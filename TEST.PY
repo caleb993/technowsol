@@ -281,6 +281,7 @@ def load_subscribers():
 PAGE = """<!doctype html>
 <html lang="en">
 <head>
+  <meta name="google-site-verification" content="dn_Eh0rj2xwyHjM_Qf9_wvb1-wy7HbiEmjeEAQDK_uA" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Muga • Portfolio — Caleb Muga</title>
