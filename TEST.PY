@@ -390,7 +390,7 @@ PAGE = """<!doctype html>
     <span></span><span></span><span></span><span></span>
   </div>
   <div class="container position-relative">
-    <h1 class="reveal">Hey, WELCOME TO TECHKNOW SOLUTIONS - Caleb Muga 👋</h1>
+    <h1 class="reveal">WELCOME TO TECHKNOW SOLUTIONS - Caleb Muga 👋</h1>
     <p class="mt-3 reveal" style="max-width:900px;margin:0 auto;">
       <span class="chip" aria-hidden="true">ICT Support</span>
       <span class="chip" aria-hidden="true">Networking</span>
