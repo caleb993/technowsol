@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <link rel="stylesheet"
+   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -139,6 +141,17 @@
     .float-whatsapp a{ width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; background:linear-gradient(135deg,#25D366,#128C7E); box-shadow: 0 10px 30px rgba(18,140,126,0.18); }
 
     @media (max-width:576px){ .hero h1{ font-size:2rem } .gallery-item{ height:140px } }
+    .glow-btn{
+      background:linear-gradient(135deg,#0d6efd,#00e5ff);
+      border:none;
+      box-shadow:0 0 20px rgba(0,229,255,.4);
+      transition:.4s ease;
+    }
+
+    .glow-btn:hover{
+      transform:translateY(-5px) scale(1.03);
+      box-shadow:0 0 35px rgba(0,229,255,.7);
+    }
   </style>
 </head>
 <body>
@@ -205,7 +218,9 @@
     </div>
 
     <div class="mt-4" data-aos="fade-up" data-aos-delay="420">
-      <a href="#portfolio" class="btn btn-lg btn-primary me-2">See My Work</a>
+      <a href="#portfolio" class="btn btn-lg btn-primary me-2 glow-btn">
+         🚀 Explore My Portfolio
+      </a> 
       <a href="#contact" class="btn btn-lg btn-outline-light">Get in Touch</a>
     </div>
   </div>
@@ -545,7 +560,375 @@
     const hero = document.querySelector('.hero .overlay');
     if(hero){ const y = window.scrollY; hero.style.transform = `translateY(${y * 0.05}px)`; }
   });
+<!-- ========================= -->
+<!-- TECHKNOW AI ASSISTANT -->
+<!-- ========================= -->
 
+<style>
+  .ai-chat-btn{
+    position:fixed;
+    bottom:90px;
+    right:20px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    border:none;
+    background:linear-gradient(135deg,#0d6efd,#00e5ff);
+    color:#fff;
+    font-size:28px;
+    cursor:pointer;
+    z-index:2000;
+    box-shadow:0 10px 30px rgba(0,229,255,.35);
+    animation:pulseAI 2s infinite;
+  }
+
+  @keyframes pulseAI{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+  }
+
+  .ai-chatbox{
+    position:fixed;
+    bottom:165px;
+    right:20px;
+    width:340px;
+    max-width:95%;
+    height:500px;
+    background:#071426;
+    border-radius:20px;
+    overflow:hidden;
+    display:none;
+    flex-direction:column;
+    z-index:2000;
+    box-shadow:0 20px 50px rgba(0,0,0,.45);
+    border:1px solid rgba(255,255,255,.08);
+  }
+
+  body.light .ai-chatbox{
+    background:#fff;
+    color:#000;
+  }
+
+  .ai-header{
+    padding:16px;
+    background:linear-gradient(135deg,#0d6efd,#6f42c1);
+    color:#fff;
+    font-weight:700;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .ai-messages{
+    flex:1;
+    padding:15px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .ai-msg{
+    padding:12px 14px;
+    border-radius:14px;
+    max-width:85%;
+    line-height:1.5;
+    animation:fadeIn .3s ease;
+  }
+
+  .ai-user{
+    align-self:flex-end;
+    background:#0d6efd;
+    color:#fff;
+  }
+
+  .ai-bot{
+    align-self:flex-start;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+  }
+
+  body.light .ai-bot{
+    background:#eef2ff;
+    color:#000;
+  }
+
+  .ai-input{
+    display:flex;
+    padding:12px;
+    gap:10px;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+
+  .ai-input input{
+    flex:1;
+    border:none;
+    outline:none;
+    padding:12px;
+    border-radius:10px;
+    background:rgba(255,255,255,.08);
+    color:#fff;
+  }
+
+  body.light .ai-input input{
+    background:#f3f4f6;
+    color:#000;
+  }
+
+  .ai-input button{
+    border:none;
+    background:#0d6efd;
+    color:#fff;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+  }
+
+  .typing{
+    width:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  .typing span{
+    width:10px;
+    height:10px;
+    background:#00e5ff;
+    border-radius:50%;
+    animation:typing 1s infinite;
+  }
+
+  .typing span:nth-child(2){
+    animation-delay:.2s;
+  }
+
+  .typing span:nth-child(3){
+    animation-delay:.4s;
+  }
+
+  @keyframes typing{
+    0%,100%{opacity:.3;transform:translateY(0);}
+    50%{opacity:1;transform:translateY(-5px);}
+  }
+
+  @keyframes fadeIn{
+    from{
+      opacity:0;
+      transform:translateY(10px);
+    }
+    to{
+      opacity:1;
+      transform:translateY(0);
+    }
+  }
+</style>
+
+<!-- AI Button -->
+<button class="ai-chat-btn" id="aiBtn">🤖</button>
+
+<!-- Chatbox -->
+<div class="ai-chatbox" id="aiBox">
+
+  <div class="ai-header">
+    <span>TechKnow AI Assistant</span>
+    <button onclick="toggleAI()" style="background:none;border:none;color:white;font-size:20px;">×</button>
+  </div>
+
+  <div class="ai-messages" id="aiMessages"></div>
+
+  <div class="ai-input">
+    <input type="text" id="aiInput" placeholder="Ask something...">
+    <button onclick="sendAI()">Send</button>
+  </div>
+
+</div>
+
+<script>
+  const aiBtn = document.getElementById("aiBtn");
+  const aiBox = document.getElementById("aiBox");
+  const aiMessages = document.getElementById("aiMessages");
+  const aiInput = document.getElementById("aiInput");
+
+  aiBtn.addEventListener("click", toggleAI);
+
+  function toggleAI(){
+    aiBox.style.display =
+      aiBox.style.display === "flex"
+      ? "none"
+      : "flex";
+  }
+
+  // Welcome Message
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      addBotMessage(getGreeting());
+      speakWelcome();
+    }, 2000);
+  });
+
+  function getGreeting(){
+    const hour = new Date().getHours();
+
+    let greet = "Hello";
+
+    if(hour < 12){
+      greet = "Good morning";
+    } else if(hour < 18){
+      greet = "Good afternoon";
+    } else {
+      greet = "Good evening";
+    }
+
+    return `${greet} 👋 Welcome to TechKnow Solutions. I am Caleb Muga's AI assistant. You can ask about services, cybersecurity, networking, projects, or contact information.`;
+  }
+
+  function addUserMessage(text){
+    const msg = document.createElement("div");
+    msg.className = "ai-msg ai-user";
+    msg.innerText = text;
+    aiMessages.appendChild(msg);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  }
+
+  function addBotMessage(text){
+    const msg = document.createElement("div");
+    msg.className = "ai-msg ai-bot";
+    msg.innerText = text;
+    aiMessages.appendChild(msg);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  }
+
+  function showTyping(){
+    const typing = document.createElement("div");
+    typing.className = "ai-msg ai-bot";
+    typing.id = "typingBox";
+
+    typing.innerHTML = `
+      <div class="typing">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    `;
+
+    aiMessages.appendChild(typing);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  }
+
+  function removeTyping(){
+    const typing = document.getElementById("typingBox");
+    if(typing) typing.remove();
+  }
+
+  function sendAI(){
+    const text = aiInput.value.trim();
+
+    if(!text) return;
+
+    addUserMessage(text);
+
+    aiInput.value = "";
+
+    showTyping();
+
+    setTimeout(() => {
+      removeTyping();
+
+      const reply = generateReply(text.toLowerCase());
+
+      addBotMessage(reply);
+
+    }, 1000);
+  }
+
+  aiInput.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+      sendAI();
+    }
+  });
+
+  function generateReply(message){
+
+    // greetings
+    if(message.includes("hi") || message.includes("hello")){
+      return "Hello 👋 Welcome to TechKnow Solutions. How can I help you today?";
+    }
+
+    // services
+    if(message.includes("service")){
+      return "TechKnow Solutions offers ICT Support, Networking, Cybersecurity, Automation, Website Development, and System Troubleshooting.";
+    }
+
+    // cybersecurity
+    if(message.includes("cyber") || message.includes("security")){
+      return "Caleb Muga helps secure networks, systems, routers, endpoints, and user accounts using cybersecurity best practices.";
+    }
+
+    // networking
+    if(message.includes("network")){
+      return "Networking services include router configuration, switch setup, VLANs, VPNs, troubleshooting, LAN/WAN support, and network security.";
+    }
+
+    // contact
+    if(message.includes("contact") || message.includes("phone")){
+      return "You can contact Caleb Muga via WhatsApp at 0791 204 587.";
+    }
+
+    // projects
+    if(message.includes("project")){
+      return "Several ICT, cybersecurity, automation, and networking projects are available in the portfolio section.";
+    }
+
+    // cv
+    if(message.includes("cv") || message.includes("resume")){
+      return "You can download Caleb Muga's CV from the About section of the website.";
+    }
+
+    // blog
+    if(message.includes("blog")){
+      return "The blog section contains cybersecurity tips, ICT tutorials, networking guides, and updates.";
+    }
+
+    // thanks
+    if(message.includes("thank")){
+      return "You're welcome 😊";
+    }
+
+    // default
+    return "I can help with ICT Support, Networking, Cybersecurity, Projects, Blogs, CV access, and contact information.";
+  }
+
+  // Voice Welcome
+  function speakWelcome(){
+
+    if("speechSynthesis" in window){
+
+      const speech = new SpeechSynthesisUtterance(
+        "Welcome to TechKnow Solutions."
+      );
+
+      speech.volume = 0.8;
+      speech.rate = 1;
+      speech.pitch = 1;
+
+      window.speechSynthesis.speak(speech);
+    }
+  }
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>  
+</script>
 </script>
 
 <!-- AOS & Bootstrap JS -->
