@@ -1,4 +1,4 @@
-```html id="vtykgm"
+```html
 <!doctype html>
 <html lang="en">
 
@@ -29,7 +29,6 @@
     }
 
     body{
-
       background:
       radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 25%),
       radial-gradient(circle at bottom left, rgba(168,85,247,0.12), transparent 25%),
@@ -68,35 +67,22 @@
     }
 
     .hero-badge{
-
       display:inline-block;
-
       padding:10px 20px;
-
       border-radius:999px;
-
       background:rgba(255,255,255,0.05);
-
       border:1px solid rgba(255,255,255,0.08);
-
       color:#93c5fd;
-
       letter-spacing:1px;
       font-size:14px;
-
       margin-bottom:25px;
-
       backdrop-filter:blur(12px);
     }
 
     .hero-title{
-
       font-size:clamp(3rem, 8vw, 5rem);
-
       font-weight:800;
-
       line-height:1;
-
       font-family:'Space Grotesk', sans-serif;
 
       background:
@@ -109,21 +95,17 @@
     }
 
     .hero-text{
-
       max-width:760px;
-
       margin:auto;
-
       color:#94a3b8;
-
       font-size:1.1rem;
-
       line-height:1.9;
     }
 
     .blog-card{
 
       position:relative;
+      z-index:1;
 
       background:rgba(255,255,255,0.05);
 
@@ -164,6 +146,8 @@
       opacity:0;
 
       transition:.45s;
+
+      pointer-events:none;
     }
 
     .blog-card:hover::before{
@@ -171,7 +155,6 @@
     }
 
     .blog-card:hover{
-
       transform:
       translateY(-12px)
       scale(1.02);
@@ -185,48 +168,42 @@
     }
 
     .blog-meta{
-
       display:flex;
       align-items:center;
       gap:10px;
-
       color:#94a3b8;
-
       font-size:14px;
-
       margin-bottom:18px;
+
+      position:relative;
+      z-index:2;
     }
 
     .blog-title{
-
       font-size:1.5rem;
-
       font-weight:700;
-
       line-height:1.5;
-
       margin-bottom:18px;
-
       color:white;
+
+      position:relative;
+      z-index:2;
     }
 
     .blog-content{
-
       color:#cbd5e1;
-
       line-height:1.9;
-
       font-size:15px;
-
       margin-bottom:28px;
+
+      position:relative;
+      z-index:2;
     }
 
     .read-btn{
 
       display:inline-flex;
-
       align-items:center;
-
       gap:10px;
 
       text-decoration:none;
@@ -252,10 +229,12 @@
 
       box-shadow:
       0 12px 30px rgba(37,99,235,0.25);
+
+      position:relative;
+      z-index:5;
     }
 
     .read-btn:hover{
-
       transform:translateY(-3px);
 
       box-shadow:
@@ -265,28 +244,19 @@
     }
 
     .empty-state{
-
       text-align:center;
-
       padding:90px 20px;
-
       border-radius:30px;
-
       background:rgba(255,255,255,0.04);
-
       border:1px dashed rgba(255,255,255,0.08);
-
       color:#94a3b8;
     }
 
     .back-btn{
-
       margin-top:60px;
 
       display:inline-flex;
-
       align-items:center;
-
       gap:10px;
 
       text-decoration:none;
@@ -307,11 +277,8 @@
     }
 
     .back-btn:hover{
-
       background:rgba(255,255,255,0.08);
-
       transform:translateY(-3px);
-
       color:white;
     }
 
@@ -424,4 +391,6 @@
 
 </body>
 </html>
+```
+
 ```
