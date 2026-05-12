@@ -1,27 +1,299 @@
-    <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Blog • Muga</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head><body style="background:#0b1220;color:#e6eef8">
-      <div class="container py-5">
-        <h1>Blog</h1>
-        <p class="text-muted">Insights, tips and updates.</p>
-        {% if blogs %}
-          <div class="row g-4">
-            {% for b in blogs %}
-              <div class="col-md-4">
-                <div style="background:#0f1724;padding:18px;border-radius:12px;">
-                  <h5>{{ b.title }}</h5>
-                  <div class="text-muted">{{ b.timestamp }}</div>
-                  <p>{{ b.content[:160] }}{% if b.content|length>160 %}...{% endif %}</p>
-                  <a class="btn btn-sm btn-outline-primary" href="{{ url_for('view_blog', slug=b.slug) }}">Read</a>
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p class="text-muted">No posts yet.</p>
-        {% endif %}
-        <a class="d-block mt-4 btn btn-outline-secondary" href="{{ url_for('index') }}">← Back</a>
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Blog • Muga</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      background:
+      radial-gradient(circle at top right, rgba(0,153,255,0.15), transparent 25%),
+      radial-gradient(circle at bottom left, rgba(139,92,246,0.15), transparent 25%),
+      #07111f;
+
+      color:#f1f5f9;
+      font-family:'Inter', sans-serif;
+      overflow-x:hidden;
+      min-height:100vh;
+    }
+
+    .hero-section{
+      text-align:center;
+      margin-bottom:70px;
+      position:relative;
+    }
+
+    .hero-badge{
+      display:inline-block;
+      padding:10px 20px;
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:999px;
+      background:rgba(255,255,255,0.04);
+      backdrop-filter:blur(10px);
+      color:#8ab4ff;
+      font-size:14px;
+      margin-bottom:20px;
+      letter-spacing:1px;
+    }
+
+    .hero-title{
+      font-size:clamp(3rem, 8vw, 5.5rem);
+      font-weight:800;
+      line-height:1;
+      font-family:'Space Grotesk', sans-serif;
+      background:linear-gradient(to right,#ffffff,#60a5fa,#8b5cf6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      margin-bottom:20px;
+    }
+
+    .hero-text{
+      max-width:750px;
+      margin:auto;
+      color:#94a3b8;
+      font-size:1.1rem;
+      line-height:1.8;
+    }
+
+    .blog-card{
+      position:relative;
+      background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:28px;
+      padding:28px;
+      overflow:hidden;
+      backdrop-filter:blur(18px);
+
+      transition:all .45s ease;
+      height:100%;
+    }
+
+    .blog-card::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(
+      135deg,
+      rgba(96,165,250,0.12),
+      rgba(139,92,246,0.08),
+      transparent
+      );
+      opacity:0;
+      transition:.5s;
+    }
+
+    .blog-card:hover::before{
+      opacity:1;
+    }
+
+    .blog-card:hover{
+      transform:translateY(-12px) scale(1.02);
+      border-color:rgba(96,165,250,0.4);
+      box-shadow:
+      0 20px 50px rgba(0,0,0,0.45),
+      0 0 25px rgba(96,165,250,0.15);
+    }
+
+    .blog-meta{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:#94a3b8;
+      font-size:14px;
+      margin-bottom:18px;
+    }
+
+    .blog-title{
+      font-size:1.5rem;
+      font-weight:700;
+      margin-bottom:18px;
+      line-height:1.4;
+      color:white;
+    }
+
+    .blog-content{
+      color:#b6c2d1;
+      line-height:1.8;
+      margin-bottom:25px;
+      font-size:15px;
+    }
+
+    .read-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      padding:12px 22px;
+      border-radius:14px;
+      background:linear-gradient(135deg,#2563eb,#7c3aed);
+      color:white;
+      font-weight:600;
+      transition:.3s;
+      border:none;
+      box-shadow:0 10px 25px rgba(37,99,235,0.25);
+    }
+
+    .read-btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 18px 35px rgba(37,99,235,0.35);
+      color:white;
+    }
+
+    .floating-light{
+      position:absolute;
+      width:300px;
+      height:300px;
+      border-radius:50%;
+      background:rgba(59,130,246,0.08);
+      filter:blur(90px);
+      z-index:-1;
+    }
+
+    .light1{
+      top:-80px;
+      right:-50px;
+    }
+
+    .light2{
+      bottom:-100px;
+      left:-80px;
+      background:rgba(168,85,247,0.08);
+    }
+
+    .back-btn{
+      margin-top:60px;
+      border-radius:16px;
+      padding:14px 22px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.04);
+      color:#dbeafe;
+      transition:.3s;
+      backdrop-filter:blur(10px);
+    }
+
+    .back-btn:hover{
+      background:rgba(255,255,255,0.08);
+      transform:translateY(-3px);
+      color:white;
+    }
+
+    .empty-state{
+      text-align:center;
+      padding:80px 20px;
+      border-radius:30px;
+      background:rgba(255,255,255,0.04);
+      border:1px dashed rgba(255,255,255,0.08);
+      color:#94a3b8;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="floating-light light1"></div>
+  <div class="floating-light light2"></div>
+
+  <div class="container py-5">
+
+    <!-- HERO -->
+    <div class="hero-section">
+
+      <div class="hero-badge">
+        ✦ MUGA INSIGHTS & STORIES
       </div>
-    </body></html>
-    """
+
+      <h1 class="hero-title">
+        The Muga Journal
+      </h1>
+
+      <p class="hero-text">
+        Thoughts, innovations, development journeys, tech insights,
+        AI explorations, and powerful digital experiences crafted
+        to inspire creators, developers, and visionaries.
+      </p>
+
+    </div>
+
+    {% if blogs %}
+
+    <div class="row g-4">
+
+      {% for b in blogs %}
+
+      <div class="col-lg-4 col-md-6">
+
+        <div class="blog-card">
+
+          <div class="blog-meta">
+            <i class="bi bi-calendar-event"></i>
+            {{ b.timestamp }}
+          </div>
+
+          <h2 class="blog-title">
+            {{ b.title }}
+          </h2>
+
+          <p class="blog-content">
+            {{ b.content[:160] }}
+            {% if b.content|length > 160 %}...{% endif %}
+          </p>
+
+          <a class="read-btn"
+             href="{{ url_for('view_blog', slug=b.slug) }}">
+
+            Read Article
+            <i class="bi bi-arrow-right"></i>
+
+          </a>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+      <h3>No Posts Yet</h3>
+      <p>Your stories and insights will appear here soon.</p>
+    </div>
+
+    {% endif %}
+
+    <a class="btn back-btn"
+       href="{{ url_for('index') }}">
+
+      ← Back Home
+
+    </a>
+
+  </div>
+
+</body>
+</html>
+```
