@@ -246,12 +246,36 @@
           {% endif %}
         </div>
         <div class="col-md-8">
-          <p class="lead-lg">Customer-focused ICT Officer with a BSc in Business & IT. Practical experience in network administration, end-user support, and cybersecurity. I build reliable tools and automate repetitive tasks to increase efficiency.</p>
-          <ul>
-            <li><strong>Strengths:</strong> Problem-solving, documentation, stakeholder communication, systems hardening.</li>
-            <li><strong>Certifications:</strong> CCNA, OPSWAT File Security Associate, ALX Virtual Assistant.</li>
-            <li><strong>Languages:</strong> English, Swahili.</li>
-          </ul>
+          <h3 class="mb-4">
+            ICT Support • Networking • Cybersecurity
+          </h3>
+
+          <p>
+            Customer-focused ICT Officer with practical
+            experience in Network Administration,
+            Cybersecurity, Automation, and IT Support.
+          </p>
+
+          <div class="row mt-4">
+
+            <div class="col-md-6">
+              <ul>
+                <li>CCNA Certified</li>
+                <li>Cybersecurity Specialist</li>
+                <li>Automation Expert</li>
+              </ul>
+            </div>
+
+            <div class="col-md-6">
+              <ul>
+                <li>Business IT Graduate</li>
+                <li>Technical Documentation</li>
+                <li>Cloud & Systems Support</li>
+              </ul>
+            </div>
+
+          </div>
+
           {% if cv_file %}
             <a href="{{ url_for('download_file', kind='cv', filename=cv_file) }}" class="btn btn-outline-light mt-2">Download CV</a>
           {% endif %}
