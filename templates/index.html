@@ -387,7 +387,36 @@
     </div>
     <div class="text-center mt-3" data-aos="fade-up" data-aos-delay="240"><a class="btn btn-outline-light" href="{{ url_for('blog_list') }}">See all posts</a></div>
   </section>
+  <!-- AI CHAT -->
 
+  <div class="glass ai-box" id="aiBox">
+  
+    <div class="ai-header">
+      TechKnow AI Assistant
+    </div>
+  
+    <div class="ai-body" id="aiMessages">
+  
+      <div class="ai-msg ai-bot">
+        👋 Hello! Welcome to TechKnow Solutions.
+        How can I help you today?
+      </div>
+  
+    </div>
+  
+    <div class="ai-footer">
+  
+      <input type="text"
+             id="aiInput"
+             placeholder="Ask something...">
+  
+      <button onclick="sendAI()">
+        Send
+      </button>
+  
+    </div>
+  
+  </div>
   <!-- Contact -->
   <section id="contact" class="mt-5" aria-labelledby="contact-title">
     <h2 class="section-title" id="contact-title" data-aos="fade-up">Contact</h2>
@@ -428,20 +457,7 @@
   </div>
 </footer>
   
-// LOADER
 
-window.addEventListener('load',()=>{
-
-  setTimeout(()=>{
-    document.getElementById('loader').style.display='none';
-  },1000);
-
-  AOS.init({
-    duration:900,
-    once:true
-  });
-
-});
 <!-- Media modal (images & videos) -->
 <div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true" aria-labelledby="mediaModalLabel">
   <div class="modal-dialog modal-dialog-centered modal-xl">
