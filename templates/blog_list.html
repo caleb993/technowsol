@@ -3,30 +3,122 @@
 <html lang="en">
 
 <head>
-    
-    <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-  
-    gtag('config', 'G-ELRXZQRGNR');
-  </script>
-    
 
+  <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Blog • Muga</title>
-  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>  
+  <!-- Primary SEO -->
+  <title>Blog • Muga Digital Journal</title>
+
+  <meta name="description"
+        content="Explore cybersecurity, networking, AI, web development, automation, and digital engineering insights by Caleb Muga at TechKnow Solutions.">
+
+  <meta name="keywords"
+        content="Caleb Muga, TechKnow Solutions, Cybersecurity, Networking, AI, Python, Web Development, ICT Blog">
+
+  <meta name="author" content="Caleb Muga">
+
+  <meta name="robots" content="index, follow">
+
+  <!-- Canonical -->
+  <link rel="canonical"
+        href="https://portfolio-sj7l.onrender.com/blog">
+
+  <!-- Open Graph -->
+  <meta property="og:title"
+        content="Muga Digital Journal">
+
+  <meta property="og:description"
+        content="Cybersecurity, networking, AI and software engineering insights.">
+
+  <meta property="og:type"
+        content="website">
+
+  <meta property="og:url"
+        content="https://portfolio-sj7l.onrender.com/blog">
+
+  <meta property="og:image"
+        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card"
+        content="summary_large_image">
+
+  <meta name="twitter:title"
+        content="Muga Digital Journal">
+
+  <meta name="twitter:description"
+        content="Cybersecurity, networking, AI and digital engineering insights.">
+
+  <meta name="twitter:image"
+        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon"
+        type="image/png"
+        href="/static/favicon.png">
+
+  <!-- Google Site Verification -->
+  <meta name="google-site-verification"
+        content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+
+  <!-- Google Adsense -->
+  <meta name="google-adsense-account"
+        content="ca-pub-4340479899629152">
+
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340479899629152"
+          crossorigin="anonymous"></script>
+
+  <!-- Google Analytics -->
+  <script async
+          src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-ELRXZQRGNR');
+  </script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Blog",
+    "name":"Muga Digital Journal",
+    "url":"https://portfolio-sj7l.onrender.com/blog",
+    "description":"Cybersecurity, networking, AI and software engineering insights by Caleb Muga.",
+    "publisher":{
+      "@type":"Person",
+      "name":"Caleb Muga"
+    }
+  }
+  </script>
+
+  <!-- Cookie Consent -->
+  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
 
   <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
 
   <!-- Bootstrap Icons -->
   <link rel="stylesheet"
@@ -40,24 +132,77 @@
       box-sizing:border-box;
     }
 
+    html{
+      scroll-behavior:smooth;
+    }
+
     body{
+
       background:
       radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 25%),
       radial-gradient(circle at bottom left, rgba(168,85,247,0.12), transparent 25%),
       #07111f;
 
       color:#f1f5f9;
+
       font-family:'Inter', sans-serif;
+
       overflow-x:hidden;
+
       min-height:100vh;
     }
 
+    /* NAVBAR */
+
+    .navbar-custom{
+
+      position:sticky;
+      top:0;
+
+      z-index:1000;
+
+      backdrop-filter:blur(18px);
+
+      background:rgba(7,17,31,0.72);
+
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+
+    .navbar-brand{
+
+      font-weight:800;
+
+      font-size:1.3rem;
+
+      color:white !important;
+    }
+
+    .navbar-brand span{
+      color:#60a5fa;
+    }
+
+    .nav-link{
+      color:#cbd5e1 !important;
+      transition:.3s;
+    }
+
+    .nav-link:hover{
+      color:white !important;
+    }
+
+    /* BACKGROUND LIGHTS */
+
     .floating-light{
+
       position:absolute;
+
       width:320px;
       height:320px;
+
       border-radius:50%;
+
       filter:blur(100px);
+
       z-index:-1;
     }
 
@@ -73,50 +218,109 @@
       background:rgba(168,85,247,0.12);
     }
 
+    /* HERO */
+
     .hero-section{
       text-align:center;
       margin-bottom:70px;
+      padding-top:60px;
     }
 
     .hero-badge{
+
       display:inline-block;
+
       padding:10px 20px;
+
       border-radius:999px;
+
       background:rgba(255,255,255,0.05);
+
       border:1px solid rgba(255,255,255,0.08);
+
       color:#93c5fd;
+
       letter-spacing:1px;
+
       font-size:14px;
+
       margin-bottom:25px;
+
       backdrop-filter:blur(12px);
     }
 
     .hero-title{
+
       font-size:clamp(3rem, 8vw, 5rem);
+
       font-weight:800;
+
       line-height:1;
+
       font-family:'Space Grotesk', sans-serif;
 
       background:
       linear-gradient(to right,#ffffff,#60a5fa,#8b5cf6);
 
       -webkit-background-clip:text;
+
       -webkit-text-fill-color:transparent;
 
       margin-bottom:20px;
     }
 
     .hero-text{
+
       max-width:760px;
+
       margin:auto;
+
       color:#94a3b8;
+
       font-size:1.1rem;
+
       line-height:1.9;
     }
+
+    /* SEARCH */
+
+    .search-box{
+
+      max-width:650px;
+
+      margin:40px auto 0;
+    }
+
+    .search-input{
+
+      background:rgba(255,255,255,0.05);
+
+      border:1px solid rgba(255,255,255,0.08);
+
+      color:white;
+
+      border-radius:18px;
+
+      padding:16px 20px;
+    }
+
+    .search-input:focus{
+
+      background:rgba(255,255,255,0.08);
+
+      color:white;
+
+      box-shadow:none;
+
+      border-color:#60a5fa;
+    }
+
+    /* BLOG CARD */
 
     .blog-card{
 
       position:relative;
+
       z-index:1;
 
       background:rgba(255,255,255,0.05);
@@ -167,6 +371,7 @@
     }
 
     .blog-card:hover{
+
       transform:
       translateY(-12px)
       scale(1.02);
@@ -180,42 +385,81 @@
     }
 
     .blog-meta{
+
       display:flex;
+
       align-items:center;
+
+      justify-content:space-between;
+
+      flex-wrap:wrap;
+
       gap:10px;
+
       color:#94a3b8;
+
       font-size:14px;
+
       margin-bottom:18px;
 
       position:relative;
+
       z-index:2;
     }
 
+    .blog-tag{
+
+      padding:6px 12px;
+
+      border-radius:999px;
+
+      background:rgba(96,165,250,0.12);
+
+      color:#93c5fd;
+
+      font-size:12px;
+    }
+
     .blog-title{
+
       font-size:1.5rem;
+
       font-weight:700;
+
       line-height:1.5;
+
       margin-bottom:18px;
+
       color:white;
 
       position:relative;
+
       z-index:2;
     }
 
     .blog-content{
+
       color:#cbd5e1;
+
       line-height:1.9;
+
       font-size:15px;
+
       margin-bottom:28px;
 
       position:relative;
+
       z-index:2;
     }
+
+    /* BUTTONS */
 
     .read-btn{
 
       display:inline-flex;
+
       align-items:center;
+
       gap:10px;
 
       text-decoration:none;
@@ -243,10 +487,12 @@
       0 12px 30px rgba(37,99,235,0.25);
 
       position:relative;
+
       z-index:5;
     }
 
     .read-btn:hover{
+
       transform:translateY(-3px);
 
       box-shadow:
@@ -256,42 +502,96 @@
     }
 
     .empty-state{
+
       text-align:center;
+
       padding:90px 20px;
+
       border-radius:30px;
+
       background:rgba(255,255,255,0.04);
+
       border:1px dashed rgba(255,255,255,0.08);
+
       color:#94a3b8;
     }
 
-    .back-btn{
-      margin-top:60px;
+    /* NEWSLETTER */
 
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
+    .newsletter{
 
-      text-decoration:none;
+      margin-top:80px;
 
-      padding:14px 24px;
+      padding:45px;
 
-      border-radius:16px;
+      border-radius:30px;
 
-      background:rgba(255,255,255,0.05);
+      background:
+      linear-gradient(
+      135deg,
+      rgba(37,99,235,0.18),
+      rgba(124,58,237,0.12)
+      );
 
       border:1px solid rgba(255,255,255,0.08);
 
-      color:#dbeafe;
-
-      backdrop-filter:blur(12px);
-
-      transition:.35s;
+      text-align:center;
     }
 
-    .back-btn:hover{
-      background:rgba(255,255,255,0.08);
-      transform:translateY(-3px);
+    .newsletter h3{
+      margin-bottom:16px;
+      font-weight:700;
+    }
+
+    .newsletter p{
+      color:#cbd5e1;
+      margin-bottom:28px;
+    }
+
+    .newsletter input{
+
+      background:rgba(255,255,255,0.06);
+
+      border:1px solid rgba(255,255,255,0.08);
+
       color:white;
+
+      border-radius:16px;
+
+      padding:14px;
+    }
+
+    .newsletter input:focus{
+      background:rgba(255,255,255,0.08);
+      color:white;
+      box-shadow:none;
+      border-color:#60a5fa;
+    }
+
+    /* FOOTER */
+
+    footer{
+
+      margin-top:80px;
+
+      padding:30px 0;
+
+      text-align:center;
+
+      color:#94a3b8;
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:768px){
+
+      .hero-title{
+        font-size:3rem;
+      }
+
+      .newsletter{
+        padding:30px 20px;
+      }
     }
 
   </style>
@@ -300,7 +600,63 @@
 
 <body>
 
-  <!-- Background Lights -->
+  <!-- NAVBAR -->
+
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+
+    <div class="container">
+
+      <a class="navbar-brand"
+         href="{{ url_for('index') }}">
+
+        MUGA<span>.dev</span>
+
+      </a>
+
+      <button class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navMenu">
+
+        <span class="navbar-toggler-icon"></span>
+
+      </button>
+
+      <div class="collapse navbar-collapse"
+           id="navMenu">
+
+        <ul class="navbar-nav ms-auto">
+
+          <li class="nav-item">
+            <a class="nav-link"
+               href="{{ url_for('index') }}">
+               Home
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link"
+               href="{{ url_for('index') }}#services">
+               Services
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link"
+               href="{{ url_for('index') }}#contact">
+               Contact
+            </a>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+  <!-- BACKGROUND LIGHTS -->
 
   <div class="floating-light light1"></div>
   <div class="floating-light light2"></div>
@@ -322,28 +678,45 @@
       <p class="hero-text">
 
         Explore deep insights, development stories,
-        creative engineering journeys, AI innovations,
-        tech strategies, and powerful digital experiences
-        designed to inspire modern creators.
+        AI innovations, cybersecurity, networking,
+        automation, and software engineering journeys.
 
       </p>
+
+      <!-- SEARCH -->
+
+      <div class="search-box">
+
+        <input type="text"
+               id="searchInput"
+               class="form-control search-input"
+               placeholder="Search articles...">
+
+      </div>
 
     </div>
 
     {% if blogs %}
 
-    <div class="row g-4">
+    <div class="row g-4"
+         id="blogContainer">
 
       {% for b in blogs %}
 
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-4 col-md-6 blog-item">
 
-        <div class="blog-card">
+        <article class="blog-card">
 
           <div class="blog-meta">
 
-            <i class="bi bi-calendar-event"></i>
-            {{ b.timestamp }}
+            <div>
+              <i class="bi bi-calendar-event"></i>
+              {{ b.timestamp }}
+            </div>
+
+            <span class="blog-tag">
+              Technology
+            </span>
 
           </div>
 
@@ -353,8 +726,8 @@
 
           <p class="blog-content">
 
-            {{ b.content[:160] }}
-            {% if b.content|length > 160 %}...{% endif %}
+            {{ b.content[:180] }}
+            {% if b.content|length > 180 %}...{% endif %}
 
           </p>
 
@@ -366,7 +739,7 @@
 
           </a>
 
-        </div>
+        </article>
 
       </div>
 
@@ -381,28 +754,101 @@
       <h3>No Posts Yet</h3>
 
       <p>
+
         Your future articles, insights,
         and digital stories will appear here.
+
       </p>
 
     </div>
 
     {% endif %}
 
-    <!-- BACK BUTTON -->
+    <!-- NEWSLETTER -->
 
-    <a href="{{ url_for('index') }}"
-       class="back-btn">
+    <div class="newsletter">
 
-      <i class="bi bi-arrow-left"></i>
-      Back Home
+      <h3>
+        Stay Updated
+      </h3>
 
-    </a>
+      <p>
+
+        Subscribe for cybersecurity insights,
+        networking tutorials, AI updates,
+        and modern tech strategies.
+
+      </p>
+
+      <form method="post"
+            action="{{ url_for('subscribe') }}"
+            class="row g-3 justify-content-center">
+
+        <div class="col-md-6">
+
+          <input type="email"
+                 name="email"
+                 class="form-control"
+                 placeholder="Enter your email"
+                 required>
+
+        </div>
+
+        <div class="col-auto">
+
+          <button class="btn btn-primary btn-lg">
+            Subscribe
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+      © {{ year }} Caleb Muga • TechKnow Solutions
+
+    </footer>
 
   </div>
 
+  <!-- Bootstrap JS -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- SEARCH FILTER -->
+
+  <script>
+
+    const searchInput =
+      document.getElementById('searchInput');
+
+    const blogItems =
+      document.querySelectorAll('.blog-item');
+
+    searchInput.addEventListener('keyup', () => {
+
+      const value =
+        searchInput.value.toLowerCase();
+
+      blogItems.forEach(item => {
+
+        const text =
+          item.innerText.toLowerCase();
+
+        item.style.display =
+          text.includes(value)
+          ? 'block'
+          : 'none';
+      });
+    });
+
+  </script>
+
 </body>
 </html>
-```
-
 ```
