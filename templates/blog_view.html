@@ -1,35 +1,129 @@
-
+```html
 <!doctype html>
 <html lang="en">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-  
-    gtag('config', 'G-ELRXZQRGNR');
-  </script>
-  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
+
+  <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>{{ post.title }} • Muga Blog</title>
+  <!-- SEO -->
+  <title>{{ post.title }} • TechKnow Solutions Blog</title>
+
+  <meta name="description"
+        content="{{ post.content[:155] }}">
+
+  <meta name="keywords"
+        content="Caleb Muga, TechKnow Solutions, Cybersecurity, Networking, ICT Support, AI, Technology Blog">
+
+  <meta name="author" content="Caleb Muga">
+
+  <link rel="canonical"
+        href="https://portfolio-sj7l.onrender.com/blog/{{ post.slug }}">
+
+  <!-- Google Verification -->
+  <meta name="google-site-verification"
+        content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
+
+  <!-- AdSense -->
+  <meta name="google-adsense-account"
+        content="ca-pub-4340479899629152">
+
+  <!-- Open Graph -->
+  <meta property="og:title"
+        content="{{ post.title }} • TechKnow Solutions">
+
+  <meta property="og:description"
+        content="{{ post.content[:150] }}">
+
+  <meta property="og:type"
+        content="article">
+
+  <meta property="og:url"
+        content="https://portfolio-sj7l.onrender.com/blog/{{ post.slug }}">
+
+  <meta property="og:image"
+        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card"
+        content="summary_large_image">
+
+  <meta name="twitter:title"
+        content="{{ post.title }}">
+
+  <meta name="twitter:description"
+        content="{{ post.content[:150] }}">
+
+  <meta name="twitter:image"
+        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', 'G-ELRXZQRGNR');
+  </script>
+
+  <!-- Cookie Consent -->
+  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
 
   <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
   <!-- Bootstrap Icons -->
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <!-- Google Fonts -->
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BlogPosting",
+    "headline":"{{ post.title }}",
+    "author":{
+      "@type":"Person",
+      "name":"Caleb Muga"
+    },
+    "publisher":{
+      "@type":"Organization",
+      "name":"TechKnow Solutions"
+    },
+    "datePublished":"{{ post.timestamp }}",
+    "mainEntityOfPage":{
+      "@type":"WebPage",
+      "@id":"https://portfolio-sj7l.onrender.com/blog/{{ post.slug }}"
+    }
+  }
+  </script>
+
   <style>
+
+    :root{
+      --bg:#07111f;
+      --card:rgba(255,255,255,0.05);
+      --border:rgba(255,255,255,0.08);
+      --text:#f1f5f9;
+      --muted:#94a3b8;
+      --primary:#3b82f6;
+      --secondary:#8b5cf6;
+    }
 
     *{
       margin:0;
@@ -37,17 +131,47 @@
       box-sizing:border-box;
     }
 
+    html{
+      scroll-behavior:smooth;
+    }
+
     body{
       background:
-      radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 25%),
-      radial-gradient(circle at bottom left, rgba(139,92,246,0.12), transparent 25%),
-      #07111f;
+      radial-gradient(circle at top right,
+      rgba(59,130,246,0.12),
+      transparent 25%),
 
-      color:#f1f5f9;
-      font-family:'Inter', sans-serif;
+      radial-gradient(circle at bottom left,
+      rgba(139,92,246,0.12),
+      transparent 25%),
+
+      var(--bg);
+
+      color:var(--text);
+      font-family:'Inter',sans-serif;
       overflow-x:hidden;
       min-height:100vh;
     }
+
+    /* Reading Progress */
+
+    .progress-container{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:4px;
+      z-index:9999;
+      background:transparent;
+    }
+
+    .progress-bar{
+      height:4px;
+      width:0%;
+      background:linear-gradient(to right,#3b82f6,#8b5cf6);
+    }
+
+    /* Background Lights */
 
     .floating-light{
       position:absolute;
@@ -70,89 +194,113 @@
       left:-100px;
     }
 
+    /* Wrapper */
+
+    .blog-wrapper{
+      max-width:920px;
+      margin:auto;
+    }
+
+    /* Back Button */
+
     .back-btn{
       display:inline-flex;
       align-items:center;
       gap:10px;
 
       text-decoration:none;
-      padding:12px 20px;
+
+      padding:13px 22px;
+
       border-radius:16px;
 
       background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
+
+      border:1px solid var(--border);
 
       color:#dbeafe;
 
       backdrop-filter:blur(12px);
 
       transition:.35s;
-      margin-bottom:40px;
+
+      margin-bottom:45px;
     }
 
     .back-btn:hover{
-      transform:translateY(-3px);
+      transform:translateY(-4px);
       background:rgba(255,255,255,0.08);
       color:white;
-      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+      box-shadow:0 10px 35px rgba(0,0,0,0.25);
     }
 
-    .blog-wrapper{
-      max-width:900px;
-      margin:auto;
-    }
+    /* Hero */
 
     .blog-hero{
-      margin-bottom:40px;
+      margin-bottom:45px;
+      animation:fadeIn 1s ease;
     }
 
     .blog-badge{
       display:inline-block;
-      padding:8px 18px;
+
+      padding:9px 18px;
+
       border-radius:999px;
 
       background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.08);
+
+      border:1px solid var(--border);
 
       color:#93c5fd;
+
       font-size:14px;
+
       letter-spacing:1px;
 
-      margin-bottom:25px;
+      margin-bottom:24px;
     }
 
     .blog-title{
-      font-size:clamp(2.5rem, 7vw, 4.5rem);
+      font-size:clamp(2.7rem,7vw,4.8rem);
+
       font-weight:800;
-      line-height:1.1;
 
-      font-family:'Space Grotesk', sans-serif;
+      line-height:1.08;
 
-      background:linear-gradient(to right,#ffffff,#60a5fa,#8b5cf6);
+      font-family:'Space Grotesk',sans-serif;
+
+      background:
+      linear-gradient(to right,#ffffff,#60a5fa,#8b5cf6);
+
       -webkit-background-clip:text;
       -webkit-text-fill-color:transparent;
 
-      margin-bottom:25px;
+      margin-bottom:28px;
     }
 
     .blog-meta{
       display:flex;
+      flex-wrap:wrap;
       align-items:center;
-      gap:12px;
+      gap:18px;
 
-      color:#94a3b8;
+      color:var(--muted);
+
       font-size:15px;
     }
 
+    /* Article */
+
     .article-container{
 
-      background:rgba(255,255,255,0.05);
+      background:var(--card);
 
-      border:1px solid rgba(255,255,255,0.08);
+      border:1px solid var(--border);
 
       border-radius:30px;
 
-      padding:45px;
+      padding:50px;
 
       backdrop-filter:blur(18px);
 
@@ -162,7 +310,6 @@
 
       box-shadow:
       0 20px 60px rgba(0,0,0,0.35);
-
     }
 
     .article-container::before{
@@ -186,7 +333,8 @@
       position:relative;
       z-index:2;
 
-      font-size:1.08rem;
+      font-size:1.12rem;
+
       line-height:2;
 
       color:#d6deea;
@@ -195,27 +343,79 @@
     }
 
     .article-content p{
-      margin-bottom:24px;
+      margin-bottom:26px;
     }
 
-    .reading-bar{
-      width:120px;
-      height:5px;
-
-      border-radius:999px;
-
-      background:
-      linear-gradient(to right,#3b82f6,#8b5cf6);
-
-      margin:35px 0;
+    .article-content h2,
+    .article-content h3{
+      margin-top:40px;
+      margin-bottom:18px;
+      color:white;
     }
+
+    .article-content a{
+      color:#60a5fa;
+      text-decoration:none;
+    }
+
+    .article-content a:hover{
+      text-decoration:underline;
+    }
+
+    /* Share Buttons */
+
+    .share-box{
+      margin-top:45px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .share-btn{
+      text-decoration:none;
+
+      padding:12px 18px;
+
+      border-radius:14px;
+
+      background:rgba(255,255,255,0.05);
+
+      border:1px solid var(--border);
+
+      color:white;
+
+      transition:.35s;
+    }
+
+    .share-btn:hover{
+      transform:translateY(-3px);
+      background:rgba(255,255,255,0.08);
+    }
+
+    /* Footer */
 
     .footer-note{
       text-align:center;
-      margin-top:45px;
+      margin-top:60px;
       color:#64748b;
       font-size:14px;
     }
+
+    /* Animations */
+
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(20px);
+      }
+
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    /* Mobile */
 
     @media(max-width:768px){
 
@@ -235,6 +435,14 @@
 
 <body>
 
+  <!-- Reading Progress -->
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Background Lights -->
+
   <div class="floating-light light1"></div>
   <div class="floating-light light2"></div>
 
@@ -242,7 +450,7 @@
 
     <div class="blog-wrapper">
 
-      <!-- BACK BUTTON -->
+      <!-- Back Button -->
 
       <a href="{{ url_for('blog_list') }}"
          class="back-btn">
@@ -252,12 +460,12 @@
 
       </a>
 
-      <!-- HERO -->
+      <!-- Hero -->
 
       <div class="blog-hero">
 
         <div class="blog-badge">
-          ✦ MUGA JOURNAL ARTICLE
+          ✦ TECHKNOW SOLUTIONS ARTICLE
         </div>
 
         <h1 class="blog-title">
@@ -266,32 +474,123 @@
 
         <div class="blog-meta">
 
-          <i class="bi bi-calendar-event"></i>
-          {{ post.timestamp }}
+          <span>
+            <i class="bi bi-calendar-event"></i>
+            {{ post.timestamp }}
+          </span>
+
+          <span>
+            <i class="bi bi-person-circle"></i>
+            Caleb Muga
+          </span>
+
+          <span>
+            <i class="bi bi-clock"></i>
+            5 min read
+          </span>
 
         </div>
 
       </div>
 
-      <!-- ARTICLE -->
+      <!-- Article -->
 
-      <div class="article-container">
-
-        <div class="reading-bar"></div>
+      <article class="article-container">
 
         <div class="article-content">
           {{ post.content }}
         </div>
 
+      </article>
+
+      <!-- Share -->
+
+      <div class="share-box">
+
+        <a target="_blank"
+           href="https://twitter.com/intent/tweet?text={{ post.title }}"
+           class="share-btn">
+
+          <i class="bi bi-twitter-x"></i>
+          Share
+
+        </a>
+
+        <a target="_blank"
+           href="https://wa.me/?text={{ post.title }}"
+           class="share-btn">
+
+          <i class="bi bi-whatsapp"></i>
+          WhatsApp
+
+        </a>
+
+        <a target="_blank"
+           href="https://www.linkedin.com/"
+           class="share-btn">
+
+          <i class="bi bi-linkedin"></i>
+          LinkedIn
+
+        </a>
+
+      </div>
+
+      <!-- AdSense Space -->
+
+      <div class="mt-5 text-center">
+
+        <!-- Replace with actual ad unit later -->
+
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-4340479899629152"
+             data-ad-slot="1234567890"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+
       </div>
 
       <div class="footer-note">
-        Crafted with insight • Powered by Muga
+        Crafted with insight • Powered by TechKnow Solutions
       </div>
 
     </div>
 
   </div>
+
+  <!-- AdSense Script -->
+
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340479899629152"
+          crossorigin="anonymous"></script>
+
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+
+  <!-- Reading Progress Script -->
+
+  <script>
+
+    window.onscroll = function() {
+
+      let winScroll =
+      document.body.scrollTop ||
+      document.documentElement.scrollTop;
+
+      let height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+
+      let scrolled =
+      (winScroll / height) * 100;
+
+      document.getElementById("progressBar").style.width =
+      scrolled + "%";
+    };
+
+  </script>
 
 </body>
 </html>
