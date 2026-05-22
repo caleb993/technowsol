@@ -258,32 +258,7 @@
         </div>
       </div>
     </div>
-  </section>  <!-- About -->
-  <section id="about" class="reveal" aria-labelledby="about-title">
-    <h2 class="section-title" id="about-title" data-aos="fade-up">About Me</h2>
-    <div class="card p-4 mx-auto" style="max-width:1000px" data-aos="fade-up" data-aos-delay="120">
-      <div class="row g-4 align-items-center">
-        <div class="col-md-4 text-center">
-          {% if profile_url %}
-            <img src="{{ profile_url }}" style="width:160px;height:160px;object-fit:cover;border-radius:12px;" alt="Profile image of Caleb Muga">
-          {% else %}
-            <div style="width:160px;height:160px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#061426;font-weight:700;font-size:28px;" aria-hidden="true">CM</div>
-          {% endif %}
-        </div>
-        <div class="col-md-8">
-          <p class="lead-lg">Customer-focused ICT Officer with a BSc in Business & IT. Practical experience in network administration, end-user support, and cybersecurity. I build reliable tools and automate repetitive tasks to increase efficiency.</p>
-          <ul>
-            <li><strong>Strengths:</strong> Problem-solving, documentation, stakeholder communication, systems hardening.</li>
-            <li><strong>Certifications:</strong> CCNA, OPSWAT File Security Associate, ALX Virtual Assistant.</li>
-            <li><strong>Languages:</strong> English, Swahili.</li>
-          </ul>
-          {% if cv_file %}
-            <a href="{{ url_for('download_file', kind='cv', filename=cv_file) }}" class="btn btn-outline-light mt-2">Download CV</a>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </section>
+  </section>  
 
   <!-- Achievements / Counters -->
   <section id="stats" class="mt-4" aria-labelledby="stats-title">
