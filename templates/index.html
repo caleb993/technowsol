@@ -387,36 +387,7 @@
     </div>
     <div class="text-center mt-3" data-aos="fade-up" data-aos-delay="240"><a class="btn btn-outline-light" href="{{ url_for('blog_list') }}">See all posts</a></div>
   </section>
-  <!-- AI CHAT -->
-
-  <div class="glass ai-box" id="aiBox">
   
-    <div class="ai-header">
-      TechKnow AI Assistant
-    </div>
-  
-    <div class="ai-body" id="aiMessages">
-  
-      <div class="ai-msg ai-bot">
-        👋 Hello! Welcome to TechKnow Solutions.
-        How can I help you today?
-      </div>
-  
-    </div>
-  
-    <div class="ai-footer">
-  
-      <input type="text"
-             id="aiInput"
-             placeholder="Ask something...">
-  
-      <button onclick="sendAI()">
-        Send
-      </button>
-  
-    </div>
-  
-  </div>
   <!-- CONTACT -->
   
   <section id="contact">
@@ -507,119 +478,7 @@
   </section>
 
 </main>
-<!-- SCRIPTS -->
 
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-
-  // LOADER
-
-  window.addEventListener('load',()=>{
-
-    setTimeout(()=>{
-      document.getElementById('loader').style.display='none';
-    },1000);
-
-    AOS.init({
-      duration:900,
-      once:true
-    });
-
-  });
-
-  // TYPED TEXT
-
-  new Typed('#typed',{
-    strings:[
-      'Network Administrator',
-      'Cybersecurity Specialist',
-      'Automation Engineer',
-      'ICT Support Expert'
-    ],
-    typeSpeed:60,
-    backSpeed:40,
-    loop:true
-  });
-
-  // COUNTERS
-
-  function counter(id,end){
-
-    let c = new CountUp(id,end);
-
-    if(!c.error){
-      c.start();
-    }
-
-  }
-
-  counter('projects',46);
-  counter('clients',54);
-  counter('networks',18);
-  counter('reads',1200);
-
-
-  // AI ASSISTANT
-
-  function toggleAI(){
-
-    let box = document.getElementById('aiBox');
-
-    box.style.display =
-      box.style.display === 'block'
-      ? 'none'
-      : 'block';
-
-  }
-
-  function sendAI(){
-
-    let input = document.getElementById('aiInput');
-
-    let msg = input.value.trim();
-
-    if(!msg) return;
-
-    let messages = document.getElementById('aiMessages');
-
-    messages.innerHTML += `
-      <div class="ai-msg ai-user">
-        ${msg}
-      </div>
-    `;
-
-    let response = "Thank you for reaching TechKnow Solutions. Caleb Muga will respond shortly.";
-
-    if(msg.toLowerCase().includes('services')){
-      response = "We offer Networking, Cybersecurity, Automation and ICT Support services.";
-    }
-
-    if(msg.toLowerCase().includes('contact')){
-      response = "You can contact Caleb Muga via WhatsApp at 0791204587.";
-    }
-
-    if(msg.toLowerCase().includes('hello')){
-      response = "👋 Hello there! Welcome to TechKnow Solutions.";
-    }
-
-    setTimeout(()=>{
-
-      messages.innerHTML += `
-        <div class="ai-msg ai-bot">
-          ${response}
-        </div>
-      `;
-
-      messages.scrollTop = messages.scrollHeight;
-
-    },600);
-
-    input.value='';
-
-  }
 
 </script>
 <footer>
