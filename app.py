@@ -589,7 +589,33 @@ def admin_delete_blog(bid):
         return redirect(url_for("login"))
     data.delete_blog_by_id(bid)
     flash("Blog post deleted.")
-    return redirect(url_for("admin"))
+    return redirect(url_for("admin") + "#blogs-pane")
+
+@app.route("/admin/blogs/get/<int:bid>", methods=["GET"])
+def admin_get_blog_json(bid):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    blogs = data.load_blogs()
+    for b in blogs:
+        if b["id"] == bid:
+            return jsonify(b)
+    return jsonify({"error": "not found"}), 404
+
+@app.route("/admin/blogs/edit/<int:bid>", methods=["POST"])
+def admin_edit_blog(bid):
+    if not require_admin():
+        return redirect(url_for("login"))
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+    if not (title and content):
+        flash("Title and content required.")
+        return redirect(url_for("admin") + "#blogs-pane")
+    ok = data.update_blog(bid, title, content)
+    if ok:
+        flash("Blog post successfully updated. ✅")
+    else:
+        flash("Failed to update blog post.")
+    return redirect(url_for("admin") + "#blogs-pane")
 
 @app.route('/sitemap.xml')
 def sitemap():
