@@ -1,15 +1,169 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Login</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head><body style="background:#0b1220;color:#e6eef8">
-  <div class="container py-5" style="max-width:480px;">
-    <div style="background:#0f1724;padding:18px;border-radius:12px;">
-      <h3>Admin Login</h3>
-      {% with msgs=get_flashed_messages() %}{% if msgs %}{% for m in msgs %}<div class="alert alert-info">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
-      <form method="post">
-        <input class="form-control mb-2" type="password" name="code" placeholder="Enter admin passcode" required>
-        <button class="btn btn-primary w-100">Login</button>
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 Secure Login | Muga.dev Portal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: #0b0f19;
+      --brand-primary: #f97316;
+      --brand-secondary: #ea580c;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(249, 115, 22, 0.15);
+    }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient background blobs */
+    .blob {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .blob-1 { top: -100px; left: -100px; }
+    .blob-2 { bottom: -100px; right: -100px; }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      padding: 15px;
+      z-index: 10;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 50px rgba(249, 115, 22, 0.04);
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: -1px;
+      font-size: 1.8rem;
+    }
+
+    .form-control-fire {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff !important;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control-fire:focus {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+    }
+
+    .btn-fire {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.85rem;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+    }
+
+    .btn-fire:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+    }
+
+    .alert-fire {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="login-container">
+    <div class="text-center mb-4">
+      <a href="/" class="text-decoration-none text-white brand-logo">
+        MUGA <span class="text-warning">.dev</span>
+      </a>
+      <p class="text-muted small mt-1">Core Operational Access Portal</p>
+    </div>
+
+    <div class="login-card">
+      <div class="text-center mb-4">
+        <div class="d-inline-flex p-3 rounded-circle mb-3" style="background: rgba(249, 115, 22, 0.05); border: 1px dashed rgba(249, 115, 22, 0.2);">
+          <i class="bi bi-shield-lock-fill text-warning fs-3"></i>
+        </div>
+        <h3 class="fw-bold mb-1">Pass Code Verification</h3>
+        <p class="text-muted small">Please input key privileges to unlock terminal dashboards.</p>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert alert-fire d-flex align-items-center gap-2 mb-4" role="alert">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              <div>{{ msg }}</div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('login') }}">
+        <div class="mb-4">
+          <label for="code" class="form-label text-muted small fw-semibold">ADMINISTRATOR PASS KEY</label>
+          <input type="password" class="form-control form-control-fire text-center" id="code" name="code" required autocomplete="current-password" placeholder="••••••••" autofocus>
+        </div>
+
+        <button type="submit" class="btn btn-fire w-100 d-flex align-items-center justify-content-center gap-2">
+          Verify Access Gate <i class="bi bi-arrow-right-short fs-5"></i>
+        </button>
       </form>
-      <a class="d-block mt-3" href="{{ url_for('index') }}">← Back to site</a>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/" class="text-muted text-decoration-none small hover-warning">
+        <i class="bi bi-chevron-left"></i> Return to Muga.dev Showcase
+      </a>
     </div>
   </div>
-</body></html>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
