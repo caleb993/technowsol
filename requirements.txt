@@ -6,4 +6,4 @@ SQLAlchemy
 PyMySQL
 python-dotenv
 psycopg2-binary
-
+markdown
