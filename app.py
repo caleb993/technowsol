@@ -88,11 +88,32 @@ def list_gallery_media():
     # items already include 'url' from data layer
     return items
 
+def list_blog_media():
+    """
+    Return list of {name,type,url} newest-first for category 'blog_media'
+    """
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("SELECT name, mimetype, uploaded_at FROM files WHERE category='blog_media' ORDER BY uploaded_at DESC")
+                rows = cur.fetchall()
+                out = []
+                for r in rows:
+                    typ = "image" if (r["mimetype"] or "").startswith("image") else "video" if (r["mimetype"] or "").startswith("video") else "other"
+                    out.append({"name": r["name"], "type": typ, "url": f"/media/blog_media/{r['name']}"})
+                return out
+    except Exception as e:
+        print(f"Error listing blog media: {e}")
+        return []
+    finally:
+        conn.close()
+
 def media_url(kind, filename):
     if not filename:
         return None
     # determine category from kind
-    category = "profile" if kind == "profile" else "hero" if kind == "hero" else "gallery"
+    category = "profile" if kind == "profile" else "hero" if kind == "hero" else "blog_media" if kind == "blog_media" else "gallery"
     ts = data.get_file_timestamp(category, filename) or 0
     return url_for("media_file", kind=kind, filename=filename) + f"?v={int(ts)}"
 
@@ -176,7 +197,7 @@ def download_file(kind, filename):
 @app.route("/media/<kind>/<path:filename>")
 def media_file(kind, filename):
     safe = secure_filename(urllib.parse.unquote(filename))
-    category = "profile" if kind == "profile" else "hero" if kind == "hero" else "gallery"
+    category = "profile" if kind == "profile" else "hero" if kind == "hero" else "blog_media" if kind == "blog_media" else "gallery"
     rec = data.get_file_record(category, safe)
     if not rec:
         abort(404)
@@ -263,6 +284,7 @@ def admin():
     prof_name, _ = latest_file("profile", only_images=True)
     hero_name, _ = latest_file("hero", only_images=True)
     gal = list_gallery_media()
+    blog_media_list = list_blog_media()
     blogs = data.load_blogs()
     subscribers = data.load_subscribers()
 
@@ -285,6 +307,7 @@ def admin():
         prof=prof_name,
         hero=hero_name,
         gal=gal,
+        blog_media=blog_media_list,
         blogs=blogs,
         subscribers=subscribers
     )
@@ -464,12 +487,73 @@ def delete_gallery_image(filename):
     if not require_admin():
         return redirect(url_for("login"))
     fname = secure_filename(urllib.parse.unquote(filename))
+    
+    # Safety Check: check if referenced in any blog post
+    blogs = data.load_blogs()
+    found_ref = False
+    ref_slugs = []
+    for b in blogs:
+        if fname in b['content']:
+            found_ref = True
+            ref_slugs.append(b['title'])
+    if found_ref:
+        flash(f"⚠️ Cannot delete '{fname}' because it is currently used in the blog post(s): {', '.join(ref_slugs)}. Please edit those posts first!")
+        return redirect(url_for("admin") + "#blog_media_section")
+
     ok = data.delete_file('gallery', fname)
     if ok:
         flash(f"Deleted gallery media '{fname}'.")
     else:
         flash("Media not found.")
     return redirect(url_for("admin"))
+
+@app.route("/admin/upload_blog_media", methods=["POST"])
+def upload_blog_media():
+    if not require_admin():
+        return redirect(url_for("login"))
+    files = request.files.getlist("images")
+    if not files:
+        flash("Select at least one file.")
+        return redirect(url_for("admin") + "#blog_media_section")
+    uploaded = 0
+    for up in files:
+        if not up or not up.filename:
+            continue
+        ext = up.filename.rsplit(".", 1)[-1].lower() if "." in up.filename else ""
+        if ext in IMAGE_EXTS or ext in VIDEO_EXTS:
+            fname, err = data.save_file_from_storage('blog_media', up, approve=True)
+            if fname:
+                uploaded += 1
+    if uploaded:
+        flash(f"Uploaded {uploaded} item(s) to Blog Media Library. ✅")
+    else:
+        flash("No valid images or videos were uploaded.")
+    return redirect(url_for("admin") + "#blog_media_section")
+
+@app.route("/admin/delete_blog_media/<path:filename>", methods=["POST"])
+def delete_blog_media(filename):
+    if not require_admin():
+        return redirect(url_for("login"))
+    fname = secure_filename(urllib.parse.unquote(filename))
+    
+    # Safety Check: check if referenced in any blog post
+    blogs = data.load_blogs()
+    found_ref = False
+    ref_slugs = []
+    for b in blogs:
+        if fname in b['content']:
+            found_ref = True
+            ref_slugs.append(b['title'])
+    if found_ref:
+        flash(f"⚠️ Cannot delete '{fname}' because it is currently used in the blog post(s): {', '.join(ref_slugs)}. Please edit those posts first!")
+        return redirect(url_for("admin") + "#blog_media_section")
+
+    ok = data.delete_file('blog_media', fname)
+    if ok:
+        flash(f"Deleted blog media '{fname}'.")
+    else:
+        flash("Media not found.")
+    return redirect(url_for("admin") + "#blog_media_section")
 
 # ====== BLOG (admin create/delete) ======
 @app.route("/admin/blogs/add", methods=["POST"])
@@ -543,11 +627,24 @@ def get_first_image(text):
     html_img = re.search(r'<img[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
     if html_img:
         return html_img.group(1).strip()
+    # 3. Look for HTML video tags src value
+    html_video = re.search(r'<video[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
+    if html_video:
+        return html_video.group(1).strip()
+    # 4. Look for HTML video <source> tags src value
+    html_source = re.search(r'<source[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
+    if html_source:
+        return html_source.group(1).strip()
+    # 5. Look for any markdown link that is a video file
+    md_link = re.findall(r'\[.*?\]\((.*?)\)', text)
+    for link in md_link:
+        if any(ext in link.lower() for ext in ['.mp4', '.webm', '.ogg', '.mov', '.m4v']):
+            return link.strip()
     # Let's also try a more permissive src extraction in case style quotes are weird
     html_img_fallback = re.search(r'src=["\'](.*?)["\']', text, re.IGNORECASE)
     if html_img_fallback:
         val = html_img_fallback.group(1).strip()
-        if any(ext in val.lower() for ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '/media/']):
+        if any(ext in val.lower() for ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.mp4', '.webm', '.ogg', '.mov', '.m4v', '/media/']):
             return val
     return ""
 
@@ -575,6 +672,30 @@ def clean_excerpt(text, length=160):
     if len(cleaned) <= length:
         return cleaned
     return cleaned[:length] + "..."
+
+@app.template_filter('get_reading_time')
+def get_reading_time(text):
+    if not text:
+        return 1
+    words = len(text.split())
+    # Average reading speed is 200 words per minute
+    minutes = max(1, int(words / 200))
+    return minutes
+
+@app.template_filter('get_category')
+def get_category(text, title=""):
+    combined = (str(title or "") + " " + str(text or "")).lower()
+    if any(keyword in combined for keyword in ["cyber", "exploit", "mitigate", "security", "defense", "hack", "penetration", "firewall"]):
+        return "Cybersecurity"
+    elif any(keyword in combined for keyword in ["rout", "net", "ip", "cisco", "ccna", "switch", "router", "dhcp", "dns", "lan", "wan"]):
+        return "Networking"
+    elif any(keyword in combined for keyword in ["ai", "machine learning", "model", "neural", "prediction", "automation", "workflow", "cron", "script"]):
+        return "AI & Automation"
+    elif any(keyword in combined for keyword in ["web", "html", "css", "flask", "react", "js", "ts", "javascript", "typescript", "frontend", "backend"]):
+        return "Web Development"
+    elif any(keyword in combined for keyword in ["ict", "support", "helpdesk", "comput", "hardware", "troubleshoot", "printer"]):
+        return "ICT Support"
+    return "Technology"
 
 # ====== MAIN ======
 if __name__ == "__main__":
