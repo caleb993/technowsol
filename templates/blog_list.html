@@ -831,8 +831,21 @@
 
           {% set thumb = b.content|get_first_image %}
           {% if thumb %}
+            {% set is_video = false %}
+            {% if thumb.endswith('.mp4') or thumb.endswith('.webm') or thumb.endswith('.ogg') or thumb.endswith('.mov') or thumb.endswith('.m4v') or 'video' in thumb|lower %}
+              {% set is_video = true %}
+            {% endif %}
             <div class="blog-card-thumbnail">
-              <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
+              {% if is_video %}
+                <div class="position-relative w-100 h-100 overflow-hidden d-flex align-items-center justify-content-center bg-black">
+                  <video src="{{ thumb }}#t=0.5" class="w-100 h-100" style="object-fit: cover;" preload="metadata" muted playsinline loop onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0.5;"></video>
+                  <div class="position-absolute d-flex align-items-center justify-content-center rounded-circle" style="background: rgba(0,0,0,0.55); width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.25); z-index: 5; pointer-events: none;">
+                    <i class="bi bi-play-fill text-white transition-all fs-6" style="margin-left: 2px;"></i>
+                  </div>
+                </div>
+              {% else %}
+                <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
+              {% endif %}
             </div>
           {% else %}
             <div class="blog-card-thumbnail placeholder-thumbnail bg-gradient-{{ cat_slug }}">
