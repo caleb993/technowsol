@@ -540,32 +540,35 @@
       </a>
 
       <!-- Hero -->
+      {% set words_count = post.content.split()|length %}
+      {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
+      {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
 
       <div class="blog-hero">
 
         <div class="blog-badge">
-          ✦ TECHKNOW SOLUTIONS ARTICLE
+          ✦ MUGA DIGITAL JOURNAL PULSE
         </div>
 
         <h1 class="blog-title">
           {{ post.title }}
         </h1>
 
-        <div class="blog-meta">
+        <div class="blog-meta d-flex flex-wrap align-items-center gap-3">
 
-          <span>
-            <i class="bi bi-calendar-event"></i>
+          <span class="d-flex align-items-center gap-1">
+            <i class="bi bi-calendar-event text-warning"></i>
             {{ post.timestamp }}
           </span>
 
-          <span>
-            <i class="bi bi-person-circle"></i>
-            Caleb Muga
+          <span class="d-flex align-items-center gap-2 px-3 py-1 bg-white bg-opacity-5 rounded-pill border border-secondary border-opacity-25">
+            <div class="d-flex align-items-center justify-content-center text-black font-bold rounded-circle" style="width: 22px; height: 22px; font-size: 10px; font-weight: 800; background: linear-gradient(135deg, #fbbf24, #f59e0b);">CM</div>
+            <strong class="text-white-50" style="font-size:0.85rem;">Caleb Muga</strong>
           </span>
 
-          <span>
-            <i class="bi bi-clock"></i>
-            5 min read
+          <span class="d-flex align-items-center gap-1">
+            <i class="bi bi-clock text-warning"></i>
+            {{ reading_time }} min read
           </span>
 
         </div>
@@ -668,6 +671,57 @@
       document.getElementById("progressBar").style.width =
       scrolled + "%";
     };
+
+    // Auto add clipboard copy action support in pre-formatted code blocks
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.article-content pre').forEach(preBlock => {
+        // Create wrapper details
+        preBlock.style.position = 'relative';
+        
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-copy-code';
+        btn.innerHTML = '<i class="bi bi-clipboard mb-0"></i> Copy';
+        btn.style.position = 'absolute';
+        btn.style.top = '12px';
+        btn.style.right = '12px';
+        btn.style.background = 'rgba(255, 255, 255, 0.08)';
+        btn.style.border = '1px solid rgba(255, 255, 255, 0.12)';
+        btn.style.borderRadius = '6px';
+        btn.style.color = '#fff';
+        btn.style.padding = '4px 10px';
+        btn.style.fontSize = '0.72rem';
+        btn.style.cursor = 'pointer';
+        btn.style.zIndex = '100';
+        btn.style.fontFamily = "'Inter', sans-serif";
+        btn.style.transition = 'all 0.2s';
+        
+        preBlock.appendChild(btn);
+        
+        btn.onmouseover = () => {
+          btn.style.background = 'rgba(255, 255, 255, 0.15)';
+          btn.style.borderColor = '#fbbf24';
+        };
+        btn.onmouseout = () => {
+          btn.style.background = 'rgba(255, 255, 255, 0.08)';
+          btn.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+        };
+        
+        btn.addEventListener('click', () => {
+          const codeText = preBlock.querySelector('code') ? preBlock.querySelector('code').innerText : preBlock.innerText;
+          navigator.clipboard.writeText(codeText).then(() => {
+            btn.innerHTML = '<i class="bi bi-check-lg text-warning"></i> Copied!';
+            btn.style.borderColor = '#fbbf24';
+            setTimeout(() => {
+              btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
+              btn.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+            }, 2000);
+          }).catch(e => {
+            console.error('Clipboard copy rejected:', e);
+          });
+        });
+      });
+    });
 
   </script>
 
