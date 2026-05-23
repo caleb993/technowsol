@@ -5,6 +5,8 @@ import secrets
 import urllib.parse
 from datetime import datetime, timedelta
 from collections import Counter
+import markdown
+
 
 import data
 
@@ -17,7 +19,7 @@ if __name__ == "__main__":
 
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    send_file, flash, abort, session, jsonify, Response
+    send_file, send_from_directory, flash, abort, session, jsonify, Response
 )
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -65,6 +67,7 @@ def latest_file(category, only_images=False):
     rec = data.get_latest_file_record(category, only_images=only_images)
     if not rec:
         return None, None
+    # rec: {"name":..., "uploaded_at": datetime, "mimetype":...}
     ts = int(rec["uploaded_at"].timestamp()) if rec.get("uploaded_at") else 0
     return rec.get("name"), ts
 
@@ -82,11 +85,13 @@ def list_gallery_media():
     Return list of {name,type,url} newest-first
     """
     items = data.list_gallery_media()
+    # items already include 'url' from data layer
     return items
 
 def media_url(kind, filename):
     if not filename:
         return None
+    # determine category from kind
     category = "profile" if kind == "profile" else "hero" if kind == "hero" else "gallery"
     ts = data.get_file_timestamp(category, filename) or 0
     return url_for("media_file", kind=kind, filename=filename) + f"?v={int(ts)}"
@@ -177,6 +182,7 @@ def media_file(kind, filename):
         abort(404)
     content = rec['content']
     mimetype = rec.get('mimetype') or 'application/octet-stream'
+    # For images/videos display inline
     return send_file(io.BytesIO(content), download_name=safe, as_attachment=False, mimetype=mimetype)
 
 # ====== BLOG PUBLIC ======
@@ -491,22 +497,40 @@ def admin_delete_blog(bid):
 def sitemap():
     return send_from_directory('static', 'sitemap.xml')
 
-# ====== ERROR HANDLERS ======
+# ====== ERROR HANDLERS (Phase 1) ======
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template("500.html"), 500
+    import traceback
+    tb = traceback.format_exc()
+    print("--- SERVER 500 TRACEBACK ---")
+    print(tb)
+    print("----------------------------")
+    return render_template("500.html", traceback=tb), 500
 
 # Custom template filter converts markdown to HTML, including inline HTML video players
 @app.template_filter('render_markdown')
 def render_markdown(text):
     if not text:
-         return ""
-    return markdown.markdown(text, extensions=['fenced_code', 'codehilite'])
+        return ""
+    try:
+        import markdown
+        # Convert the post text to HTML, supporting HTML5 <video> embedding
+        return markdown.markdown(text, extensions=['fenced_code', 'codehilite'])
+    except Exception as e:
+        print(f"Error rendering markdown custom extensions: {e}")
+        try:
+            import markdown
+            return markdown.markdown(text)
+        except Exception as e2:
+            print(f"Fallback markdown failed too: {e2}")
+            import html
+            return f"<pre>{html.escape(text)}</pre>"
 
 # ====== MAIN ======
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+V
