@@ -666,9 +666,10 @@
           <!-- Writer -->
           <div class="col-lg-7">
             <div class="card-fire p-4">
-              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight</h4>
+              <h4 class="mb-4 text-white fw-bold" id="editor-title"><i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight</h4>
               
-              <form action="/admin/blogs/add" method="POST">
+              <form id="blog-form" action="/admin/blogs/add" method="POST">
+                <input type="hidden" id="edit-blog-id" value="">
                 <div class="mb-3">
                   <label for="title" class="form-label text-muted small">ARTICLE TITLE (Auto Slugified)</label>
                   <input type="text" class="form-control form-control-fire" id="title" name="title" required placeholder="e.g. Setting up CCNA Subnets and routing configurations">
@@ -682,7 +683,10 @@
                   <textarea class="form-control form-control-fire text-mono style-textarea" id="blogContent" name="content" rows="18" required placeholder="# Write your article content in Markdown here...&#10;&#10;Use the format of images or videos with copy paste tags from the Media Library:&#10;![Some Photo](/media/blog_media/filename.jpg)"></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-fire-primary w-100">Publish Article <i class="bi bi-send-fill"></i></button>
+                <div class="d-flex gap-2">
+                  <button type="submit" id="blog-submit-btn" class="btn btn-fire-primary w-100">Publish Article <i class="bi bi-send-fill"></i></button>
+                  <button type="button" id="cancel-edit-btn" class="btn btn-outline-warning d-none" onclick="cancelEditing()"><i class="bi bi-x-circle"></i> Cancel</button>
+                </div>
               </form>
             </div>
           </div>
@@ -759,7 +763,11 @@
                       </div>
                       <div class="d-flex justify-content-between align-items-center mt-1">
                         <span class="text-muted text-mono" style="font-size:0.7rem;"><i class="bi bi-calendar"></i> {{ b.timestamp[:10] }}</span>
-                        <a href="/blog/{{ b.slug }}" target="_blank" class="text-warning text-mono hover:underline" style="font-size: 0.7rem;">View <i class="bi bi-box-arrow-up-right"></i></a>
+                        <div class="d-flex gap-2 align-items-center">
+                          <button type="button" class="btn btn-xs btn-link text-warning text-mono p-0 hover:underline m-0" style="font-size: 0.72rem; text-decoration: none;" onclick="loadBlogForEditing({{ b.id }})"><i class="bi bi-pencil-square"></i> Edit</button>
+                          <span class="text-muted" style="font-size: 0.7rem;">|</span>
+                          <a href="/blog/{{ b.slug }}" target="_blank" class="text-warning text-mono hover:underline" style="font-size: 0.7rem;">View <i class="bi bi-box-arrow-up-right"></i></a>
+                        </div>
                       </div>
                     </div>
                   {% endfor %}
@@ -947,6 +955,51 @@
         console.error(e);
         alert('Network anomaly reported.');
       });
+    }
+
+    // Blog post editing controller
+    function loadBlogForEditing(bid) {
+      fetch('/admin/blogs/get/' + bid)
+        .then(res => res.json())
+        .then(blog => {
+          if (blog.error) {
+            alert("Could not load blog post data: " + blog.error);
+            return;
+          }
+          // Populate fields
+          document.getElementById('edit-blog-id').value = blog.id;
+          document.getElementById('title').value = blog.title;
+          document.getElementById('blogContent').value = blog.content;
+          
+          // Update form action and UI labels
+          document.getElementById('blog-form').action = '/admin/blogs/edit/' + blog.id;
+          document.getElementById('editor-title').innerHTML = '<i class="bi bi-pencil-fill text-warning me-2"></i>Edit Insight: ' + blog.title;
+          document.getElementById('blog-submit-btn').innerHTML = 'Save Changes <i class="bi bi-check-circle-fill"></i>';
+          document.getElementById('cancel-edit-btn').classList.remove('d-none');
+          
+          // Smooth scroll to the editor top
+          document.getElementById('blogs-pane').scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(e => {
+          console.error(e);
+          alert("Error fetching blog details.");
+        });
+    }
+
+    function cancelEditing() {
+      document.getElementById('edit-blog-id').value = '';
+      document.getElementById('title').value = '';
+      document.getElementById('blogContent').value = '';
+      
+      // Reset form action and UI labels
+      document.getElementById('blog-form').action = '/admin/blogs/add';
+      document.getElementById('editor-title').innerHTML = '<i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight';
+      document.getElementById('blog-submit-btn').innerHTML = 'Publish Article <i class="bi bi-send-fill"></i>';
+      document.getElementById('cancel-edit-btn').classList.add('d-none');
+      
+      // Clear draft storage
+      localStorage.removeItem("draft_title");
+      localStorage.removeItem("draft_content");
     }
 
     // copy clipboard helper for markdown library references
