@@ -445,6 +445,37 @@
       border: 1px solid rgba(148, 163, 184, 0.2) !important;
     }
 
+    /* Clean category selection system */
+    .category-tabs-container {
+      margin-top: 35px;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 10;
+    }
+    .btn-category {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(8px);
+    }
+    .btn-category:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: white;
+      border-color: rgba(96, 165, 250, 0.4);
+      transform: translateY(-2px);
+    }
+    .btn-category-active {
+      background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+      color: white !important;
+      border-color: transparent !important;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+    }
+
     .blog-card::before{
 
       content:'';
@@ -779,10 +810,42 @@
         <input type="text"
                id="searchInput"
                class="form-control search-input"
-               placeholder="Search articles...">
+               placeholder="Search articles & resources...">
 
       </div>
 
+    </div>
+
+    <!-- CATEGORY DECK FILTER -->
+    <div class="category-tabs-container text-center mb-5">
+      <div class="d-flex flex-wrap justify-content-center gap-2 max-w-lg mx-auto">
+        <button type="button" class="btn btn-category btn-category-active" onclick="filterByCategory('all')">
+          <i class="bi bi-grid-fill text-warning me-1"></i> All Insights
+        </button>
+        <button type="button" class="btn btn-category" onclick="filterByCategory('cybersecurity')">
+          <i class="bi bi-shield-lock text-danger me-1"></i> Cybersecurity
+        </button>
+        <button type="button" class="btn btn-category" onclick="filterByCategory('networking')">
+          <i class="bi bi-hdd-network text-info me-1"></i> Networking
+        </button>
+        <button type="button" class="btn btn-category" onclick="filterByCategory('ai-automation')">
+          <i class="bi bi-cpu text-purple me-1 animate-pulse"></i> AI & Automation
+        </button>
+        <button type="button" class="btn btn-category" onclick="filterByCategory('web-development')">
+          <i class="bi bi-code-slash text-cyan me-1"></i> Web Dev
+        </button>
+        <button type="button" class="btn btn-category" onclick="filterByCategory('ict-support')">
+          <i class="bi bi-headset text-success me-1"></i> ICT Support
+        </button>
+        <button type="button" class="btn btn-category" onclick="filterByCategory('technology')">
+          <i class="bi bi-journal-text text-secondary me-1"></i> Tech
+        </button>
+      </div>
+      {% if blogs %}
+      <div id="filter-status-msg" class="text-muted small mt-4 text-mono">
+        Active insights feed • Showing <span id="visible-post-count" class="text-warning fw-bold">{{ blogs|length }}</span> pulses
+      </div>
+      {% endif %}
     </div>
 
     {% if blogs %}
@@ -825,7 +888,7 @@
           {% set cat_icon = "bi-journal-text" %}
         {% endif %}
 
-      <div class="col-lg-4 col-md-6 blog-item">
+      <div class="col-lg-4 col-md-6 blog-item" data-category="{{ cat_slug }}">
 
         <article class="blog-card d-flex flex-column h-100">
 
@@ -964,37 +1027,86 @@
 
   </div>
 
-  <!-- Bootstrap JS -->
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- SEARCH FILTER -->
-
   <script>
+    let currentCategory = 'all';
 
-    const searchInput =
-      document.getElementById('searchInput');
-
-    const blogItems =
-      document.querySelectorAll('.blog-item');
-
-    searchInput.addEventListener('keyup', () => {
-
-      const value =
-        searchInput.value.toLowerCase();
-
-      blogItems.forEach(item => {
-
-        const text =
-          item.innerText.toLowerCase();
-
-        item.style.display =
-          text.includes(value)
-          ? 'block'
-          : 'none';
+    function filterByCategory(catSlug) {
+      currentCategory = catSlug;
+      
+      // Update active class
+      document.querySelectorAll('.btn-category').forEach(btn => {
+        btn.classList.remove('btn-category-active');
       });
-    });
+      
+      const evt = window.event;
+      if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('btn-category-active');
+      } else {
+        // Find manually
+        const buttons = document.querySelectorAll('.btn-category');
+        buttons.forEach(btn => {
+          if (btn.getAttribute('onclick').includes("'" + catSlug + "'")) {
+            btn.classList.add('btn-category-active');
+          }
+        });
+      }
+      applyFilters();
+    }
 
+    function applyFilters() {
+      const searchInput = document.getElementById('searchInput');
+      const value = searchInput ? searchInput.value.toLowerCase() : '';
+      let visibleCount = 0;
+      let totalCount = 0;
+      
+      const blogItems = document.querySelectorAll('.blog-item');
+      blogItems.forEach(item => {
+        totalCount++;
+        const itemCat = item.getAttribute('data-category') || '';
+        const text = item.innerText.toLowerCase();
+        
+        const matchesCategory = (currentCategory === 'all' || itemCat === currentCategory);
+        const matchesSearch = text.includes(value);
+        
+        if (matchesCategory && matchesSearch) {
+          item.style.display = 'block';
+          visibleCount++;
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Update count text
+      const statusEl = document.getElementById('visible-post-count');
+      if (statusEl) {
+        statusEl.innerText = visibleCount;
+      }
+      
+      const filterStatusText = document.getElementById('filter-status-msg');
+      if (filterStatusText) {
+        if (visibleCount === 0) {
+          filterStatusText.innerHTML = `No articles match current filters. <a href="#" onclick="resetAllFilters(event)" class="text-warning text-decoration-none">Reset all filters <i class="bi bi-arrow-counterclockwise"></i></a>`;
+        } else {
+          filterStatusText.innerHTML = `Showing <span id="visible-post-count" class="text-warning fw-bold">${visibleCount}</span> of ${totalCount} articles`;
+        }
+      }
+    }
+
+    function resetAllFilters(e) {
+      if (e) e.preventDefault();
+      const sInput = document.getElementById('searchInput');
+      if (sInput) sInput.value = '';
+      filterByCategory('all');
+    }
+
+    // Bind real-time input keyups
+    document.addEventListener("DOMContentLoaded", function() {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+      }
+    });
   </script>
 
 </body>
