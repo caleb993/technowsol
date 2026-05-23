@@ -530,7 +530,52 @@ def render_markdown(text):
             import html
             return f"<pre>{html.escape(text)}</pre>"
 
+@app.template_filter('get_first_image')
+def get_first_image(text):
+    if not text:
+        return ""
+    import re
+    # 1. Look for markdown image patterns like ![alt](url)
+    md_img = re.search(r'!\[.*?\]\((.*?)\)', text)
+    if md_img:
+        return md_img.group(1).strip()
+    # 2. Look for HTML img tags including src value
+    html_img = re.search(r'<img[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
+    if html_img:
+        return html_img.group(1).strip()
+    # Let's also try a more permissive src extraction in case style quotes are weird
+    html_img_fallback = re.search(r'src=["\'](.*?)["\']', text, re.IGNORECASE)
+    if html_img_fallback:
+        val = html_img_fallback.group(1).strip()
+        if any(ext in val.lower() for ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '/media/']):
+            return val
+    return ""
+
+@app.template_filter('clean_excerpt')
+def clean_excerpt(text, length=160):
+    if not text:
+        return ""
+    import re
+    # Remove any figcaption blocks completely so caption text does not merge into the preview
+    text_no_caption = re.sub(r'<figcaption[^>]*>.*?</figcaption>', '', text, flags=re.DOTALL | re.IGNORECASE)
+    # Remove HTML tags
+    text_no_html = re.sub(r'<[^>]+>', ' ', text_no_caption)
+    # Remove markdown images
+    text_no_md_img = re.sub(r'!\[.*?\]\(.*?\)', ' ', text_no_html)
+    # Clean up markdown links: [text](url) -> text
+    text_no_md_links = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text_no_md_img)
+    # Remove headers formatting / bold / code blocks headers
+    cleaned = re.sub(r'#+\s+', '', text_no_md_links)
+    cleaned = re.sub(r'\*+', '', cleaned)
+    cleaned = re.sub(r'`+', '', cleaned)
+    
+    # Compress multiple whitespaces
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    
+    if len(cleaned) <= length:
+        return cleaned
+    return cleaned[:length] + "..."
+
 # ====== MAIN ======
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
