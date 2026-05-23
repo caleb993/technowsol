@@ -6,7 +6,8 @@ import urllib.parse
 from datetime import datetime, timedelta
 from collections import Counter
 import markdown
-
+import psycopg2
+import psycopg2.extras
 
 import data
 
@@ -322,6 +323,15 @@ def message_json(mid):
         return jsonify({"error": "not found"}), 404
     return jsonify(m)
 
+@app.route("/admin/mark_read_json/<int:mid>", methods=["POST"])
+def mark_read_json(mid):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    ok, status = data.mark_message_read_by_index(mid)
+    if not ok:
+        return jsonify({"error": "not found"}), 404
+    return jsonify({"status": "read"})
+
 @app.route("/admin/toggle_read_json/<int:mid>", methods=["POST"])
 def toggle_read_json(mid):
     if not require_admin():
@@ -512,9 +522,11 @@ def upload_blog_media():
     if not require_admin():
         return redirect(url_for("login"))
     files = request.files.getlist("images")
+    ret = request.args.get("ret", "")
+    target_pane = "#blogs-pane" if ret == "blogs" else "#blog-media-pane"
     if not files:
         flash("Select at least one file.")
-        return redirect(url_for("admin") + "#blog_media_section")
+        return redirect(url_for("admin") + target_pane)
     uploaded = 0
     for up in files:
         if not up or not up.filename:
@@ -528,13 +540,15 @@ def upload_blog_media():
         flash(f"Uploaded {uploaded} item(s) to Blog Media Library. ✅")
     else:
         flash("No valid images or videos were uploaded.")
-    return redirect(url_for("admin") + "#blog_media_section")
+    return redirect(url_for("admin") + target_pane)
 
 @app.route("/admin/delete_blog_media/<path:filename>", methods=["POST"])
 def delete_blog_media(filename):
     if not require_admin():
         return redirect(url_for("login"))
     fname = secure_filename(urllib.parse.unquote(filename))
+    ret = request.args.get("ret", "")
+    target_pane = "#blogs-pane" if ret == "blogs" else "#blog-media-pane"
     
     # Safety Check: check if referenced in any blog post
     blogs = data.load_blogs()
@@ -546,14 +560,14 @@ def delete_blog_media(filename):
             ref_slugs.append(b['title'])
     if found_ref:
         flash(f"⚠️ Cannot delete '{fname}' because it is currently used in the blog post(s): {', '.join(ref_slugs)}. Please edit those posts first!")
-        return redirect(url_for("admin") + "#blog_media_section")
+        return redirect(url_for("admin") + target_pane)
 
     ok = data.delete_file('blog_media', fname)
     if ok:
         flash(f"Deleted blog media '{fname}'.")
     else:
         flash("Media not found.")
-    return redirect(url_for("admin") + "#blog_media_section")
+    return redirect(url_for("admin") + target_pane)
 
 # ====== BLOG (admin create/delete) ======
 @app.route("/admin/blogs/add", methods=["POST"])
