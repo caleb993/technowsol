@@ -1,792 +1,846 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin • Studio Panel</title>
-    <!-- Google Fonts for Editorial News Style -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      :root {
-        --font-sans: 'Inter', sans-serif;
-        --font-display: 'Space Grotesk', sans-serif;
-        --font-mono: 'JetBrains Mono', monospace;
-        --bg-main: #090d16;
-        --bg-card: #0f172a;
-        --border-color: #1e293b;
-        --accent-primary: #38bdf8;
-        --text-muted: #94a3b8;
-      }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ Central Control Center | Caleb Muga Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: #0b0f19;
+      --brand-primary: #f97316;
+      --brand-secondary: #ea580c;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(249, 115, 22, 0.12);
+      --input-bg: rgba(255, 255, 255, 0.02);
+    }
 
-      body {
-        background-color: var(--bg-main);
-        color: #f8fafc;
-        font-family: var(--font-sans);
-        padding: 24px 18px;
-        letter-spacing: -0.011em;
-      }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-      h1, h2, h3, h4, h5, h6, .display-font {
-        font-family: var(--font-display);
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #030712;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-primary);
+    }
 
-      p {
-        line-height: 1.6;
-      }
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
 
-      .card {
-        border: 1px solid var(--border-color);
-        border-radius: 14px;
-        background-color: var(--bg-card);
-        padding: 20px;
-        box-shadow: 0 4px 20px -2px rgba(0,0,0,0.4);
-        margin-bottom: 24px;
-      }
+    .nav-tabs-fire {
+      border-bottom: 2px solid #1f2937;
+    }
 
-      .small-muted { 
-        color: var(--text-muted);
-        font-size: 0.85rem;
-      }
+    .nav-tabs-fire .nav-link {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-family: 'Space Grotesk', sans-serif;
+    }
 
-      /* Custom Form Inputs */
-      .form-control, .form-select {
-        background-color: #0b0f19;
-        border: 1px solid var(--border-color);
-        color: #f8fafc;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-      }
+    .nav-tabs-fire .nav-link:hover {
+      color: #fff;
+      border-bottom-color: rgba(249, 115, 22, 0.3);
+    }
 
-      .form-control:focus, .form-select:focus {
-        background-color: #0b0f19;
-        border-color: var(--accent-primary);
-        color: #f8fafc;
-        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
-      }
+    .nav-tabs-fire .nav-link.active {
+      color: var(--brand-primary);
+      border-bottom-color: var(--brand-primary);
+      background: transparent;
+    }
 
-      .btn-primary {
-        background-color: var(--accent-primary);
-        border: none;
-        color: #0f172a;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: transform 0.2s, opacity 0.2s;
-      }
-      .btn-primary:hover {
-        background-color: #0ea5e9;
-        transform: translateY(-1px);
-        color: #0f172a;
-      }
+    .card-fire {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
 
-      /* Integrated Media Quick Insertion Interface */
-      .media-scroller {
-        max-height: 380px;
-        overflow-y: auto;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: #0b0f19;
-      }
-      .media-item {
-        border-bottom: 1px solid var(--border-color);
-        padding: 10px;
-        transition: background 0.2s;
-      }
-      .media-item:hover {
-        background: #1e293b;
-      }
+    .card-fire:hover {
+      border-color: rgba(249, 115, 22, 0.22);
+    }
 
-      /* Blog Dual Workspace Preview UI */
-      .preview-body {
-        background: #020617;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 20px;
-        min-height: 250px;
-        max-height: 500px;
-        overflow-y: auto;
-      }
+    .stat-card {
+      padding: 1.5rem;
+    }
 
-      /* Embedded professional media wraps for top news vibe */
-      .news-media-container {
-        margin: 24px 0;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #334155;
-        background: #020617;
-      }
-      .news-media-container img, .news-media-container video {
-        width: 100%;
-        display: block;
-        max-height: 400px;
-        object-fit: cover;
-      }
-      .news-caption {
-        background: #1e293b;
-        color: #cbd5e1;
-        font-size: 0.85rem;
-        padding: 8px 12px;
-        border-top: 1px solid #334155;
-        font-family: var(--font-sans);
-        display: block;
-      }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
 
-      /* Utility classes for lists and items */
-      .pagination .page-link {
-        background-color: var(--bg-card);
-        border-color: var(--border-color);
-        color: #cbd5e1;
-      }
-      .pagination .page-item.active .page-link {
-        background-color: var(--accent-primary);
-        border-color: var(--accent-primary);
-        color: #0f172a;
-      }
+    .form-control-fire {
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff !important;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: all 0.3s ease;
+    }
 
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0b0f19;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 3px;
-      }
-    </style>
+    .form-control-fire:focus {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.15);
+    }
+
+    .btn-fire-primary {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .btn-fire-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
+    }
+
+    .btn-fire-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-weight: 500;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-fire-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Media items cards inside admin panel */
+    .admin-media-item {
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .admin-media-item:hover {
+      border-color: rgba(249, 115, 22, 0.25);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .admin-media-thumb {
+      height: 120px;
+      position: relative;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .admin-media-thumb img,
+    .admin-media-thumb video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .admin-media-info {
+      padding: 0.8rem;
+    }
+
+    .code-badge {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      display: block;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      color: var(--brand-primary);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* Notifications / Flash alerts */
+    .alert-fire {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      color: #ffedd5;
+      border-radius: 12px;
+    }
+
+    .text-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .drag-drop-zone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 12px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .drag-drop-zone:hover {
+      border-color: var(--brand-primary);
+      background: rgba(249, 115, 22, 0.02);
+    }
+
+    /* Blog reference modal copy instructions */
+    .ins-block {
+      background: rgba(249,115,22,0.02);
+      border-left: 3px solid var(--brand-primary);
+      padding: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
 </head>
-<body>
-    <div class="container-fluid">
-      <!-- HEADER ROW -->
-      <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary-subtle">
-        <div>
-          <h1 class="mb-1 text-white">Technowsol Studio</h1>
-          <div class="text-muted">Master Publishing Console & Audience Insights</div>
+<body class="py-4">
+
+  <div class="container">
+    
+    <!-- HEADER BAR -->
+    <header class="d-flex flex-wrap justify-content-between align-items-center pb-4 mb-4 border-bottom border-secondary-subtle">
+      <div class="d-flex align-items-center gap-3">
+        <div class="p-2 rounded bg-warning bg-opacity-10 text-warning">
+          <i class="bi bi-shield-lock-fill fs-4"></i>
         </div>
-        <div class="d-flex gap-2">
-          <a class="btn btn-outline-secondary" href="{{ url_for('export_messages') }}">Export CSV</a>
-          <a class="btn btn-outline-danger" href="{{ url_for('logout') }}">Logout</a>
+        <div>
+          <h2 class="fw-bold mb-0 brand-logo">Caleb Muga <span class="text-warning">.dashboard</span></h2>
+          <small class="text-muted">High-Security Operational Console</small>
         </div>
       </div>
+      <div class="d-flex gap-2">
+        <a href="/" class="btn btn-fire-secondary d-flex align-items-center gap-2">
+          <i class="bi bi-eye"></i> View Live Site
+        </a>
+        <a href="/logout" class="btn btn-danger btn-sm px-3 d-flex align-items-center gap-2">
+          <i class="bi bi-power"></i> Log Out
+        </a>
+      </div>
+    </header>
 
-      <!-- FLASH MESSAGES -->
-      {% with msgs_flash = get_flashed_messages() %}
-        {% if msgs_flash %}
-          <div class="mb-4">
-            {% for fm in msgs_flash %}
-              <div class="alert alert-info alert-dismissible fade show" role="alert" style="background:#1e293b; color:#38bdf8; border-color:#334155;">
-                {{ fm }}
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endfor %}
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert alert-fire alert-dismissible fade show d-flex align-items-center gap-3 py-3 mb-4" role="alert">
+            <i class="bi bi-info-circle-fill text-warning fs-5"></i>
+            <div>{{ msg }}</div>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
-        {% endif %}
-      {% endwith %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-      <div class="row g-4">
-        <!-- LEFT COLUMN: Inbox & Analytics -->
-        <div class="col-xl-7 col-lg-6">
-          
-          <!-- MESSAGES MANAGER -->
-          <div class="card">
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-3 mb-3">
-              <h5 class="mb-0 text-white">Message Feed ({{ total_filtered }})</h5>
-              <form class="d-flex" method="get" style="gap:8px;">
-                <input name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search..." aria-label="Search messages">
-                <select name="show" class="form-select form-select-sm" aria-label="Filter messages">
-                  <option value="all" {% if show=='all' %}selected{% endif %}>All Inbox</option>
-                  <option value="unread" {% if show=='unread' %}selected{% endif %}>Unread</option>
-                </select>
-                <input type="hidden" name="page" value="1">
-                <button class="btn btn-primary btn-sm">Filter</button>
-              </form>
-            </div>
-
-            {% if display_msgs %}
-              <div class="table-responsive">
-                <table class="table table-sm table-dark table-hover align-middle mb-0" style="--bs-table-bg:transparent; border-color: var(--border-color);">
-                  <thead>
-                    <tr class="text-muted" style="border-bottom: 2px solid var(--border-color)">
-                      <th>When</th>
-                      <th>Sender</th>
-                      <th>Snippet</th>
-                      <th class="text-end">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for m in display_msgs %}
-                      <tr style="border-bottom: 1px solid var(--border-color)">
-                        <td class="text-muted small" style="white-space: nowrap;">{{ m.timestamp }}</td>
-                        <td>
-                          <div class="fw-semibold text-white">
-                            {{ m.name }} 
-                            {% if m.status=='unread' %}
-                              <span class="badge bg-danger ms-1" style="font-size:0.65rem; vertical-align: middle;">NEW</span>
-                            {% endif %}
-                          </div>
-                          <a class="small-muted text-decoration-none" href="mailto:{{ m.email }}">{{ m.email }}</a>
-                        </td>
-                        <td class="text-secondary" style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                          {{ m.message }}
-                        </td>
-                        <td class="text-end">
-                          <button class="btn btn-sm btn-outline-info me-1" onclick="openMessageModal({{ m.gid }})">View</button>
-                          <form method="post" action="{{ url_for('delete_message', mid=m.gid) }}" style="display:inline">
-                            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete message permanently?')">🗑️</button>
-                          </form>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-
-              <!-- PAGINATION -->
-              <nav class="mt-3">
-                <ul class="pagination pagination-sm justify-content-center mb-0">
-                  <li class="page-item {% if page<=1 %}disabled{% endif %}">
-                    <a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ page-1 }}&per_page={{ per_page }}">Previous</a>
-                  </li>
-                  {% for p in range(1, pages+1) %}
-                    <li class="page-item {% if p==page %}active{% endif %}">
-                      <a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ p }}&per_page={{ per_page }}">{{ p }}</a>
-                    </li>
-                  {% endfor %}
-                  <li class="page-item {% if page>=pages %}disabled{% endif %}">
-                    <a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ page+1 }}&per_page={{ per_page }}">Next</a>
-                  </li>
-                </ul>
-              </nav>
-            {% else %}
-              <p class="text-muted py-4 mb-0 text-center">No client queries inside message inbox.</p>
+    <!-- OVERVIEW STATS CARDS -->
+    <div class="row g-3 mb-5">
+      <div class="col-6 col-lg-3">
+        <div class="card-fire stat-card">
+          <div class="text-muted small mb-1">TOTAL MESSAGES</div>
+          <div class="stat-number d-flex align-items-baseline gap-2">
+            {{ total_messages }}
+            {% if unread_count > 0 %}
+              <span class="badge bg-warning text-black font-semibold rounded fs-6" style="vertical-align: middle;">{{ unread_count }} NEW</span>
             {% endif %}
           </div>
-
-          <!-- ANALYTICS -->
-          <div class="card">
-            <h5 class="text-white mb-3">Audience Interaction Trends</h5>
-            <canvas id="messagesChart" width="400" height="140" aria-label="Messages timeline chart"></canvas>
-            <small class="text-muted d-block mt-2 font-monospace">Telemetry: Tracks total incoming contact requests over the last 30 days.</small>
-          </div>
-
         </div>
-
-        <!-- RIGHT COLUMN: Submissions, Documents, Media Manager -->
-        <div class="col-xl-5 col-lg-6">
-          
-          <!-- FILE UPLOADS/PROPOSALS -->
-          <div class="card">
-            <h5 class="text-white mb-3">Incoming Project Proposals <span class="badge bg-primary rounded-pill ms-2">{{ pending|length }}</span></h5>
-            {% if pending %}
-              <ul class="list-group list-group-flush mb-3" style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
-                {% for f in pending %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-white border-secondary">
-                    <span class="text-truncate font-monospace small" style="max-width: 60%;">{{ f }}</span>
-                    <span class="d-flex gap-2">
-                      <form method="post" action="{{ url_for('approve_file', filename=f) }}"><button class="btn btn-sm btn-success">Accept</button></form>
-                      <form method="post" action="{{ url_for('reject_file', filename=f) }}"><button class="btn btn-sm btn-outline-danger">Decline</button></form>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted small">No pending proposal submissions awaiting audit.</p>
-            {% endif %}
-
-            <h6 class="text-white mt-4 mb-2">Approved Portfolio Deliverables</h6>
-            {% if projects %}
-              <ul class="list-group list-group-flush" style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; max-height: 200px; overflow-y: auto;">
-                {% for f in projects %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0b0f19; color:#f8fafc; border-color: var(--border-color);">
-                    <span class="text-truncate font-monospace small" style="max-width: 60%;">{{ f }}</span>
-                    <span>
-                      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('download_file', kind='project', filename=f) }}">Get File</a>
-                      <form method="post" action="{{ url_for('delete_project', filename=f) }}" style="display:inline"><button class="btn btn-sm btn-outline-danger">🗑️</button></form>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted small mb-0">No deliverables archived yet.</p>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card-fire stat-card">
+          <div class="text-muted small mb-1">NEWSLETTER SUBSCRIBERS</div>
+          <div class="stat-number">{{ subscribers|length }}</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card-fire stat-card">
+          <div class="text-muted small mb-1">PENDING DROPBOX FILES</div>
+          <div class="stat-number d-flex align-items-baseline gap-2">
+            {{ pending_count }}
+            {% if pending_count > 0 %}
+              <span class="badge bg-info text-black font-semibold rounded fs-6">URGENT</span>
             {% endif %}
           </div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="card-fire stat-card">
+          <div class="text-muted small mb-1">PUBLISHED BLOGS</div>
+          <div class="stat-number">{{ blogs|length }}</div>
+        </div>
+      </div>
+    </div>
 
-          <!-- DOCUMENTation CV HUB -->
-          <div class="card">
-            <h5 class="text-white mb-2">Owner Profile Resume (CV)</h5>
-            {% if cv_file %}
-              <div class="p-3 mb-2 rounded bg-dark border border-secondary d-flex justify-content-between align-items-center">
-                <span>📄 <strong class="font-monospace text-info small">{{ cv_file }}</strong></span>
-                <a class="btn btn-sm btn-primary" href="{{ url_for('download_file', kind='cv', filename=cv_file) }}">Download</a>
-              </div>
-            {% else %}
-              <p class="text-muted small">Resume missing from database directory.</p>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_cv_admin') }}" class="mt-2">
-              <div class="input-group input-group-sm">
-                <input type="file" name="cv" class="form-control" required>
-                <button class="btn btn-warning">Replace Resume</button>
-              </div>
-            </form>
-          </div>
+    <!-- TABS -->
+    <ul class="nav nav-tabs nav-tabs-fire mb-4 gap-1" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="msgs-tab" data-bs-toggle="tab" data-bs-target="#msgs-pane" type="button" role="tab" aria-controls="msgs-pane" aria-selected="true">
+          <i class="bi bi-chat-left-text-fill"></i> Messages & Subs
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects-pane" type="button" role="tab" aria-controls="projects-pane" aria-selected="false">
+          <i class="bi bi-hdd-network-fill"></i> Project Droproom ({{ pending_count }})
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery-pane" type="button" role="tab" aria-controls="gallery-pane" aria-selected="false">
+          <i class="bi bi-images"></i> Showcase Gallery
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="blog-media-tab" data-bs-toggle="tab" data-bs-target="#blog-media-pane" type="button" role="tab" aria-controls="blog-media-pane" aria-selected="false">
+          <i class="bi bi-folder-symlink-fill"></i> Blog Media Library 🌟
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="blogs-tab" data-bs-toggle="tab" data-bs-target="#blogs-pane" type="button" role="tab" aria-controls="blogs-pane" aria-selected="false">
+          <i class="bi bi-journals"></i> Insights & Editorial
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="branding-tab" data-bs-toggle="tab" data-bs-target="#branding-pane" type="button" role="tab" aria-controls="branding-pane" aria-selected="false">
+          <i class="bi bi-sliders2"></i> Identity Assets
+        </button>
+      </li>
+    </ul>
 
-          <!-- SITE MEDIA CONTROLS & GALLERY -->
-          <div class="card">
-            <h5 class="text-white mb-3">Identity Assets & Gallery</h5>
-            
-            <div class="row g-3 mb-4">
-              <div class="col-6">
-                <div class="p-2 border border-secondary rounded text-center bg-black">
-                  <div class="small-muted mb-1">Avatar Profile</div>
-                  {% if prof %}
-                    <img src="{{ url_for('media_file', kind='profile', filename=prof) }}" class="img-fluid rounded mb-2" style="height: 64px; width: 64px; object-fit: cover;">
-                  {% else %}
-                    <div class="text-muted py-2 small">Unspecified</div>
-                  {% endif %}
-                  <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_profile_image') }}">
-                    <input type="file" name="image" accept="image/*" class="form-control form-control-sm mb-1" required>
-                    <button class="btn btn-sm btn-outline-primary w-100 btn-action">Update</button>
-                  </form>
+    <div class="tab-content" id="adminTabsContent">
+
+      <!-- TAB 1: MESSAGES & SUBS -->
+      <div class="tab-pane fade show active" id="msgs-pane" role="tabpanel" aria-labelledby="msgs-tab">
+        <div class="row g-4">
+          <!-- Messages -->
+          <div class="col-lg-8">
+            <div class="card-fire p-4 h-100">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0 text-white fw-bold"><i class="bi bi-envelope-open-fill text-warning me-2"></i>Inbox Submissions</h4>
+                <div class="d-flex gap-2">
+                  <a href="/admin/export_messages" class="btn btn-sm btn-fire-secondary btn-mono"><i class="bi bi-download"></i> Export CSV</a>
                 </div>
               </div>
-              <div class="col-6">
-                <div class="p-2 border border-secondary rounded text-center bg-black">
-                  <div class="small-muted mb-1">Hero Background</div>
-                  {% if hero %}
-                    <img src="{{ url_for('media_file', kind='hero', filename=hero) }}" class="img-fluid rounded mb-2" style="height: 64px; width: 100%; object-fit: cover;">
-                  {% else %}
-                    <div class="text-muted py-2 small">Unspecified</div>
-                  {% endif %}
-                  <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_hero_image') }}">
-                    <input type="file" name="image" accept="image/*" class="form-control form-control-sm mb-1" required>
-                    <button class="btn btn-sm btn-outline-primary w-100 btn-action">Update</button>
-                  </form>
+
+              {% if display_msgs %}
+                <div class="table-responsive">
+                  <table class="table table-dark table-hover align-middle border-secondary-subtle">
+                    <thead>
+                      <tr>
+                        <th>Status</th>
+                        <th>Sender</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                        <th class="text-end">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for m in display_msgs %}
+                        <tr class="{% if m.status == 'unread' %}table-active{% endif %}">
+                          <td>
+                            {% if m.status == "unread" %}
+                              <span class="badge bg-warning text-black font-semibold">New</span>
+                            {% else %}
+                              <span class="badge bg-secondary">Read</span>
+                            {% endif %}
+                          </td>
+                          <td>
+                            <div class="fw-bold">{{ m.name }}</div>
+                            <small class="text-muted d-block text-mono" style="font-size:0.8rem;">{{ m.email }}</small>
+                          </td>
+                          <td>
+                            <div class="text-truncate" style="max-width: 250px;" title="{{ m.message }}">{{ m.message }}</div>
+                          </td>
+                          <td class="text-mono small">{{ m.timestamp }}</td>
+                          <td class="text-end">
+                            <div class="d-inline-flex gap-2">
+                              <button class="btn btn-sm btn-outline-warning" onclick="toggleReadStatus({{ m.gid }}, this)" title="Mark as Read/Unread">
+                                <i class="bi {% if m.status == 'unread' %}bi-envelope-paper-fill{% else %}bi-envelope-fill{% endif %}"></i>
+                              </button>
+                              <form action="/admin/delete_message/{{ m.gid }}" method="POST" onsubmit="return confirm('Delete this message permanently?');" class="m-0">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                              </form>
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
                 </div>
-              </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-mailbox display-4 mb-3 d-block"></i>
+                  <p class="mb-0">Your operational inbox is clean!</p>
+                </div>
+              {% endif %}
             </div>
+          </div>
 
-            <hr class="border-secondary">
-            <h6 class="text-white">Professional Media Bank</h6>
-            <p class="text-muted small">Upload screenshots, schematics, and news clips here, then easily insert them into blog posts below.</p>
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_gallery') }}" class="mb-3">
-              <div class="input-group input-group-sm">
-                <input type="file" name="images" accept="image/*,video/*" multiple class="form-control" required>
-                <button class="btn btn-primary">Archive Media</button>
-              </div>
-            </form>
-
-            <!-- Media Database Feed -->
-            {% if gal %}
-              <div class="media-scroller p-2" id="mediaBankList">
-                {% for g in gal %}
-                  <div class="d-flex justify-content-between align-items-center media-item rounded p-2">
-                    <div class="d-flex align-items-center gap-2">
-                      {% if g.type == 'image' %}
-                        <img src="{{ g.url }}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;" data-url="{{ g.url }}">
-                      {% else %}
-                        <video muted playsinline preload="metadata" style="width:48px;height:48px;object-fit:cover;border-radius:6px;" data-url="{{ g.url }}">
-                          <source src="{{ g.url }}">
-                        </video>
-                      {% endif %}
-                      <div class="text-truncate" style="max-width:180px;">
-                        <span class="d-block text-white fw-medium small text-truncate">{{ g.name }}</span>
-                        <span class="badge bg-info-subtle text-info font-monospace" style="font-size:0.6rem;">{{ g.type|upper }}</span>
+          <!-- Subscribers -->
+          <div class="col-lg-4">
+            <div class="card-fire p-4 h-100">
+              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-mailbox2 text-warning me-2"></i>Newsletter Subs</h4>
+              {% if subscribers %}
+                <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                  {% for s in subscribers %}
+                    <div class="list-group-item bg-transparent text-white border-secondary-subtle px-0 py-3">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-mono small">{{ s.email }}</span>
+                        <span class="text-muted text-mono" style="font-size:0.75rem;">{{ s.timestamp[:10] }}</span>
                       </div>
                     </div>
-                    <div class="d-flex gap-1">
-                      <!-- Insert button explicitly for inserting inside content creation form -->
-                      <button class="btn btn-xs btn-success text-dark py-1 px-2" onclick="insertMediaToBlog('{{ g.url }}', '{{ g.type }}', '{{ g.name }}')">⚡ Add</button>
-                      <form method="post" action="{{ url_for('delete_gallery_image', filename=g.name) }}" style="display:inline">
-                        <button class="btn btn-sm btn-outline-danger py-1">🗑️</button>
-                      </form>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-megaphone display-4 mb-3 d-block"></i>
+                  <p class="mb-0">No active subscribers yet.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: PROJECT DROPROOM -->
+      <div class="tab-pane fade" id="projects-pane" role="tabpanel" aria-labelledby="projects-tab">
+        <div class="card-fire p-4">
+          <h4 class="mb-4 text-white fw-bold"><i class="bi bi-cloud-arrow-down-fill text-warning me-2"></i>Client Secure Submissions</h4>
+          
+          <div class="row g-4">
+            <!-- Pending -->
+            <div class="col-md-6 border-end border-secondary-subtle">
+              <h5 class="text-warning fw-bold mb-3 d-flex align-items-center gap-2">
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                In Verification Queue ({{ pending|length }})
+              </h5>
+              
+              {% if pending %}
+                <div class="d-flex flex-column gap-3">
+                  {% for file in pending %}
+                    <div class="d-flex align-items-center justify-content-between p-3 rounded border border-warning border-opacity-25" style="background: rgba(255,255,255,0.01)">
+                      <div class="text-mono text-truncate me-2" style="max-width: 70%;" title="{{ file }}">
+                        <i class="bi bi-file-earmark-lock-fill text-warning me-2"></i>{{ file }}
+                      </div>
+                      <div class="d-flex gap-2">
+                        <form action="/admin/approve/{{ file }}" method="POST" class="m-0">
+                          <button type="submit" class="btn btn-sm btn-success px-3">Verify <i class="bi bi-check-circle"></i></button>
+                        </form>
+                        <form action="/admin/reject/{{ file }}" method="POST" onsubmit="return confirm('Reject and securely delete this file?');" class="m-0">
+                          <button type="submit" class="btn btn-sm btn-outline-danger">Reject <i class="bi bi-x-circle"></i></button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
-                {% endfor %}
-              </div>
-            {% else %}
-              <p class="text-muted small mt-2">The digital vault contains no media assets.</p>
-            {% endif %}
-          </div>
-
-        </div>
-      </div>
-
-      <!-- BLOG DOCK & DUAL WORKSPACE EDITING STUDIO -->
-      <hr class="border-secondary my-5">
-      
-      <div class="row g-4" id="blogStudioAnchor">
-        <div class="col-12">
-          <h2 class="text-white mb-2">Publishing Studio</h2>
-          <p class="text-muted">Draft interactive, high-fidelity publications with embedded inline assets.</p>
-        </div>
-
-        <!-- BLOG WORKSPACE: EDITOR SIDE -->
-        <div class="col-xl-7">
-          <div class="card h-100">
-            <h5 class="text-white mb-3">Article Architect</h5>
-            <form id="blogPostForm" method="post" action="{{ url_for('admin_add_blog') }}" enctype="multipart/form-data">
-              <div class="mb-3">
-                <label class="form-label small text-muted">Aesthetic Cover Banner (Featured Image/Video)</label>
-                <input type="file" name="featured_media" accept="image/*,video/*" class="form-control form-control-sm">
-                <div class="form-text text-muted" style="font-size:0.75rem;">Optional. Displays as a stunning cover at the top of the article.</div>
-              </div>
-
-              <div class="mb-3">
-                <input name="title" id="blogFormTitle" class="form-control form-control-lg display-font fs-4 mb-2" placeholder="Post Title (e.g. Navigating High-Speed Networks)" required>
-              </div>
-
-              <div class="mb-3">
-                <label class="form-label small text-muted">Summary Draft (Excerpt for News Grid)</label>
-                <input name="summary" id="blogFormSummary" class="form-control form-control-sm" placeholder="Short professional summary of the topic (defaults to first few sentences)...">
-              </div>
-
-              <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <label class="form-label small text-muted mb-0">Story Body (Supports Markdown & Inline Media Containers)</label>
-                  <span class="small-muted font-monospace"><span id="wordCountText">0</span> words</span>
+                  {% endfor %}
                 </div>
-                <textarea name="content" id="blogFormContent" class="form-control font-monospace" rows="12" placeholder="Write your content here... Use the buttons in the 'Identity Assets & Gallery' sidebar above to inject images and videos cleanly into your article text wherever you want!" required></textarea>
-              </div>
-
-              <div class="d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-info" onclick="triggerTemplateInjection()">💡 Insert Professional Sample Column</button>
-                <button type="submit" class="btn btn-primary px-4 py-2">Publish Article Now</button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- BLOG WORKSPACE: PERSISTENT RENDERED PREVIEW SIDE -->
-        <div class="col-xl-5">
-          <div class="card h-100">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="text-white mb-0">Live High-Fidelity Rendering</h5>
-              <span class="badge bg-success">LIVE MATCH ENGINE</span>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-file-earmark-check display-5 mb-3 d-block"></i>
+                  <p class="mb-0">No pending submissions to verify.</p>
+                </div>
+              {% endif %}
             </div>
-            
-            <div class="preview-body" id="blogTimelinePreview">
-              <div class="text-center text-muted py-5" id="previewEmptyPlaceholder">
-                <div class="fs-1 mb-2">📰</div>
-                Keep writing to trigger live rendering! Your inline images and video players will render automatically inside this box as you type.
-              </div>
-              <div id="previewContentWrap" style="display:none;">
-                <div class="display-font text-white fw-bold fs-3 mb-2" id="previewTitleText">Article Title</div>
-                <div class="small-muted mb-4 font-monospace">📅 Published Just Now • ⏱️ <span id="readingTime">1 min read</span></div>
-                <hr class="border-secondary opacity-50 mb-4">
-                <div id="previewMainContent" class="text-secondary" style="font-size:0.95rem; line-height:1.7;"></div>
-              </div>
-            </div>
-            <div class="p-3 rounded mt-3 text-white border border-secondary" style="background:#090d16; font-size:0.85rem;">
-              <span class="text-info fw-bold">💡 Design Tip:</span> To insert media, just scroll to your <strong>Professional Media Bank</strong> on the right sidebar, place your text cursor at the right paragraph, and hit the green <strong>⚡ Add</strong> button.
+
+            <!-- Approved -->
+            <div class="col-md-6">
+              <h5 class="text-success fw-bold mb-3"><i class="bi bi-shield-fill-check me-2"></i>Approved Portfolio Projects ({{ projects|length }})</h5>
+              {% if projects %}
+                <div class="d-flex flex-column gap-3">
+                  {% for file in projects %}
+                    <div class="d-flex align-items-center justify-content-between p-3 rounded" style="background: rgba(255,255,255,0.02)">
+                      <div class="text-mono text-truncate me-2" style="max-width: 60%;" title="{{ file }}">
+                        <i class="bi bi-file-earmark-zip-fill text-success me-2"></i>{{ file }}
+                      </div>
+                      <div class="d-flex gap-2">
+                        <a href="/media/project/{{ file }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i> Download</a>
+                        <form action="/admin/delete_project/{{ file }}" method="POST" onsubmit="return confirm('Delete this project asset permanently?');" class="m-0">
+                          <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-shield display-5 mb-3 d-block"></i>
+                  <p class="mb-0">No live approved projects yet.</p>
+                </div>
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PUBLISHED ARTICLES LIST -->
-      <div class="card mt-4">
-        <h5 class="text-white mb-3">Live Feed Directory</h5>
-        {% if blogs %}
-          <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0 align-middle" style="--bs-table-bg:transparent; border-color: var(--border-color);">
-              <thead>
-                <tr class="text-muted">
-                  <th>Timestamp</th>
-                  <th>Title</th>
-                  <th class="text-end">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for b in blogs %}
-                  <tr style="border-color: var(--border-color)">
-                    <td class="font-monospace text-muted small" style="width: 150px;">{{ b.timestamp }}</td>
-                    <td class="fw-semibold text-white">{{ b.title }}</td>
-                    <td class="text-end" style="width: 180px;">
-                      <a class="btn btn-sm btn-outline-info me-2" href="{{ url_for('view_blog', slug=b.slug) }}" target="_blank">View Post</a>
-                      <form method="post" action="{{ url_for('admin_delete_blog', bid=b.id) }}" style="display:inline">
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this post permanently?')">Delete</button>
-                      </form>
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        {% else %}
-          <p class="text-muted py-4 mb-0 text-center">Empty directory. Publish your first story.</p>
-        {% endif %}
-      </div>
-
-      <!-- SUBSCRIBERS BANK -->
-      <hr class="border-secondary my-5">
-      <div class="card mb-5">
-        <h5 class="text-white mb-2">Newsletter Network ({{ subscribers|length }})</h5>
-        <p class="text-muted small">Registered subscribers following Technowsol publications.</p>
-        {% if subscribers %}
-          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
-            {% for s in subscribers %}
-              <div class="col">
-                <div class="p-2 border border-secondary rounded bg-dark d-flex justify-content-between align-items-center">
-                  <div class="text-truncate">
-                    <span class="text-white small d-block text-truncate fw-medium">{{ s.get('email') }}</span>
-                    <span class="font-monospace text-muted" style="font-size:0.7rem;">Since: {{ s.get('timestamp') }}</span>
+      <!-- TAB 3: SHOWCASE GALLERY -->
+      <div class="tab-pane fade" id="gallery-pane" role="tabpanel" aria-labelledby="gallery-tab">
+        <div class="row g-4">
+          <!-- Upload -->
+          <div class="col-lg-4">
+            <div class="card-fire p-4">
+              <h4 class="mb-3 text-white fw-bold"><i class="bi bi-cloud-upload-fill text-warning me-2"></i>Add Gallery Showcase</h4>
+              <p class="text-muted small">Upload infrastructure, cybersecurity, physical network setups, or system diagrams here. Supported extensions: images or videos (.jpg, .png, .gif, .webp, .mp4, .webm etc.)</p>
+              
+              <form action="/admin/upload_gallery" method="POST" enctype="multipart/form-data">
+                <div class="mb-4">
+                  <div class="drag-drop-zone" onclick="document.getElementById('galleryInput').click()">
+                    <i class="bi bi-folder-plus text-warning display-5 mb-3 d-block"></i>
+                    <span class="text-white d-block mb-1">Click to select files</span>
+                    <span class="text-muted small text-mono" id="galIndicator">None selected</span>
+                    <input type="file" id="galleryInput" name="images" multiple required hidden onchange="document.getElementById('galIndicator').innerText = this.files.length + ' file(s) loaded'">
                   </div>
                 </div>
-              </div>
-            {% endfor %}
+                <button type="submit" class="btn btn-fire-primary w-100">Upload Showcase <i class="bi bi-upload"></i></button>
+              </form>
+            </div>
           </div>
-        {% else %}
-          <p class="text-muted small py-2 mb-0">No subscribers currently listening.</p>
-        {% endif %}
+
+          <!-- Existing -->
+          <div class="col-lg-8">
+            <div class="card-fire p-4">
+              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-images text-warning me-2"></i>Featured Gallery ({{ gal|length }})</h4>
+              
+              {% if gal %}
+                <div class="row g-3">
+                  {% for item in gal %}
+                    <div class="col-sm-6 col-md-4">
+                      <div class="admin-media-item">
+                        <div class="admin-media-thumb">
+                          {% if item.type == 'image' %}
+                            <img src="{{ item.url }}" alt="{{ item.name }}" loading="lazy">
+                          {% elif item.type == 'video' %}
+                            <video src="{{ item.url }}" preload="metadata" muted playsinline></video>
+                            <span class="badge bg-warning text-black position-absolute top-2 start-2"><i class="bi bi-film"></i> VIDEO</span>
+                          {% else %}
+                            <div class="text-center text-muted p-4"><i class="bi bi-file-earmark-fill fs-1"></i></div>
+                          {% endif %}
+                        </div>
+                        <div class="admin-media-info">
+                          <small class="text-mono d-block text-truncate mb-2" title="{{ item.name }}">{{ item.name }}</small>
+                          <form action="/admin/delete_gallery/{{ item.name }}" method="POST" onsubmit="return confirm('Delete this gallery file securely?');" class="m-0">
+                            <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-trash"></i> Wipe Asset</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-images display-5 mb-3 d-block"></i>
+                  <p class="mb-0">The portfolio gallery grid is currently empty.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BLOG MEDIA LIBRARY (NEW!) -->
+      <div class="tab-pane fade" id="blog-media-pane" role="tabpanel" aria-labelledby="blog-media-tab">
+        <div class="row g-4" id="blog_media_section">
+          <!-- Description Block -->
+          <div class="col-12">
+            <div class="card-fire p-4 mb-2">
+              <h4 class="mb-2 text-white fw-bold"><i class="bi bi-folder-symlink-fill text-warning me-2"></i>Blog Article Media Library 🌟</h4>
+              <p class="text-muted mb-0">
+                To prevent deleting your critical article assets, **never upload blog images/videos into the general public Showcase Gallery!** Put them right here instead! These files are saved in an isolated directory block and will not clutter the landing page gallery. Plus, you can easily copy the markdown insertions directly with a single click copy button!
+              </p>
+            </div>
+          </div>
+
+          <!-- Uploader -->
+          <div class="col-lg-4">
+            <div class="card-fire p-4">
+              <h5 class="mb-3 text-warning fw-bold">Upload Blog Assets</h5>
+              <form action="/admin/upload_blog_media" method="POST" enctype="multipart/form-data">
+                <div class="mb-4">
+                  <div class="drag-drop-zone" style="border-color: rgba(249,115,22,0.3);" onclick="document.getElementById('blogMediaInput').click()">
+                    <i class="bi bi-cloud-arrow-up text-warning display-5 mb-3 d-block"></i>
+                    <span class="text-white d-block mb-1">Upload Article Media</span>
+                    <span class="text-muted small text-mono" id="bmIndicator">Drag or Click here</span>
+                    <input type="file" id="blogMediaInput" name="images" multiple required hidden onchange="document.getElementById('bmIndicator').innerText = this.files.length + ' file(s) loaded'">
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-fire-primary w-100">Upload to Blog Lib <i class="bi bi-upload"></i></button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Catalog List -->
+          <div class="col-lg-8">
+            <div class="card-fire p-4">
+              <h5 class="mb-4 text-white fw-bold"><i class="bi bi-files text-warning me-2"></i>Isolated Blog Assets Catalog ({{ blog_media|length }})</h5>
+              
+              {% if blog_media %}
+                <div class="row g-3">
+                  {% for item in blog_media %}
+                    <div class="col-sm-6 col-md-4">
+                      <div class="admin-media-item">
+                        <div class="admin-media-thumb">
+                          {% if item.type == 'image' %}
+                            <img src="{{ item.url }}" alt="{{ item.name }}" loading="lazy">
+                          {% elif item.type == 'video' %}
+                            <video src="{{ item.url }}" preload="metadata" muted playsinline></video>
+                            <span class="badge bg-warning text-black position-absolute top-2 start-2"><i class="bi bi-film"></i> VIDEO</span>
+                          {% else %}
+                            <div class="text-center text-muted p-4"><i class="bi bi-file-earmark-fill fs-1"></i></div>
+                          {% endif %}
+                        </div>
+                        <div class="admin-media-info p-2">
+                          <small class="text-mono d-block text-truncate mb-2 fw-semibold" title="{{ item.name }}">{{ item.name }}</small>
+                          
+                          <!-- Copy Links helpers -->
+                          <div class="mb-2">
+                            {% if item.type == 'image' %}
+                              <button class="btn btn-xs btn-outline-warning w-100 text-mono px-1 py-1" style="font-size: 0.72rem;" onclick="copyToClipboard('![Image]({{ item.url }})', this)">
+                                <i class="bi bi-clipboard-check"></i> Copy MD Image
+                              </button>
+                            {% elif item.type == 'video' %}
+                              <button class="btn btn-xs btn-outline-warning w-100 text-mono px-1 py-1 mb-1" style="font-size: 0.72rem;" onclick="copyToClipboard('<video src=&quot;{{ item.url }}&quot; controls class=&quot;embedded-video&quot;></video>', this)">
+                                <i class="bi bi-clipboard-check"></i> Copy HTML5 video
+                              </button>
+                            {% endif %}
+                          </div>
+
+                          <form action="/admin/delete_blog_media/{{ item.name }}" method="POST" onsubmit="return confirm('Wipe output file permanently?');" class="m-0">
+                            <button type="submit" class="btn btn-sm btn-outline-danger w-100 py-1" style="font-size:0.8rem;"><i class="bi bi-trash3"></i> Delete Asset</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-folder-symlink display-5 mb-3 d-block"></i>
+                  <p class="mb-0">Blog Media Library is empty. Upload items here to embed inside your markdown posts!</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: INSIGHTS & EDITORIAL (BLOGS) -->
+      <div class="tab-pane fade" id="blogs-pane" role="tabpanel" aria-labelledby="blogs-tab">
+        <div class="row g-4">
+          <!-- Writer -->
+          <div class="col-lg-8">
+            <div class="card-fire p-4">
+              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight</h4>
+              
+              <form action="/admin/blogs/add" method="POST">
+                <div class="mb-3">
+                  <label for="title" class="form-label text-muted small">ARTICLE TITLE (Auto Slugified)</label>
+                  <input type="text" class="form-control form-control-fire" id="title" name="title" required placeholder="e.g. Setting up CCNA Subnets and routing configurations">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="content" class="form-label text-muted small">ARTICLE BODY (Markdown & Inline HTML embed tags supported)</label>
+                  <div class="ins-block mb-3">
+                    <i class="bi bi-info-circle"></i> Tip: Auto-detecting Category from word references: Cybersecurity, Networking, AI & Automation, Web Development, ICT Support, or Technology.
+                  </div>
+                  <textarea class="form-control form-control-fire text-mono style-textarea" id="content" name="content" rows="18" required placeholder="# Write your article content in Markdown here...&#10;&#10;Use the format of images or videos with copy paste tags from the Media Library:&#10;![Some Photo](/media/blog_media/filename.jpg)"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-fire-primary w-100">Publish Article <i class="bi bi-send-fill"></i></button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Existing Articles -->
+          <div class="col-lg-4">
+            <div class="card-fire p-4 h-100">
+              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-list-stars text-warning me-2"></i>Active Pulses ({{ blogs|length }})</h4>
+              
+              {% if blogs %}
+                <div class="d-flex flex-column gap-3" style="max-height: 650px; overflow-y: auto;">
+                  {% for b in blogs %}
+                    <div class="p-3 rounded border border-secondary-subtle" style="background: rgba(255,255,255,0.015)">
+                      <h6 class="fw-bold text-white mb-2">{{ b.title }}</h6>
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted text-mono" style="font-size:0.75rem;"><i class="bi bi-calendar"></i> {{ b.timestamp[:10] }}</span>
+                        <form action="/admin/blogs/delete/{{ b.id }}" method="POST" onsubmit="return confirm('Delete this blog post? This action is absolutely irreversible!');" class="m-0">
+                          <button type="submit" class="btn btn-xs btn-outline-danger px-2 py-1"><i class="bi bi-trash"></i> Wipe Post</button>
+                        </form>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-journals display-5 mb-3 d-block"></i>
+                  <p class="mb-0">No active articles.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: IDENTITY ASSETS -->
+      <div class="tab-pane fade" id="branding-pane" role="tabpanel" aria-labelledby="branding-tab">
+        <div class="row g-4">
+          <!-- Profile image -->
+          <div class="col-md-4">
+            <div class="card-fire p-4 text-center h-100 d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="text-white fw-bold mb-3"><i class="bi bi-person-bounding-box text-warning"></i> Profile Photograph</h5>
+                <p class="text-muted small mb-4">Set your profile headshot on the landing page about section. High resolution PNG/JPG recommended.</p>
+                {% if prof %}
+                  <div class="mx-auto rounded-circle overflow-hidden mb-4 border-fire" style="width: 140px; height: 140px; border: 3px solid var(--brand-primary); box-shadow: 0 0 15px rgba(249,115,22,0.3);">
+                    <img src="/media/profile/{{ prof }}" alt="Current Profile" class="img-fluid w-100 h-100" style="object-fit:cover;">
+                  </div>
+                {% else %}
+                  <div class="mx-auto rounded-circle overflow-hidden mb-4 bg-secondary d-flex align-items-center justify-content-center" style="width: 140px; height: 140px;">
+                    <i class="bi bi-person text-white display-3"></i>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <form action="/admin/upload_profile_image" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <input class="form-control form-control-fire text-mono p-2" type="file" name="file" required>
+                </div>
+                <button type="submit" class="btn btn-fire-primary w-100">Wipe and Upload <i class="bi bi-check-lg"></i></button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Hero Background -->
+          <div class="col-md-4">
+            <div class="card-fire p-4 text-center h-100 d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="text-white fw-bold mb-3"><i class="bi bi-image text-warning"></i> Home Hero Backdrop</h5>
+                <p class="text-muted small mb-4">Wipe and set the immersive background of the primary splash banner on index.</p>
+                {% if hero %}
+                  <div class="mx-auto rounded overflow-hidden mb-4 border" style="width: 220px; height: 110px;">
+                    <img src="/media/hero/{{ hero }}" alt="Current Hero Backdrop" class="img-fluid w-100 h-100" style="object-fit:cover;">
+                  </div>
+                {% else %}
+                  <div class="mx-auto rounded overflow-hidden mb-4 bg-secondary d-flex align-items-center justify-content-center" style="width: 220px; height: 110px;">
+                    <i class="bi bi-card-image text-white fs-1"></i>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <form action="/admin/upload_hero_image" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <input class="form-control form-control-fire text-mono p-2" type="file" name="file" required>
+                </div>
+                <button type="submit" class="btn btn-fire-primary w-100">Replace Billboard <i class="bi bi-check-lg"></i></button>
+              </form>
+            </div>
+          </div>
+
+          <!-- CV PDF DOCS -->
+          <div class="col-md-4">
+            <div class="card-fire p-4 text-center h-100 d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="text-white fw-bold mb-3"><i class="bi bi-file-earmark-person-fill text-warning"></i> Professional CV Resume</h5>
+                <p class="text-muted small mb-4">Allows visitors and recruiters to download your current capability resume files directly.</p>
+                
+                <div class="mx-auto bg-dark border border-secondary p-3 rounded mb-4 d-flex align-items-center justify-content-center gap-2 " style="width: max-content;">
+                  <i class="bi b-filetype-pdf text-danger fs-3"></i>
+                  <span class="text-mono small text-truncate" style="max-width: 150px;">
+                    {% if cv_file %}{{ cv_file }}{% else %}No document uploaded{% endif %}
+                  </span>
+                </div>
+              </div>
+              
+              <form action="/admin/upload_cv" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <input class="form-control form-control-fire text-mono p-2" type="file" name="file" required>
+                </div>
+                <button type="submit" class="btn btn-fire-primary w-100">Upload CV Package <i class="bi bi-check-lg"></i></button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
 
-    <!-- MESSAGE DISPLAY MODAL -->
-    <div class="modal fade" id="msgModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" style="background:#090d16; border:1px solid #334155;">
-          <div class="modal-header border-secondary">
-            <h5 class="modal-title font-display text-white">Message Details</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="p-3 mb-3 rounded" style="background: #0f172a; border: 1px solid var(--border-color);">
-              <div class="row g-2">
-                <div class="col-md-6">
-                  <div class="small-muted">Sender</div>
-                  <strong class="text-white fs-6" id="modal-name"></strong>
-                </div>
-                <div class="col-md-6">
-                  <div class="small-muted">Email</div>
-                  <a id="modal-email" class="text-info fw-semibold text-decoration-none" href="#"></a>
-                </div>
-                <div class="col-11 mt-2">
-                  <div class="small-muted">Timestamp</div>
-                  <span id="modal-when" class="font-monospace text-secondary"></span>
-                </div>
-              </div>
-            </div>
-            <hr class="border-secondary mb-3">
-            <div id="modal-message" class="text-light p-3 rounded font-monospace" style="white-space:pre-wrap; background: #0b0f19; line-height: 1.6;"></div>
-          </div>
-          <div class="modal-footer border-secondary">
-            <button id="modal-toggle-read" class="btn btn-outline-info">Mark active</button>
-            <form id="modal-delete-form" method="post" action="" style="display:inline">
-              <button class="btn btn-danger" onclick="return confirm('Delete this message permanently?')">Delete</button>
-            </form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
 
-    <!-- SCRIPTS -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-      // Insert Media Snippets seamlessly inside Content editor Area
-      function insertMediaToBlog(mediaUrl, mediaType, mediaName) {
-        const textarea = document.getElementById('blogFormContent');
-        if (!textarea) return;
-
-        let markup = "";
-        if (mediaType === "image") {
-          markup = `\n<figure class="news-media-container">\n  <img src="${mediaUrl}" alt="${mediaName}" loading="lazy">\n  <figcaption class="news-caption">${mediaName}</figcaption>\n</figure>\n`;
-        } else if (mediaType === "video") {
-          markup = `\n<figure class="news-media-container">\n  <video controls poster="" preload="metadata" playsinline>\n    <source src="${mediaUrl}" type="video/mp4">\n    Browser lacks video support.\n  </video>\n  <figcaption class="news-caption">${mediaName}</figcaption>\n</figure>\n`;
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle read unread message dynamically over JSON endpoints
+    function toggleReadStatus(mid, btnNode) {
+      fetch('/admin/toggle_read_json/' + mid, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'ok') {
+          // reload window to update counts and state dynamically
+          window.location.reload();
         } else {
-          markup = `\n[Download File Asset: ${mediaName}](${mediaUrl})\n`;
+          alert('Verification error: ' + (data.error || 'Server rejected request.'));
         }
+      })
+      .catch(e => {
+        console.error(e);
+        alert('Network anomaly reported.');
+      });
+    }
 
-        // Get position to insert
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = textarea.value;
-        const before = text.substring(0, start);
-        const after  = text.substring(end, text.length);
-
-        textarea.value = before + markup + after;
-        textarea.focus();
-        
-        // Relocate selection cursor after insertion
-        textarea.selectionStart = textarea.selectionEnd = start + markup.length;
-        
-        // Trigger live match compilation immediately
-        updateBlogLivePreview();
-      }
-
-      // Generate a polished editorial sample blog structure instantly
-      function triggerTemplateInjection() {
-        const titleEl = document.getElementById('blogFormTitle');
-        const summaryEl = document.getElementById('blogFormSummary');
-        const contentEl = document.getElementById('blogFormContent');
-
-        titleEl.value = "The Quantum Leap: Navigating Edge Computations";
-        summaryEl.value = "An elegant dive into high-performance low latency edge models and media delivery mechanisms.";
-        contentEl.value = `### Introduction\nEdge infrastructure represents the architectural transition towards decentralization. By bringing critical workflows closer to customers, bandwidth spikes decrease and interactive rendering feels fluid.\n\n### Core Engineering Challenges\nModern workflows struggle with media density. Instead of serving standard resources, we optimize utilizing responsive structures:\n\n* **Asset Delivery:** Lazy-loading content as requested.\n* **Modern Video Players:** Utilizing hardware-accelerated loops.\n\n### Architectural Overview\nBelow is an illustration highlighting modern edge delivery pipelines configured dynamically:\n\n<!-- Tip: Replace this link with your uploaded media URL from the panel! -->\n<figure class="news-media-container">\n  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80" alt="Microprocessors Hardware Framework">\n  <figcaption class="news-caption">Image: High-Performance Edge Computing nodes.</figcaption>\n</figure>\n\n### Conclusion\nBuilding secure networks demands proactive caching, modern databases, and clean frameworks. Stay tuned as we update weekly.`;
-        
-        updateBlogLivePreview();
-      }
-
-      // Live Render Engine
-      function updateBlogLivePreview() {
-        const title = document.getElementById('blogFormTitle').value;
-        const content = document.getElementById('blogFormContent').value;
-        
-        const previewWrap = document.getElementById('previewContentWrap');
-        const emptyPlaceholder = document.getElementById('previewEmptyPlaceholder');
-        const previewTitle = document.getElementById('previewTitleText');
-        const previewContent = document.getElementById('previewMainContent');
-        const wordCountText = document.getElementById('wordCountText');
-        const readingTimeText = document.getElementById('readingTime');
-
-        if (!title && !content) {
-          emptyPlaceholder.style.display = "block";
-          previewWrap.style.display = "none";
-          wordCountText.innerText = "0";
-          return;
-        }
-
-        emptyPlaceholder.style.display = "none";
-        previewWrap.style.display = "block";
-
-        previewTitle.innerText = title || "Untitled Article Draft";
-        
-        // Estimate read time
-        const wordCount = content ? content.trim().split(/\s+/).filter(Boolean).length : 0;
-        wordCountText.innerText = wordCount;
-        readingTimeText.innerText = Math.max(1, Math.ceil(wordCount / 200)) + " min read";
-
-        // Convert simplistic markdown paragraphs & inline HTML safely
-        let formatted = content;
-        if (formatted) {
-          // Headers
-          formatted = formatted.replace(/^### (.*$)/gim, '<h4 class="text-white mt-4 mb-2 fw-semibold">$1</h4>');
-          formatted = formatted.replace(/^## (.*$)/gim, '<h3 class="text-white mt-4 mb-2 fw-bold">$1</h3>');
-          
-          // Bold / Italics
-          formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-          formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
-          
-          // Lists
-          formatted = formatted.replace(/^\* (.*$)/gim, '<li class="text-secondary ms-3 mb-1">$1</li>');
-          
-          // Simple paragraphs handling while protecting already existing HTML structures like figures/videos
-          let parts = formatted.split(/\n\n+/);
-          formatted = parts.map(part => {
-            if (part.trim().startsWith('<figure') || part.trim().startsWith('<h3') || part.trim().startsWith('<h4') || part.trim().startsWith('<li')) {
-              return part;
-            }
-            return `<p class="mb-3 text-secondary">${part.replace(/\n/g, '<br>')}</p>`;
-          }).join('');
-        }
-
-        previewContent.innerHTML = formatted || "<em class='text-muted'>Start typing your story draft...</em>";
-      }
-
-      // Attach real-time event listeners
-      document.getElementById('blogFormTitle').addEventListener('input', updateBlogLivePreview);
-      document.getElementById('blogFormContent').addEventListener('input', updateBlogLivePreview);
-
-      // Open message modal detail via JSON lookup
-      function openMessageModal(gid){
-        try {
-          const base = '{{ url_for("message_json", mid=0) }}';
-          const url = base.replace('/0', '/' + encodeURIComponent(gid));
-          fetch(url, { credentials: 'same-origin' })
-            .then(r => {
-              if (!r.ok) throw new Error('Status ' + r.status);
-              return r.json();
-            })
-            .then(data => {
-              document.getElementById('modal-name').innerText = data.name || '(no name)';
-              const emailEl = document.getElementById('modal-email');
-              emailEl.innerText = data.email || '(no email)'; 
-              emailEl.href = 'mailto:' + (data.email || '');
-              document.getElementById('modal-when').innerText = data.timestamp || '';
-              document.getElementById('modal-message').innerText = data.message || '';
-              
-              const form = document.getElementById('modal-delete-form'); 
-              form.action = '/admin/delete_message/' + encodeURIComponent(gid);
-              
-              const toggleBtn = document.getElementById('modal-toggle-read');
-              toggleBtn.onclick = function(){
-                fetch('/admin/toggle_read_json/' + encodeURIComponent(gid), { method: 'POST', credentials: 'same-origin' })
-                  .then(r => {
-                    if (!r.ok) throw new Error('Toggle failed: ' + r.status);
-                    return r.json();
-                  })
-                  .then(res => {
-                    if (res.status) {
-                      toggleBtn.innerText = res.status === 'read' ? 'Mark unread' : 'Mark read';
-                    }
-                  }).catch(e => {
-                    alert('Could not toggle read/unread status.');
-                    console.error(e);
-                  });
-              };
-              toggleBtn.innerText = data.status === 'unread' ? 'Mark read' : 'Mark unread';
-              
-              const modal = new bootstrap.Modal(document.getElementById('msgModal')); 
-              modal.show();
-            })
-            .catch(e => {
-              alert('Could not load message data.');
-              console.error(e);
-            });
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      // Chart: Fetch timeline from analytics JSON and render bar chart
-      async function loadMessagesChart() {
-        try {
-          const resp = await fetch('{{ url_for("admin_analytics_data") }}', { credentials: 'same-origin' });
-          if(!resp.ok) throw new Error('Fetch analytics failed');
-          const data = await resp.json();
-          const ctx = document.getElementById('messagesChart').getContext('2d');
-          new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: data.labels,
-              datasets: [{
-                label: 'Client Inbox Quantities',
-                data: data.values,
-                backgroundColor: 'rgba(56, 189, 248, 0.45)',
-                borderColor: '#38bdf8',
-                borderWidth: 1.5,
-                borderRadius: 4,
-                barPercentage: 0.7,
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { display: false }
-              },
-              scales: {
-                x: { 
-                  grid: { color: '#1e293b' },
-                  ticks: { color: '#94a3b8', font: { size: 9 } } 
-                },
-                y: { 
-                  grid: { color: '#1e293b' },
-                  ticks: { color: '#94a3b8', beginAtZero: true }
-                }
-              }
-            }
-          });
-        } catch (e) {
-          console.error('loadMessagesChart error:', e);
-        }
-      }
-
-      // Launch charts on load
-      loadMessagesChart();
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    // copy clipboard helper for markdown library references
+    function copyToClipboard(val, buttonElement) {
+      navigator.clipboard.writeText(val).then(() => {
+        const orig = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="bi bi-check-all text-success"></i> Copied Tag!';
+        buttonElement.classList.remove('btn-outline-warning');
+        buttonElement.classList.add('btn-success');
+        buttonElement.classList.add('text-black');
+        setTimeout(() => {
+          buttonElement.innerHTML = orig;
+          buttonElement.classList.remove('btn-success');
+          buttonElement.classList.remove('text-black');
+          buttonElement.classList.add('btn-outline-warning');
+        }, 1800);
+      }).catch(e => {
+        alert('Clipboard permissions blocks browser automatic writeback.');
+      });
+    }
+  </script>
 </body>
 </html>
