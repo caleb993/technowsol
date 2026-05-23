@@ -322,9 +322,9 @@
 
       z-index:1;
 
-      background:rgba(255,255,255,0.05);
+      background:rgba(255,255,255,0.04);
 
-      border:1px solid rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.06);
 
       border-radius:28px;
 
@@ -350,6 +350,7 @@
       margin-bottom: 20px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       background-color: rgba(255, 255, 255, 0.02);
+      position: relative;
     }
 
     .blog-card-thumbnail img {
@@ -361,6 +362,87 @@
 
     .blog-card:hover .blog-card-thumbnail img {
       transform: scale(1.05);
+    }
+
+    /* Fallback and Category Visual Styles */
+    .placeholder-thumbnail {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .placeholder-thumbnail i {
+      transition: transform 0.4s ease, filter 0.4s ease;
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+    .blog-card:hover .placeholder-thumbnail i {
+      transform: scale(1.18) rotate(-4deg);
+    }
+
+    .bg-gradient-cybersecurity {
+      background: linear-gradient(135deg, #1e1b4b 0%, #450a0a 100%) !important;
+      color: #ef4444 !important;
+    }
+    .bg-gradient-networking {
+      background: linear-gradient(135deg, #172554 0%, #0c4a6e 100%) !important;
+      color: #3b82f6 !important;
+    }
+    .bg-gradient-ai-automation {
+      background: linear-gradient(135deg, #2e1065 0%, #3b0764 100%) !important;
+      color: #a855f7 !important;
+    }
+    .bg-gradient-web-development {
+      background: linear-gradient(135deg, #042f2e 0%, #115e59 100%) !important;
+      color: #06b6d4 !important;
+    }
+    .bg-gradient-ict-support {
+      background: linear-gradient(135deg, #064e3b 0%, #0f766e 100%) !important;
+      color: #14b8a6 !important;
+    }
+    .bg-gradient-technology {
+      background: linear-gradient(135deg, #111827 0%, #374151 100%) !important;
+      color: #9ca3af !important;
+    }
+
+    /* Dyn badges style */
+    .blog-tag {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+    }
+    .badge-cybersecurity {
+      background: rgba(239, 68, 68, 0.12) !important;
+      color: #f87171 !important;
+      border: 1px solid rgba(239, 68, 68, 0.2) !important;
+    }
+    .badge-networking {
+      background: rgba(59, 130, 246, 0.12) !important;
+      color: #60a5fa !important;
+      border: 1px solid rgba(59, 130, 246, 0.2) !important;
+    }
+    .badge-ai-automation {
+      background: rgba(139, 92, 246, 0.12) !important;
+      color: #a78bfa !important;
+      border: 1px solid rgba(139, 92, 246, 0.2) !important;
+    }
+    .badge-web-development {
+      background: rgba(6, 182, 212, 0.12) !important;
+      color: #22d3ee !important;
+      border: 1px solid rgba(6, 182, 212, 0.2) !important;
+    }
+    .badge-ict-support {
+      background: rgba(20, 184, 166, 0.12) !important;
+      color: #2dd4bf !important;
+      border: 1px solid rgba(20, 184, 166, 0.2) !important;
+    }
+    .badge-technology {
+      background: rgba(148, 163, 184, 0.12) !important;
+      color: #cbd5e1 !important;
+      border: 1px solid rgba(148, 163, 184, 0.2) !important;
     }
 
     .blog-card::before{
@@ -425,19 +507,6 @@
       position:relative;
 
       z-index:2;
-    }
-
-    .blog-tag{
-
-      padding:6px 12px;
-
-      border-radius:999px;
-
-      background:rgba(96,165,250,0.12);
-
-      color:#93c5fd;
-
-      font-size:12px;
     }
 
     .blog-title{
@@ -722,28 +791,51 @@
          id="blogContainer">
 
       {% for b in blogs %}
+        {% set cat = b.content|get_category(b.title) %}
+        {% set reading_time = b.content|get_reading_time %}
+        {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
+        {% if cat_slug == "cybersecurity" %}
+          {% set cat_icon = "bi-shield-lock" %}
+        {% elif cat_slug == "networking" %}
+          {% set cat_icon = "bi-hdd-network" %}
+        {% elif cat_slug == "ai-automation" %}
+          {% set cat_icon = "bi-cpu" %}
+        {% elif cat_slug == "web-development" %}
+          {% set cat_icon = "bi-code-slash" %}
+        {% elif cat_slug == "ict-support" %}
+          {% set cat_icon = "bi-headset" %}
+        {% else %}
+          {% set cat_icon = "bi-journal-text" %}
+        {% endif %}
 
       <div class="col-lg-4 col-md-6 blog-item">
 
-        <article class="blog-card">
+        <article class="blog-card d-flex flex-column h-100">
 
           {% set thumb = b.content|get_first_image %}
           {% if thumb %}
             <div class="blog-card-thumbnail">
               <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
             </div>
+          {% else %}
+            <div class="blog-card-thumbnail placeholder-thumbnail bg-gradient-{{ cat_slug }}">
+              <i class="bi {{ cat_icon }} display-4"></i>
+            </div>
           {% endif %}
 
-          <div class="blog-meta">
+          <div class="blog-meta mb-3">
 
-            <div>
+            <div class="d-flex align-items-center gap-2">
               <i class="bi bi-calendar-event"></i>
               {{ b.timestamp }}
             </div>
 
-            <span class="blog-tag">
-              Technology
-            </span>
+            <div class="ms-auto d-flex align-items-center gap-2">
+              <span class="blog-tag badge-{{ cat_slug }}">
+                {{ cat }}
+              </span>
+              <span class="small text-muted"><i class="bi bi-clock"></i> {{ reading_time }} min read</span>
+            </div>
 
           </div>
 
@@ -751,14 +843,14 @@
             {{ b.title }}
           </h2>
 
-          <p class="blog-content">
+          <p class="blog-content flex-grow-1">
 
             {{ b.content|clean_excerpt(180) }}
 
           </p>
 
           <a href="{{ url_for('view_blog', slug=b.slug) }}"
-             class="read-btn">
+             class="read-btn justify-content-center w-100 mt-auto">
 
             Read Article
             <i class="bi bi-arrow-right"></i>
