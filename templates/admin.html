@@ -1,450 +1,651 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Technowsol - Secure System Admin</title>
-  <!-- Tailwind CSS Grid utilities -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js for beautiful inbox volume records animation -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Beautiful Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
+  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muga • TechKnow Solutions— Caleb Muga</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace'],
-          }
-        }
-      }
-    }
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'G-ELRXZQRGNR');
   </script>
-</head>
-<body class="bg-[#0b0f19] text-gray-200 font-sans min-h-screen">
 
-  <!-- Header Panel Navigation header -->
-  <header class="border-b border-gray-800 bg-[#0c1222]/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-emerald-500 flex items-center justify-center font-bold text-white shadow-lg shadow-cyan-500/20 shadow-glow">
-          T
-        </div>
-        <div>
-          <h1 class="text-lg font-bold text-white tracking-tight">TECHNOWSOL</h1>
-          <p class="text-[10px] text-cyan-400 font-bold tracking-widest uppercase">System Control Unit</p>
-        </div>
+  <!-- SEO / OpenGraph -->
+  <meta name="description" content="TechKnow Solutions — Caleb Muga: ICT Support, Networking, Cybersecurity, and process automation. Contact for services and view portfolio.">
+  <meta name="author" content="Caleb Muga">
+  <meta property="og:title" content="TechKnow Solutions — Caleb Muga">
+  <meta property="og:description" content="ICT Support, Networking, Cybersecurity and automation solutions.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="TechKnow Solutions">
+  {% if hero_url %}
+  <meta property="og:image" content="{{ hero_url }}">
+  {% endif %}
+
+  <!-- Fallback profile image -->
+  <meta property="og:image:alt" content="Profile photo of Caleb Muga">
+  <meta property="og:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+
+  <!-- Structured data for Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Caleb Muga",
+    "url": "https://muga.portfolio",
+    "image": "https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg",
+    "jobTitle": "ICT Support & Cybersecurity",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "TechKnow Solutions"
+    }
+  }
+  </script>
+
+  <!-- Bootstrap + AOS (Animate on Scroll) + CountUp.js via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{ --brand1:#0d6efd; --brand2:#6f42c1; --accent:#00e5ff; --muted:#6b7280; }
+    * { box-sizing: border-box; }
+    html,body{ height:100%; }
+    body{
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:#051025; color:#e6eef8; min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
+      transition: background .25s, color .25s;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    body.light{ background: #f6f8fb; color:#071025; }
+
+    /* Navbar */
+    .navbar{ font-size:1.02rem; background:transparent; }
+    .brand-avatar{ display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; }
+    .brand-avatar img{ width:42px; height:42px; border-radius:10px; object-fit:cover; box-shadow:0 6px 24px rgba(2,6,23,0.6); }
+    .brand-avatar span{ color: #dbeafe; font-size:1.05rem }
+    body.light .brand-avatar span{ color:#071025 }
+
+    /* Top controls */
+    .top-right-controls { display:flex; gap:10px; align-items:center; }
+    .dark-toggle{ cursor:pointer; border-radius:999px; padding:.45rem .7rem; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); }
+    body.light .dark-toggle{ background: rgba(0,0,0,0.04); }
+
+    /* Hero */
+    .hero{ position:relative; padding:120px 24px 100px; text-align:center; overflow:hidden; border-bottom-left-radius:22px; border-bottom-right-radius:22px; }
+    .hero .overlay{ position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; opacity:.32; filter:saturate(120%) contrast(105%); }
+    .hero h1{ position:relative; z-index:2; font-weight:800; font-size:3.2rem; letter-spacing:.2px; margin-bottom:10px; text-shadow: 0 10px 40px rgba(2,120,255,0.06); }
+    .hero p{ position:relative; z-index:2; max-width:920px; margin:0 auto; font-size:1.15rem; color:rgba(230,238,248,0.95); }
+
+    /* Neon accent */
+    .neon { color:var(--accent); text-shadow: 0 0 12px rgba(0,229,255,0.12), 0 8px 36px rgba(0,229,255,0.05); }
+
+    .chips { margin-top:14px; }
+    .chip{ display:inline-block; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:.4rem .75rem; border-radius:999px; font-size:.95rem; margin:0 .35rem .5rem; border:1px solid rgba(255,255,255,0.04); }
+    body.light .chip{ background:#fff; border:1px solid #eef2ff; color:#071025 }
+
+    /* Floating shapes */
+    .floaters span{ position:absolute; border-radius:50%; filter: blur(10px); opacity:.22; animation: drift 14s ease-in-out infinite; }
+    .floaters .f1{ width:160px; height:160px; left:6%; top:30%; background: linear-gradient(135deg, rgba(13,110,253,0.16), rgba(111,66,193,0.1)); }
+    .floaters .f2{ width:220px; height:220px; right:6%; top:10%; background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(13,110,253,0.06)); }
+    .floaters .f3{ width:100px; height:100px; left:18%; bottom:8%; background: linear-gradient(135deg, rgba(111,66,193,0.14), rgba(13,110,253,0.06)); }
+    .floaters .f4{ width:140px; height:140px; right:18%; bottom:12%; background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(13,110,253,0.06)); }
+    @keyframes drift{ 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-18px) } }
+
+    /* Moving tech icons row */
+    .tech-row{ display:flex; gap:18px; justify-content:center; align-items:center; margin-top:26px; overflow:hidden; }
+    .tech-icon{ width:46px; height:46px; display:inline-flex; align-items:center; justify-content:center; border-radius:10px; background:rgba(255,255,255,0.03); box-shadow:0 6px 18px rgba(2,6,23,0.45); transform: translateY(0); transition: transform .45s ease; }
+    .tech-row.marquee{ animation: marquee 12s linear infinite; }
+    @keyframes marquee{ 0%{ transform: translateX(0);} 100%{ transform: translateX(-50%);} }
+
+    /* Sections */
+    section{ padding:80px 0; }
+    .section-title{ font-weight:800; font-size:2rem; text-align:center; margin-bottom:18px; }
+    .lead-lg{ font-size:1.05rem; color:rgba(210,216,230,0.88); }
+    body.light .lead-lg{ color:#374151 }
+
+    /* Cards */
+    .card{ border:0; border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); box-shadow: 0 12px 30px rgba(2,6,23,0.6); }
+    body.light .card{ background:#fff; box-shadow: 0 8px 20px rgba(11,22,40,0.04); }
+
+    /* Gallery */
+    .gallery-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:16px; }
+    .gallery-item{ position:relative; border-radius:12px; overflow:hidden; background:#041027; cursor:pointer; height:180px; display:flex; align-items:center; justify-content:center; transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .4s ease; }
+    .gallery-item:hover{ transform: translateY(-10px) rotate(-1deg); box-shadow: 0 28px 68px rgba(2,6,23,0.6); }
+    .gallery-item img, .gallery-item video{ width:100%; height:100%; object-fit:cover; display:block; }
+    .video-play-icon{ position:absolute; z-index:5; width:64px; height:64px; border-radius:999px; background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25)); display:flex; align-items:center; justify-content:center; }
+    .video-play-icon:after{ content:''; border-style:solid; border-width:12px 0 12px 18px; border-color: transparent transparent transparent #fff; margin-left:6px; }
+
+    /* Counters */
+    .counters{ display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:18px; align-items:center; }
+    .counter{ text-align:center; padding:20px; border-radius:12px; }
+    .counter h3{ font-size:1.8rem; margin:6px 0; color:var(--accent); }
+    .counter p{ margin:0; color:var(--muted); }
+
+    /* Blog */
+    .blog-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:18px; }
+    .blog-card{ padding:18px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); transition: transform .35s ease, box-shadow .35s ease; }
+    .blog-card:hover{ transform: translateY(-8px); box-shadow:0 18px 40px rgba(2,6,23,0.5); }
+
+    /* Footer */
+    footer{ margin-top:40px; padding:18px 0; color:rgba(210,216,230,0.7); }
+
+    /* Loader */
+    #loader{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#020617, #051025); z-index:9999; }
+    .spinner{ width:56px; height:56px; border-radius:50%; border:6px solid rgba(255,255,255,.06); border-top-color:var(--brand1); animation:spin 1s linear infinite; }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    /* Floating WhatsApp */
+    .float-whatsapp{ position:fixed; right:18px; bottom:18px; z-index:1100; display:flex; gap:8px; flex-direction:column; }
+    .float-whatsapp a{ width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; background:linear-gradient(135deg,#25D366,#128C7E); box-shadow: 0 10px 30px rgba(18,140,126,0.18); }
+
+    @media (max-width:576px){ .hero h1{ font-size:2rem } .gallery-item{ height:140px } }
+  </style>
+</head>
+<body>
+
+<div id="loader" role="status" aria-hidden="false"><div class="spinner" aria-hidden="true"></div></div>
+
+<nav class="navbar navbar-expand-lg fixed-top" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <a class="brand-avatar" href="#home" aria-label="Go to home">
+      {% if profile_url %}
+        <img src="{{ profile_url }}" alt="profile">
+      {% endif %}
+      <span>MUGA<span style="color:var(--brand1)">.dev</span></span>
+    </a>
+
+    <div class="top-right-controls ms-auto">
+      <button id="themeBtn" class="dark-toggle" title="Toggle light / dark" aria-pressed="false">🌙</button>
+      <a class="btn btn-sm btn-outline-light ms-2" href="{{ url_for('blog_list') }}">Updates</a>
+      <a class="btn btn-sm btn-outline-light ms-2" href="{{ url_for('admin') }}">TECHKNOW</a>
+    </div>
+  </div>
+</nav>
+
+<header id="home" class="hero" role="banner">
+  {% if hero_url %}
+    <div class="overlay" style="background-image: url('{{ hero_url }}');" aria-hidden="true"></div>
+  {% else %}
+    <div class="overlay" style="background: linear-gradient(135deg,#061428 0%, #0b2540 100%);" aria-hidden="true"></div>
+  {% endif %}
+
+  <div class="floaters" aria-hidden="true">
+    <span class="f1"></span>
+    <span class="f2"></span>
+    <span class="f3"></span>
+    <span class="f4"></span>
+  </div>
+
+  <div class="container position-relative" style="z-index:2">
+    <h1 data-aos="fade-up">✅ <span class="neon">WELCOME</span> TO TECHKNOW SOLUTIONS</h1>
+    <p data-aos="fade-up" data-aos-delay="120" class="mt-3">ICT Support, Network consultancy & Cybersecurity specialist. We help secure systems, automate work, and teach teams how to stay safe online.</p>
+
+    <div class="chips mt-3" data-aos="fade-up" data-aos-delay="220">
+      <span class="chip">ICT Support</span>
+      <span class="chip">Networking</span>
+      <span class="chip">Cybersecurity</span>
+      <span class="chip">Automation</span>
+    </div>
+
+    <!-- moving tech icons marquee -->
+    <div class="tech-row marquee" aria-hidden="true" style="margin-top:20px;" data-aos="zoom-in" data-aos-delay="320">
+      <div class="tech-icon">🔒</div>
+      <div class="tech-icon">📱</div>
+      <div class="tech-icon">🛰️</div>
+      <div class="tech-icon">🛠️</div>
+      <div class="tech-icon">☁️</div>
+      <div class="tech-icon">📶</div>
+      <!-- duplicated set for continuous loop -->
+      <div class="tech-icon">🔒</div>
+      <div class="tech-icon">📱</div>
+      <div class="tech-icon">🛰️</div>
+      <div class="tech-icon">🛠️</div>
+      <div class="tech-icon">☁️</div>
+      <div class="tech-icon">📶</div>
+    </div>
+
+    <div class="mt-4" data-aos="fade-up" data-aos-delay="420">
+      <a href="#portfolio" class="btn btn-lg btn-primary me-2">See My Work</a>
+      <a href="#contact" class="btn btn-lg btn-outline-light">Get in Touch</a>
+    </div>
+  </div>
+</header>
+
+<main class="container" role="main" style="padding-top:100px;">
+  {% with msgs=get_flashed_messages() %}
+    {% if msgs %}
+      <div class="mt-4" aria-live="polite">
+        {% for m in msgs %}
+          <div class="alert alert-info">{{ m }}</div>
+        {% endfor %}
       </div>
-      <div class="flex items-center gap-4">
-        <a href="/" target="_blank" class="px-4 py-1.5 rounded-lg border border-gray-700 hover:border-cyan-500/50 hover:bg-cyan-950/20 text-xs font-semibold text-gray-300 transition-all flex items-center gap-2">
-          View Website ↗
-        </a>
-        <a href="/logout" class="px-3.5 py-1.5 rounded-lg bg-rose-950/20 hover:bg-rose-900/30 border border-rose-900/40 text-rose-300 text-xs font-bold transition-all">
-          Logout
-        </a>
+    {% endif %}
+  {% endwith %}
+
+  <!-- About -->
+  <section id="about" class="reveal" aria-labelledby="about-title">
+    <h2 class="section-title" id="about-title" data-aos="fade-up">About Me</h2>
+    <div class="card p-4 mx-auto" style="max-width:1000px" data-aos="fade-up" data-aos-delay="120">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4 text-center">
+          {% if profile_url %}
+            <img src="{{ profile_url }}" style="width:160px;height:160px;object-fit:cover;border-radius:12px;" alt="Profile image of Caleb Muga">
+          {% else %}
+            <div style="width:160px;height:160px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#061426;font-weight:700;font-size:28px;" aria-hidden="true">CM</div>
+          {% endif %}
+        </div>
+        <div class="col-md-8">
+          <h3 class="mb-4">
+            ICT Support • Networking • Cybersecurity
+          </h3>
+
+          <p>
+            Customer-focused ICT Officer with practical
+            experience in Network Administration,
+            Cybersecurity, Automation, and IT Support.
+          </p>
+
+          <div class="row mt-4">
+
+            <div class="col-md-6">
+              <ul>
+                <li>CCNA Certified</li>
+                <li>Cybersecurity Specialist</li>
+                <li>Automation Expert</li>
+              </ul>
+            </div>
+
+            <div class="col-md-6">
+              <ul>
+                <li>Business IT Analyst</li>
+                <li>Technical Documentation</li>
+                <li>Cloud & Systems Support</li>
+              </ul>
+            </div>
+
+          </div>
+
+          {% if cv_file %}
+            <a href="{{ url_for('download_file', kind='cv', filename=cv_file) }}" class="btn btn-outline-light mt-2">Download CV</a>
+          {% endif %}
+        </div>
       </div>
     </div>
-  </header>
+  </section>  
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+  <!-- Achievements / Counters -->
+  <section id="stats" class="mt-4" aria-labelledby="stats-title">
+    <h2 class="section-title" id="stats-title" data-aos="fade-up">Achievements</h2>
+    <div class="counters" data-aos="fade-up" data-aos-delay="120">
+      <div class="counter card text-center p-3">
+        <p class="text-muted">Projects Completed</p>
+        <h3 id="count-projects">46</h3>
+        <p class="small text-muted">Trusted solutions delivered</p>
+      </div>
+      <div class="counter card text-center p-3">
+        <p class="text-muted">Clients Served</p>
+        <h3 id="count-clients">54</h3>
+        <p class="small text-muted">Local businesses & individuals</p>
+      </div>
+      <div class="counter card text-center p-3">
+        <p class="text-muted">Networks Secured</p>
+        <h3 id="count-networks">8</h3>
+        <p class="small text-muted">Routers, switches & endpoints</p>
+      </div>
+      <div class="counter card text-center p-3">
+        <p class="text-muted">Blog Reads</p>
+        <h3 id="count-reads">189</h3>
+        <p class="small text-muted">Helpful cyber safety tips shared</p>
+      </div>
+    </div>
+  </section>
 
-    <!-- Flash Notifications Wrapper -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="space-y-3">
-          {% for category, msg in messages %}
-            <div class="p-4 rounded-xl text-xs sm:text-sm flex items-center justify-between {% if category == 'success' %} bg-emerald-950/40 text-emerald-300 border border-emerald-800/50 {% else %} bg-rose-950/40 text-rose-300 border border-rose-800/50 {% endif %}">
-              <span class="font-medium">{{ msg }}</span>
-              <button onclick="this.parentElement.remove()" class="text-lg opacity-70 hover:opacity-100">&times;</button>
+  <!-- Portfolio / Gallery -->
+  <section id="portfolio" class="mt-5" aria-labelledby="portfolio-title">
+    <h2 class="section-title" id="portfolio-title" data-aos="fade-up">Portfolio & Gallery</h2>
+    <p class="text-center lead-lg" data-aos="fade-up" data-aos-delay="80">Featured gallery and private project submission.</p>
+
+    <div class="card p-3 mb-4" data-aos="fade-up" data-aos-delay="140">
+      <h5 class="mb-3">Featured Gallery ({{ gallery_images|length }})</h5>
+      {% if gallery_images %}
+        <div class="gallery-grid">
+          {% for g in gallery_images %}
+            <div class="gallery-item" onclick="openGalleryItem({{ loop.index0 }})" role="button" tabindex="0" aria-label="Open gallery item {{ loop.index }}" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 40 }}">
+              {% if g.type == 'image' %}
+                <img src="{{ g.url }}" alt="Gallery image {{ loop.index }}">
+              {% elif g.type == 'video' %}
+                <video muted playsinline preload="metadata" aria-hidden="true">
+                  <source src="{{ g.url }}">
+                </video>
+                <div class="video-play-icon" aria-hidden="true"></div>
+              {% else %}
+                <img src="{{ g.url }}" alt="Gallery {{ loop.index }}">
+              {% endif %}
             </div>
           {% endfor %}
         </div>
+      {% else %}
+        <p class="text-muted mb-0">Gallery is empty. (Admin can add photos or videos in the Admin Panel.)</p>
       {% endif %}
-    {% endwith %}
-
-    <!-- Top Grid: System Analytics & Quick Setup Banners -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <!-- System Admin Meta Cards -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 flex flex-col justify-between space-y-4">
-        <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Active Slots</h3>
-        <div class="space-y-3">
-          <!-- Profile Asset File Upload Field -->
-          <form action="/admin/upload" method="post" enctype="multipart/form-data" class="flex items-center justify-between border-b border-gray-800/80 pb-3">
-            <input type="hidden" name="kind" value="profile">
-            <div class="text-xs">
-              <span class="block text-gray-400">Avatar Icon File</span>
-              <span class="font-mono text-[10px] text-cyan-400">{{ profile_img or 'Not Uploaded' }}</span>
-            </div>
-            <label class="px-3 py-1 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-[11px] font-bold rounded cursor-pointer transition-colors">
-              Update <input type="file" name="asset_file" onchange="this.form.submit()" class="hidden">
-            </label>
-          </form>
-
-          <!-- Banner File Upload Field -->
-          <form action="/admin/upload" method="post" enctype="multipart/form-data" class="flex items-center justify-between border-b border-gray-800/80 pb-3">
-            <input type="hidden" name="kind" value="banner">
-            <div class="text-xs">
-              <span class="block text-gray-400">Homepage Banner</span>
-              <span class="font-mono text-[10px] text-cyan-400">{{ banner_img or 'Not Uploaded' }}</span>
-            </div>
-            <label class="px-3 py-1 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-[11px] font-bold rounded cursor-pointer transition-colors">
-              Update <input type="file" name="asset_file" onchange="this.form.submit()" class="hidden">
-            </label>
-          </form>
-
-          <!-- CV PDF Doc Core File Slot -->
-          <form action="/admin/upload" method="post" enctype="multipart/form-data" class="flex items-center justify-between pb-1">
-            <input type="hidden" name="kind" value="cv">
-            <div class="text-xs">
-              <span class="block text-gray-400">Curriculum Vitae (CV)</span>
-              <span class="font-mono text-[10px] text-cyan-400">{{ cv_file or 'Not Uploaded' }}</span>
-            </div>
-            <label class="px-3 py-1 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-[11px] font-bold rounded cursor-pointer transition-colors">
-              Update <input type="file" name="asset_file" onchange="this.form.submit()" class="hidden">
-            </label>
-          </form>
-        </div>
-      </div>
-
-      <!-- Live Messaging Volume Line Chart Analytics -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-2">
-        <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase mb-4">Contact Inbox Velocity (30 Days)</h3>
-        <div class="h-44">
-          <canvas id="velocityChart"></canvas>
-        </div>
-      </div>
-
     </div>
 
-    <!-- MAIN MEDIA ATTACHER & COMPOSER SECTION -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      
-      <!-- Right/Sidebar: Media Assets Gallery & Quick Markdown Injectors -->
-      <div id="media-gallery" class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-5 space-y-6">
-        <div>
-          <h2 class="text-base font-bold text-white">Media Manager Drawer</h2>
-          <p class="text-xs text-gray-400 mt-1">Upload images/videos, then click shortcut buttons to instant insert codes straight into the article composer.</p>
-        </div>
-
-        <!-- Add Items to Sandbox Media Database -->
-        <form action="/admin/gallery/add" method="post" enctype="multipart/form-data" class="p-4 bg-[#080d1a] border border-gray-800/80 rounded-xl space-y-3">
-          <label class="block text-xs font-semibold text-gray-300">Register New Asset File</label>
-          <div class="flex gap-2">
-            <input type="file" name="gallery_file" required class="flex-1 bg-gray-950 text-xs px-3 py-1.5 rounded-lg border border-gray-800 focus:outline-none focus:border-cyan-500">
-            <button type="submit" class="px-4 py-1.5 bg-gradient-to-tr from-cyan-600 to-cyan-500 text-white text-xs font-bold rounded-lg hover:from-cyan-500 transition-all">Upload</button>
-          </div>
+    <div class="card" data-aos="fade-up" data-aos-delay="220">
+      <div class="card-body">
+        <h5 class="card-title">Submit Your Project (Private)</h5>
+        <p class="text-muted mb-2">Your file is uploaded privately and only the admin can view/approve it.</p>
+        <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_project') }}">
+          <input type="file" name="file" class="form-control mb-2" required aria-label="Choose file to upload">
+          <button class="btn btn-primary">Upload</button>
         </form>
-
-        <!-- Listed Gallery Assets -->
-        <div class="space-y-3.5 max-h-[480px] overflow-y-auto pr-1">
-          {% if gallery_files %}
-            {% for g in gallery_files %}
-              <div class="p-3 bg-gray-950 rounded-xl border border-gray-950 flex flex-col justify-between space-y-3 sm:space-y-2">
-                <div class="flex items-center gap-3">
-                  <!-- Visual thumbnail checks -->
-                  {% if g.mimetype.startswith('image/') %}
-                    <img src="/media/gallery/{{ g.filename }}" alt="thumb" class="h-10 w-10 object-cover rounded-lg border border-gray-800 bg-gray-900">
-                  {% elif g.mimetype.startswith('video/') %}
-                    <div class="h-10 w-10 bg-cyan-950/50 flex items-center justify-center border border-cyan-800/40 rounded-lg text-cyan-400 font-mono text-[10px] font-bold">MP4</div>
-                  {% else %}
-                    <div class="h-10 w-10 bg-gray-900 flex items-center justify-center border border-gray-800 rounded-lg text-gray-400 font-mono text-[10px]">FILE</div>
-                  {% endif %}
-                  <div class="flex-1 min-w-0">
-                    <span class="block text-xs font-semibold text-gray-200 truncate font-mono">{{ g.filename }}</span>
-                    <span class="block text-[10px] text-gray-500">{{ g.mimetype }}</span>
-                  </div>
-                </div>
-
-                <!-- Action Injection Shortcuts -->
-                <div class="flex flex-wrap items-center gap-1.5 justify-end">
-                  {% if g.mimetype.startswith('image/') %}
-                    <!-- Image markdown tag shortcut injector -->
-                    <button type="button" onclick="injectMarkdown('![Description](/media/gallery/{{ g.filename }})')" class="px-2 py-1 bg-cyan-950/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-cyan-950 text-cyan-300 text-[10px] font-bold rounded cursor-pointer transition-all">+ Insert Image</button>
-                  {% elif g.mimetype.startswith('video/') %}
-                    <!-- Video tag constructor shortcut injector (Using nice clean styling tags) -->
-                    <button type="button" onclick="injectMarkdown('\n&lt;video src=&quot;/media/gallery/{{ g.filename }}&quot; controls class=&quot;w-full rounded-2xl border border-gray-800 my-6 shadow-2xl&quot;&gt;&lt;/video&gt;\n')" class="px-2 py-1 bg-emerald-950/40 border border-emerald-950/30 hover:border-emerald-500 hover:bg-emerald-950 text-emerald-300 text-[10px] font-bold rounded cursor-pointer transition-all">+ Insert Video Code</button>
-                  {% else %}
-                    <button type="button" onclick="injectMarkdown('[Download File](/media/gallery/{{ g.filename }})')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px] rounded cursor-pointer transition-all">+ Insert File Link</button>
-                  {% endif %}
-                  
-                  <a href="/admin/gallery/delete/{{ g.filename }}" class="px-2 py-1 bg-rose-950/20 hover:bg-rose-950 text-rose-300 text-[10px] font-bold rounded hover:text-white transition-all text-center">Delete</a>
-                </div>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="text-center py-8 text-xs text-gray-500">No media assets in the gallery vault yet. Upload records first!</div>
-          {% endif %}
-        </div>
+        <small class="text-muted d-block mt-2">Allowed: {{ allowed_exts|join(', ') }} • up to 32MB</small>
       </div>
-
-      <!-- Left: Full Markdown Blog Composer -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-7 space-y-6">
-        <div>
-          <h2 class="text-base font-bold text-white flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span>
-            Dynamic Blog Composer
-          </h2>
-          <p class="text-xs text-gray-400 mt-1">Scribble blogs using plain-text layout syntax. Safe embed routes for photos & videos uploaded above.</p>
-        </div>
-
-        <form action="/admin/blogs/add" method="post" class="space-y-4">
-          <div class="space-y-1">
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Blog Title & Slug Anchor</label>
-            <input type="text" name="title" required placeholder="e.g., Implementing sqlite BLOB streaming in local networks" class="w-full bg-gray-950 text-xs px-4 py-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-cyan-500 text-white font-medium">
-          </div>
-
-          <div class="space-y-1">
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Summary Preview (Optional Card text)</label>
-            <input type="text" name="summary" placeholder="Leave empty for auto-generated paragraph excerpt previews..." class="w-full bg-gray-950 text-xs px-4 py-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-cyan-500 text-gray-300">
-          </div>
-
-          <div class="space-y-1">
-            <div class="flex items-center justify-between">
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Markup Article Core</label>
-              <div class="text-[10px] text-cyan-400 font-mono">Supports HTML tags & code fences</div>
-            </div>
-            <!-- TextArea referenced during media tag injections -->
-            <textarea id="blog_content_editor" name="content" required rows="15" placeholder="Write article content. Use markdown syntax like # Hello or click '+ Insert' on the gallery sidebar items to automatically inject photos/videos." class="w-full bg-gray-950 text-xs px-4 py-3.5 rounded-xl border border-gray-800 focus:outline-none focus:border-cyan-500 text-gray-200 font-mono leading-relaxed focus:ring-1 focus:ring-cyan-500"></textarea>
-          </div>
-
-          <div class="flex justify-end pt-2">
-            <button type="submit" class="px-6 py-2.5 bg-gradient-to-tr from-cyan-600 to-emerald-600 text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-cyan-500/10 hover:from-cyan-500 hover:to-emerald-500 transition-all">
-              Publish Article Post
-            </button>
-          </div>
-        </form>
-      </div>
-
     </div>
+  </section>
 
-    <!-- INBOX FEEDBACK MESSAGES & SUBSCRIBERS LOG -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      
-      <!-- Left List Column: Direct Contact Inbox -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-8 space-y-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-bold text-white">Client Communications (User Inbox)</h2>
-            <p class="text-xs text-gray-400 mt-1">Messages captured through homepage forms.</p>
+  <!-- Newsletter -->
+  <section id="newsletter" class="mt-5" aria-labelledby="newsletter-title">
+    <h2 class="section-title" id="newsletter-title" data-aos="fade-up">Stay Updated</h2>
+    <p class="text-center lead-lg" data-aos="fade-up" data-aos-delay="60">Subscribe to occasional updates and new blog posts.</p>
+    <div class="card p-3 mx-auto" style="max-width:720px" data-aos="fade-up" data-aos-delay="120">
+      <form method="post" action="{{ url_for('subscribe') }}" class="d-flex gap-2 align-items-center" aria-label="Subscribe to newsletter">
+        <label for="sub-email" class="visually-hidden">Email address</label>
+        <input id="sub-email" type="email" name="email" class="form-control" placeholder="Email address" required>
+        <button class="btn btn-primary">Subscribe</button>
+      </form>
+      <div class="small text-muted mt-2">No spam. Unsubscribe anytime by contacting admin.</div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="mt-5" aria-labelledby="services-title">
+    <h2 class="section-title" id="services-title" data-aos="fade-up">Services</h2>
+    <div class="row g-4" data-aos="fade-up" data-aos-delay="80">
+      <div class="col-md-4">
+        <div class="card h-100 p-3">
+          <h5 class="card-title">Network Administration</h5>
+          <p class="mb-0">Design, deploy, and maintain reliable networks (LAN/WAN, switches, routers, VPNs).</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 p-3">
+          <h5 class="card-title">Cybersecurity</h5>
+          <p class="mb-0">Vulnerability scanning, hardening, access control, and incident response support.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 p-3">
+          <h5 class="card-title">Automation & Data Solutions</h5>
+          <p class="mb-0">Dashboards, scripts, and small automations that save time and reduce errors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog preview -->
+  <section id="blog" class="mt-5" aria-labelledby="blog-title">
+    <h2 class="section-title" id="blog-title" data-aos="fade-up">Latest from my blog</h2>
+    <div class="blog-grid mt-3" data-aos="fade-up" data-aos-delay="80">
+      {% if blog_posts %}
+        {% for b in blog_posts[:3] %}
+          <article class="blog-card" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 60 }}">
+            <h4>{{ b.title }}</h4>
+            <div class="text-muted" style="font-size:.9rem">{{ b.timestamp }}</div>
+            <p style="margin-top:.6rem; color:inherit;">{{ b.content[:200] }}{% if b.content|length > 200 %}...{% endif %}</p>
+            <a class="btn btn-sm btn-outline-light" href="{{ url_for('view_blog', slug=b.slug) }}">Read</a>
+          </article>
+        {% endfor %}
+      {% else %}
+        <div class="col-12"><p class="text-muted">No blog posts yet. (Admin can add posts.)</p></div>
+      {% endif %}
+    </div>
+    <div class="text-center mt-3" data-aos="fade-up" data-aos-delay="240"><a class="btn btn-outline-light" href="{{ url_for('blog_list') }}">See all posts</a></div>
+  </section>
+  
+  <!-- CONTACT -->
+  
+  <section id="contact">
+  
+    <div class="container">
+  
+      <h2 class="section-title" data-aos="fade-up">
+        Contact Me
+      </h2>
+  
+      <p class="section-subtitle" data-aos="fade-up">
+        Let's build something amazing together.
+      </p>
+  
+      <div class="row g-5">
+  
+        <div class="col-lg-6" data-aos="fade-right">
+  
+          <div class="glass p-5">
+  
+            <form method="post" action="{{ url_for('contact') }}">
+  
+              <input type="text"
+                     name="name"
+                     class="form-control mb-3"
+                     placeholder="Your Name"
+                     required>
+  
+              <input type="email"
+                     name="email"
+                     class="form-control mb-3"
+                     placeholder="Your Email"
+                     required>
+  
+              <textarea name="message"
+                        rows="5"
+                        class="form-control mb-3"
+                        placeholder="Your Message"
+                        required></textarea>
+  
+              <button class="btn btn-primary w-100">
+                Send Message
+              </button>
+  
+            </form>
+  
           </div>
-          {% if inbox %}
-            <a href="/admin/messages/export" class="px-3 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800/40 text-[10px] font-bold rounded-lg hover:bg-cyan-900/60 transition-all">
-              Export CSV Inbox
+  
+        </div>
+  
+        <div class="col-lg-6" data-aos="fade-left">
+  
+          <div class="glass p-5 h-100">
+  
+            <h4 class="mb-4">
+              Reach Me Directly
+            </h4>
+  
+            <p>
+              <i class="fa-solid fa-phone"></i>
+              0791 204 587
+            </p>
+  
+            <p>
+              <i class="fa-solid fa-envelope"></i>
+              info@techknowsolutions.co.ke
+            </p>
+  
+            <p>
+              <i class="fa-solid fa-location-dot"></i>
+              Nairobi, Kenya
+            </p>
+  
+            <a href="https://wa.me/254791204587"
+               target="_blank"
+               class="btn btn-success mt-3">
+               Chat on WhatsApp
             </a>
-          {% endif %}
-        </div>
-
-        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-1">
-          {% if inbox %}
-            {% for m in inbox %}
-              <div class="p-4 rounded-xl border transition-all {% if m.read %} bg-[#0a0f1d] border-gray-900/40 {% else %} bg-gradient-to-tr from-[#0f182f] to-[#122239] border-cyan-900/30 {% endif %} flex flex-col sm:flex-row justify-between sm:items-start gap-4">
-                <div class="space-y-2 flex-1">
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs font-bold text-white">{{ m.name }}</span>
-                    <span class="text-[10px] font-mono text-gray-500">{{ m.email }}</span>
-                    {% if not m.read %}
-                      <span class="px-1.5 py-0.5 bg-cyan-950 text-cyan-400 font-mono text-[8px] font-bold rounded uppercase">Unread</span>
-                    {% endif %}
-                  </div>
-                  <p class="text-xs text-gray-300 leading-relaxed font-sans whitespace-pre-wrap">{{ m.message }}</p>
-                  <span class="block text-[9px] text-gray-650 font-mono">{{ m.created_at }}</span>
-                </div>
-                <div class="flex items-center gap-1.5 self-end sm:self-auto">
-                  <a href="/admin/messages/status/{{ m.id }}" class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-[10px] font-semibold text-gray-300 rounded-lg transition-all text-center min-w-[70px]">
-                    {% if m.read %} Unlock {% else %} Read {% endif %}
-                  </a>
-                  <a href="/admin/messages/delete/{{ m.id }}" class="px-2 py-1 bg-rose-950/20 hover:bg-rose-900/40 border border-rose-900/10 text-rose-300 text-[10px] font-semibold rounded-lg hover:text-white transition-all">
-                    Discard
-                  </a>
-                </div>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="text-center py-12 text-xs text-gray-500 border border-dashed border-gray-855 rounded-xl">No contact feedback messages in the system database yet.</div>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Right Column: Newsletter Subscriber Lists -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-4 space-y-6">
-        <div>
-          <h2 class="text-base font-bold text-white">Subscribers ({{ subscribers|length }})</h2>
-          <p class="text-xs text-gray-400 mt-1">Active mailing addresses.</p>
-        </div>
-
-        <div class="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
-          {% if subscribers %}
-            {% for s in subscribers %}
-              <div class="p-3 bg-gray-950 rounded-lg border border-gray-900 flex justify-between items-center text-xs">
-                <span class="font-mono text-gray-200 truncate pr-2">{{ s.email }}</span>
-                <span class="text-[9px] text-gray-600 font-mono shrink-0">{{ s.subscribed_at.split(' ')[0] if s.subscribed_at else '' }}</span>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="text-center py-12 text-xs text-gray-500 border border-dashed border-gray-855 rounded-xl">No subscriptions recorded.</div>
-          {% endif %}
-        </div>
-      </div>
-
-    </div>
-
-    <!-- PUBLISHED BLOG ROSTER AND SHOWCASE APPLICATIONS -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      
-      <!-- Section 1: Published Blog Posts -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 space-y-6">
-        <div>
-          <h2 class="text-base font-bold text-white">Published Roster Articles ({{ blogs|length }})</h2>
-          <p class="text-xs text-gray-400 mt-1">Read and delete active published blog stories from database slots.</p>
-        </div>
-
-        <div class="space-y-3.5 max-h-[400px] overflow-y-auto pr-1">
-          {% if blogs %}
-            {% for b in blogs %}
-              <div class="p-3 bg-gray-950 border border-gray-850/30 rounded-xl flex items-center justify-between gap-4">
-                <div class="min-w-0 flex-1">
-                  <h4 class="text-xs font-bold text-white truncate">{{ b.title }}</h4>
-                  <p class="text-[10px] text-cyan-400 mt-0.5 font-mono">/blog/{{ b.slug }}</p>
-                </div>
-                <div class="flex gap-2">
-                  <a href="/blog/{{ b.slug }}" target="_blank" class="px-2.5 py-1 bg-gray-800 text-[10px] hover:text-cyan-400 rounded transition-all">View</a>
-                  <a href="/admin/blogs/delete/{{ b.id }}" class="px-2.5 py-1 bg-rose-950/20 text-rose-300 text-[10px] font-bold hover:bg-rose-900 hover:text-white rounded transition-all">Purge</a>
-                </div>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="text-center py-10 text-xs text-gray-500">No core blog records registered yet. Publish one above!</div>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Section 2: Portfolio Client Applications -->
-      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 space-y-6">
-        <div>
-          <h2 class="text-base font-bold text-white">Showcase Contribution Pipelines</h2>
-          <p class="text-xs text-gray-400 mt-1">Moderate project files uploaded anonymously by developers.</p>
-        </div>
-
-        <!-- Pending Items -->
-        <div class="space-y-4">
-          <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Pending Applications ({{ pending_projects|length }})</h3>
-          <div class="space-y-3 max-h-[220px] overflow-y-auto pr-1">
-            {% if pending_projects %}
-              {% for p in pending_projects %}
-                <div class="p-3.5 bg-gray-950 rounded-xl border border-amber-900/20 space-y-2">
-                  <div class="flex justify-between items-start gap-3">
-                    <div class="min-w-0">
-                      <span class="block text-xs font-bold text-white truncate">{{ p.title }}</span>
-                      <p class="text-xs text-gray-400 font-sans line-clamp-2 mt-1">{{ p.description }}</p>
-                      <span class="block text-[10px] font-mono text-cyan-400 mt-1 select-all hover:underline">{{ p.filename }}</span>
-                    </div>
-                    {% if p.filename.lower()[-4:] in ['.jpg', '.png', '.jpeg', '.gif', 'webp'] %}
-                      <img src="/media/gallery/{{ p.filename }}" class="h-14 w-14 object-cover rounded-md border border-gray-800 select-none pointer-events-none">
-                    {% endif %}
-                  </div>
-                  <div class="flex items-center justify-end gap-1.5 pt-1.5 border-t border-gray-850/40">
-                    <a href="/admin/projects/approve/{{ p.filename }}" class="px-2.5 py-1 bg-emerald-950 text-emerald-300 text-[10px] font-bold rounded hover:bg-emerald-900 hover:text-white transition-all">Accept</a>
-                    <a href="/admin/projects/reject/{{ p.filename }}" class="px-2.5 py-1 bg-orange-950 text-orange-300 text-[10px] font-semibold rounded hover:bg-orange-900 hover:text-white transition-all">Decline</a>
-                    <a href="/admin/projects/delete/{{ p.filename }}" class="px-2.5 py-1 bg-rose-950/20 text-rose-300 text-[10px] font-semibold rounded hover:bg-rose-955 hover:text-white transition-all">Purge</a>
-                  </div>
-                </div>
-              {% endfor %}
-            {% else %}
-              <div class="text-center py-6 text-[11px] text-gray-550 border border-gray-900 rounded-lg">No pending external contributions.</div>
-            {% endif %}
+  
           </div>
+  
         </div>
-
-        <!-- Approved Items -->
-        <div class="space-y-3 pt-2">
-          <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Approved Catalog ({{ approved_projects|length }})</h3>
-          <div class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
-            {% if approved_projects %}
-              {% for p in approved_projects %}
-                <div class="p-3 bg-gray-950 rounded-xl border border-gray-900 flex items-center justify-between text-xs">
-                  <span class="text-white font-medium truncate pr-4">{{ p.title }}</span>
-                  <div class="flex items-center gap-1.5 shrink-0">
-                    <a href="/admin/projects/reject/{{ p.filename }}" class="px-2 py-0.5 bg-orange-950 text-orange-400 text-[9px] rounded hover:bg-orange-900 hover:text-white transition-all">Unapprove</a>
-                    <a href="/admin/projects/delete/{{ p.filename }}" class="px-2 py-0.5 bg-rose-950/20 text-rose-300 text-[9px] rounded hover:bg-rose-900 hover:text-white transition-all">Purge</a>
-                  </div>
-                </div>
-              {% endfor %}
-            {% else %}
-              <div class="text-center py-4 text-[11px] text-gray-600">No active uploads approved. Items accepted display in home.</div>
-            {% endif %}
-          </div>
-        </div>
-
+  
       </div>
-
+  
     </div>
+  
+  </section>
 
-  </main>
+</main>
 
-  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center text-xs text-gray-650 border-t border-gray-900 mt-20 font-mono">
-    System Control Console Technowsol Engine. Powered by secure sqlite pipeline. Version 4.1.0-Caleb
-  </footer>
 
-  <!-- MARKDOWN EDITOR HELPER INJECTION LOGIC -->
-  <script>
-    function injectMarkdown(mdCode) {
-      const editor = document.getElementById('blog_content_editor');
-      if (!editor) return;
+</script>
+<footer>
+  <div class="container d-flex flex-wrap justify-content-between align-items-center py-3">
+    <div>© {{ year }} <strong>Caleb Muga</strong>. All rights reserved.</div>
+    <div><a class="text-decoration-none" href="#home">Back to top ↑</a></div>
+  </div>
+</footer>
+  
 
-      const start = editor.selectionStart;
-      const end = editor.selectionEnd;
-      const originalText = editor.value;
+<!-- Media modal (images & videos) -->
+<div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true" aria-labelledby="mediaModalLabel">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content" style="background:transparent;border:0;">
+      <div class="modal-body p-0">
+        <div id="mediaContainer" style="width:100%;height:auto;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:transparent;">
+          <!-- JS injects media -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-      // Slice insert inside cursor position coordinates
-      editor.value = originalText.substring(0, start) + mdCode + originalText.substring(end);
-      editor.selectionStart = editor.selectionEnd = start + mdCode.length;
-      editor.focus();
+<!-- Floating WhatsApp -->
+<div class="float-whatsapp">
+  <a href="https://wa.me/254791204587" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">📞</a>
+</div>
+
+<script>
+  // Wait for DOM
+  window.addEventListener('load', () => {
+    const l = document.getElementById('loader');
+    if(l){ l.style.opacity = '0'; setTimeout(() => l.style.display='none', 300); }
+    AOS.init({ once:true, duration:700, easing:'ease-out-cubic' });
+  });
+
+  // Reveal observer (for classes not covered by AOS)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, { threshold:.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Gallery items as array
+  const galleryItems = {{ gallery_images|tojson }};
+  const blogPosts = {{ blog_posts|tojson }};
+
+  function openGalleryItem(idx){
+    if(!galleryItems || idx < 0 || idx >= galleryItems.length) return;
+    const it = galleryItems[idx];
+    const container = document.getElementById('mediaContainer');
+    container.innerHTML = '';
+    if(it.type === 'image'){
+      const img = document.createElement('img');
+      img.src = it.url; img.alt = 'Gallery image'; img.style.width='100%'; img.style.height='auto'; img.style.display='block'; img.style.borderRadius='12px';
+      container.appendChild(img);
+    } else if(it.type === 'video'){
+      const vid = document.createElement('video');
+      vid.src = it.url; vid.controls = true; vid.autoplay = false; vid.playsInline = true; vid.style.width='100%'; vid.style.height='auto'; vid.style.display='block'; vid.style.borderRadius='12px';
+      container.appendChild(vid);
+    } else {
+      const a = document.createElement('a'); a.href = it.url; a.innerText = 'Open media'; a.target = '_blank'; container.appendChild(a);
     }
+    const modalEl = document.getElementById('mediaModal');
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
 
-    // Charting Engine Initializer
-    document.addEventListener("DOMContentLoaded", () => {
-      const ctx = document.getElementById('velocityChart');
-      if (ctx) {
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: {{ chart_labels | tojson }},
-            datasets: [{
-              label: 'Inbox Volume',
-              data: {{ chart_values | tojson }},
-              borderColor: '#06b6d4',
-              backgroundColor: 'rgba(6, 182, 212, 0.05)',
-              tension: 0.45,
-              fill: true,
-              borderWidth: 2,
-              pointRadius: 1,
-              pointHoverRadius: 5
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false }
-            },
-            scales: {
-              x: {
-                grid: { display: false },
-                ticks: { color: '#64748b', font: { size: 9, family: 'JetBrains Mono' } }
-              },
-              y: {
-                grid: { color: 'rgba(51, 65, 85, 0.15)' },
-                ticks: { color: '#64748b', stepSize: 1, font: { size: 9, family: 'JetBrains Mono' } }
-              }
-            }
-          }
-        });
-      }
+  // Counters (CountUp) - compute real-ish values from available data
+  const baseProjects = {{ gallery_images|length }} || 0;
+  const baseBlogs = {{ blog_posts|length }} || 0;
+
+  // Try to derive a realistic 'reads' value from blog objects if they include 'views' or 'reads'
+  let derivedReads = 0;
+  try{
+    if(Array.isArray(blogPosts) && blogPosts.length){
+      blogPosts.forEach(b => { derivedReads += (b.views || b.reads || 0); });
+    }
+  }catch(e){ derivedReads = 0; }
+
+  const computed = {
+    projects: Math.max(baseProjects, baseProjects),
+    clients: Math.max(5, Math.round(baseProjects * 0.7) || 5),
+    networks: Math.max(8, Math.round(baseProjects * 0.9) || 8),
+    reads: derivedReads > 0 ? derivedReads : Math.max(1200, baseBlogs * 1200)
+  };
+
+  function animateCounters(){
+    const map = [
+      { id:'count-projects', end: computed.projects },
+      { id:'count-clients', end: computed.clients },
+      { id:'count-networks', end: computed.networks },
+      { id:'count-reads', end: computed.reads }
+    ];
+    map.forEach(c => {
+      const el = document.getElementById(c.id); if(!el) return;
+      if(el.getAttribute('data-started')) return;
+      const cu = new CountUp(c.id, c.end, { duration: 2.2, separator: ',' });
+      if(!cu.error){ cu.start(); el.setAttribute('data-started','true'); }
     });
-  </script>
+  }
+  // trigger when stats section visible
+  const statSection = document.getElementById('stats');
+  if(statSection){
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ animateCounters(); obs.disconnect(); } });
+    }, { threshold: 0.3 });
+    obs.observe(statSection);
+  }
+
+  // marquee pause on hover
+  document.querySelectorAll('.tech-row.marquee').forEach(row => {
+    row.addEventListener('mouseover', () => row.style.animationPlayState = 'paused');
+    row.addEventListener('mouseout', () => row.style.animationPlayState = 'running');
+  });
+
+  // Theme toggle (persist in localStorage)
+  const themeKey = 'muga_theme';
+  const themeBtn = document.getElementById('themeBtn');
+  function applyTheme(t){ if(t==='light'){ document.body.classList.add('light'); themeBtn.setAttribute('aria-pressed','true'); themeBtn.textContent = '☀️'; }
+    else { document.body.classList.remove('light'); themeBtn.setAttribute('aria-pressed','false'); themeBtn.textContent = '🌙'; }
+  }
+  function initTheme(){ const t = localStorage.getItem(themeKey) || 'dark'; applyTheme(t); }
+  initTheme(); themeBtn.addEventListener('click', () => { const t = document.body.classList.contains('light') ? 'dark' : 'light'; localStorage.setItem(themeKey, t); applyTheme(t); });
+
+  // keyboard accessibility for gallery items (Enter to open)
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && document.activeElement && document.activeElement.classList.contains('gallery-item')){
+      const nodeList = Array.from(document.querySelectorAll('.gallery-item'));
+      const idx = nodeList.indexOf(document.activeElement);
+      if(idx >= 0) openGalleryItem(idx);
+    }
+  });
+
+  // Small parallax on scroll for hero overlay
+  window.addEventListener('scroll', () => {
+    const hero = document.querySelector('.hero .overlay');
+    if(hero){ const y = window.scrollY; hero.style.transform = `translateY(${y * 0.05}px)`; }
+  });
+
+</script>
+
+<!-- AOS & Bootstrap JS -->
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
