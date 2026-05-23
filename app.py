@@ -505,7 +505,13 @@ def page_not_found(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template("500.html"), 500
-
+# Custom template filter converts markdown to HTML, including inline HTML video players
+@app.template_filter('render_markdown')
+def render_markdown(text):
+    if not text:
+        return ""
+    # Converts the post text to HTML, supporting HTML5 <video> embedding
+    return markdown.markdown(text, extensions=['fenced_code', 'codehilite'])
 # ====== MAIN ======
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
