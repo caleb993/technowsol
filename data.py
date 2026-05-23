@@ -338,6 +338,20 @@ def delete_blog_by_id(bid):
     finally:
         conn.close()
 
+def update_blog(bid, title, content):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                slug = slugify(title) or f"post-{bid}"
+                cur.execute(
+                    "UPDATE blogs SET title = %s, slug = %s, content = %s WHERE id = %s",
+                    (title.strip(), slug, content.strip(), bid)
+                )
+                return True
+    finally:
+        conn.close()
+
 # ---------------- Files ----------------
 def _guess_mimetype(filename, file_storage=None):
     if file_storage and getattr(file_storage, "mimetype", None):
