@@ -279,10 +279,10 @@ def load_blogs():
                 return [
                     {
                         "id": r["id"],
-                        "timestamp": r["timestamp"].isoformat(timespec="seconds") if r["timestamp"] else "",
-                        "title": r["title"],
-                        "slug": r["slug"],
-                        "content": r["content"]
+                        "timestamp": (r["timestamp"].isoformat(timespec="seconds") if r["timestamp"] else "") if "timestamp" in r and r["timestamp"] else "",
+                        "title": r["title"] or "",
+                        "slug": r["slug"] or "",
+                        "content": r["content"] or ""
                     }
                     for r in cur.fetchall()
                 ]
@@ -298,7 +298,19 @@ def get_blog_by_slug(slug):
                 r = cur.fetchone()
                 if not r:
                     return None
-                return {"id": r["id"], "timestamp": r["timestamp"].isoformat(timespec="seconds") if r["timestamp"] else "", "title": r["title"], "slug": r["slug"], "content": r["content"]}
+                timestamp_str = ""
+                if r["timestamp"]:
+                    try:
+                        timestamp_str = r["timestamp"].isoformat(timespec="seconds")
+                    except Exception:
+                        timestamp_str = str(r["timestamp"])
+                return {
+                    "id": r["id"], 
+                    "timestamp": timestamp_str, 
+                    "title": r["title"] or "", 
+                    "slug": r["slug"] or "", 
+                    "content": r["content"] or ""
+                }
     finally:
         conn.close()
 
