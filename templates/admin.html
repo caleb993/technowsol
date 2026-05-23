@@ -1,352 +1,450 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin • Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      body{background:#0b1220;color:#e6eef8;padding:18px}
-      .card{border:0;border-radius:12px;background:#0f1724;padding:12px}
-      .small-muted{ color:#9aa1b0 }
-    </style>
-    </head><body>
-    <div class="container-fluid">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><h1 class="mb-0">Admin Panel</h1><div class="text-muted">Manage messages, uploads & media</div></div>
-        <div class="d-flex gap-2">
-          <a class="btn btn-outline-secondary" href="{{ url_for('export_messages') }}">Export CSV</a>
-          <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Logout</a>
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technowsol - Secure System Admin</title>
+  <!-- Tailwind CSS Grid utilities -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js for beautiful inbox volume records animation -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Beautiful Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0b0f19] text-gray-200 font-sans min-h-screen">
+
+  <!-- Header Panel Navigation header -->
+  <header class="border-b border-gray-800 bg-[#0c1222]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-emerald-500 flex items-center justify-center font-bold text-white shadow-lg shadow-cyan-500/20 shadow-glow">
+          T
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-tight">TECHNOWSOL</h1>
+          <p class="text-[10px] text-cyan-400 font-bold tracking-widest uppercase">System Control Unit</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="/" target="_blank" class="px-4 py-1.5 rounded-lg border border-gray-700 hover:border-cyan-500/50 hover:bg-cyan-950/20 text-xs font-semibold text-gray-300 transition-all flex items-center gap-2">
+          View Website ↗
+        </a>
+        <a href="/logout" class="px-3.5 py-1.5 rounded-lg bg-rose-950/20 hover:bg-rose-900/30 border border-rose-900/40 text-rose-300 text-xs font-bold transition-all">
+          Logout
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- Flash Notifications Wrapper -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="space-y-3">
+          {% for category, msg in messages %}
+            <div class="p-4 rounded-xl text-xs sm:text-sm flex items-center justify-between {% if category == 'success' %} bg-emerald-950/40 text-emerald-300 border border-emerald-800/50 {% else %} bg-rose-950/40 text-rose-300 border border-rose-800/50 {% endif %}">
+              <span class="font-medium">{{ msg }}</span>
+              <button onclick="this.parentElement.remove()" class="text-lg opacity-70 hover:opacity-100">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Top Grid: System Analytics & Quick Setup Banners -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- System Admin Meta Cards -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 flex flex-col justify-between space-y-4">
+        <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase">Active Slots</h3>
+        <div class="space-y-3">
+          <!-- Profile Asset File Upload Field -->
+          <form action="/admin/upload" method="post" enctype="multipart/form-data" class="flex items-center justify-between border-b border-gray-800/80 pb-3">
+            <input type="hidden" name="kind" value="profile">
+            <div class="text-xs">
+              <span class="block text-gray-400">Avatar Icon File</span>
+              <span class="font-mono text-[10px] text-cyan-400">{{ profile_img or 'Not Uploaded' }}</span>
+            </div>
+            <label class="px-3 py-1 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-[11px] font-bold rounded cursor-pointer transition-colors">
+              Update <input type="file" name="asset_file" onchange="this.form.submit()" class="hidden">
+            </label>
+          </form>
+
+          <!-- Banner File Upload Field -->
+          <form action="/admin/upload" method="post" enctype="multipart/form-data" class="flex items-center justify-between border-b border-gray-800/80 pb-3">
+            <input type="hidden" name="kind" value="banner">
+            <div class="text-xs">
+              <span class="block text-gray-400">Homepage Banner</span>
+              <span class="font-mono text-[10px] text-cyan-400">{{ banner_img or 'Not Uploaded' }}</span>
+            </div>
+            <label class="px-3 py-1 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-[11px] font-bold rounded cursor-pointer transition-colors">
+              Update <input type="file" name="asset_file" onchange="this.form.submit()" class="hidden">
+            </label>
+          </form>
+
+          <!-- CV PDF Doc Core File Slot -->
+          <form action="/admin/upload" method="post" enctype="multipart/form-data" class="flex items-center justify-between pb-1">
+            <input type="hidden" name="kind" value="cv">
+            <div class="text-xs">
+              <span class="block text-gray-400">Curriculum Vitae (CV)</span>
+              <span class="font-mono text-[10px] text-cyan-400">{{ cv_file or 'Not Uploaded' }}</span>
+            </div>
+            <label class="px-3 py-1 bg-gray-800 hover:bg-gray-750 border border-gray-700 text-[11px] font-bold rounded cursor-pointer transition-colors">
+              Update <input type="file" name="asset_file" onchange="this.form.submit()" class="hidden">
+            </label>
+          </form>
         </div>
       </div>
 
-      {% with msgs_flash = get_flashed_messages() %}
-        {% if msgs_flash %}
-          <div class="mb-3">
-            {% for fm in msgs_flash %}<div class="alert alert-info">{{ fm }}</div>{% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-
-      <div class="row g-4">
-        <div class="col-lg-7">
-          <div class="card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5>Messages ({{ total_filtered }})</h5>
-              <form class="d-flex" method="get" style="gap:8px;">
-                <input name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search messages..." aria-label="Search messages">
-                <select name="show" class="form-select form-select-sm" aria-label="Filter messages">
-                  <option value="all" {% if show=='all' %}selected{% endif %}>All</option>
-                  <option value="unread" {% if show=='unread' %}selected{% endif %}>Unread</option>
-                </select>
-                <input type="hidden" name="page" value="1">
-                <button class="btn btn-primary btn-sm">Search</button>
-              </form>
-            </div>
-
-            {% if display_msgs %}
-              <div class="table-responsive">
-                <table class="table table-sm table-striped" style="color:inherit;">
-                  <thead><tr><th>#</th><th>When</th><th>Name</th><th>Email</th><th>Snippet</th><th>Actions</th></tr></thead>
-                  <tbody>
-                    {% for m in display_msgs %}
-                      <tr>
-                        <td>{{ loop.index + (page-1)*per_page }}</td>
-                        <td>{{ m.timestamp }}</td>
-                        <td>{{ m.name }} {% if m.status=='unread' %}<span style="color:#fff;background:#d63384;padding:2px 6px;border-radius:8px;font-size:.8rem;">unread</span>{% endif %}</td>
-                        <td><a style="color:inherit" href="mailto:{{ m.email }}">{{ m.email }}</a></td>
-                        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">{{ m.message[:120] }}{% if m.message|length>120 %}...{% endif %}</td>
-                        <td>
-                          <button class="btn btn-sm btn-outline-primary" onclick="openMessageModal({{ m.gid }})">View</button>
-                          <form method="post" action="{{ url_for('delete_message', mid=m.gid) }}" style="display:inline">
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
-                          </form>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-
-              <nav class="mt-2"><ul class="pagination pagination-sm">
-                <li class="page-item {% if page<=1 %}disabled{% endif %}"><a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ page-1 }}&per_page={{ per_page }}">Previous</a></li>
-                {% for p in range(1, pages+1) %}<li class="page-item {% if p==page %}active{% endif %}"><a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ p }}&per_page={{ per_page }}">{{ p }}</a></li>{% endfor %}
-                <li class="page-item {% if page>=pages %}disabled{% endif %}"><a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ page+1 }}&per_page={{ per_page }}">Next</a></li>
-              </ul></nav>
-            {% else %}
-              <p class="text-muted">No messages match your criteria.</p>
-            {% endif %}
-          </div>
-
-          <!-- Analytics chart (Chart.js) -->
-          <div class="card mt-3">
-            <h5>Analytics (Messages last 30 days)</h5>
-            <canvas id="messagesChart" width="400" height="120" aria-label="Messages chart"></canvas>
-            <small class="text-muted d-block mt-2">This chart shows number of messages per day (last 30 days).</small>
-          </div>
-
-        </div>
-
-        <div class="col-lg-5">
-          <div class="card">
-            <h5>Visitor Uploads (Pending) <small>({{ pending|length }})</small></h5>
-            {% if pending %}
-              <ul class="list-group mb-2">
-                {% for f in pending %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;border:1px solid #1d2b4a;">
-                    <span style="max-width:60%;overflow:hidden;text-overflow:ellipsis;">{{ f }}</span>
-                    <span class="d-flex gap-2">
-                      <form method="post" action="{{ url_for('approve_file', filename=f) }}"><button class="btn btn-sm btn-success">Approve</button></form>
-                      <form method="post" action="{{ url_for('reject_file', filename=f) }}"><button class="btn btn-sm btn-danger">Reject</button></form>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted">No pending uploads.</p>
-            {% endif %}
-
-            <hr>
-            <h5>Approved Files</h5>
-            {% if projects %}
-              <ul class="list-group mb-2">
-                {% for f in projects %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;border:1px solid #1d2b4a;">
-                    <span style="max-width:60%;overflow:hidden;text-overflow:ellipsis;">{{ f }}</span>
-                    <span>
-                      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('download_file', kind='project', filename=f) }}">Download</a>
-                      <form method="post" action="{{ url_for('delete_project', filename=f) }}" style="display:inline"><button class="btn btn-sm btn-danger">Delete</button></form>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted">No approved files yet.</p>
-            {% endif %}
-
-            <hr>
-            <h5>Owner CV</h5>
-            {% if cv_file %}
-              <p>Latest CV: <strong>{{ cv_file }}</strong></p>
-              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('download_file', kind='cv', filename=cv_file) }}">Download CV</a>
-            {% else %}
-              <p class="text-muted">No CV uploaded yet.</p>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_cv_admin') }}" class="mt-2">
-              <input type="file" name="cv" class="form-control form-control-sm mb-2" required>
-              <button class="btn btn-warning btn-sm">Upload / Replace CV</button>
-            </form>
-          </div>
-
-          <div class="card mt-3">
-            <h5>Site Media</h5>
-            <div class="mb-2">
-              <div class="small-muted">Profile</div>
-              {% if prof %}<img src="{{ url_for('media_file', kind='profile', filename=prof) }}" style="width:64px;height:64px;border-radius:8px;">{% else %}<div class="text-muted">None</div>{% endif %}
-              <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_profile_image') }}" class="mt-2">
-                <input type="file" name="image" accept="image/*" class="form-control form-control-sm mb-2" required>
-                <button class="btn btn-outline-primary btn-sm">Upload</button>
-              </form>
-            </div>
-            <div class="mb-2">
-              <div class="small-muted">Hero Background</div>
-              {% if hero %}<img src="{{ url_for('media_file', kind='hero', filename=hero) }}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;">{% else %}<div class="text-muted">None</div>{% endif %}
-              <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_hero_image') }}" class="mt-2">
-                <input type="file" name="image" accept="image/*" class="form-control form-control-sm mb-2" required>
-                <button class="btn btn-outline-primary btn-sm">Upload</button>
-              </form>
-            </div>
-
-            <hr>
-            <h6>Gallery</h6>
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_gallery') }}">
-              <input type="file" name="images" accept="image/*,video/*" multiple class="form-control form-control-sm mb-2" required>
-              <button class="btn btn-primary btn-sm">Upload Image(s) / Video(s)</button>
-            </form>
-            {% if gal %}
-              <ul class="list-group mt-2">
-                {% for g in gal %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                      {% if g.type == 'image' %}
-                        <img src="{{ g.url }}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
-                      {% elif g.type == 'video' %}
-                        <video muted playsinline preload="metadata" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
-                          <source src="{{ g.url }}">
-                        </video>
-                      {% else %}
-                        <img src="{{ g.url }}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
-                      {% endif %}
-                      <span style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">{{ g.name }}</span>
-                    </div>
-                    <form method="post" action="{{ url_for('delete_gallery_image', filename=g.name) }}"><button class="btn btn-sm btn-danger">Delete</button></form>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted mt-2">No gallery media yet.</p>
-            {% endif %}
-          </div>
-
+      <!-- Live Messaging Volume Line Chart Analytics -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-2">
+        <h3 class="text-sm font-semibold text-gray-400 tracking-wider uppercase mb-4">Contact Inbox Velocity (30 Days)</h3>
+        <div class="h-44">
+          <canvas id="velocityChart"></canvas>
         </div>
       </div>
 
-      <hr>
-      <h5>Blog Posts</h5>
-      <div class="card">
-        <form method="post" action="{{ url_for('admin_add_blog') }}">
-          <input name="title" class="form-control mb-2" placeholder="Post title" required>
-          <textarea name="content" class="form-control mb-2" rows="4" placeholder="Write post content (plain text)..." required></textarea>
-          <button class="btn btn-primary btn-sm">Publish</button>
+    </div>
+
+    <!-- MAIN MEDIA ATTACHER & COMPOSER SECTION -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Right/Sidebar: Media Assets Gallery & Quick Markdown Injectors -->
+      <div id="media-gallery" class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-5 space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-white">Media Manager Drawer</h2>
+          <p class="text-xs text-gray-400 mt-1">Upload images/videos, then click shortcut buttons to instant insert codes straight into the article composer.</p>
+        </div>
+
+        <!-- Add Items to Sandbox Media Database -->
+        <form action="/admin/gallery/add" method="post" enctype="multipart/form-data" class="p-4 bg-[#080d1a] border border-gray-800/80 rounded-xl space-y-3">
+          <label class="block text-xs font-semibold text-gray-300">Register New Asset File</label>
+          <div class="flex gap-2">
+            <input type="file" name="gallery_file" required class="flex-1 bg-gray-950 text-xs px-3 py-1.5 rounded-lg border border-gray-800 focus:outline-none focus:border-cyan-500">
+            <button type="submit" class="px-4 py-1.5 bg-gradient-to-tr from-cyan-600 to-cyan-500 text-white text-xs font-bold rounded-lg hover:from-cyan-500 transition-all">Upload</button>
+          </div>
         </form>
 
-        <hr>
-        {% if blogs %}
-          <ul class="list-group">
-            {% for b in blogs %}
-              <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;">
-                <div>
-                  <strong>{{ b.title }}</strong><div class="text-muted">{{ b.timestamp }}</div>
+        <!-- Listed Gallery Assets -->
+        <div class="space-y-3.5 max-h-[480px] overflow-y-auto pr-1">
+          {% if gallery_files %}
+            {% for g in gallery_files %}
+              <div class="p-3 bg-gray-950 rounded-xl border border-gray-950 flex flex-col justify-between space-y-3 sm:space-y-2">
+                <div class="flex items-center gap-3">
+                  <!-- Visual thumbnail checks -->
+                  {% if g.mimetype.startswith('image/') %}
+                    <img src="/media/gallery/{{ g.filename }}" alt="thumb" class="h-10 w-10 object-cover rounded-lg border border-gray-800 bg-gray-900">
+                  {% elif g.mimetype.startswith('video/') %}
+                    <div class="h-10 w-10 bg-cyan-950/50 flex items-center justify-center border border-cyan-800/40 rounded-lg text-cyan-400 font-mono text-[10px] font-bold">MP4</div>
+                  {% else %}
+                    <div class="h-10 w-10 bg-gray-900 flex items-center justify-center border border-gray-800 rounded-lg text-gray-400 font-mono text-[10px]">FILE</div>
+                  {% endif %}
+                  <div class="flex-1 min-w-0">
+                    <span class="block text-xs font-semibold text-gray-200 truncate font-mono">{{ g.filename }}</span>
+                    <span class="block text-[10px] text-gray-500">{{ g.mimetype }}</span>
+                  </div>
                 </div>
-                <div>
-                  <a class="btn btn-sm btn-outline-primary" href="{{ url_for('view_blog', slug=b.slug) }}" target="_blank">View</a>
-                  <form method="post" action="{{ url_for('admin_delete_blog', bid=b.id) }}" style="display:inline"><button class="btn btn-sm btn-danger">Delete</button></form>
+
+                <!-- Action Injection Shortcuts -->
+                <div class="flex flex-wrap items-center gap-1.5 justify-end">
+                  {% if g.mimetype.startswith('image/') %}
+                    <!-- Image markdown tag shortcut injector -->
+                    <button type="button" onclick="injectMarkdown('![Description](/media/gallery/{{ g.filename }})')" class="px-2 py-1 bg-cyan-950/40 border border-cyan-900/30 hover:border-cyan-500 hover:bg-cyan-950 text-cyan-300 text-[10px] font-bold rounded cursor-pointer transition-all">+ Insert Image</button>
+                  {% elif g.mimetype.startswith('video/') %}
+                    <!-- Video tag constructor shortcut injector (Using nice clean styling tags) -->
+                    <button type="button" onclick="injectMarkdown('\n&lt;video src=&quot;/media/gallery/{{ g.filename }}&quot; controls class=&quot;w-full rounded-2xl border border-gray-800 my-6 shadow-2xl&quot;&gt;&lt;/video&gt;\n')" class="px-2 py-1 bg-emerald-950/40 border border-emerald-950/30 hover:border-emerald-500 hover:bg-emerald-950 text-emerald-300 text-[10px] font-bold rounded cursor-pointer transition-all">+ Insert Video Code</button>
+                  {% else %}
+                    <button type="button" onclick="injectMarkdown('[Download File](/media/gallery/{{ g.filename }})')" class="px-2 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 text-[10px] rounded cursor-pointer transition-all">+ Insert File Link</button>
+                  {% endif %}
+                  
+                  <a href="/admin/gallery/delete/{{ g.filename }}" class="px-2 py-1 bg-rose-950/20 hover:bg-rose-950 text-rose-300 text-[10px] font-bold rounded hover:text-white transition-all text-center">Delete</a>
                 </div>
-              </li>
+              </div>
             {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No blog posts yet.</p>
-        {% endif %}
-      </div>
-
-      <hr>
-      <h5>Subscribers ({{ subscribers|length }})</h5>
-      <div class="card">
-        {% if subscribers %}
-          <ul class="list-group">
-            {% for s in subscribers %}
-              <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;">
-                <div>{{ s.get('email') }} <div class="text-muted small">{{ s.get('timestamp') }}</div></div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No subscribers yet.</p>
-        {% endif %}
-      </div>
-
-    </div>
-
-    <!-- Message modal -->
-    <div class="modal fade" id="msgModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" style="background:#0b1220;border:1px solid #1d2b4a;">
-          <div class="modal-header"><h5 class="modal-title">Message details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-          <div class="modal-body">
-            <div><strong>From:</strong> <span id="modal-name"></span></div>
-            <div class="mb-2"><strong>Email:</strong> <a id="modal-email" href=""></a></div>
-            <div class="mb-2"><strong>When:</strong> <span id="modal-when"></span></div>
-            <hr>
-            <div id="modal-message" style="white-space:pre-wrap;"></div>
-          </div>
-          <div class="modal-footer">
-            <button id="modal-toggle-read" class="btn btn-outline-primary">Mark read</button>
-            <form id="modal-delete-form" method="post" action=""><button class="btn btn-danger" onclick="return confirm('Delete this message?')">Delete</button></form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
+          {% else %}
+            <div class="text-center py-8 text-xs text-gray-500">No media assets in the gallery vault yet. Upload records first!</div>
+          {% endif %}
         </div>
       </div>
+
+      <!-- Left: Full Markdown Blog Composer -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-7 space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span>
+            Dynamic Blog Composer
+          </h2>
+          <p class="text-xs text-gray-400 mt-1">Scribble blogs using plain-text layout syntax. Safe embed routes for photos & videos uploaded above.</p>
+        </div>
+
+        <form action="/admin/blogs/add" method="post" class="space-y-4">
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Blog Title & Slug Anchor</label>
+            <input type="text" name="title" required placeholder="e.g., Implementing sqlite BLOB streaming in local networks" class="w-full bg-gray-950 text-xs px-4 py-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-cyan-500 text-white font-medium">
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Summary Preview (Optional Card text)</label>
+            <input type="text" name="summary" placeholder="Leave empty for auto-generated paragraph excerpt previews..." class="w-full bg-gray-950 text-xs px-4 py-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-cyan-500 text-gray-300">
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">Markup Article Core</label>
+              <div class="text-[10px] text-cyan-400 font-mono">Supports HTML tags & code fences</div>
+            </div>
+            <!-- TextArea referenced during media tag injections -->
+            <textarea id="blog_content_editor" name="content" required rows="15" placeholder="Write article content. Use markdown syntax like # Hello or click '+ Insert' on the gallery sidebar items to automatically inject photos/videos." class="w-full bg-gray-950 text-xs px-4 py-3.5 rounded-xl border border-gray-800 focus:outline-none focus:border-cyan-500 text-gray-200 font-mono leading-relaxed focus:ring-1 focus:ring-cyan-500"></textarea>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="px-6 py-2.5 bg-gradient-to-tr from-cyan-600 to-emerald-600 text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-cyan-500/10 hover:from-cyan-500 hover:to-emerald-500 transition-all">
+              Publish Article Post
+            </button>
+          </div>
+        </form>
+      </div>
+
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-      // openMessageModal uses credentials and improved error handling
-      function openMessageModal(gid){
-        try {
-          const base = '{{ url_for("message_json", mid=0) }}';
-          const url = base.replace('/0', '/' + encodeURIComponent(gid));
-          fetch(url, { credentials: 'same-origin' })
-            .then(r => {
-              if (!r.ok) {
-                console.error('Failed to fetch message JSON, status:', r.status, r.statusText);
-                throw new Error('Status ' + r.status);
-              }
-              return r.json();
-            })
-            .then(data => {
-              document.getElementById('modal-name').innerText = data.name || '(no name)';
-              const emailEl = document.getElementById('modal-email');
-              emailEl.innerText = data.email || '(no email)'; emailEl.href = 'mailto:' + (data.email || '');
-              document.getElementById('modal-when').innerText = data.timestamp || '';
-              document.getElementById('modal-message').innerText = data.message || '';
-              const form = document.getElementById('modal-delete-form'); form.action = '/admin/delete_message/' + encodeURIComponent(gid);
-              const toggleBtn = document.getElementById('modal-toggle-read');
-              // handler
-              toggleBtn.onclick = function(){
-                fetch('/admin/toggle_read_json/' + encodeURIComponent(gid), { method: 'POST', credentials: 'same-origin' })
-                  .then(r => {
-                    if (!r.ok) {
-                      console.error('Toggle read failed, status:', r.status);
-                      throw new Error('Toggle status ' + r.status);
-                    }
-                    return r.json();
-                  })
-                  .then(res => {
-                    if (res.status) {
-                      toggleBtn.innerText = res.status === 'read' ? 'Mark unread' : 'Mark read';
-                    }
-                  }).catch(e => {
-                    alert('Could not toggle read/unread. See console for details.');
-                    console.error(e);
-                  });
-              };
-              toggleBtn.innerText = data.status === 'unread' ? 'Mark read' : 'Mark unread';
-              const modal = new bootstrap.Modal(document.getElementById('msgModal')); modal.show();
-            })
-            .catch(e => {
-              alert('Could not load message — check console for details.');
-              console.error('openMessageModal error:', e);
-            });
-        } catch (err) {
-          alert('An unexpected error occurred while opening the message.');
-          console.error(err);
-        }
-      }
+    <!-- INBOX FEEDBACK MESSAGES & SUBSCRIBERS LOG -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left List Column: Direct Contact Inbox -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-8 space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-white">Client Communications (User Inbox)</h2>
+            <p class="text-xs text-gray-400 mt-1">Messages captured through homepage forms.</p>
+          </div>
+          {% if inbox %}
+            <a href="/admin/messages/export" class="px-3 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800/40 text-[10px] font-bold rounded-lg hover:bg-cyan-900/60 transition-all">
+              Export CSV Inbox
+            </a>
+          {% endif %}
+        </div>
 
-      // Chart: fetch analytics data endpoint and render
-      async function loadMessagesChart() {
-        try {
-          const resp = await fetch('{{ url_for("admin_analytics_data") }}', { credentials: 'same-origin' });
-          if(!resp.ok) throw new Error('Fetch analytics failed: ' + resp.status);
-          const data = await resp.json();
-          const ctx = document.getElementById('messagesChart').getContext('2d');
-          const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: data.labels,
-              datasets: [{
-                label: 'Messages',
-                data: data.values,
-                borderRadius: 6,
-                barPercentage: 0.8,
-                categoryPercentage: 0.8
-              }]
+        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-1">
+          {% if inbox %}
+            {% for m in inbox %}
+              <div class="p-4 rounded-xl border transition-all {% if m.read %} bg-[#0a0f1d] border-gray-900/40 {% else %} bg-gradient-to-tr from-[#0f182f] to-[#122239] border-cyan-900/30 {% endif %} flex flex-col sm:flex-row justify-between sm:items-start gap-4">
+                <div class="space-y-2 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-white">{{ m.name }}</span>
+                    <span class="text-[10px] font-mono text-gray-500">{{ m.email }}</span>
+                    {% if not m.read %}
+                      <span class="px-1.5 py-0.5 bg-cyan-950 text-cyan-400 font-mono text-[8px] font-bold rounded uppercase">Unread</span>
+                    {% endif %}
+                  </div>
+                  <p class="text-xs text-gray-300 leading-relaxed font-sans whitespace-pre-wrap">{{ m.message }}</p>
+                  <span class="block text-[9px] text-gray-650 font-mono">{{ m.created_at }}</span>
+                </div>
+                <div class="flex items-center gap-1.5 self-end sm:self-auto">
+                  <a href="/admin/messages/status/{{ m.id }}" class="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-[10px] font-semibold text-gray-300 rounded-lg transition-all text-center min-w-[70px]">
+                    {% if m.read %} Unlock {% else %} Read {% endif %}
+                  </a>
+                  <a href="/admin/messages/delete/{{ m.id }}" class="px-2 py-1 bg-rose-950/20 hover:bg-rose-900/40 border border-rose-900/10 text-rose-300 text-[10px] font-semibold rounded-lg hover:text-white transition-all">
+                    Discard
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-12 text-xs text-gray-500 border border-dashed border-gray-855 rounded-xl">No contact feedback messages in the system database yet.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Right Column: Newsletter Subscriber Lists -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 lg:col-span-4 space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-white">Subscribers ({{ subscribers|length }})</h2>
+          <p class="text-xs text-gray-400 mt-1">Active mailing addresses.</p>
+        </div>
+
+        <div class="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
+          {% if subscribers %}
+            {% for s in subscribers %}
+              <div class="p-3 bg-gray-950 rounded-lg border border-gray-900 flex justify-between items-center text-xs">
+                <span class="font-mono text-gray-200 truncate pr-2">{{ s.email }}</span>
+                <span class="text-[9px] text-gray-600 font-mono shrink-0">{{ s.subscribed_at.split(' ')[0] if s.subscribed_at else '' }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-12 text-xs text-gray-500 border border-dashed border-gray-855 rounded-xl">No subscriptions recorded.</div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PUBLISHED BLOG ROSTER AND SHOWCASE APPLICATIONS -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Section 1: Published Blog Posts -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-white">Published Roster Articles ({{ blogs|length }})</h2>
+          <p class="text-xs text-gray-400 mt-1">Read and delete active published blog stories from database slots.</p>
+        </div>
+
+        <div class="space-y-3.5 max-h-[400px] overflow-y-auto pr-1">
+          {% if blogs %}
+            {% for b in blogs %}
+              <div class="p-3 bg-gray-950 border border-gray-850/30 rounded-xl flex items-center justify-between gap-4">
+                <div class="min-w-0 flex-1">
+                  <h4 class="text-xs font-bold text-white truncate">{{ b.title }}</h4>
+                  <p class="text-[10px] text-cyan-400 mt-0.5 font-mono">/blog/{{ b.slug }}</p>
+                </div>
+                <div class="flex gap-2">
+                  <a href="/blog/{{ b.slug }}" target="_blank" class="px-2.5 py-1 bg-gray-800 text-[10px] hover:text-cyan-400 rounded transition-all">View</a>
+                  <a href="/admin/blogs/delete/{{ b.id }}" class="px-2.5 py-1 bg-rose-950/20 text-rose-300 text-[10px] font-bold hover:bg-rose-900 hover:text-white rounded transition-all">Purge</a>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="text-center py-10 text-xs text-gray-500">No core blog records registered yet. Publish one above!</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Section 2: Portfolio Client Applications -->
+      <div class="bg-[#0f172a] rounded-2xl border border-gray-800 p-6 space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-white">Showcase Contribution Pipelines</h2>
+          <p class="text-xs text-gray-400 mt-1">Moderate project files uploaded anonymously by developers.</p>
+        </div>
+
+        <!-- Pending Items -->
+        <div class="space-y-4">
+          <h3 class="text-xs font-bold text-amber-400 uppercase tracking-widest">Pending Applications ({{ pending_projects|length }})</h3>
+          <div class="space-y-3 max-h-[220px] overflow-y-auto pr-1">
+            {% if pending_projects %}
+              {% for p in pending_projects %}
+                <div class="p-3.5 bg-gray-950 rounded-xl border border-amber-900/20 space-y-2">
+                  <div class="flex justify-between items-start gap-3">
+                    <div class="min-w-0">
+                      <span class="block text-xs font-bold text-white truncate">{{ p.title }}</span>
+                      <p class="text-xs text-gray-400 font-sans line-clamp-2 mt-1">{{ p.description }}</p>
+                      <span class="block text-[10px] font-mono text-cyan-400 mt-1 select-all hover:underline">{{ p.filename }}</span>
+                    </div>
+                    {% if p.filename.lower()[-4:] in ['.jpg', '.png', '.jpeg', '.gif', 'webp'] %}
+                      <img src="/media/gallery/{{ p.filename }}" class="h-14 w-14 object-cover rounded-md border border-gray-800 select-none pointer-events-none">
+                    {% endif %}
+                  </div>
+                  <div class="flex items-center justify-end gap-1.5 pt-1.5 border-t border-gray-850/40">
+                    <a href="/admin/projects/approve/{{ p.filename }}" class="px-2.5 py-1 bg-emerald-950 text-emerald-300 text-[10px] font-bold rounded hover:bg-emerald-900 hover:text-white transition-all">Accept</a>
+                    <a href="/admin/projects/reject/{{ p.filename }}" class="px-2.5 py-1 bg-orange-950 text-orange-300 text-[10px] font-semibold rounded hover:bg-orange-900 hover:text-white transition-all">Decline</a>
+                    <a href="/admin/projects/delete/{{ p.filename }}" class="px-2.5 py-1 bg-rose-950/20 text-rose-300 text-[10px] font-semibold rounded hover:bg-rose-955 hover:text-white transition-all">Purge</a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-center py-6 text-[11px] text-gray-550 border border-gray-900 rounded-lg">No pending external contributions.</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Approved Items -->
+        <div class="space-y-3 pt-2">
+          <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Approved Catalog ({{ approved_projects|length }})</h3>
+          <div class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+            {% if approved_projects %}
+              {% for p in approved_projects %}
+                <div class="p-3 bg-gray-950 rounded-xl border border-gray-900 flex items-center justify-between text-xs">
+                  <span class="text-white font-medium truncate pr-4">{{ p.title }}</span>
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <a href="/admin/projects/reject/{{ p.filename }}" class="px-2 py-0.5 bg-orange-950 text-orange-400 text-[9px] rounded hover:bg-orange-900 hover:text-white transition-all">Unapprove</a>
+                    <a href="/admin/projects/delete/{{ p.filename }}" class="px-2 py-0.5 bg-rose-950/20 text-rose-300 text-[9px] rounded hover:bg-rose-900 hover:text-white transition-all">Purge</a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="text-center py-4 text-[11px] text-gray-600">No active uploads approved. Items accepted display in home.</div>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center text-xs text-gray-650 border-t border-gray-900 mt-20 font-mono">
+    System Control Console Technowsol Engine. Powered by secure sqlite pipeline. Version 4.1.0-Caleb
+  </footer>
+
+  <!-- MARKDOWN EDITOR HELPER INJECTION LOGIC -->
+  <script>
+    function injectMarkdown(mdCode) {
+      const editor = document.getElementById('blog_content_editor');
+      if (!editor) return;
+
+      const start = editor.selectionStart;
+      const end = editor.selectionEnd;
+      const originalText = editor.value;
+
+      // Slice insert inside cursor position coordinates
+      editor.value = originalText.substring(0, start) + mdCode + originalText.substring(end);
+      editor.selectionStart = editor.selectionEnd = start + mdCode.length;
+      editor.focus();
+    }
+
+    // Charting Engine Initializer
+    document.addEventListener("DOMContentLoaded", () => {
+      const ctx = document.getElementById('velocityChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: {{ chart_labels | tojson }},
+            datasets: [{
+              label: 'Inbox Volume',
+              data: {{ chart_values | tojson }},
+              borderColor: '#06b6d4',
+              backgroundColor: 'rgba(6, 182, 212, 0.05)',
+              tension: 0.45,
+              fill: true,
+              borderWidth: 2,
+              pointRadius: 1,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
             },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { display: false },
-                tooltip: { mode: 'index', intersect: false }
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: '#64748b', font: { size: 9, family: 'JetBrains Mono' } }
               },
-              scales: {
-                x: { ticks: { color: '#cbd5e1' } },
-                y: { ticks: { color: '#cbd5e1' }, beginAtZero: true }
+              y: {
+                grid: { color: 'rgba(51, 65, 85, 0.15)' },
+                ticks: { color: '#64748b', stepSize: 1, font: { size: 9, family: 'JetBrains Mono' } }
               }
             }
-          });
-        } catch (e) {
-          console.error('loadMessagesChart error:', e);
-        }
+          }
+        });
       }
-      loadMessagesChart();
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body></html>
+    });
+  </script>
+</body>
+</html>
