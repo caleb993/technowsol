@@ -385,10 +385,14 @@
                           </td>
                           <td>
                             <div class="text-truncate" style="max-width: 250px;" title="{{ m.message }}">{{ m.message }}</div>
+                            <div id="full-msg-{{ m.gid }}" class="d-none">{{ m.message }}</div>
                           </td>
                           <td class="text-mono small">{{ m.timestamp }}</td>
                           <td class="text-end">
-                            <div class="d-inline-flex gap-2">
+                            <div class="d-inline-flex align-items-center gap-2">
+                              <button class="btn btn-sm btn-fire-primary text-xs py-1 px-2 d-flex align-items-center gap-1" onclick="openMessageModal({{ m.gid }}, '{{ m.name|escape }}', '{{ m.email|escape }}', '{{ m.timestamp|escape }}', '{{ m.status }}')" title="Open and Read">
+                                <i class="bi bi-eye"></i> View
+                              </button>
                               <button class="btn btn-sm btn-outline-warning" onclick="toggleReadStatus({{ m.gid }}, this)" title="Mark as Read/Unread">
                                 <i class="bi {% if m.status == 'unread' %}bi-envelope-paper-fill{% else %}bi-envelope-fill{% endif %}"></i>
                               </button>
@@ -660,7 +664,7 @@
       <div class="tab-pane fade" id="blogs-pane" role="tabpanel" aria-labelledby="blogs-tab">
         <div class="row g-4">
           <!-- Writer -->
-          <div class="col-lg-8">
+          <div class="col-lg-7">
             <div class="card-fire p-4">
               <h4 class="mb-4 text-white fw-bold"><i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight</h4>
               
@@ -671,11 +675,11 @@
                 </div>
                 
                 <div class="mb-3">
-                  <label for="content" class="form-label text-muted small">ARTICLE BODY (Markdown & Inline HTML embed tags supported)</label>
+                  <label for="blogContent" class="form-label text-muted small">ARTICLE BODY (Markdown & Inline HTML embed tags supported)</label>
                   <div class="ins-block mb-3">
                     <i class="bi bi-info-circle"></i> Tip: Auto-detecting Category from word references: Cybersecurity, Networking, AI & Automation, Web Development, ICT Support, or Technology.
                   </div>
-                  <textarea class="form-control form-control-fire text-mono style-textarea" id="content" name="content" rows="18" required placeholder="# Write your article content in Markdown here...&#10;&#10;Use the format of images or videos with copy paste tags from the Media Library:&#10;![Some Photo](/media/blog_media/filename.jpg)"></textarea>
+                  <textarea class="form-control form-control-fire text-mono style-textarea" id="blogContent" name="content" rows="18" required placeholder="# Write your article content in Markdown here...&#10;&#10;Use the format of images or videos with copy paste tags from the Media Library:&#10;![Some Photo](/media/blog_media/filename.jpg)"></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-fire-primary w-100">Publish Article <i class="bi bi-send-fill"></i></button>
@@ -683,29 +687,87 @@
             </div>
           </div>
 
-          <!-- Existing Articles -->
-          <div class="col-lg-4">
-            <div class="card-fire p-4 h-100">
-              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-list-stars text-warning me-2"></i>Active Pulses ({{ blogs|length }})</h4>
+          <!-- Existing Articles & Media Helpers -->
+          <div class="col-lg-5">
+            <!-- Part A: Interactive Media Helper -->
+            <div class="card-fire p-4 mb-4">
+              <h5 class="text-white fw-bold mb-3"><i class="bi bi-folder-symlink-fill text-warning me-2"></i>Draft Assets Helper Deck</h5>
+              <p class="text-muted small mb-3">Upload media files on the fly and click **Insert** to instantly place the asset tag exactly where you are typing inside your Article draft!</p>
               
-              {% if blogs %}
-                <div class="d-flex flex-column gap-3" style="max-height: 650px; overflow-y: auto;">
-                  {% for b in blogs %}
-                    <div class="p-3 rounded border border-secondary-subtle" style="background: rgba(255,255,255,0.015)">
-                      <h6 class="fw-bold text-white mb-2">{{ b.title }}</h6>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <span class="text-muted text-mono" style="font-size:0.75rem;"><i class="bi bi-calendar"></i> {{ b.timestamp[:10] }}</span>
-                        <form action="/admin/blogs/delete/{{ b.id }}" method="POST" onsubmit="return confirm('Delete this blog post? This action is absolutely irreversible!');" class="m-0">
-                          <button type="submit" class="btn btn-xs btn-outline-danger px-2 py-1"><i class="bi bi-trash"></i> Wipe Post</button>
-                        </form>
+              <!-- Quick Upload -->
+              <form action="/admin/upload_blog_media?ret=blogs" method="POST" enctype="multipart/form-data" class="mb-4">
+                <div class="input-group">
+                  <input type="file" name="images" id="quickBlogMediaInput" class="form-control form-control-fire py-1 px-2 text-mono" style="font-size:0.8rem;" multiple required>
+                  <button type="submit" class="btn btn-sm btn-fire-primary">Upload & Refresh</button>
+                </div>
+                <small class="text-muted text-mono d-block mt-1" style="font-size: 0.72rem;">Supports PNG, JPG, JPEG, MP4, WEBM</small>
+              </form>
+              
+              <hr class="border-secondary-subtle opacity-25 my-3">
+              
+              <h6 class="text-white small mb-2 text-mono uppercase"><i class="bi bi-card-image text-warning"></i> Ready-to-Insert Assets ({{ blog_media|length }})</h6>
+              
+              {% if blog_media %}
+                <div class="d-flex flex-column gap-2" style="max-height: 280px; overflow-y: auto; padding-right: 4px;">
+                  {% for item in blog_media %}
+                    <div class="d-flex align-items-center justify-content-between p-2 rounded border border-secondary-subtle" style="background: rgba(255,255,255,0.02)">
+                      <div class="d-flex align-items-center gap-2 text-truncate" style="max-width: 65%;">
+                        <div style="width: 38px; height: 38px; border-radius: 4px; overflow: hidden; background: #000;" class="flex-shrink-0">
+                          {% if item.type == 'image' %}
+                            <img src="{{ item.url }}" style="width:100%; height:100%; object-fit:cover;">
+                          {% else %}
+                            <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-black"><i class="bi bi-film text-warning small"></i></div>
+                          {% endif %}
+                        </div>
+                        <div class="text-truncate flex-grow-1">
+                          <small class="text-mono text-white text-truncate d-block" style="font-size: 0.75rem;" title="{{ item.name }}">{{ item.name }}</small>
+                          <small class="text-muted text-mono d-block" style="font-size: 0.65rem;">{{ item.type }}</small>
+                        </div>
+                      </div>
+                      <div class="d-flex gap-1 flex-shrink-0">
+                        <button type="button" class="btn btn-xs btn-fire-primary py-1 px-1 text-xs" style="font-size: 0.7rem; padding: 2px 6px;" onclick="insertMediaTag('{{ item.url }}', '{{ item.type }}')">
+                          <i class="bi bi-plus-lg"></i> Insert
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-warning py-1 px-1 text-xs" style="font-size: 0.7rem; padding: 2px 6px;" onclick="copyToClipboard('![{{ item.name }}]({{ item.url }})', this)">
+                          <i class="bi bi-clipboard"></i> Copy Key
+                        </button>
                       </div>
                     </div>
                   {% endfor %}
                 </div>
               {% else %}
-                <div class="text-center py-5 text-muted">
-                  <i class="bi bi-journals display-5 mb-3 d-block"></i>
-                  <p class="mb-0">No active articles.</p>
+                <div class="text-center py-4 text-muted bg-black bg-opacity-25 rounded border border-secondary-subtle">
+                  <i class="bi bi-folder-plus display-6 mb-2 d-block text-muted"></i>
+                  <p class="mb-0 small">No assets uploaded yet in Blog library.</p>
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Part B: Active published pulses list -->
+            <div class="card-fire p-4">
+              <h5 class="text-white fw-bold mb-3"><i class="bi bi-list-stars text-warning me-2"></i>Active Pulses ({{ blogs|length }})</h5>
+              
+              {% if blogs %}
+                <div class="d-flex flex-column gap-2" style="max-height: 250px; overflow-y: auto;">
+                  {% for b in blogs %}
+                    <div class="p-2 rounded border border-secondary-subtle" style="background: rgba(255,255,255,0.015)">
+                      <div class="d-flex justify-content-between align-items-center gap-2">
+                        <span class="fw-bold text-white text-truncate small" title="{{ b.title }}">{{ b.title }}</span>
+                        <form action="/admin/blogs/delete/{{ b.id }}" method="POST" onsubmit="return confirm('Delete this blog post? This action is absolutely irreversible!');" class="m-0 flex-shrink-0">
+                          <button type="submit" class="btn btn-xs btn-outline-danger px-2 py-1" style="font-size:0.75rem;"><i class="bi bi-trash"></i> Wipe</button>
+                        </form>
+                      </div>
+                      <div class="d-flex justify-content-between align-items-center mt-1">
+                        <span class="text-muted text-mono" style="font-size:0.7rem;"><i class="bi bi-calendar"></i> {{ b.timestamp[:10] }}</span>
+                        <a href="/blog/{{ b.slug }}" target="_blank" class="text-warning text-mono hover:underline" style="font-size: 0.7rem;">View <i class="bi bi-box-arrow-up-right"></i></a>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-4 text-muted">
+                  <i class="bi bi-journals display-6 mb-2 d-block"></i>
+                  <p class="mb-0 small">No active articles.</p>
                 </div>
               {% endif %}
             </div>
@@ -798,8 +860,72 @@
 
   </div>
 
+  <!-- MESSAGE DETAILS MODAL -->
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-white" style="background: #1e293b; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <div class="modal-header border-secondary-subtle">
+          <h5 class="modal-title fw-bold text-warning d-flex align-items-center gap-2" id="messageModalLabel">
+            <i class="bi bi-envelope-open-fill"></i> Operational Message Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="text-muted small text-uppercase text-mono d-block" style="font-size:0.75rem;">Sender</label>
+            <span id="modalSender" class="fw-bold fs-5 text-white"></span>
+          </div>
+          <div class="mb-3">
+            <label class="text-muted small text-uppercase text-mono d-block" style="font-size:0.75rem;">Email Address</label>
+            <span id="modalEmail" class="text-warning text-mono text-break"></span>
+          </div>
+          <div class="mb-3">
+            <label class="text-muted small text-uppercase text-mono d-block" style="font-size:0.75rem;">Date Received</label>
+            <span id="modalTimestamp" class="text-white small"></span>
+          </div>
+          <hr class="border-secondary-subtle opacity-25">
+          <div class="mb-2">
+            <label class="text-muted small text-uppercase text-mono d-block" style="font-size:0.75rem;">Secure Message Content</label>
+            <div id="modalContent" class="p-3 rounded text-white text-mono mt-1" style="background: rgba(0,0,0,0.25); white-space: pre-wrap; border: 1px solid rgba(255,255,255,0.05); max-height: 250px; overflow-y: auto; font-size: 0.9rem;"></div>
+          </div>
+        </div>
+        <div class="modal-footer border-secondary-subtle">
+          <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Message details viewer and auto mark as read
+    function openMessageModal(mid, name, email, timestamp, status) {
+      document.getElementById('modalSender').innerText = name;
+      document.getElementById('modalEmail').innerText = email;
+      document.getElementById('modalTimestamp').innerText = timestamp;
+      
+      var rawMsg = document.getElementById('full-msg-' + mid).innerText;
+      document.getElementById('modalContent').innerText = rawMsg;
+      
+      const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+      modal.show();
+      
+      if (status === 'unread') {
+        fetch('/admin/mark_read_json/' + mid, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+          // reload the layout once they close the modal to update counts
+          document.getElementById('messageModal').addEventListener('hidden.bs.modal', function() {
+            window.location.reload();
+          }, { once: true });
+        })
+        .catch(e => console.error(e));
+      }
+    }
+
     // Toggle read unread message dynamically over JSON endpoints
     function toggleReadStatus(mid, btnNode) {
       fetch('/admin/toggle_read_json/' + mid, {
@@ -810,7 +936,7 @@
       })
       .then(res => res.json())
       .then(data => {
-        if (data.status === 'ok') {
+        if (data.status) {
           // reload window to update counts and state dynamically
           window.location.reload();
         } else {
@@ -827,7 +953,7 @@
     function copyToClipboard(val, buttonElement) {
       navigator.clipboard.writeText(val).then(() => {
         const orig = buttonElement.innerHTML;
-        buttonElement.innerHTML = '<i class="bi bi-check-all text-success"></i> Copied Tag!';
+        buttonElement.innerHTML = '<i class="bi bi-check-all"></i> Copied!';
         buttonElement.classList.remove('btn-outline-warning');
         buttonElement.classList.add('btn-success');
         buttonElement.classList.add('text-black');
@@ -841,6 +967,71 @@
         alert('Clipboard permissions blocks browser automatic writeback.');
       });
     }
+
+    // Insert Media Markdown Tag helper at cursor caret index
+    function insertMediaTag(url, type) {
+      var textarea = document.getElementById("blogContent");
+      if (!textarea) return;
+      
+      const filename = url.split('/').pop();
+      var tag = (type === 'image') ? '![' + filename + '](' + url + ')' : '<video src="' + url + '" controls class="embedded-video"></video>';
+      
+      var startPos = textarea.selectionStart;
+      var endPos = textarea.selectionEnd;
+      var text = textarea.value;
+      
+      textarea.value = text.substring(0, startPos) + tag + text.substring(endPos, text.length);
+      textarea.focus();
+      textarea.selectionStart = startPos + tag.length;
+      textarea.selectionEnd = startPos + tag.length;
+      
+      // trigger save to local storage
+      localStorage.setItem("draft_content", textarea.value);
+    }
+
+    // Initialize Auto-saving drafts & Hash Router deep linkage
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Hash deep linkage
+      var hash = window.location.hash;
+      if (hash) {
+        var triggerEl = document.querySelector('button[data-bs-target="' + hash + '"]');
+        if (triggerEl) {
+          var tab = new bootstrap.Tab(triggerEl);
+          tab.show();
+        }
+      }
+
+      // 2. Blog auto-save and restore
+      var blogTitleInput = document.getElementById("title");
+      var blogContentTextarea = document.getElementById("blogContent");
+      
+      if (blogTitleInput && blogContentTextarea) {
+        // Restore
+        if (localStorage.getItem("draft_title")) {
+          blogTitleInput.value = localStorage.getItem("draft_title");
+        }
+        if (localStorage.getItem("draft_content")) {
+          blogContentTextarea.value = localStorage.getItem("draft_content");
+        }
+        
+        // Auto-save on edit
+        blogTitleInput.addEventListener("input", function() {
+          localStorage.setItem("draft_title", blogTitleInput.value);
+        });
+        blogContentTextarea.addEventListener("input", function() {
+          localStorage.setItem("draft_content", blogContentTextarea.value);
+        });
+        
+        // Clear on form submit
+        var blogForm = blogTitleInput.closest("form");
+        if (blogForm) {
+          blogForm.addEventListener("submit", function() {
+            localStorage.removeItem("draft_title");
+            localStorage.removeItem("draft_content");
+          });
+        }
+      }
+    });
   </script>
 </body>
 </html>
