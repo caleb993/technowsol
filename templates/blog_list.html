@@ -791,8 +791,25 @@
          id="blogContainer">
 
       {% for b in blogs %}
-        {% set cat = b.content|get_category(b.title) %}
-        {% set reading_time = b.content|get_reading_time %}
+        {% set combined = (b.title ~ " " ~ b.content)|lower %}
+        {% if "cyber" in combined or "exploit" in combined or "mitigate" in combined or "security" in combined or "defense" in combined or "hack" in combined or "penetration" in combined or "firewall" in combined %}
+          {% set cat = "Cybersecurity" %}
+        {% elif "rout" in combined or "net" in combined or "ip" in combined or "cisco" in combined or "ccna" in combined or "switch" in combined or "router" in combined or "dhcp" in combined or "dns" in combined or "lan" in combined or "wan" in combined %}
+          {% set cat = "Networking" %}
+        {% elif "ai" in combined or "machine" in combined or "learning" in combined or "model" in combined or "neural" in combined or "predict" in combined or "automation" in combined or "workflow" in combined or "cron" in combined or "script" in combined %}
+          {% set cat = "AI & Automation" %}
+        {% elif "web" in combined or "html" in combined or "css" in combined or "flask" in combined or "react" in combined or "js" in combined or "ts" in combined or "javascript" in combined or "typescript" in combined or "frontend" in combined or "backend" in combined %}
+          {% set cat = "Web Development" %}
+        {% elif "ict" in combined or "support" in combined or "helpdesk" in combined or "comput" in combined or "hardware" in combined or "troubleshoot" in combined or "printer" in combined %}
+          {% set cat = "ICT Support" %}
+        {% else %}
+          {% set cat = "Technology" %}
+        {% endif %}
+        
+        {% set words_count = b.content.split()|length %}
+        {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
+        {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
+        
         {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
         {% if cat_slug == "cybersecurity" %}
           {% set cat_icon = "bi-shield-lock" %}
