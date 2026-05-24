@@ -245,6 +245,93 @@
               Article Published Successfully!
             </h5>
           </div>
+
+    <!-- REAL-TIME TELEMETRY & CONTENT ANALYTICS -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+      <!-- Card A: Real-Time Active Users -->
+      <div class="col">
+        <div class="card-fire h-100 border border-info/30" style="background: rgba(8, 15, 30, 0.45);">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-xs text-info font-mono tracking-wider"><i class="bi bi-person-fill-gear animate-spin"></i> ACTIVE SESSIONS REALTIME</span>
+              <span class="badge bg-info/10 text-info border border-info/20 fw-bold" id="simulation-badge">MONITORING</span>
+            </div>
+            <div class="d-flex align-items-baseline gap-2 mb-2">
+              <span class="display-6 hover:scale-105 transition-transform text-info fw-bold" id="active-user-count" style="font-family: 'Space Grotesk', sans-serif;">1</span>
+              <span class="text-muted text-xs font-mono">active IP hosts</span>
+            </div>
+            <div class="progress gap-1 mb-3 animate-pulse" style="height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;">
+              <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
+            </div>
+            
+            <!-- Real-time simulation controller for Caleb to test -->
+            <div class="bg-black/35 rounded p-2.5 border border-secondary/10">
+              <div class="d-flex justify-content-between align-items-center mb-1.5">
+                <span class="text-[10px] text-muted font-mono"><i class="bi bi-cpu"></i> SIMULATION CONSOLE</span>
+                <div class="form-check form-switch p-0 m-0 d-flex align-items-center">
+                  <input class="form-check-input ms-0 scale-75" type="checkbox" id="sim-active-users-check" onchange="toggleUsersSimulation()">
+                </div>
+              </div>
+              <input type="range" class="form-range cursor-pointer" id="sim-user-slider" min="1" max="80" value="12" disabled oninput="updateSimUserCount()">
+              <div class="d-flex justify-content-between text-[10px] text-muted font-mono mt-1">
+                <span>1 User</span>
+                <span id="slider-curr-val" class="text-info font-bold">12 Users</span>
+                <span>80 Max</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card B: Most Viewed Article -->
+      <div class="col">
+        <div class="card-fire h-100 border border-warning/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
+          <div class="card-body p-4 d-flex flex-column justify-content-between">
+            <div>
+              <span class="text-xs text-warning font-mono tracking-wider"><i class="bi bi-star-fill text-warning"></i> MOST POPULAR ESSAY</span>
+              <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" style="font-family: 'Space Grotesk', sans-serif;">
+                {% if most_viewed_blog %}
+                  {{ most_viewed_blog.title }}
+                {% else %}
+                  No blogs written yet
+                {% endif %}
+              </h5>
+              <div class="text-muted text-xs font-mono">
+                {% if most_viewed_blog %}
+                  <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> {{ most_viewed_blog.views }}</span> accumulative unique hits
+                {% else %}
+                  0 views
+                {% endif %}
+              </div>
+            </div>
+            
+            {% if most_viewed_blog %}
+            <a href="/blog/{{ most_viewed_blog.slug }}" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Inspect Article Performance
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card C: Hot Category Segment -->
+      <div class="col">
+        <div class="card-fire h-100 border border-success/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
+          <div class="card-body p-4 d-flex flex-column justify-content-between">
+            <div>
+              <span class="text-xs text-success font-mono tracking-wider"><i class="bi bi-diagram-3 text-success"></i> DOMINANT CATEGORY PATH</span>
+              <h5 class="text-white font-semibold mt-3 mb-2" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
+                {{ most_viewed_category }}
+              </h5>
+              <p class="text-muted small m-0 leading-relaxed" style="font-size: 0.75rem;">This segment is receiving the highest digital footfall across the blog gateway in Postgres.</p>
+            </div>
+            <button onclick="bootstrap.Tab.getInstance(document.querySelector('#blogs-tab')).show();" class="btn btn-xs btn-outline-success font-mono w-100 py-1.5 mt-3 rounded">
+              <i class="bi bi-card-checklist me-1"></i> Manage Insights Fleet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
           <div class="modal-body text-white/95">
             <p>Your informative article <strong>"{{ session.get('promote_blog_title') }}"</strong> has been saved in the Supabase/PostgreSQL database!</p>
             <p class="text-muted small">Let's push this insight instantly to your WhatsApp audience channels to immediately notify readers and drive premium clients to your cybersecurity agency!</p>
@@ -357,6 +444,93 @@
       </div>
     </div>
 
+    <!-- REAL-TIME TELEMETRY & CONTENT ANALYTICS -->
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+      <!-- Card A: Real-Time Active Users -->
+      <div class="col">
+        <div class="card-fire h-100 border border-info/30" style="background: rgba(8, 15, 30, 0.45);">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-xs text-info font-mono tracking-wider"><i class="bi bi-person-fill-gear animate-spin"></i> ACTIVE SESSIONS REALTIME</span>
+              <span class="badge bg-info/10 text-info border border-info/20 fw-bold" id="simulation-badge">MONITORING</span>
+            </div>
+            <div class="d-flex align-items-baseline gap-2 mb-2">
+              <span class="display-6 hover:scale-105 transition-transform text-info fw-bold" id="active-user-count" style="font-family: 'Space Grotesk', sans-serif;">1</span>
+              <span class="text-muted text-xs font-mono">active IP hosts</span>
+            </div>
+            <div class="progress gap-1 mb-3 animate-pulse" style="height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;">
+              <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
+            </div>
+            
+            <!-- Real-time simulation controller for Caleb to test -->
+            <div class="bg-black/35 rounded p-2.5 border border-secondary/10">
+              <div class="d-flex justify-content-between align-items-center mb-1.5">
+                <span class="text-[10px] text-muted font-mono"><i class="bi bi-cpu"></i> SIMULATION CONSOLE</span>
+                <div class="form-check form-switch p-0 m-0 d-flex align-items-center">
+                  <input class="form-check-input ms-0 scale-75" type="checkbox" id="sim-active-users-check" onchange="toggleUsersSimulation()">
+                </div>
+              </div>
+              <input type="range" class="form-range cursor-pointer" id="sim-user-slider" min="1" max="80" value="12" disabled oninput="updateSimUserCount()">
+              <div class="d-flex justify-content-between text-[10px] text-muted font-mono mt-1">
+                <span>1 User</span>
+                <span id="slider-curr-val" class="text-info font-bold">12 Users</span>
+                <span>80 Max</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Card B: Most Viewed Article -->
+      <div class="col">
+        <div class="card-fire h-100 border border-warning/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
+          <div class="card-body p-4 d-flex flex-column justify-content-between">
+            <div>
+              <span class="text-xs text-warning font-mono tracking-wider"><i class="bi bi-star-fill text-warning"></i> MOST POPULAR ESSAY</span>
+              <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" style="font-family: 'Space Grotesk', sans-serif;">
+                {% if most_viewed_blog %}
+                  {{ most_viewed_blog.title }}
+                {% else %}
+                  No blogs written yet
+                {% endif %}
+              </h5>
+              <div class="text-muted text-xs font-mono">
+                {% if most_viewed_blog %}
+                  <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> {{ most_viewed_blog.views }}</span> accumulative unique views
+                {% else %}
+                  0 views
+                {% endif %}
+              </div>
+            </div>
+            
+            {% if most_viewed_blog %}
+            <a href="/blog/{{ most_viewed_blog.slug }}" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Inspect Article Performance
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card C: Hot Category Segment -->
+      <div class="col">
+        <div class="card-fire h-100 border border-success/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
+          <div class="card-body p-4 d-flex flex-column justify-content-between">
+            <div>
+              <span class="text-xs text-success font-mono tracking-wider"><i class="bi bi-diagram-3 text-success"></i> DOMINANT CATEGORY PATH</span>
+              <h5 class="text-white font-semibold mt-3 mb-2" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
+                {{ most_viewed_category }}
+              </h5>
+              <p class="text-muted small m-0 leading-relaxed" style="font-size: 0.75rem;">This segment is receiving the highest digital footfall across the blog gateway in Postgres.</p>
+            </div>
+            <button onclick="bootstrap.Tab.getInstance(document.querySelector('#blogs-tab')).show();" class="btn btn-xs btn-outline-success font-mono w-100 py-1.5 mt-3 rounded">
+              <i class="bi bi-card-checklist me-1"></i> Manage Insights Fleet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- DAILY VISITOR STREAM ANALYTICS -->
     <div class="card-fire p-4 mb-5 border border-success/20">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -428,6 +602,11 @@
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="blogs-tab" data-bs-toggle="tab" data-bs-target="#blogs-pane" type="button" role="tab" aria-controls="blogs-pane" aria-selected="false">
           <i class="bi bi-journals"></i> Insights & Editorial
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="techrich-tab" data-bs-toggle="tab" data-bs-target="#techrich-pane" type="button" role="tab" aria-controls="techrich-pane" aria-selected="false" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24;">
+          <i class="bi bi-rocket-takeoff-fill text-warning me-1"></i> TECHRICH CCNA & ICT Support
         </button>
       </li>
       <li class="nav-item" role="presentation">
@@ -857,7 +1036,10 @@
                         </form>
                       </div>
                       <div class="d-flex justify-content-between align-items-center mt-1">
-                        <span class="text-muted text-mono" style="font-size:0.7rem;"><i class="bi bi-calendar"></i> {{ b.timestamp[:10] }}</span>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="text-muted text-mono" style="font-size:0.7rem;"><i class="bi bi-calendar text-muted"></i> {{ b.timestamp[:10] }}</span>
+                          <span class="badge bg-success/20 text-success border border-success/30 font-mono" style="font-size: 0.65rem; padding: 1px 4px;"><i class="bi bi-eye"></i> {{ b.views }} views</span>
+                        </div>
                         <div class="d-flex gap-2 align-items-center">
                           <button type="button" class="btn btn-xs btn-link text-warning text-mono p-0 hover:underline m-0" style="font-size: 0.72rem; text-decoration: none;" onclick="loadBlogForEditing({{ b.id }})"><i class="bi bi-pencil-square"></i> Edit</button>
                           <span class="text-muted" style="font-size: 0.7rem;">|</span>
@@ -873,6 +1055,117 @@
                   <p class="mb-0 small">No active articles.</p>
                 </div>
               {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: TECHRICH KNOWLEDGE CONSOLE -->
+      <div class="tab-pane fade" id="techrich-pane" role="tabpanel" aria-labelledby="techrich-tab">
+        <div class="card-fire p-4 mb-4 border border-warning/20">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+            <div>
+              <h4 class="text-warning fw-bold m-0"><i class="bi bi-book-half text-warning me-2 animate-pulse"></i>TechRich Administration Library</h4>
+              <p class="text-muted small m-0">A dedicated sandbox reference manual for Caleb to brush up on CCNA, Network architecture, and client-side helpdesk solutions. Direct click-to-draft capability included.</p>
+            </div>
+            <div>
+              <input type="text" id="techrich-search" class="form-control form-control-fire py-1.5 px-3 font-mono text-sm" placeholder="Search modules/keywords..." oninput="filterTechRich()">
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <button class="btn btn-xs btn-outline-warning text-mono py-1 px-3 active" id="tr-filter-all" onclick="filterTechRichCat('all')">All Knowledge Nodes</button>
+            <button class="btn btn-xs btn-outline-warning text-mono py-1 px-3" id="tr-filter-ccna" onclick="filterTechRichCat('ccna')">CCNA Networking Standards</button>
+            <button class="btn btn-xs btn-outline-warning text-mono py-1 px-3" id="tr-filter-ict" onclick="filterTechRichCat('ict')">ICT Support & Helpdesk</button>
+          </div>
+
+          <div class="row g-3" id="techrich-articles">
+            <!-- Node 1 -->
+            <div class="col-12 col-md-6 techrich-item" data-category="ccna">
+              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">NETWORK ALGORITHM</span>
+                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> CCNA Routing</span>
+                  </div>
+                  <h6 class="text-white fw-bold mb-2">Resolving VLAN Leakage and Trunk Port Encapsulation Standards</h6>
+                  <p class="text-muted small leading-relaxed mb-3">
+                    <strong>Problem:</strong> Inter-VLAN traffic fails to route through a Router-on-a-Stick setup. Access terminal cannot ping secondary gateways.<br>
+                    <strong>Diagnostic:</strong> Check Trunk encapsulation standards. On older devices, IEEE 802.1Q override is required. Check if the Native VLAN ID matches on both switch and router virtual subinterfaces.
+                  </p>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('VLAN Leakage and trunk encapsulation guidelines', '# Comprehensive VLAN Encapsulation Standards\n\nThis article outlines enterprise diagnostic criteria for mitigating Inter-VLAN performance loss across Layer 2 and Layer3 routing equipment.\n\n### Core Engineering Diagnostics\n\n1. Check trunk status:\n   `show interface trunk`\n2. Configure dot1q routing encapsulation:\n   `interface gig0/0.10`\n   `encapsulation dot1Q 10`\n   `ip address 10.10.10.1 255.255.255.0`\n\nEnsure STP protocol rules prevent loop formation during live interfaces bridging.')">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 2 -->
+            <div class="col-12 col-md-6 techrich-item" data-category="ccna">
+              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">DYNAMIC PROTOCOLS</span>
+                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> OSPF Dynamics</span>
+                  </div>
+                  <h6 class="text-white fw-bold mb-2">Analyzing Stuck OSPF Neighbor States (DR/BDR Election Loop)</h6>
+                  <p class="text-muted small leading-relaxed mb-3">
+                    <strong>Scenario:</strong> OSPF routing adjacencies fail to transition into the **FULL** state, remaining locked inside **EXSTART** or **LOADING** sequences.<br>
+                    <strong>Resolution:</strong> Ensure identical Maximum Transmission Units (MTU) across physical segments. Mismatched packet sizes abort DB descriptors. Check Hello/Dead timers and unique Router IDs.
+                  </p>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('Demystifying OSPF Neighbor States and MTU Mismatches', '# Demystifying Stuck OSPF Neighbor States\n\nWhen deploying enterprise OSPF routing networks, engineers often encounter neighbor relationships stuck in EXSTART or LOADING states.\n\n### Immediate Actions\n\n1. Double-check MTU matching: `show ip ospf interface`\n2. Run `ip ospf mtu-ignore` to debug descriptors exchange loops.\n3. Verify OSPF Area IDs match perfectly on interfaces.')">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 3 -->
+            <div class="col-12 col-md-6 techrich-item" data-category="ict">
+              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">HELPDESK PROTOCOL</span>
+                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> ICT Troubleshooting</span>
+                  </div>
+                  <h6 class="text-white fw-bold mb-2">Managing Sudden DHCP Autoconfiguration Loops (169.254.x.x)</h6>
+                  <p class="text-muted small leading-relaxed mb-3">
+                    <strong>Problem:</strong> Employee workstation receives APIPA address (169.254.x.x), displaying a yellow No Internet warning flag.<br>
+                    <strong>Remedy:</strong> Release lease block using `ipconfig /release` followed by `ipconfig /renew`. If self-assigning persists, inspect helper-addresses on Layer 3 border boundaries pointing to DHCP servers.
+                  </p>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('Workstations stuck on 169.254 Autoconfiguration loops solved', '# Resolving Workstation APIPA (169.254.x.x) Issues\n\nWhen a workstation is assigned a 169.254.0.0/16 address block, it is self-generated by APIPA. This points directly to a DHCP client network negotiation failure.\n\n### Diagnosis Protocol\n- Release current gateway configuration.\n- Verify active Layer 3 IP helper parameters on routing devices:\n  `ip helper-address 192.168.1.10`\n- Double check the central DHCP lease scopes capacity limits.')">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 4 -->
+            <div class="col-12 col-md-6 techrich-item" data-category="ict">
+              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">DISASTER CONTROLS</span>
+                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> Network Loops</span>
+                  </div>
+                  <h6 class="text-white fw-bold mb-2">Mitigating Broadcast packet storms inside Spanning Tree Networks</h6>
+                  <p class="text-muted small leading-relaxed mb-3">
+                    <strong>Symptom:</strong> Entire workstation LAN segment freezes. Switch interfaces display extreme traffic flickers. ping response spikes up to 4,000ms.<br>
+                    <strong>Solution:</strong> A network loop exists on the access layer. Verify Spanning Tree election roots. Isolate interfaces. Run `spanning-tree bpduguard enable` to freeze illicit ports.
+                  </p>
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('Mitigating access layer network loops with Spanning Tree', '# Mitigating Access Layer Network Loops with STP BPDU Guard\n\nA network loop can easily freeze standard commercial enterprise architectures by echoing packets infinitely back and forth.\n\n### Hardening Switches Configuration\nEnsure Loop protection is strictly configured on all trunk and access terminals:\n```\nswitchport mode access\nswitchport access vlan 10\nspanning-tree portfast\nspanning-tree bpduguard enable\n```\nThis ensures a port is immediately shut down upon detecting looped bridge protocol data blocks.')">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1248,6 +1541,21 @@
       
       // Trigger lazy load
       loadChartScript();
+
+      // 4. URL query param check to load blog editing instantly
+      const urlParams = new URLSearchParams(window.location.search);
+      const editId = urlParams.get('edit_id');
+      if (editId) {
+        var blogsBtn = document.querySelector('button[data-bs-target="#blogs-pane"]');
+        if (blogsBtn) {
+          var tab = new bootstrap.Tab(blogsBtn);
+          tab.show();
+        }
+        // Small delay to allow tab transitions before scrolling
+        setTimeout(() => {
+          loadBlogForEditing(editId);
+        }, 150);
+      }
     });
 
     // Push live analytics to WhatsApp click-to-chat redirector
@@ -1259,6 +1567,237 @@
       const query = encodeURIComponent(text);
       window.open(`https://wa.me/254791204587?text=${query}`, '_blank');
     }
+
+    // --- TECHRICH & ACTIVE VISITORS AUXILIARY SCRIPTS ---
+    
+    // Convert curated item to Blog Draft
+    function pushTechRichToDraft(title, content) {
+      // 1. Programmatically trigger click on blogs-tab
+      const blogsTabBtn = document.getElementById("blogs-tab");
+      if (blogsTabBtn) {
+        const tab = new bootstrap.Tab(blogsTabBtn);
+        tab.show();
+      }
+      
+      // 2. Populate editing fields
+      document.getElementById("title").value = "TechRich: " + title;
+      document.getElementById("blogContent").value = content;
+      
+      // 3. Focus and scroll smoothly
+      setTimeout(() => {
+        const titleInput = document.getElementById("title");
+        titleInput.focus();
+        titleInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        showToastAlert("🚀 Adapted TechRich article template! Adjust content, add your keywords, and hit 'Publish' to push live on your blog.");
+      }, 200);
+    }
+    
+    // Filter TECHRICH list by search query
+    function filterTechRich() {
+      const query = document.getElementById("techrich-search").value.toLowerCase().trim();
+      const items = document.querySelectorAll(".techrich-item");
+      
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        if (text.includes(query)) {
+          item.classList.remove("d-none");
+        } else {
+          item.classList.add("d-none");
+        }
+      });
+    }
+    
+    // Filter TECHRICH by Category selector
+    function filterTechRichCat(cat) {
+      // Manage active/inactive button states
+      const btns = ["all", "ccna", "ict"];
+      btns.forEach(b => {
+        document.getElementById("tr-filter-" + b).classList.remove("active");
+      });
+      document.getElementById("tr-filter-" + cat).classList.add("active");
+      
+      const items = document.querySelectorAll(".techrich-item");
+      items.forEach(item => {
+        const itemCat = item.getAttribute("data-category");
+        if (cat === "all" || itemCat === cat) {
+          item.classList.remove("d-none");
+        } else {
+          item.classList.add("d-none");
+        }
+      });
+    }
+
+    // Global alert tracking for thresholds
+    let notifiedThresholds = new Set();
+    let isTelemetrySimulating = false;
+    let simUserCount = 12;
+
+    function toggleUsersSimulation() {
+      const check = document.getElementById("sim-active-users-check");
+      const slider = document.getElementById("sim-user-slider");
+      isTelemetrySimulating = check.checked;
+      slider.disabled = !isTelemetrySimulating;
+      
+      const badge = document.getElementById("simulation-badge");
+      if (isTelemetrySimulating) {
+        badge.innerText = "SIMULATING";
+        badge.classList.remove("bg-info/10", "text-info", "border-info/20");
+        badge.classList.add("bg-warning/15", "text-warning", "border-warning/30");
+        updateSimUserCount();
+      } else {
+        badge.innerText = "MONITORING";
+        badge.classList.add("bg-info/10", "text-info", "border-info/20");
+        badge.classList.remove("bg-warning/15", "text-warning", "border-warning/30");
+        pollActiveUsers();
+      }
+    }
+
+    function updateSimUserCount() {
+      const slider = document.getElementById("sim-user-slider");
+      simUserCount = parseInt(slider.value);
+      document.getElementById("slider-curr-val").innerText = simUserCount + " Users";
+      
+      // Update UI instantly for sim
+      updateActiveUsersUI(simUserCount);
+      checkActiveUsersAlerts(simUserCount);
+    }
+
+    // Retrieve active real-time stats from endpoint
+    function pollActiveUsers() {
+      if (isTelemetrySimulating) return;
+      
+      fetch("/api/admin/active_users")
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            const count = data.active_users || 1;
+            updateActiveUsersUI(count);
+            checkActiveUsersAlerts(count);
+          }
+        })
+        .catch(err => console.error("Active users tracking offline:", err));
+    }
+
+    function updateActiveUsersUI(count) {
+      document.getElementById("active-user-count").innerText = count;
+      const progressPercent = Math.min(100, Math.max(8, (count / 60) * 100));
+      document.getElementById("active-progress").style.width = progressPercent + "%";
+    }
+
+    function checkActiveUsersAlerts(count) {
+      const alertThresholds = [10, 20, 30, 40, 50, 60];
+      
+      for (let t of alertThresholds) {
+        if (count >= t && !notifiedThresholds.has(t)) {
+          notifiedThresholds.add(t);
+          triggerAutomaticWhatsAppPush(t, count);
+          break; // alert on highest reached newly-triggered milestone
+        }
+      }
+    }
+
+    function triggerAutomaticWhatsAppPush(threshold, count) {
+      // 1. Generate futuristic sound chime
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx) {
+          const oscSelected = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          oscSelected.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          oscSelected.frequency.setValueAtTime(680, audioCtx.currentTime); // High cyber ping
+          oscSelected.type = "sine";
+          gainNode.gain.setValueAtTime(0.35, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+          
+          oscSelected.start();
+          oscSelected.stop(audioCtx.currentTime + 0.8);
+        }
+      } catch (e) {
+        console.warn("Audio Context deactivated or blocked by client permissions.");
+      }
+      
+      // 2. Draft WhatsApp telemetry string
+      const text = `🚨 *MUGA.dev Live Traffic Alert*:\n============================\n👤 *Owner*: Caleb Muga\n🔥 *Traffic Threshold Exceeded*: \`${threshold}+ Active Users\`\n📈 *Current Metric*: \`${count} active IP hosts\`\n⚡ *System Alert Action*: Automatic real-time telemetry socket dispatch.\n\n👉 Review Admin suite: ${window.location.origin}/admin`;
+      const waUrl = "https://wa.me/254791204587?text=" + encodeURIComponent(text);
+      
+      // 3. Automatically execute redirect open
+      const popup = window.open(waUrl, "_blank");
+      if (!popup) {
+        // Fallback: Reveal floating elegant notification action button
+        showToastActionAlert(`🚨 REALTIME ALERT: Active users reached ${count}! Popup was blocked. Click here to WhatsApp Caleb.`, waUrl);
+      } else {
+        showToastAlert(`🚀 Automated Traffic Alert dispatched to WhatsApp for ${threshold} active users!`);
+      }
+    }
+
+    // Toast alert utility system
+    function showToastAlert(message) {
+      // Create element dynamically
+      const toast = document.createElement("div");
+      toast.className = "position-fixed bottom-0 start-0 m-4 p-3 rounded shadow text-white border border-success/30 font-sans";
+      toast.style.background = "rgba(11, 21, 15, 0.95)";
+      toast.style.zIndex = "4000";
+      toast.style.maxWidth = "350px";
+      toast.style.animation = "slideUp 0.35s ease-out forwards";
+      toast.innerHTML = `<div class="d-flex align-items-center gap-2"><i class="bi bi-shield-fill-check text-success fs-5"></i><span style="font-size:0.85rem;">${message}</span></div>`;
+      
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = "slideDown 0.35s ease-in forwards";
+        setTimeout(() => toast.remove(), 400);
+      }, 4500);
+    }
+
+    function showToastActionAlert(message, url) {
+      const toast = document.createElement("div");
+      toast.className = "position-fixed bottom-0 start-0 m-4 p-3 rounded shadow text-white border border-warning/30 font-sans";
+      toast.style.background = "rgba(22, 18, 10, 0.95)";
+      toast.style.zIndex = "4000";
+      toast.style.maxWidth = "350px";
+      toast.style.animation = "slideUp 0.35s ease-out forwards";
+      toast.innerHTML = `
+        <div class="d-flex flex-column gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill text-warning fs-5"></i>
+            <span style="font-size:0.85rem;">${message}</span>
+          </div>
+          <a href="${url}" target="_blank" class="btn btn-warning btn-xs py-1 text-black font-semibold text-center rounded" style="font-size:0.75rem;">
+            <i class="bi bi-whatsapp"></i> Launch WhatsApp Alert
+          </a>
+        </div>
+      `;
+      
+      document.body.appendChild(toast);
+      // Keep on screen longer since action is required
+      setTimeout(() => {
+        toast.style.animation = "slideDown 0.35s ease-in forwards";
+        setTimeout(() => toast.remove(), 400);
+      }, 10000);
+    }
+
+    // Global CSS CSS keys inject for keyframes
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+      @keyframes slideUp {
+        from { transform: translateY(100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      @keyframes slideDown {
+        from { transform: translateY(0); opacity: 1; }
+        to { transform: translateY(100px); opacity: 0; }
+      }
+      .btn-xs {
+        padding: 2px 8px;
+        font-size: 0.75rem;
+      }
+    `;
+    document.head.appendChild(styleSheet);
+
+    // Initial setups
+    pollActiveUsers();
+    setInterval(pollActiveUsers, 12000); // Check active sessions database stats every 12 seconds
   </script>
 </body>
 </html>
