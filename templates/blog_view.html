@@ -578,21 +578,32 @@
         </div>
 
         <!-- Audio Read Aloud Capability -->
-        <div class="mt-4 p-3 rounded-4 border border-warning/20 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3" style="background: rgba(251, 191, 36, 0.05); backdrop-filter: blur(4px);">
+        <div class="mt-4 p-3 rounded-4 border border-warning/20 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3" style="background: rgba(251, 191, 36, 0.05); backdrop-filter: blur(4px);">
           <div class="d-flex align-items-center gap-2.5">
-            <div class="bg-warning/10 rounded-circle d-flex align-items-center justify-content-center border border-warning/20" style="width: 36px; height: 36px;">
+            <div class="bg-warning/10 rounded-circle d-flex align-items-center justify-content-center border border-warning/20" style="width: 36px; height: 36px; flex-shrink: 0;">
               <i class="bi bi-soundwave text-warning fs-5"></i>
             </div>
             <div>
               <div class="text-white text-xs font-mono fw-bold">NATIVE VOICE READ-ALOUD</div>
-              <div class="text-xs text-muted" style="font-size: 0.72rem;">Listen to this article automatically using web speech synthesized AI voice.</div>
+              <div class="text-xs text-muted" style="font-size: 0.72rem;">Listen to this article automatically with dynamic audio voice reader.</div>
             </div>
           </div>
-          <div class="d-flex align-items-center gap-2 font-mono">
-            <button onclick="toggleArticleReader()" id="reader-btn" class="btn btn-xs btn-warning text-black py-1 px-3.5 d-flex align-items-center gap-1.5 fw-bold" style="border-radius: 6px; font-size: 0.72rem;">
-              <i class="bi bi-play-fill animate-pulse"></i> Read Aloud
+          
+          <div class="d-flex flex-wrap align-items-center gap-2 font-mono">
+            <!-- Voice Selection Dropdown -->
+            <div class="d-flex align-items-center gap-1.5 me-md-2">
+              <span class="text-muted" style="font-size: 0.65rem;">VOICE:</span>
+              <select id="reader-voice-select" class="form-select bg-black text-white text-xs border border-warning/35 py-1 px-2" style="border-radius: 6px; height: 31px; width: 140px; font-size: 0.72rem;">
+                <option value="woman" selected>👩 Woman Voice</option>
+                <option value="man">👨 Man Voice</option>
+                <option value="child">👧 Child Voice</option>
+              </select>
+            </div>
+            
+            <button onclick="toggleArticleReader()" id="reader-btn" class="btn btn-xs btn-warning text-black py-1 px-3.5 d-flex align-items-center gap-1.5 fw-bold" style="border-radius: 6px; font-size: 0.72rem; height: 31px;">
+              <i class="bi bi-play-fill"></i> Read Aloud
             </button>
-            <button onclick="stopArticleReader()" id="stop-reader-btn" class="btn btn-xs btn-outline-danger py-1 px-3 d-flex align-items-center gap-1.5 d-none" style="border-radius: 6px; font-size: 0.72rem;">
+            <button onclick="stopArticleReader()" id="stop-reader-btn" class="btn btn-xs btn-outline-danger py-1 px-3 d-flex align-items-center gap-1.5 d-none" style="border-radius: 6px; font-size: 0.72rem; height: 31px;">
               <i class="bi bi-stop-fill"></i> Stop
             </button>
           </div>
@@ -753,6 +764,11 @@
     let articleUtterance = null;
     let isReadingArticle = false;
 
+    // Load voices proactively on startup
+    if (articleSynth) {
+      articleSynth.getVoices();
+    }
+
     function toggleArticleReader() {
       if (!articleSynth) {
         alert("Web Speech API has been deactivated or is unsupported on this browser platform.");
@@ -766,25 +782,59 @@
           return;
         } else {
           articleSynth.pause();
-          document.getElementById("reader-btn").innerHTML = '<i class="bi bi-play-fill animate-pulse"></i> Resume';
+          document.getElementById("reader-btn").innerHTML = '<i class="bi bi-play-fill"></i> Resume';
           return;
         }
       }
 
+      // Cancel any ongoing reads first
+      articleSynth.cancel();
+
       // Read text content
       const titleText = "{{ post.title }}";
       const contentText = document.querySelector(".article-content").innerText;
-      const readText = `Reviewing and summarizing the article: ${titleText}. ... ${contentText}`;
+      
+      // Clean up punctuation and markers slightly so it sounds fluid and natural
+      let cleanText = contentText
+          .replace(/[#*`~_]/g, '')
+          .replace(/\/\/+/g, ' ')
+          .replace(/```[\s\S]*?```/g, ' [code guidelines omitted for speech] ');
+          
+      const readText = `Hello. Reviewing the article: ${titleText}. ... ${cleanText}`;
 
       articleUtterance = new SpeechSynthesisUtterance(readText);
-      articleUtterance.rate = 1.05;
       
-      // Select standard pleasant english voice if available
+      // Extract voices and voice genders
+      const genderChoice = document.getElementById("reader-voice-select").value;
       const voices = articleSynth.getVoices();
-      const engVoice = voices.find(v => v.lang.startsWith("en-") && v.name.includes("Google")) || voices.find(v => v.lang.startsWith("en-"));
-      if (engVoice) {
-        articleUtterance.voice = engVoice;
+      
+      let selectedVoice = null;
+      let pitch = 1.0;
+      let rate = 1.0;
+
+      if (genderChoice === "child") {
+        pitch = 1.6; // High pitch
+        rate = 1.12;  // High frequency rate
+        // Search voice
+        selectedVoice = voices.find(v => v.lang.startsWith("en-") && (v.name.includes("Samantha") || v.name.includes("Google US English") || v.name.includes("Zira") || v.name.includes("Female"))) || voices.find(v => v.lang.startsWith("en-"));
+      } else if (genderChoice === "man") {
+        pitch = 0.85; // Low baritone
+        rate = 0.98;
+        // Search male sounding names in English
+        selectedVoice = voices.find(v => v.lang.startsWith("en-") && (v.name.includes("David") || v.name.includes("Male") || v.name.includes("Mark") || v.name.includes("George"))) || voices.find(v => v.lang.startsWith("en-"));
+      } else {
+        pitch = 1.05; // Normal female
+        rate = 1.02;  // Natural flow
+        // Search female sounding names in English
+        selectedVoice = voices.find(v => v.lang.startsWith("en-") && (v.name.includes("Zira") || v.name.includes("Samantha") || v.name.includes("Hazel") || v.name.includes("Female") || v.name.includes("Google US English"))) || voices.find(v => v.lang.startsWith("en-"));
       }
+
+      if (selectedVoice) {
+        articleUtterance.voice = selectedVoice;
+      }
+      
+      articleUtterance.pitch = pitch;
+      articleUtterance.rate = rate;
 
       articleUtterance.onstart = function() {
         isReadingArticle = true;
@@ -797,8 +847,10 @@
       };
 
       articleUtterance.onerror = function(e) {
-        console.warn("Speech error triggered:", e);
-        cleanReaderUI();
+        console.warn("Speech synthesis notice:", e);
+        if (e.error !== 'interrupted') {
+          cleanReaderUI();
+        }
       };
 
       articleSynth.speak(articleUtterance);
