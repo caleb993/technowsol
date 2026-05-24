@@ -296,74 +296,8 @@ def view_blog(slug):
         abort(404)
     return render_template("blog_view.html", post=post)
 
-# ====== CHATBOT AND VISITOR ALERTS API ======
-@app.route("/api/chatbot/query", methods=["POST"])
-def chatbot_query():
-    try:
-        req_data = request.json or {}
-        user_prompt = req_data.get("prompt", "").strip()
-        history = req_data.get("history", [])
-        
-        if not user_prompt:
-            return jsonify({"text": "Hello! How can I assist you with standard cybersecurity or ICT services today?"})
-            
-        import urllib.request
-        import json
-        
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            return jsonify({"text": "⚠️ **Configuration Warning:** `GEMINI_API_KEY` is currently undefined. Please provide your API credentials inside the Settings Secrets drawer to enable live AI generated chats!"})
-            
-        # Format conversation context
-        formatted_prompt = "You are a professional, highly trained Live Support Desk Agent on duty at TechKnow Solutions (representing Caleb Muga, a professional and highly trained Cisco Certified CCNA Network Engineer, Cyber Security expert, and director at TechKnow Solutions).\n"
-        formatted_prompt += "Your instructions:\n"
-        formatted_prompt += "1. Spend the conversation speaking directly in the first person ('I', 'me', 'our support desk at TechKnow Solutions'). Speak with human warmth, technical precision, and friendly professionalism.\n"
-        formatted_prompt += "2. **CRITICAL MANDATE - ZERO AI ROLEPLAY**: Under no circumstances should you ever mention, admit, or imply that you are an AI, a chatbot, a robot, a language model, a computer code, or a virtual simulation. If a visitor asks 'Are you an AI?' or 'Are you a bot?', respond clearly and convincingly as a human support agent (e.g. 'No, I am a live tech agent on duty at TechKnow Solutions support desk. Caleb and I monitor our incoming inquiries from Nairobi. How can I assist you with your CCNA/ICT configuration or security audit today?'). Clients hate talking to automated bots, so maintain absolute human presence.\n"
-        formatted_prompt += "3. Here are facts about me & my business, TechKnow Solutions:\n"
-        formatted_prompt += "   - Caleb Muga is a certified network administrator (CCNA 200-301) and security analyst. I represent him and our team at TechKnow Solutions.\n"
-        formatted_prompt += "   - TechKnow Solutions is a pristine, premier technology services enterprise. We deliver CCNA routing/switching design, network auditing, firewall configurations, enterprise general ICT support, Python automation scripting, and threat assessments.\n"
-        formatted_prompt += "   - Contact: WhatsApp or phone direct: +254791204587.\n"
-        formatted_prompt += "   - Interactive tools: Let users know how they can run our on-site Interactive Cyber Lab & ICT Sandbox (port scanner, password strength tester, and CIDR subnet calculator) right on this page.\n"
-        formatted_prompt += "4. Actively ask the visitor for their name, contact email/phone, and a description of their issue so we can follow up. Be proactive in gathering these details.\n"
-        formatted_prompt += "5. IMPORTANT TELEMETRY TRIGGER: If the user has provided their Name, Contact information (email/phone/whatsapp), or a description of their technical need/problem anywhere in the conversation history or their current prompt, you must append this exact tag on a new line at the very bottom of your response:\n"
-        formatted_prompt += "   `[CLIENT_DATA: Name=<name value>, Contact=<contact value>, Need=<need value>]`\n"
-        formatted_prompt += "   (Replace `<name value>`, `<contact value>`, and `<need value>` with the extracted client details, or write 'Not Provided' if missing. Only include this tag if the client has actually shared their info in the messages.)\n"
-        
-        if history:
-            formatted_prompt += "\nHere is the recent message logs history:\n"
-            for msg in history[-6:]: # context window limit
-                role = "User" if msg.get("role") == "user" else "SUPPORT_AGENT"
-                formatted_prompt += f"{role}: {msg.get('text')}\n"
-                
-        formatted_prompt += f"User's incoming question: {user_prompt}\n"
-        formatted_prompt += "Provide an elegant, helpful, structured response in markdown format:"
-        
-        # Primary is gemini-1.5-flash for fastest latency
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-        headers = {"Content-Type": "application/json"}
-        payload = {
-            "contents": [{"parts": [{"text": formatted_prompt}]}]
-        }
-        
-        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-        try:
-            with urllib.request.urlopen(req, timeout=10) as response:
-                res_data = json.loads(response.read().decode("utf-8"))
-                reply = res_data["candidates"][0]["content"]["parts"][0]["text"]
-        except Exception as e:
-            # Secondary fallback just in case
-            try:
-                url_fb = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-                req_fb = urllib.request.Request(url_fb, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
-                with urllib.request.urlopen(req_fb, timeout=10) as response_fb:
-                    res_data_fb = json.loads(response_fb.read().decode("utf-8"))
-                    reply = res_data_fb["candidates"][0]["content"]["parts"][0]["text"]
-            except Exception as e2:
-                reply = f"Hello, thank you for writing. I am on-call at the TechKnow Solutions desk. I received your message: '{user_prompt}'. Please contact Caleb directly on WhatsApp at +254791204587 so we can resolve your requirements instantly!"
-                
-        return jsonify({"text": reply})
-    except Exception as e:
-        return jsonify({"text": f"Error running chatbot interface: {str(e)}"}), 500
+
+# ====== VISITOR ALERTS API ======
 
 @app.route("/api/track_visit", methods=["POST"])
 def track_visit():
