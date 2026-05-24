@@ -1,4 +1,4 @@
-A<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -67,6 +67,8 @@ A<!doctype html>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   
   <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
+  <!-- Markdown parser for AI Digital Twin bot -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
     /* Styling Theme and Variables */
@@ -1278,16 +1280,16 @@ A<!doctype html>
 
     </section>
 
-    <!-- STRATEGICAL PLACE FOR AI REPRESENTATIVE (CALEB'S DIGITAL TWIN / TECHKNOW REPRESENTATIVE) -->
+    <!-- STRATEGICAL PLACE FOR TECHKNOW LIVE SUPPORT CONSOLE -->
     <section id="ai-representative" class="py-5" style="background: linear-gradient(180deg, rgba(8, 12, 22, 0.95) 0%, rgba(11, 15, 25, 0.98) 100%); border-top: 1px solid rgba(16, 185, 129, 0.15); border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
       <div class="container container-custom">
         <div class="section-header text-center mb-5">
           <div class="badge px-3 py-1 bg-success/15 text-success rounded-pill mb-2 font-mono" style="font-size: 0.72rem; letter-spacing: 0.05rem;">
-            ✦ ADVANCED CO-PILOT DEPLOYMENT
+            ✦ ACTIVE CHAT MONITORING DEPLOYMENT
           </div>
-          <h2 class="section-title text-white fw-bold" id="ai-rep-title" data-aos="fade-up">Caleb Muga's AI Representative Console</h2>
+          <h2 class="section-title text-white fw-bold" id="ai-rep-title" data-aos="fade-up">TechKnow Live Support Console</h2>
           <p class="section-subtitle text-muted max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="80">
-            Consult my trained digital model representing me at <strong>TechKnow Solutions</strong>. Get instant CCNA technical support, cybersecurity assessments, or book direct consultations.
+            Consult our dedicated live support staff at <strong>TechKnow Solutions</strong>. Get instant CCNA technical advice, cybersecurity assessments, or schedule network service visits.
           </p>
         </div>
 
@@ -1300,17 +1302,17 @@ A<!doctype html>
                 <div class="d-flex align-items-center gap-3">
                   <div class="position-relative">
                     {% if profile_url %}
-                      <img src="{{ profile_url }}" alt="Caleb AI" class="rounded-circle border border-success/30" style="width: 44px; height: 44px; object-fit: cover;">
+                      <img src="{{ profile_url }}" alt="TechKnow Support" class="rounded-circle border border-success/30" style="width: 44px; height: 44px; object-fit: cover;">
                     {% else %}
-                      <div class="rounded-circle d-flex align-items-center justify-content-center text-black font-bold border border-success/30" style="width: 44px; height: 44px; background: linear-gradient(135deg, #fbbf24, #f59e0b);">CM</div>
+                      <div class="rounded-circle d-flex align-items-center justify-content-center text-black font-bold border border-success/30" style="width: 44px; height: 44px; background: linear-gradient(135deg, #fbbf24, #f59e0b);">TS</div>
                     {% endif %}
                     <span class="position-absolute bottom-0 end-0 bg-success border border-black border-2 rounded-circle" style="width: 12px; height: 12px;"></span>
                   </div>
                   <div>
-                    <h5 class="text-white mb-0.5" style="font-size: 0.95rem; font-weight: 700;">MUGA.DEV AI AGENT</h5>
+                    <h5 class="text-white mb-0.5" style="font-size: 0.95rem; font-weight: 700;">TechKnow Support Desk</h5>
                     <div class="text-success font-mono d-inline-flex align-items-center gap-1.5" style="font-size: 0.7rem;">
                       <span class="d-inline-block rounded-circle bg-success shrink-0" style="width: 6px; height: 6px; animation: pulse 1.5s infinite;"></span>
-                      SECURE DIGITAL TWIN PORTAL • TECHKNOW SOLUTIONS
+                      ACTIVE TECH HELP PORTAL • TECHKNOW SOLUTIONS
                     </div>
                   </div>
                 </div>
@@ -1329,11 +1331,11 @@ A<!doctype html>
                 <!-- Welcome greeting -->
                 <div class="d-flex gap-2 text-sm max-w-85%">
                   <div class="bg-success/10 rounded-circle d-flex align-items-center justify-content-center border border-success/25" style="width: 32px; height: 32px; flex-shrink:0;">
-                    <i class="bi bi-robot text-success text-xs"></i>
+                    <i class="bi bi-headset text-success text-xs"></i>
                   </div>
                   <div class="p-3 rounded-4 style-msg text-white font-sans" style="background: rgba(22, 28, 45, 0.85); border: 1px solid rgba(16,185,129,0.15); line-height: 1.5; font-size: 0.85rem;">
-                    <p class="mb-1"><strong>Hello, welcome!</strong> I am Caleb's AI assistant, trained heavily on standard <strong>TechKnow Solutions</strong> ICT operational specifications & my professional CCNA parameters.</p>
-                    <p class="mb-0 text-muted" style="font-size:0.78rem;">You can type your IT service requirements directly, or use the microphone button below to talk to me with voice commands!</p>
+                    <p class="mb-1"><strong>Hello, welcome!</strong> I am the support representative on call at the TechKnow Solutions desk. We monitor networks, execute CCNA standard setups, and provide cybersecurity solutions from our Nairobi office.</p>
+                    <p class="mb-0 text-muted" style="font-size:0.78rem;">You can type your IT support requests directly, or use the microphone button below to type with voice commands! How can I assist you with your systems today?</p>
                   </div>
                 </div>
               </div>
@@ -2230,82 +2232,82 @@ A<!doctype html>
     } catch(e) {}
   </script>
 
-  <!-- FLOATING AI CYBERSECURITY ADVISOR CHATBOT WIDGET -->
-  <div id="ai-chat-app" class="position-fixed bottom-0 end-0 m-3 m-md-4" style="z-index: 1050; font-family: 'Inter', sans-serif;">
+  <!-- FLOATING TECHKNOW DESK HUMAN-CAMOUFLAGED CHATBOT WIDGET -->
+  <div id="ai-chat-app" class="position-fixed bottom-0 start-0 m-3 m-md-4" style="z-index: 1050; font-family: 'Inter', sans-serif;">
     <!-- Launcher Button -->
-    <button id="ai-chat-launcher" onclick="toggleAIChatWindow()" class="btn border border-success/30 rounded-circle shadow d-flex align-items-center justify-content-center" style="width: 58px; height: 58px; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(12px); box-shadow: 0 0 20px rgba(16,185,129,0.25) !important;">
+    <button id="ai-chat-launcher" onclick="toggleAIChatWindow()" class="btn border border-success/30 rounded-circle shadow d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(12px); box-shadow: 0 0 20px rgba(16,185,129,0.25) !important;">
       <div class="position-relative">
-        <i class="bi bi-robot text-success fs-3 animate-pulse"></i>
-        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle" style="animation: pulse 1.5s infinite;"><span class="visually-hidden">Live AI</span></span>
+        <i class="bi bi-headset text-success fs-4 animate-pulse"></i>
+        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle" style="animation: pulse 1.5s infinite;"><span class="visually-hidden">Active Support</span></span>
       </div>
     </button>
 
-    <!-- Chat Interface Container -->
-    <div id="ai-chat-window" class="ai-chat-card d-none d-flex flex-column" style="width: 370px; max-width: 90vw; height: 500px; background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <!-- Chat Interface Container (Reduced / Compact Layout) -->
+    <div id="ai-chat-window" class="ai-chat-card d-none d-flex flex-column animate-fade-in" style="width: 315px; max-width: 90vw; height: 430px; background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; box-shadow: 0 10px 35px rgba(0,0,0,0.6); font-size: 0.85rem;">
       <!-- Header -->
-      <div class="p-3 border-bottom border-success/20 d-flex align-items-center justify-content-between text-white" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(3, 7, 18, 0) 100%);">
+      <div class="p-2.5 border-bottom border-success/20 d-flex align-items-center justify-content-between text-white" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(3, 7, 18, 0) 100%);">
         <div class="d-flex align-items-center gap-2">
-          <div class="bg-success/10 p-2 rounded-circle border border-success/30">
-            <i class="bi bi-shield-lock-fill text-success"></i>
+          <div class="bg-success/10 p-1.5 rounded-circle border border-success/30">
+            <i class="bi bi-headset text-success fs-6"></i>
           </div>
           <div>
-            <h6 class="m-0 fw-bold tracking-tight text-white">TechKnow AI Advisor</h6>
-            <span class="text-success font-mono text-xs d-flex align-items-center gap-1">
-              <span class="rounded-circle bg-success" style="width: 6px; height: 6px; animation: pulse 1.5s infinite;"></span>
-              Virtual Security Officer
+            <h6 class="m-0 fw-bold tracking-tight text-white" style="font-size: 0.85rem;">Live Support Desk</h6>
+            <span class="text-success font-mono text-xs d-flex align-items-center gap-1" style="font-size: 0.65rem;">
+              <span class="rounded-circle bg-success" style="width: 5px; height: 5px; animation: pulse 1.5s infinite;"></span>
+              Active Support Representative
             </span>
           </div>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-1.5">
           <!-- Voice Output Checkbox Button -->
-          <button id="ai-tts-toggle" onclick="toggleVoiceSpeech()" class="btn btn-sm text-muted bg-black/30 border border-secondary/15 rounded p-1" title="Toggle AI Audio Output Voice Reader">
+          <button id="ai-tts-toggle" onclick="toggleVoiceSpeech()" class="btn btn-sm text-muted bg-black/30 border border-secondary/15 rounded p-1" style="font-size: 0.7rem;" title="Toggle Support Audio Output Voice Reader">
             <i id="ai-tts-icon" class="bi bi-volume-mute"></i>
           </button>
-          <button onclick="toggleAIChatWindow()" class="btn btn-sm btn-link text-muted hover:text-white p-0"><i class="bi bi-x-lg"></i></button>
+          <button onclick="toggleAIChatWindow()" class="btn btn-sm btn-link text-muted hover:text-white p-0"><i class="bi bi-x-lg" style="font-size: 0.8rem;"></i></button>
         </div>
       </div>
 
       <!-- Dialogue History -->
-      <div id="ai-chat-body" class="p-3 flex-grow-1 overflow-auto d-flex flex-column gap-3" style="max-height: 350px;">
+      <div id="ai-chat-body" class="p-2.5 flex-grow-1 overflow-auto d-flex flex-column gap-2" style="max-height: 250px;">
         <!-- Welcome Dialogue Message -->
         <div class="d-flex gap-2">
-          <div class="bg-success/15 rounded-circle d-flex align-items-center justify-content-center border border-success/25" style="width: 32px; height: 32px; flex-shrink: 0;">
-            <i class="bi bi-shield-fill-check text-success text-xs"></i>
+          <div class="bg-success/15 rounded-circle d-flex align-items-center justify-content-center border border-success/25" style="width: 28px; height: 28px; flex-shrink: 0;">
+            <i class="bi bi-person-circle text-success text-xs"></i>
           </div>
-          <div class="p-3 rounded-3 text-white text-sm" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); max-width: 80%;">
-            <p class="mb-1 leading-normal">Hello, I am Caleb Muga's virtual AI Cybersecurity & Network Advisor.</p>
-            <p class="mb-1 text-xs text-muted">Need custom server provisioning, CCNA setups, or password checkups? Ask me anything! We can push complex support logs directly to Caleb via WhatsApp as well.</p>
+          <div class="p-2.5 rounded-3 text-white" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); max-width: 85%; font-size: 0.78rem;">
+            <p class="mb-1 leading-normal fw-bold">Hello, welcome to TechKnow Solutions support desk!</p>
+            <p class="mb-1 text-muted text-xxs">I am the support representative on duty. Feel free to ask about CCNA setups, security auditing, general ICT problems, or get a callback. How can I assist you with your systems today?</p>
           </div>
         </div>
       </div>
 
       <!-- Keyboard voice interaction control deck -->
-      <div id="ai-audio-status" class="px-3 py-1 bg-success/5 border-top border-success/10 text-success font-mono text-xs d-none align-items-center justify-content-between">
-        <span><i class="bi bi-mic-fill animate-pulse me-1"></i> Listening to voice input stream...</span>
-        <button onclick="stopVoiceRecognition()" class="btn btn-link btn-xs text-danger p-0 font-semibold text-xs text-decoration-none">Cancel</button>
+      <div id="ai-audio-status" class="px-2.5 py-1 bg-success/5 border-top border-success/10 text-success font-mono text-[10px] d-none align-items-center justify-content-between">
+        <span><i class="bi bi-mic-fill animate-pulse me-1"></i> Recording audio input...</span>
+        <button onclick="stopVoiceRecognition()" class="btn btn-link btn-xs text-danger p-0 font-semibold text-[10px] text-decoration-none">Cancel</button>
       </div>
 
       <!-- Quick Action buttons (Lead Conversion) -->
-      <div class="px-3 pt-2 d-flex gap-1.5 overflow-x-auto border-top border-success/10 pb-1" style="scrollbar-width: none;">
-        <button onclick="quickAskChatbot('Tell me about Caleb Muga\'s certifications')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.75rem;">📜 Cisco CCNA</button>
-        <button onclick="quickAskChatbot('What Cybersecurity audits do you support?')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.75rem;">🛡️ Security Audits</button>
-        <button onclick="quickAskChatbot('How can I contact TechKnow Solutions?')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.75rem;">📞 Contact Caleb</button>
+      <div class="px-2.5 pt-1.5 d-flex gap-1 overflow-x-auto border-top border-success/10 pb-1" style="scrollbar-width: none;">
+        <button onclick="quickAskChatbot('Tell me about your CCNA support capabilities')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.68rem; padding: 2px 6px;">📜 Cisco CCNA</button>
+        <button onclick="quickAskChatbot('What Cybersecurity audits can we schedule?')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.68rem; padding: 2px 6px;">🛡️ Security Audits</button>
+        <button onclick="quickAskChatbot('How can I contact the support desk?')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.68rem; padding: 2px 6px;">📞 Contact Support</button>
       </div>
 
       <!-- Bottom Form Input -->
-      <div id="ai-form-container" class="p-3 border-top border-success/10 bg-black/40 d-flex gap-2 align-items-center">
-        <button id="ai-mic-btn" onclick="startSpeechToText()" class="btn btn-fire-secondary rounded p-2" title="Speak into microphone (Voice Typing)">
-          <i class="bi bi-mic"></i>
+      <div id="ai-form-container" class="p-2.5 border-top border-success/10 bg-black/40 d-flex gap-1.5 align-items-center">
+        <button id="ai-mic-btn" onclick="startSpeechToText()" class="btn btn-fire-secondary rounded p-1.5 btn-sm" title="Speak into microphone (Voice Typing)">
+          <i class="bi bi-mic text-xs"></i>
         </button>
-        <input id="ai-chat-input" onkeydown="handleChatFormKey(event)" type="text" class="form-control form-control-fire py-2 px-3 text-white text-sm bg-neutral-950 font-sans" placeholder="Type or speak a question..." style="border: 1px solid rgba(16, 185, 129, 0.25);">
-        <button onclick="submitChatbotMessage()" class="btn btn-success p-2 rounded d-flex align-items-center justify-content-center shadow" style="background-color: #10b981; border: none;">
-          <i class="bi bi-paperplane-fill text-black font-bold"></i>
+        <input id="ai-chat-input" onkeydown="handleChatFormKey(event)" type="text" class="form-control form-control-fire py-1.5 px-2.5 text-white text-xs bg-neutral-950 font-sans" placeholder="Type message..." style="border: 1px solid rgba(16, 185, 129, 0.25);">
+        <button onclick="submitChatbotMessage()" class="btn btn-success p-1.5 rounded d-flex align-items-center justify-content-center shadow btn-sm" style="background-color: #10b981; border: none;">
+          <i class="bi bi-paperplane-fill text-black font-bold text-xs"></i>
         </button>
       </div>
 
       <!-- Persistent Escalation Footer -->
-      <div class="p-2 border-top border-success/10 bg-black/60 d-flex align-items-center justify-content-between">
-        <span class="text-muted text-xs ms-1">Found a security bug?</span>
+      <div class="p-2 border-top border-success/10 bg-black/60 d-flex align-items-center justify-content-between" style="font-size: 0.72rem;">
+        <span class="text-xs ms-1 text-muted">Need direct feedback?</span>
         <button onclick="pushInquiryToWhatsAppOwner()" class="btn btn-xs btn-success font-semibold px-2 py-1 d-flex align-items-center gap-1" style="font-size:0.75rem;">
           <i class="bi bi-whatsapp"></i> Push Lead to Caleb (0791204587)
         </button>
