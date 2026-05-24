@@ -113,7 +113,7 @@ def allowed_video(filename: str) -> bool:
 
 def require_admin():
     if not session.get("is_admin"):
-        flash("Please log in as admin.")
+        flash("Please log in with your user credentials.")
         return False
     return True
 
