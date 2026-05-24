@@ -1223,22 +1223,22 @@
       <div class="counters" data-aos="fade-up" data-aos-delay="100">
         <div class="counter-card card-fire">
           <p class="label">Completed Projects</p>
-          <h3 id="count-projects">38</h3>
+          <h3 id="count-projects">0</h3>
           <p class="sub-label">Verified systems optimized</p>
         </div>
         <div class="counter-card card-fire">
           <p class="label">Consultation Clients</p>
-          <h3 id="count-clients">112</h3>
+          <h3 id="count-clients">0</h3>
           <p class="sub-label">Companies & users supported</p>
         </div>
         <div class="counter-card card-fire">
           <p class="label">Secured Networks</p>
-          <h3 id="count-networks">12</h3>
+          <h3 id="count-networks">0</h3>
           <p class="sub-label">Routers & switches installed</p>
         </div>
         <div class="counter-card card-fire">
           <p class="label">Journal Readers</p>
-          <h3 id="count-reads">579</h3>
+          <h3 id="count-reads">0</h3>
           <p class="sub-label">Cyber protection tips shared</p>
         </div>
       </div>
@@ -1271,6 +1271,184 @@
             <div class="service-icon"><i class="bi bi-gear-wide-connected"></i></div>
             <h4 class="mb-3 text-white">IT Automation & Support</h4>
             <p class="text-muted mb-0">Lightweight script generation, data synchronization routines, technical backups schedules, hardware troubleshooting, and immediate cloud support.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </section>
+
+    <!-- INTERACTIVE CYBER SECURITY & ICT LAB SANDBOX -->
+    <section id="cyber-lab" class="py-5" style="background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 60%);">
+      <div class="section-header text-center mb-5">
+        <h2 class="section-title text-white fw-bold" data-aos="fade-up">Interactive Cyber Lab & ICT Sandbox</h2>
+        <p class="section-subtitle text-muted" data-aos="fade-up" data-aos-delay="80">Deploy real-time diagnostic simulators to audit vulnerabilities, calculate parameters, and analyze threats instantly.</p>
+      </div>
+
+      <div class="row g-4 justify-content-center" data-aos="fade-up" data-aos-delay="100">
+        <div class="col-12 col-xl-10">
+          <div class="card-fire p-4 border border-success/15" style="background: rgba(11, 15, 25, 0.7); backdrop-filter: blur(12px);">
+            
+            <!-- Sandbox Navigation Navigation -->
+            <ul class="nav nav-pills nav-fill bg-black/40 p-1.5 rounded-3 border border-secondary/10 mb-4 gap-2" id="labTabs" role="tablist">
+              <li class="nav-item">
+                <button class="nav-link active font-mono py-2 bg-transparent text-muted text-sm border-0" id="port-scanner-tab" data-bs-toggle="pill" data-bs-target="#port-scanner" type="button" role="tab"><i class="bi bi-terminal-fill me-1.5 text-success"></i> Port Scanner Simulator</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link font-mono py-2 bg-transparent text-muted text-sm border-0" id="pw-audit-tab" data-bs-toggle="pill" data-bs-target="#pw-audit" type="button" role="tab"><i class="bi bi-shield-lock-fill me-1.5 text-success"></i> Password Entropy Audit</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link font-mono py-2 bg-transparent text-muted text-sm border-0" id="subnetter-tab" data-bs-toggle="pill" data-bs-target="#subnetter" type="button" role="tab"><i class="bi bi-calculator-fill me-1.5 text-success"></i> CCNA Subnet CIDR Calculator</button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="labTabsContent">
+              <!-- LAB 1: PORT SCANNER -->
+              <div class="tab-pane fade show active" id="port-scanner" role="tabpanel">
+                <div class="row g-4">
+                  <div class="col-12 col-lg-5">
+                    <h5 class="text-white fw-bold mb-2"><i class="bi bi-broadcast text-success me-2"></i>Port Vulnerability Diagnostics</h5>
+                    <p class="text-muted small">Examine network configurations. When running our benign automated probe sandbox on any targeted domain or node host IP, we review safety status across primary server protocols.</p>
+                    
+                    <div class="mb-3">
+                      <label class="text-muted text-xs font-mono mb-1.5 d-block">TARGET SYSTEM ADDRESS / IP</label>
+                      <input type="text" id="scan-domain" class="form-control form-control-fire py-2 px-3 font-mono text-sm bg-neutral-950 border border-secondary/15" value="192.168.10.45" placeholder="e.g. mycompany.com or IP">
+                    </div>
+                    
+                    <button onclick="executeSimulatedPortScan()" id="scan-btn" class="btn btn-success w-100 font-mono d-flex align-items-center justify-content-center gap-2">
+                      <i class="bi bi-shield-radar text-black"></i> Run Safety Diagnostic Audit
+                    </button>
+                  </div>
+                  
+                  <div class="col-12 col-lg-7">
+                    <!-- Console UI -->
+                    <div class="bg-black/80 rounded-3 border border-secondary/20 p-3 h-100 d-flex flex-column justify-content-between" style="min-height: 250px;">
+                      <div>
+                        <div class="d-flex align-items-center justify-content-between text-muted text-xs font-mono pb-2 border-bottom border-secondary/10 mb-2">
+                          <span>SYSTEM LOG ANALYZER STATE: ACTIVE</span>
+                          <span class="rounded-circle bg-success" style="width: 6px; height: 6px; animation: pulse 1s infinite;"></span>
+                        </div>
+                        <div id="scan-console" class="font-mono text-xs text-secondary/80 leading-relaxed overflow-y-auto" style="max-height: 180px;">
+                          <p class="mb-1 text-success">Ready: Awaiting user safe audit initialize commands...</p>
+                        </div>
+                      </div>
+                      
+                      <div id="scan-feedback" class="d-none p-2 rounded bg-success/5 border border-success/10 text-xs text-white mt-2">
+                        <i class="bi bi-shield-fill-check text-success me-1"></i> <strong>Audit Summary:</strong> No active network payload leak detected. Ensure default ports are correctly hardened using certified Cisco configurations.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LAB 2: PASSWORD ENTROPY -->
+              <div class="tab-pane fade" id="pw-audit" role="tabpanel">
+                <div class="row g-4">
+                  <div class="col-12 col-md-6">
+                    <h5 class="text-white fw-bold mb-2"><i class="bi bi-key-fill text-success me-2"></i>Brute-Force Leak Simulator</h5>
+                    <p class="text-muted small">Target vulnerability vectors. Input a proposed administrative password to evaluate entropy strength and measure approximate seconds required for botnets to trace your line.</p>
+                    
+                    <div class="mb-3.5 position-relative">
+                      <label class="text-muted text-xs font-mono mb-1.5 d-block">PROPOSED PASSWORD DRAFT</label>
+                      <input oninput="evaluatePasswordSecurity()" type="password" id="lab-pass" class="form-control form-control-fire py-2 px-3 text-sm font-mono bg-neutral-950 border border-secondary/15" placeholder="Enter test password..." style="letter-spacing: 0.15em;">
+                      <button onclick="togglePasswordInputVis()" class="btn btn-xs btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2 font-mono text-white/50" style="margin-top: 5px;">SHOW</button>
+                    </div>
+
+                    <div class="mt-4 p-3 rounded bg-success/5 border border-success/15">
+                      <span class="text-success font-mono text-xs d-block mb-1">Caleb Muga's CCNA Recommendations:</span>
+                      <p class="text-muted small m-0 leading-normal">Scammers in 2025 leverage cheap high-GPU clusters. Implement 14+ characters encompassing alphanumeric mixes to completely defeat brute force.</p>
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-6">
+                    <div class="bg-black/30 rounded-3 border border-secondary/20 p-3 h-100 d-flex flex-column justify-content-between">
+                      <div>
+                        <span class="text-xs text-muted font-mono tracking-wider mb-2 d-block">PROBABILISTIC ANALYSIS</span>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                          <span class="text-white text-sm font-semibold">Security Level:</span>
+                          <span id="pw-lvl" class="badge bg-danger text-black font-semibold">NOT MEASURED</span>
+                        </div>
+                        
+                        <!-- Entropy progress rating bar -->
+                        <div class="progress bg-secondary-subtle/15 mb-4" style="height: 6px; border-radius: 3px;">
+                          <div id="pw-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%; transition: width 0.3s;"></div>
+                        </div>
+
+                        <!-- Scammer crack rate -->
+                        <div class="p-3 bg-black/40 rounded border border-secondary/10">
+                          <span class="text-muted text-xs d-block font-mono">ESTIMATED SCAMMER CRACK SPEED:</span>
+                          <h4 id="pw-speed" class="text-white font-mono fw-bold m-0 mt-1">Instantaneous</h4>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LAB 3: IP CIDR NETWORK CALCULATOR -->
+              <div class="tab-pane fade" id="subnetter" role="tabpanel">
+                <div class="row g-4">
+                  <div class="col-12 col-lg-5">
+                    <h5 class="text-white fw-bold mb-2"><i class="bi bi-box-fill text-success me-2"></i>CIDR Enterprise Subnet Calculator</h5>
+                    <p class="text-muted small font-sans d-block">Configure network masks. Provide any IP prefix block and bits mask to calculate standard administrative metrics like networks, broadcasts, and host boundaries on the fly.</p>
+                    
+                    <div class="row g-2 mb-3">
+                      <div class="col-8">
+                        <label class="text-muted text-xs font-mono mb-1 d-block">IP ADDRESS PREFIX</label>
+                        <input id="sub-ip" type="text" class="form-control form-control-fire py-2 px-3 text-sm font-mono bg-neutral-950 border border-secondary/15" value="192.168.10.0">
+                      </div>
+                      <div class="col-4">
+                        <label class="text-muted text-xs font-mono mb-1 d-block">MASK bits</label>
+                        <select id="sub-mask" class="form-select form-control-fire py-2 font-mono text-sm bg-neutral-950 border border-secondary/15" style="color:#10b981;">
+                          <option value="24">/24 (255.255.255.0)</option>
+                          <option value="25">/25 (255.255.255.128)</option>
+                          <option value="26">/26 (255.255.255.192)</option>
+                          <option value="27">/27 (255.255.255.224)</option>
+                          <option value="28">/28 (255.255.255.240)</option>
+                          <option value="30">/30 (255.255.255.252)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <button onclick="calculateCidrSubnets()" class="btn btn-success w-100 font-mono"><i class="bi bi-calculator me-1"></i> Calculate Routing Ranges</button>
+                  </div>
+
+                  <div class="col-12 col-lg-7">
+                    <div class="bg-black/30 rounded-3 border border-secondary/20 p-3 h-100">
+                      <span class="text-xs text-muted font-mono tracking-wider mb-3 d-block">SUBNET BLOCK GRAPHICS</span>
+                      
+                      <div class="row g-2.5">
+                        <div class="col-6">
+                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
+                            <span class="text-muted text-xxs d-block font-mono">SUBNET MASK</span>
+                            <span id="sub-res-mask" class="text-success text-sm font-mono">255.255.255.0</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
+                            <span class="text-muted text-xxs d-block font-mono">MAX USABLE HOSTS</span>
+                            <span id="sub-res-hosts" class="text-success text-sm font-mono">254 IPs</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
+                            <span class="text-muted text-xxs d-block font-mono">NETWORK ROUTING PREFIX</span>
+                            <span id="sub-res-net" class="text-white text-sm font-mono">192.168.10.0</span>
+                          </div>
+                        </div>
+                        <div class="col-6">
+                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
+                            <span class="text-muted text-xxs d-block font-mono">BROADCAST ADDRESS</span>
+                            <span id="sub-res-bcast" class="text-white text-sm font-mono">192.168.10.255</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -1582,6 +1760,173 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // ==========================================
+    // INTERACTIVE CYBER SECURITY & ICT LAB ENGINE
+    // ==========================================
+    
+    // 1. Safe Network Port Exploits Scanner Simulator
+    const SIMULATOR_LOGS = [
+      { text: "🛰️ Launching security socket probe handshake...", color: "#9ca3af" },
+      { text: "🔍 Checking [Port 80] HTTP Web Server...", color: "#9ca3af" },
+      { text: "   ↳ RESPONSE code 200 OK | Nginx server active (Hardened).", color: "#10b981" },
+      { text: "🔒 Checking [Port 22] SSH Terminal Gateway...", color: "#f59e0b" },
+      { text: "   ↳ WARNING: Root authentication is enabled. CCNA recommendation: change to SSH Key pairs.", color: "#f59e0b" },
+      { text: "🛡️ Probing [Port 53] DNS Resolver zone...", color: "#9ca3af" },
+      { text: "   ↳ DNS protection secure. Cache poisoning vectors disabled.", color: "#10b981" },
+      { text: "📊 Probing [Port 3306] MySQL Database port...", color: "#9ca3af" },
+      { text: "   ↳ SECURE: Port filtered. Outer connections disallowed.", color: "#10b981" },
+      { text: "🏁 Safety audit sequence complete.", color: "#10b981" }
+    ];
+
+    function executeSimulatedPortScan() {
+      const btn = document.getElementById("scan-btn");
+      const consoleEl = document.getElementById("scan-console");
+      const feedback = document.getElementById("scan-feedback");
+      const targetDomain = document.getElementById("scan-domain").value.trim() || "192.168.10.45";
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Auditing ${targetDomain}...`;
+      consoleEl.innerHTML = "";
+      feedback.classList.add("d-none");
+
+      let logIndex = 0;
+      function printNextLog() {
+        if (logIndex < SIMULATOR_LOGS.length) {
+          const log = SIMULATOR_LOGS[logIndex];
+          const p = document.createElement("p");
+          p.className = "mb-1";
+          p.style.color = log.color;
+          p.textContent = log.text.replace("192.168.10.45", targetDomain);
+          consoleEl.appendChild(p);
+          consoleEl.scrollTop = consoleEl.scrollHeight;
+          logIndex++;
+          setTimeout(printNextLog, 450);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="bi bi-shield-radar text-black"></i> Run Safety Diagnostic Audit`;
+          feedback.classList.remove("d-none");
+        }
+      }
+      printNextLog();
+    }
+
+    // 2. Interactive Password Entropy & Botnet Leak Rate Checker
+    function evaluatePasswordSecurity() {
+      const pwInput = document.getElementById("lab-pass");
+      const lvlBadge = document.getElementById("pw-lvl");
+      const bar = document.getElementById("pw-bar");
+      const speed = document.getElementById("pw-speed");
+      
+      const val = pwInput.value;
+      if (!val) {
+        lvlBadge.textContent = "NOT MEASURED";
+        lvlBadge.className = "badge bg-danger text-black font-semibold";
+        bar.style.width = "0%";
+        bar.className = "progress-bar bg-danger";
+        speed.textContent = "Instantaneous";
+        return;
+      }
+
+      // Calculate score based on primitive entropy rules
+      let score = 0;
+      if (val.length >= 6) score += 20;
+      if (val.length >= 10) score += 20;
+      if (/[A-Z]/.test(val)) score += 15;
+      if (/[0-9]/.test(val)) score += 15;
+      if (/[^A-Za-z0-9]/.test(val)) score += 30;
+
+      bar.style.width = score + "%";
+
+      if (score < 40) {
+        lvlBadge.textContent = "HIGH VULNERABILITY (WEAK)";
+        lvlBadge.className = "badge bg-danger text-black font-semibold";
+        bar.className = "progress-bar bg-danger";
+        speed.innerHTML = "🔴 <span class='text-danger'>~ 0.04 seconds</span> (Instant crack)";
+      } else if (score < 75) {
+        lvlBadge.textContent = "MODERATE (MEDIUM)";
+        lvlBadge.className = "badge bg-warning text-black font-semibold";
+        bar.className = "progress-bar bg-warning";
+        speed.innerHTML = "🟡 <span class='text-warning'>~ 14 hours</span> (Vulnerable)";
+      } else {
+        lvlBadge.textContent = "MILITARY ENTERPRISE SECURE";
+        lvlBadge.className = "badge bg-success text-black font-semibold";
+        bar.className = "progress-bar bg-success";
+        speed.innerHTML = "🟢 <span class='text-success'>~ 14.8 million centuries</span> (Secure)";
+      }
+    }
+
+    function togglePasswordInputVis() {
+      const input = document.getElementById("lab-pass");
+      if (input.type === "password") {
+        input.type = "text";
+      } else {
+        input.type = "password";
+      }
+    }
+
+    // 3. CCNA / Network Engineering IP Mask CIDR Calculator
+    function calculateCidrSubnets() {
+      const ip = document.getElementById("sub-ip").value.trim() || "192.168.10.0";
+      const mask = parseInt(document.getElementById("sub-mask").value);
+      
+      const resMask = document.getElementById("sub-res-mask");
+      const resHosts = document.getElementById("sub-res-hosts");
+      const resNet = document.getElementById("sub-res-net");
+      const resBcast = document.getElementById("sub-res-bcast");
+
+      // Set subnet parameters based on chosen bit values
+      let maskString = "255.255.255.0";
+      let totalHosts = 254;
+      let broadcastSegment = 255;
+      let netSegment = 0;
+
+      if (mask === 24) {
+        maskString = "255.255.255.0";
+        totalHosts = 254;
+        netSegment = 0;
+        broadcastSegment = 255;
+      } else if (mask === 25) {
+        maskString = "255.255.255.128";
+        totalHosts = 126;
+        netSegment = 0;
+        broadcastSegment = 127;
+      } else if (mask === 26) {
+        maskString = "255.255.255.192";
+        totalHosts = 62;
+        netSegment = 0;
+        broadcastSegment = 63;
+      } else if (mask === 27) {
+        maskString = "255.255.255.224";
+        totalHosts = 30;
+        netSegment = 0;
+        broadcastSegment = 31;
+      } else if (mask === 28) {
+        maskString = "255.255.255.240";
+        totalHosts = 14;
+        netSegment = 0;
+        broadcastSegment = 15;
+      } else if (mask === 30) {
+        maskString = "255.255.255.252";
+        totalHosts = 2;
+        netSegment = 0;
+        broadcastSegment = 3;
+      }
+
+      // Format IP network boundary display
+      const ipParts = ip.split(".");
+      if (ipParts.length === 4) {
+        const baseIp = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}`;
+        resNet.textContent = `${baseIp}.${netSegment}`;
+        resBcast.textContent = `${baseIp}.${broadcastSegment}`;
+      } else {
+        resNet.textContent = `${ip}`;
+        resBcast.textContent = `${ip} / broadcast range`;
+      }
+
+      resMask.textContent = maskString;
+      resHosts.textContent = `${totalHosts} hosts/IPs`;
+    }
+
     // Reveal Loader once fully loaded
     window.addEventListener('load', () => {
       const loader = document.getElementById('loader');
@@ -1756,6 +2101,390 @@
         heroBg.style.transform = `translateY(${offset * 0.08}px)`;
       }
     });
+    // Parallax scrolling layout for hero media layer
+    window.addEventListener('scroll', () => {
+      const heroBg = document.querySelector('.hero .overlay');
+      if (heroBg) {
+        const offset = window.scrollY;
+        heroBg.style.transform = `translateY(${offset * 0.08}px)`;
+      }
+    });
+
+    // Dynamic Live Visit Tracking & Pre-emptive alert links
+    try {
+      fetch("/api/track_visit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: window.location.pathname })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Analytics tracker active: visit logged.", data.ip_address);
+      })
+      .catch(err => console.log("Analytics loading passive status: ", err));
+    } catch(e) {}
+  </script>
+
+  <!-- FLOATING AI CYBERSECURITY ADVISOR CHATBOT WIDGET -->
+  <div id="ai-chat-app" class="position-fixed bottom-0 end-0 m-3 m-md-4" style="z-index: 1050; font-family: 'Inter', sans-serif;">
+    <!-- Launcher Button -->
+    <button id="ai-chat-launcher" onclick="toggleAIChatWindow()" class="btn border border-success/30 rounded-circle shadow d-flex align-items-center justify-content-center" style="width: 58px; height: 58px; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(12px); box-shadow: 0 0 20px rgba(16,185,129,0.25) !important;">
+      <div class="position-relative">
+        <i class="bi bi-robot text-success fs-3 animate-pulse"></i>
+        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle" style="animation: pulse 1.5s infinite;"><span class="visually-hidden">Live AI</span></span>
+      </div>
+    </button>
+
+    <!-- Chat Interface Container -->
+    <div id="ai-chat-window" class="ai-chat-card d-none d-flex flex-column" style="width: 370px; max-width: 90vw; height: 500px; background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <!-- Header -->
+      <div class="p-3 border-bottom border-success/20 d-flex align-items-center justify-content-between text-white" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(3, 7, 18, 0) 100%);">
+        <div class="d-flex align-items-center gap-2">
+          <div class="bg-success/10 p-2 rounded-circle border border-success/30">
+            <i class="bi bi-shield-lock-fill text-success"></i>
+          </div>
+          <div>
+            <h6 class="m-0 fw-bold tracking-tight text-white">TechKnow AI Advisor</h6>
+            <span class="text-success font-mono text-xs d-flex align-items-center gap-1">
+              <span class="rounded-circle bg-success" style="width: 6px; height: 6px; animation: pulse 1.5s infinite;"></span>
+              Virtual Security Officer
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <!-- Voice Output Checkbox Button -->
+          <button id="ai-tts-toggle" onclick="toggleVoiceSpeech()" class="btn btn-sm text-muted bg-black/30 border border-secondary/15 rounded p-1" title="Toggle AI Audio Output Voice Reader">
+            <i id="ai-tts-icon" class="bi bi-volume-mute"></i>
+          </button>
+          <button onclick="toggleAIChatWindow()" class="btn btn-sm btn-link text-muted hover:text-white p-0"><i class="bi bi-x-lg"></i></button>
+        </div>
+      </div>
+
+      <!-- Dialogue History -->
+      <div id="ai-chat-body" class="p-3 flex-grow-1 overflow-auto d-flex flex-column gap-3" style="max-height: 350px;">
+        <!-- Welcome Dialogue Message -->
+        <div class="d-flex gap-2">
+          <div class="bg-success/15 rounded-circle d-flex align-items-center justify-content-center border border-success/25" style="width: 32px; height: 32px; flex-shrink: 0;">
+            <i class="bi bi-shield-fill-check text-success text-xs"></i>
+          </div>
+          <div class="p-3 rounded-3 text-white text-sm" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); max-width: 80%;">
+            <p class="mb-1 leading-normal">Hello, I am Caleb Muga's virtual AI Cybersecurity & Network Advisor.</p>
+            <p class="mb-1 text-xs text-muted">Need custom server provisioning, CCNA setups, or password checkups? Ask me anything! We can push complex support logs directly to Caleb via WhatsApp as well.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard voice interaction control deck -->
+      <div id="ai-audio-status" class="px-3 py-1 bg-success/5 border-top border-success/10 text-success font-mono text-xs d-none align-items-center justify-content-between">
+        <span><i class="bi bi-mic-fill animate-pulse me-1"></i> Listening to voice input stream...</span>
+        <button onclick="stopVoiceRecognition()" class="btn btn-link btn-xs text-danger p-0 font-semibold text-xs text-decoration-none">Cancel</button>
+      </div>
+
+      <!-- Quick Action buttons (Lead Conversion) -->
+      <div class="px-3 pt-2 d-flex gap-1.5 overflow-x-auto border-top border-success/10 pb-1" style="scrollbar-width: none;">
+        <button onclick="quickAskChatbot('Tell me about Caleb Muga\'s certifications')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.75rem;">📜 Cisco CCNA</button>
+        <button onclick="quickAskChatbot('What Cybersecurity audits do you support?')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.75rem;">🛡️ Security Audits</button>
+        <button onclick="quickAskChatbot('How can I contact TechKnow Solutions?')" class="btn btn-xs btn-outline-success font-mono flex-shrink-0" style="font-size:0.75rem;">📞 Contact Caleb</button>
+      </div>
+
+      <!-- Bottom Form Input -->
+      <div id="ai-form-container" class="p-3 border-top border-success/10 bg-black/40 d-flex gap-2 align-items-center">
+        <button id="ai-mic-btn" onclick="startSpeechToText()" class="btn btn-fire-secondary rounded p-2" title="Speak into microphone (Voice Typing)">
+          <i class="bi bi-mic"></i>
+        </button>
+        <input id="ai-chat-input" onkeydown="handleChatFormKey(event)" type="text" class="form-control form-control-fire py-2 px-3 text-white text-sm bg-neutral-950 font-sans" placeholder="Type or speak a question..." style="border: 1px solid rgba(16, 185, 129, 0.25);">
+        <button onclick="submitChatbotMessage()" class="btn btn-success p-2 rounded d-flex align-items-center justify-content-center shadow" style="background-color: #10b981; border: none;">
+          <i class="bi bi-paperplane-fill text-black font-bold"></i>
+        </button>
+      </div>
+
+      <!-- Persistent Escalation Footer -->
+      <div class="p-2 border-top border-success/10 bg-black/60 d-flex align-items-center justify-content-between">
+        <span class="text-muted text-xs ms-1">Found a security bug?</span>
+        <button onclick="pushInquiryToWhatsAppOwner()" class="btn btn-xs btn-success font-semibold px-2 py-1 d-flex align-items-center gap-1" style="font-size:0.75rem;">
+          <i class="bi bi-whatsapp"></i> Push Lead to Caleb (0791204587)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Chat Widget Custom Stylesheets */
+    .ai-chat-card {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(0);
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    #ai-chat-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    #ai-chat-body::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.2);
+      border-radius: 2px;
+    }
+    .text-xs { font-size: 0.75rem; }
+    .text-sm { font-size: 0.875rem; }
+    .btn-xs {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.72rem;
+      border-radius: 4px;
+    }
+    .quick-escalate-btn {
+      transition: background 0.2s;
+    }
+    .quick-escalate-btn:hover {
+      background: rgba(16, 185, 129, 0.1) !important;
+    }
+  </style>
+
+  <script>
+    // AI Chatbot Interactivity Engine
+    let chatHistory = [];
+    let isTtsActive = false;
+    let voiceRecognitionObj = null;
+
+    function toggleAIChatWindow() {
+      const win = document.getElementById("ai-chat-window");
+      const launcher = document.getElementById("ai-chat-launcher");
+      
+      if (win.classList.contains("d-none")) {
+        win.classList.remove("d-none");
+        launcher.classList.add("d-none");
+        document.getElementById("ai-chat-input").focus();
+      } else {
+        win.classList.add("d-none");
+        launcher.classList.remove("d-none");
+      }
+    }
+
+    function toggleVoiceSpeech() {
+      isTtsActive = !isTtsActive;
+      const icon = document.getElementById("ai-tts-icon");
+      const btn = document.getElementById("ai-tts-toggle");
+      
+      if (isTtsActive) {
+        icon.className = "bi bi-volume-up-fill text-success";
+        btn.classList.add("border-success");
+        // Test call sound trigger
+        speakAIReplies("Voice feedback activated!");
+      } else {
+        icon.className = "bi bi-volume-mute";
+        btn.classList.remove("border-success");
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      }
+    }
+
+    function speakAIReplies(rawText) {
+      if (!isTtsActive || !window.speechSynthesis) return;
+      
+      // Stop current sounds
+      window.speechSynthesis.cancel();
+      
+      // Clean markdown tags out
+      let cleanStr = rawText.replace(/[\*\#\`\-\>\_\+\{\}\[\]\(\)]/g, "");
+      
+      const utterance = new SpeechSynthesisUtterance(cleanStr);
+      // Try to choose an elegant english tone if available
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find(v => v.lang.includes("en-US") || v.lang.includes("en-GB"));
+      if (engVoice) {
+        utterance.voice = engVoice;
+      }
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function quickAskChatbot(promptText) {
+      document.getElementById("ai-chat-input").value = promptText;
+      submitChatbotMessage();
+    }
+
+    function handleChatFormKey(e) {
+      if (e.key === "Enter") {
+        submitChatbotMessage();
+      }
+    }
+
+    // Web Speech Recognition for voice navigation (Speech-to-Text Voice Typing)
+    function startSpeechToText() {
+      const SpeechRegClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRegClass) {
+        alert("Voice recognition is not fully supported in this browser version. Accessing over chrome recommended.");
+        return;
+      }
+      
+      if (voiceRecognitionObj) {
+        stopVoiceRecognition();
+        return;
+      }
+      
+      document.getElementById("ai-audio-status").classList.remove("d-none");
+      document.getElementById("ai-mic-btn").classList.add("btn-success", "text-black");
+      
+      voiceRecognitionObj = new SpeechRegClass();
+      voiceRecognitionObj.continuous = false;
+      voiceRecognitionObj.interimResults = false;
+      voiceRecognitionObj.lang = "en-US";
+      
+      voiceRecognitionObj.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        if (text) {
+          document.getElementById("ai-chat-input").value = text;
+        }
+        stopVoiceRecognition();
+      };
+      
+      voiceRecognitionObj.onerror = function() {
+        stopVoiceRecognition();
+      };
+      
+      voiceRecognitionObj.onend = function() {
+        stopVoiceRecognition();
+      };
+      
+      voiceRecognitionObj.start();
+    }
+
+    function stopVoiceRecognition() {
+      if (voiceRecognitionObj) {
+        try {
+          voiceRecognitionObj.stop();
+        } catch(e) {}
+        voiceRecognitionObj = null;
+      }
+      document.getElementById("ai-audio-status").classList.add("d-none");
+      document.getElementById("ai-mic-btn").classList.remove("btn-success", "text-black");
+    }
+
+    function submitChatbotMessage() {
+      const input = document.getElementById("ai-chat-input");
+      const userText = input.value.trim();
+      if (!userText) return;
+      
+      // Clear input
+      input.value = "";
+      
+      // Append user's bubble
+      appendMessageBubble("user", userText);
+      
+      // Append typing status loader
+      const loaderId = appendTypingLoader();
+      
+      // Query API Backend routing Proxy
+      fetch("/api/chatbot/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: userText,
+          history: chatHistory
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        // Destroy typing loader
+        document.getElementById(loaderId)?.remove();
+        
+        const answer = data.text || "Apologies, I couldn't reach Caleb's knowledge base. Try messaging him directly on WhatsApp!";
+        // Append response bubble
+        appendMessageBubble("model", answer);
+        
+        // Feed text to Speech Audio synthesizer if enabled
+        speakAIReplies(answer);
+        
+        // Saved state log references
+        chatHistory.push({ role: "user", text: userText });
+        chatHistory.push({ role: "model", text: answer });
+      })
+      .catch(err => {
+        document.getElementById(loaderId)?.remove();
+        appendMessageBubble("model", "⚠️ Streaming system connection error. Please ensure your backend is online and run compile tests.");
+      });
+    }
+
+    function appendMessageBubble(role, text) {
+      const body = document.getElementById("ai-chat-body");
+      const container = document.createElement("div");
+      container.className = "d-flex gap-2 " + (role === "user" ? "justify-content-end" : "");
+      
+      let avatarHtml = "";
+      let styleContent = "";
+      if (role === "model") {
+        avatarHtml = `
+          <div class="bg-success/15 rounded-circle d-flex align-items-center justify-content-center border border-success/25" style="width: 32px; height: 32px; flex-shrink: 0;">
+            <i class="bi bi-shield-lock-fill text-success text-xs"></i>
+          </div>`;
+        styleContent = "background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); text-white;";
+      } else {
+        avatarHtml = ""; // User bubble has no avatar
+        styleContent = "background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.25); text-white;";
+      }
+      
+      // Parse brief Markdown lines safely
+      let parsedText = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/\`(.*?)\`/g, '<code class="font-mono bg-black/40 px-1 rounded text-success">$1</code>');
+        
+      container.innerHTML = `
+        ${role === "model" ? avatarHtml : ""}
+        <div class="p-2.5 rounded-3 text-sm" style="${styleContent} max-width: 80%; word-break: break-word;">
+          <p class="mb-0 leading-normal">${parsedText}</p>
+          ${role === "model" ? `
+            <div class="d-flex justify-content-end mt-2">
+              <button onclick="forwardMessageToWhatsApp('${encodeURIComponent(text)}')" class="btn btn-xs quick-escalate-btn text-success border-0 bg-transparent p-0 d-flex align-items-center gap-1 font-semibold" style="font-size:0.7rem;">
+                <i class="bi bi-whatsapp"></i> Push to WhatsApp
+              </button>
+            </div>
+          ` : ""}
+        </div>
+      `;
+      
+      body.appendChild(container);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function appendTypingLoader() {
+      const body = document.getElementById("ai-chat-body");
+      const loaderId = "loader-" + Date.now();
+      const container = document.createElement("div");
+      container.id = loaderId;
+      container.className = "d-flex gap-2 align-items-center text-muted text-xs font-mono";
+      container.innerHTML = `
+        <div class="bg-success/15 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+          <i class="bi bi-gear-fill text-success animate-spin text-xs"></i>
+        </div>
+        <span>AI is assessing your query...</span>
+      `;
+      body.appendChild(container);
+      body.scrollTop = body.scrollHeight;
+      return loaderId;
+    }
+
+    function forwardMessageToWhatsApp(encodedText) {
+      const text = decodeURIComponent(encodedText);
+      const output = `💬 *TechKnow AI Chat Inquiry Log*:\n============================\n❓ *Question*: \`User conversation logs\`\n\n🛡️ *AIP Model Response*:\n"${text}"\n\n👉 Let's schedule a dedicated live support call with Caleb!`;
+      const waLink = `https://wa.me/254791204587?text=${encodeURIComponent(output)}`;
+      window.open(waLink, '_blank');
+    }
+
+    function pushInquiryToWhatsAppOwner() {
+      // Get conversation outline
+      let logs = "";
+      if (chatHistory.length > 0) {
+        logs = chatHistory.map(h => `${h.role === 'user' ? '👤 User' : '🤖 AI'}: ${h.text}`).join('\n\n');
+      } else {
+        logs = "Hello Caleb, I would love to consult with you about TechKnow Solution's standard cybersecurity services!";
+      }
+      
+      const promptText = `🚀 *TECHKNOW SOLUTIONS LEAD CONVERSATION*:\n==================================\n${logs}\n\n==================================\n⏰ Generated: ${new Date().toLocaleString()}`;
+      window.open(`https://wa.me/254791204587?text=${encodeURIComponent(promptText)}`, '_blank');
+    }
   </script>
 </body>
 </html>
