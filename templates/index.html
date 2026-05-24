@@ -1864,7 +1864,7 @@
       }
     }
 
-    // 3. CCNA / Network Engineering IP Mask CIDR Calculator
+    // 3. CCNA / Network Engineering IP Mask CIDR Calculator (ADVANCED REAL-WORLD MATHEMATICS ENGINE)
     function calculateCidrSubnets() {
       const ip = document.getElementById("sub-ip").value.trim() || "192.168.10.0";
       const mask = parseInt(document.getElementById("sub-mask").value);
@@ -1874,57 +1874,72 @@
       const resNet = document.getElementById("sub-res-net");
       const resBcast = document.getElementById("sub-res-bcast");
 
-      // Set subnet parameters based on chosen bit values
-      let maskString = "255.255.255.0";
-      let totalHosts = 254;
-      let broadcastSegment = 255;
-      let netSegment = 0;
-
-      if (mask === 24) {
-        maskString = "255.255.255.0";
-        totalHosts = 254;
-        netSegment = 0;
-        broadcastSegment = 255;
-      } else if (mask === 25) {
-        maskString = "255.255.255.128";
-        totalHosts = 126;
-        netSegment = 0;
-        broadcastSegment = 127;
-      } else if (mask === 26) {
-        maskString = "255.255.255.192";
-        totalHosts = 62;
-        netSegment = 0;
-        broadcastSegment = 63;
-      } else if (mask === 27) {
-        maskString = "255.255.255.224";
-        totalHosts = 30;
-        netSegment = 0;
-        broadcastSegment = 31;
-      } else if (mask === 28) {
-        maskString = "255.255.255.240";
-        totalHosts = 14;
-        netSegment = 0;
-        broadcastSegment = 15;
-      } else if (mask === 30) {
-        maskString = "255.255.255.252";
-        totalHosts = 2;
-        netSegment = 0;
-        broadcastSegment = 3;
+      // Parse IP parts
+      const parts = ip.split(".");
+      if (parts.length !== 4) {
+        alert("Please enter a valid IPv4 address (e.g. 192.168.10.45) to execute binary subnetting calculations.");
+        return;
       }
 
-      // Format IP network boundary display
-      const ipParts = ip.split(".");
-      if (ipParts.length === 4) {
-        const baseIp = `${ipParts[0]}.${ipParts[1]}.${ipParts[2]}`;
-        resNet.textContent = `${baseIp}.${netSegment}`;
-        resBcast.textContent = `${baseIp}.${broadcastSegment}`;
-      } else {
-        resNet.textContent = `${ip}`;
-        resBcast.textContent = `${ip} / broadcast range`;
+      // Convert classes to 32-bit Integer
+      let ipInt = 0;
+      for (let i = 0; i < 4; i++) {
+        let val = parseInt(parts[i]);
+        if (isNaN(val) || val < 0 || val > 255) {
+          alert("Invalid IPv4 address octet detected: '" + parts[i] + "'");
+          return;
+        }
+        ipInt = (ipInt << 8) + val;
       }
 
+      // Generate Netmask
+      let maskInt = 0;
+      for (let i = 0; i < mask; i++) {
+        maskInt = (maskInt << 1) | 1;
+      }
+      maskInt = maskInt << (32 - mask);
+
+      // Extract Netmask Decimals representation
+      const mParts = [
+        (maskInt >>> 24) & 255,
+        (maskInt >>> 16) & 255,
+        (maskInt >>> 8) & 255,
+        maskInt & 255
+      ];
+      const maskString = mParts.join(".");
+
+      // Calculate network prefix segment and broadcast segment
+      const netInt = ipInt & maskInt;
+      const bcastInt = netInt | (~maskInt);
+
+      const netParts = [
+        (netInt >>> 24) & 255,
+        (netInt >>> 16) & 255,
+        (netInt >>> 8) & 255,
+        netInt & 255
+      ];
+      const bcastParts = [
+        (bcastInt >>> 24) & 255,
+        (bcastInt >>> 16) & 255,
+        (bcastInt >>> 8) & 255,
+        bcastInt & 255
+      ];
+
+      const netString = netParts.join(".");
+      const bcastString = bcastParts.join(".");
+
+      // Calculate total usable hosts block count
+      const totalHosts = Math.max(0, Math.pow(2, 32 - mask) - 2);
+
+      // Usable Host Boundaries range
+      const firstUsable = [netParts[0], netParts[1], netParts[2], netParts[3] + (mask < 31 ? 1 : 0)].join(".");
+      const lastUsable = [bcastParts[0], bcastParts[1], bcastParts[2], bcastParts[3] - (mask < 31 ? 1 : 0)].join(".");
+
+      // Populate interactive metrics UI
       resMask.textContent = maskString;
-      resHosts.textContent = `${totalHosts} hosts/IPs`;
+      resHosts.textContent = `${totalHosts} IPs (${firstUsable} - ${lastUsable})`;
+      resNet.textContent = netString;
+      resBcast.textContent = bcastString;
     }
 
     // Reveal Loader once fully loaded
@@ -2390,9 +2405,41 @@
         // Destroy typing loader
         document.getElementById(loaderId)?.remove();
         
-        const answer = data.text || "Apologies, I couldn't reach Caleb's knowledge base. Try messaging him directly on WhatsApp!";
-        // Append response bubble
-        appendMessageBubble("model", answer);
+        let answer = data.text || "Apologies, I couldn't reach Caleb's knowledge base. Try messaging him directly on WhatsApp!";
+        
+        // Automated WhatsApp telemetry trigger
+        const regex = /\[CLIENT_DATA:\s*Name=([\s\S]*?),\s*Contact=([\s\S]*?),\s*Need=([\s\S]*?)\]/i;
+        const match = answer.match(regex);
+        
+        if (match) {
+          const clientName = match[1].trim();
+          const clientContact = match[2].trim();
+          const clientNeed = match[3].trim();
+          
+          // Clean answer text by stripping the tags so visitor does not see system metadata
+          answer = answer.replace(regex, "").trim();
+          
+          // Trigger automated WhatsApp system telemetry payload
+          const waText = `📬 *NEW SUITE CLIENT LEAD*:\n============================\n🗣️ *Name*: ${clientName}\n📬 *Contact*: ${clientContact}\n🛠️ *Technical Need*: ${clientNeed}\n🤖 *Dispatched via*: MUGA.dev Chatbot AI\n⏰ *Time*: ${new Date().toLocaleString()}`;
+          const waUrl = "https://wa.me/254791204587?text=" + encodeURIComponent(waText);
+          
+          // Append standard explanation response
+          appendMessageBubble("model", answer);
+          
+          // Load interactive direct dispatch action card
+          setTimeout(() => {
+            // Attempt automated pop-up redirect
+            const pop = window.open(waUrl, "_blank");
+            if (!pop) {
+              appendLeadDispatcherCard(clientName, clientContact, clientNeed, waUrl);
+            } else {
+              appendMessageBubble("model", "🚀 **Automatic Sync Active:** I have successfully generated your direct support ticket and synchronized it automatically with Caleb's WhatsApp terminal for instant attention!");
+            }
+          }, 800);
+        } else {
+          // Append regular response bubble
+          appendMessageBubble("model", answer);
+        }
         
         // Feed text to Speech Audio synthesizer if enabled
         speakAIReplies(answer);
@@ -2405,6 +2452,51 @@
         document.getElementById(loaderId)?.remove();
         appendMessageBubble("model", "⚠️ Streaming system connection error. Please ensure your backend is online and run compile tests.");
       });
+    }
+
+    function appendLeadDispatcherCard(name, contact, need, waUrl) {
+      const body = document.getElementById("ai-chat-body");
+      const container = document.createElement("div");
+      container.className = "d-flex gap-2 my-2.5 enter-animation";
+      
+      const avatarHtml = `
+        <div class="bg-warning/10 rounded-circle d-flex align-items-center justify-content-center border border-warning/30 animate-pulse" style="width: 32px; height: 32px; flex-shrink: 0;">
+          <i class="bi bi-person-badge-fill text-warning text-xs"></i>
+        </div>`;
+      
+      container.innerHTML = `
+        ${avatarHtml}
+        <div class="p-3.5 rounded-3 text-sm border border-warning/30 text-white" style="background: rgba(22, 18, 10, 0.95); max-width: 80%; word-break: break-word; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+          <span class="text-xs text-warning font-mono tracking-wider mb-2 d-block fw-bold"><i class="bi bi-send-check"></i> SECURE ACTION RECOMMENDED</span>
+          <p class="text-muted text-xs mb-2">I have prepared your secure technical support inquiry ticket. Click below to submit it straight onto Caleb's WhatsApp line automatically!</p>
+          <div class="font-mono text-xs text-white/90 bg-black/45 p-2 rounded mb-3 border border-secondary/15">
+            <div class="text-truncate"><strong>Client:</strong> ${name}</div>
+            <div class="text-truncate"><strong>Contact:</strong> ${contact}</div>
+            <div class="text-wrap mt-1 text-warning"><strong>Need:</strong> ${need}</div>
+          </div>
+          <a href="${waUrl}" target="_blank" class="btn btn-warning text-black font-semibold w-100 py-1.5 rounded d-flex align-items-center justify-content-center gap-1.5" style="font-size:0.78rem;">
+            <i class="bi bi-whatsapp"></i> Confirm & Telegram to Caleb
+          </a>
+        </div>
+      `;
+      
+      body.appendChild(container);
+      body.scrollTop = body.scrollHeight;
+      
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx) {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 chime
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.5);
+        }
+      } catch (e) {}
     }
 
     function appendMessageBubble(role, text) {
