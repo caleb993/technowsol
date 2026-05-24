@@ -245,93 +245,6 @@
               Article Published Successfully!
             </h5>
           </div>
-
-    <!-- REAL-TIME TELEMETRY & CONTENT ANALYTICS -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-      <!-- Card A: Real-Time Active Users -->
-      <div class="col">
-        <div class="card-fire h-100 border border-info/30" style="background: rgba(8, 15, 30, 0.45);">
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-xs text-info font-mono tracking-wider"><i class="bi bi-person-fill-gear animate-spin"></i> ACTIVE SESSIONS REALTIME</span>
-              <span class="badge bg-info/10 text-info border border-info/20 fw-bold" id="simulation-badge">MONITORING</span>
-            </div>
-            <div class="d-flex align-items-baseline gap-2 mb-2">
-              <span class="display-6 hover:scale-105 transition-transform text-info fw-bold" id="active-user-count" style="font-family: 'Space Grotesk', sans-serif;">1</span>
-              <span class="text-muted text-xs font-mono">active IP hosts</span>
-            </div>
-            <div class="progress gap-1 mb-3 animate-pulse" style="height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;">
-              <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
-            </div>
-            
-            <!-- Real-time simulation controller for Caleb to test -->
-            <div class="bg-black/35 rounded p-2.5 border border-secondary/10">
-              <div class="d-flex justify-content-between align-items-center mb-1.5">
-                <span class="text-[10px] text-muted font-mono"><i class="bi bi-cpu"></i> SIMULATION CONSOLE</span>
-                <div class="form-check form-switch p-0 m-0 d-flex align-items-center">
-                  <input class="form-check-input ms-0 scale-75" type="checkbox" id="sim-active-users-check" onchange="toggleUsersSimulation()">
-                </div>
-              </div>
-              <input type="range" class="form-range cursor-pointer" id="sim-user-slider" min="1" max="80" value="12" disabled oninput="updateSimUserCount()">
-              <div class="d-flex justify-content-between text-[10px] text-muted font-mono mt-1">
-                <span>1 User</span>
-                <span id="slider-curr-val" class="text-info font-bold">12 Users</span>
-                <span>80 Max</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Card B: Most Viewed Article -->
-      <div class="col">
-        <div class="card-fire h-100 border border-warning/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
-          <div class="card-body p-4 d-flex flex-column justify-content-between">
-            <div>
-              <span class="text-xs text-warning font-mono tracking-wider"><i class="bi bi-star-fill text-warning"></i> MOST POPULAR ESSAY</span>
-              <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" style="font-family: 'Space Grotesk', sans-serif;">
-                {% if most_viewed_blog %}
-                  {{ most_viewed_blog.title }}
-                {% else %}
-                  No blogs written yet
-                {% endif %}
-              </h5>
-              <div class="text-muted text-xs font-mono">
-                {% if most_viewed_blog %}
-                  <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> {{ most_viewed_blog.views }}</span> accumulative unique hits
-                {% else %}
-                  0 views
-                {% endif %}
-              </div>
-            </div>
-            
-            {% if most_viewed_blog %}
-            <a href="/blog/{{ most_viewed_blog.slug }}" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
-              <i class="bi bi-box-arrow-up-right me-1"></i> Inspect Article Performance
-            </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-
-      <!-- Card C: Hot Category Segment -->
-      <div class="col">
-        <div class="card-fire h-100 border border-success/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
-          <div class="card-body p-4 d-flex flex-column justify-content-between">
-            <div>
-              <span class="text-xs text-success font-mono tracking-wider"><i class="bi bi-diagram-3 text-success"></i> DOMINANT CATEGORY PATH</span>
-              <h5 class="text-white font-semibold mt-3 mb-2" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
-                {{ most_viewed_category }}
-              </h5>
-              <p class="text-muted small m-0 leading-relaxed" style="font-size: 0.75rem;">This segment is receiving the highest digital footfall across the blog gateway in Postgres.</p>
-            </div>
-            <button onclick="bootstrap.Tab.getInstance(document.querySelector('#blogs-tab')).show();" class="btn btn-xs btn-outline-success font-mono w-100 py-1.5 mt-3 rounded">
-              <i class="bi bi-card-checklist me-1"></i> Manage Insights Fleet
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
           <div class="modal-body text-white/95">
             <p>Your informative article <strong>"{{ session.get('promote_blog_title') }}"</strong> has been saved in the Supabase/PostgreSQL database!</p>
             <p class="text-muted small">Let's push this insight instantly to your WhatsApp audience channels to immediately notify readers and drive premium clients to your cybersecurity agency!</p>
@@ -1060,114 +973,89 @@
         </div>
       </div>
 
-      <!-- TAB: TECHRICH KNOWLEDGE CONSOLE -->
+      <!-- TAB: TECHRICH KNOWLEDGE CONSOLE (DYNAMIC BROWSER + EDITOR) -->
       <div class="tab-pane fade" id="techrich-pane" role="tabpanel" aria-labelledby="techrich-tab">
-        <div class="card-fire p-4 mb-4 border border-warning/20">
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
-            <div>
-              <h4 class="text-warning fw-bold m-0"><i class="bi bi-book-half text-warning me-2 animate-pulse"></i>TechRich Administration Library</h4>
-              <p class="text-muted small m-0">A dedicated sandbox reference manual for Caleb to brush up on CCNA, Network architecture, and client-side helpdesk solutions. Direct click-to-draft capability included.</p>
-            </div>
-            <div>
-              <input type="text" id="techrich-search" class="form-control form-control-fire py-1.5 px-3 font-mono text-sm" placeholder="Search modules/keywords..." oninput="filterTechRich()">
+        <div class="row g-4">
+          
+          <!-- LEFT: Document Browser Tree & Upload interface -->
+          <div class="col-lg-5">
+            <div class="card-fire p-4 border border-warning/20 mb-4 animate-fade-in" style="background: rgba(14, 18, 28, 0.45);">
+              <div class="d-flex align-items-center justify-content-between mb-3.5">
+                <div>
+                  <h5 class="text-warning fw-bold m-0" style="font-size:1.15rem;"><i class="bi bi-folder2-open me-2 text-warning animate-pulse"></i>TechRich Cabinet</h5>
+                  <span class="text-muted text-xs">Caleb's interactive CCNA & ICT support repository</span>
+                </div>
+                <button type="button" onclick="createNewTechRichNote()" class="btn btn-xs btn-outline-warning font-mono d-flex align-items-center gap-1.5 py-1 px-2.5" style="border-radius: 6px; font-size: 0.7rem;">
+                  <i class="bi bi-file-earmark-plus-fill text-warning"></i> + New Note
+                </button>
+              </div>
+
+              <!-- Upload Drag Zone / Form -->
+              <form id="techrich-upload-form" class="p-3 rounded-4 mb-4 border border-secondary/15 bg-black/30 text-center" style="border-style: dashed !important;">
+                <label for="tr-file-input" class="cursor-pointer mb-0 w-100 py-2">
+                  <i class="bi bi-cloud-arrow-up-fill fs-3 text-warning mb-2 d-block"></i>
+                  <span class="text-white text-xs d-block mb-1 fw-bold">Upload PDF, Word or Notes</span>
+                  <span class="text-muted d-block text-xxs mb-3.5">Supports PDF and standard DOC/DOCX files</span>
+                  <input type="file" id="tr-file-input" onchange="uploadTechRichFile()" class="d-none" accept=".pdf,.doc,.docx,.txt,.md">
+                  <span class="btn btn-neutral-900 border border-secondary/10 hover:border-warning/35 rounded-3 py-1 px-3 text-white text-xs inline-flex align-items-center gap-1.5">
+                    <i class="bi bi-folder-open text-warning"></i> Select local file
+                  </span>
+                </label>
+              </form>
+
+              <!-- Filter Search tools -->
+              <div class="mb-3.5 input-group">
+                <span class="input-group-text bg-black/45 border-secondary/15"><i class="bi bi-search text-warning"></i></span>
+                <input type="text" id="tr-search" oninput="drawTechRichDocs()" class="form-control form-control-fire py-1.5 px-3 font-mono text-xs d-inline" placeholder="Search knowledge catalog...">
+              </div>
+
+              <!-- Filter Pills -->
+              <div class="d-flex flex-wrap gap-1.5 mb-3.5">
+                <button type="button" class="btn btn-xxs btn-outline-warning active" id="tr-pil-all" onclick="filterTechRichByTab('all')">All</button>
+                <button type="button" class="btn btn-xxs btn-outline-warning" id="tr-pil-pdf" onclick="filterTechRichByTab('pdf')"><i class="bi bi-file-earmark-pdf"></i> PDFs</button>
+                <button type="button" class="btn btn-xxs btn-outline-warning" id="tr-pil-word" onclick="filterTechRichByTab('word')"><i class="bi bi-file-word"></i> Word Docs</button>
+                <button type="button" class="btn btn-xxs btn-outline-warning" id="tr-pil-note" onclick="filterTechRichByTab('note')"><i class="bi bi-clipboard-data"></i> Self Created</button>
+              </div>
+
+              <!-- Browser tree items container -->
+              <div class="scrollbar-custom overflow-auto rounded-3 border border-secondary/15" style="max-height: 480px; background: rgba(0,0,0,0.15);">
+                <div class="list-group list-group-flush" id="tr-browser-list">
+                  <div class="p-4 text-center text-muted font-mono text-xs">
+                    <div class="spinner-border spinner-border-sm text-warning mb-2"></div>
+                    <div>Reading document indexes...</div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
-          <div class="d-flex flex-wrap gap-2 mb-4">
-            <button class="btn btn-xs btn-outline-warning text-mono py-1 px-3 active" id="tr-filter-all" onclick="filterTechRichCat('all')">All Knowledge Nodes</button>
-            <button class="btn btn-xs btn-outline-warning text-mono py-1 px-3" id="tr-filter-ccna" onclick="filterTechRichCat('ccna')">CCNA Networking Standards</button>
-            <button class="btn btn-xs btn-outline-warning text-mono py-1 px-3" id="tr-filter-ict" onclick="filterTechRichCat('ict')">ICT Support & Helpdesk</button>
-          </div>
-
-          <div class="row g-3" id="techrich-articles">
-            <!-- Node 1 -->
-            <div class="col-12 col-md-6 techrich-item" data-category="ccna">
-              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
+          <!-- RIGHT: Interactive Workspace / live editor viewport -->
+          <div class="col-lg-7">
+            <div id="tr-editor-card" class="card-fire p-4 border border-warning/20 h-100 d-flex flex-column" style="min-height: 600px; background: rgba(14, 18, 28, 0.45);">
+              <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between border-bottom border-secondary/15 pb-3 mb-3 gap-2">
                 <div>
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">NETWORK ALGORITHM</span>
-                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> CCNA Routing</span>
-                  </div>
-                  <h6 class="text-white fw-bold mb-2">Resolving VLAN Leakage and Trunk Port Encapsulation Standards</h6>
-                  <p class="text-muted small leading-relaxed mb-3">
-                    <strong>Problem:</strong> Inter-VLAN traffic fails to route through a Router-on-a-Stick setup. Access terminal cannot ping secondary gateways.<br>
-                    <strong>Diagnostic:</strong> Check Trunk encapsulation standards. On older devices, IEEE 802.1Q override is required. Check if the Native VLAN ID matches on both switch and router virtual subinterfaces.
-                  </p>
+                  <h5 class="text-white fw-bold mb-1" id="tr-active-title">Workspace Sandbox</h5>
+                  <div class="text-muted text-xs font-mono" id="tr-active-meta">Select a document node from the directory browser to open</div>
                 </div>
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('VLAN Leakage and trunk encapsulation guidelines', '# Comprehensive VLAN Encapsulation Standards\n\nThis article outlines enterprise diagnostic criteria for mitigating Inter-VLAN performance loss across Layer 2 and Layer3 routing equipment.\n\n### Core Engineering Diagnostics\n\n1. Check trunk status:\n   `show interface trunk`\n2. Configure dot1q routing encapsulation:\n   `interface gig0/0.10`\n   `encapsulation dot1Q 10`\n   `ip address 10.10.10.1 255.255.255.0`\n\nEnsure STP protocol rules prevent loop formation during live interfaces bridging.')">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
-                  </button>
+                
+                <!-- Action toolbar controls -->
+                <div class="d-flex align-items-center gap-2" id="tr-active-actions">
+                  <!-- Actions dynamically populated here -->
                 </div>
               </div>
-            </div>
 
-            <!-- Node 2 -->
-            <div class="col-12 col-md-6 techrich-item" data-category="ccna">
-              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
-                <div>
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">DYNAMIC PROTOCOLS</span>
-                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> OSPF Dynamics</span>
-                  </div>
-                  <h6 class="text-white fw-bold mb-2">Analyzing Stuck OSPF Neighbor States (DR/BDR Election Loop)</h6>
-                  <p class="text-muted small leading-relaxed mb-3">
-                    <strong>Scenario:</strong> OSPF routing adjacencies fail to transition into the **FULL** state, remaining locked inside **EXSTART** or **LOADING** sequences.<br>
-                    <strong>Resolution:</strong> Ensure identical Maximum Transmission Units (MTU) across physical segments. Mismatched packet sizes abort DB descriptors. Check Hello/Dead timers and unique Router IDs.
-                  </p>
-                </div>
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('Demystifying OSPF Neighbor States and MTU Mismatches', '# Demystifying Stuck OSPF Neighbor States\n\nWhen deploying enterprise OSPF routing networks, engineers often encounter neighbor relationships stuck in EXSTART or LOADING states.\n\n### Immediate Actions\n\n1. Double-check MTU matching: `show ip ospf interface`\n2. Run `ip ospf mtu-ignore` to debug descriptors exchange loops.\n3. Verify OSPF Area IDs match perfectly on interfaces.')">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Node 3 -->
-            <div class="col-12 col-md-6 techrich-item" data-category="ict">
-              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
-                <div>
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">HELPDESK PROTOCOL</span>
-                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> ICT Troubleshooting</span>
-                  </div>
-                  <h6 class="text-white fw-bold mb-2">Managing Sudden DHCP Autoconfiguration Loops (169.254.x.x)</h6>
-                  <p class="text-muted small leading-relaxed mb-3">
-                    <strong>Problem:</strong> Employee workstation receives APIPA address (169.254.x.x), displaying a yellow No Internet warning flag.<br>
-                    <strong>Remedy:</strong> Release lease block using `ipconfig /release` followed by `ipconfig /renew`. If self-assigning persists, inspect helper-addresses on Layer 3 border boundaries pointing to DHCP servers.
-                  </p>
-                </div>
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('Workstations stuck on 169.254 Autoconfiguration loops solved', '# Resolving Workstation APIPA (169.254.x.x) Issues\n\nWhen a workstation is assigned a 169.254.0.0/16 address block, it is self-generated by APIPA. This points directly to a DHCP client network negotiation failure.\n\n### Diagnosis Protocol\n- Release current gateway configuration.\n- Verify active Layer 3 IP helper parameters on routing devices:\n  `ip helper-address 192.168.1.10`\n- Double check the central DHCP lease scopes capacity limits.')">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Node 4 -->
-            <div class="col-12 col-md-6 techrich-item" data-category="ict">
-              <div class="p-3.5 rounded border border-secondary bg-black/15 h-100 d-flex flex-column justify-content-between">
-                <div>
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="badge bg-warning/10 text-warning border border-warning/20 font-mono" style="font-size:0.68rem;">DISASTER CONTROLS</span>
-                    <span class="text-muted text-mono" style="font-size:0.68rem;"><i class="bi bi-tag-fill text-warning"></i> Network Loops</span>
-                  </div>
-                  <h6 class="text-white fw-bold mb-2">Mitigating Broadcast packet storms inside Spanning Tree Networks</h6>
-                  <p class="text-muted small leading-relaxed mb-3">
-                    <strong>Symptom:</strong> Entire workstation LAN segment freezes. Switch interfaces display extreme traffic flickers. ping response spikes up to 4,000ms.<br>
-                    <strong>Solution:</strong> A network loop exists on the access layer. Verify Spanning Tree election roots. Isolate interfaces. Run `spanning-tree bpduguard enable` to freeze illicit ports.
-                  </p>
-                </div>
-                <div class="d-flex gap-2">
-                  <button type="button" class="btn btn-xs btn-warning text-black w-100 font-semibold" onclick="pushTechRichToDraft('Mitigating access layer network loops with Spanning Tree', '# Mitigating Access Layer Network Loops with STP BPDU Guard\n\nA network loop can easily freeze standard commercial enterprise architectures by echoing packets infinitely back and forth.\n\n### Hardening Switches Configuration\nEnsure Loop protection is strictly configured on all trunk and access terminals:\n```\nswitchport mode access\nswitchport access vlan 10\nspanning-tree portfast\nspanning-tree bpduguard enable\n```\nThis ensures a port is immediately shut down upon detecting looped bridge protocol data blocks.')">
-                    <i class="bi bi-box-arrow-up-right me-1"></i> Adapt & Copy to Blog Draft
-                  </button>
+              <!-- Editor Canvas frame -->
+              <div id="tr-editor-canvas" class="flex-grow-1 bg-black/45 border border-secondary/15 rounded-4 p-4 d-flex flex-column">
+                <div class="m-auto text-center text-muted col-10 font-sans">
+                  <i class="bi bi-terminal-split text-warning" style="font-size: 3.5rem; opacity: 0.15; display:block; margin-bottom: 0.5rem;"></i>
+                  <h6 class="text-white-50 fw-bold">ACTIVE WORKSPACE READOUT</h6>
+                  <p class="text-xs text-muted leading-relaxed">Double click any document node from Caleb's left browser cabinet to inspect CCNA configuration guidelines, stream reference PDFs, or update ICT support staff routines directly without download/re-upload cycles.</p>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -1592,40 +1480,375 @@
       }, 200);
     }
     
-    // Filter TECHRICH list by search query
-    function filterTechRich() {
-      const query = document.getElementById("techrich-search").value.toLowerCase().trim();
-      const items = document.querySelectorAll(".techrich-item");
-      
-      items.forEach(item => {
-        const text = item.innerText.toLowerCase();
-        if (text.includes(query)) {
-          item.classList.remove("d-none");
-        } else {
-          item.classList.add("d-none");
+    // --- DYNAMIC TECHRICH CLOUD CABINET SYSTEM & EDITING ENGINE ---
+    let techRichDocs = [];
+    let activeTrTab = "all";
+    let activeTrDocId = null;
+
+    function loadTechRichDocs() {
+      fetch("/admin/techrich/list")
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success" || data.docs) {
+            techRichDocs = data.docs || [];
+            drawTechRichDocs();
+          }
+        })
+        .catch(err => {
+          console.error("Failed to load TechRich index:", err);
+          document.getElementById("tr-browser-list").innerHTML = `
+            <div class="p-4 text-center text-danger font-mono text-xs">
+              <i class="bi bi-exclamation-triangle d-block mb-2"></i>
+              Failed to connect to digital cabinet.
+            </div>
+          `;
+        });
+    }
+
+    function filterTechRichByTab(type) {
+      const tabs = ["all", "pdf", "word", "note"];
+      tabs.forEach(t => {
+        document.getElementById("tr-pil-" + t).classList.remove("active");
+      });
+      document.getElementById("tr-pil-" + type).classList.add("active");
+      activeTrTab = type;
+      drawTechRichDocs();
+    }
+
+    function drawTechRichDocs() {
+      const query = document.getElementById("tr-search").value.toLowerCase().trim();
+      const listContainer = document.getElementById("tr-browser-list");
+      listContainer.innerHTML = "";
+
+      const filtered = techRichDocs.filter(d => {
+        const matchesTab = (activeTrTab === "all" || d.doc_type === activeTrTab);
+        const matchesQuery = (!query || d.title.toLowerCase().includes(query) || (d.file_name && d.file_name.toLowerCase().includes(query)));
+        return (matchesTab && matchesQuery);
+      });
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="p-4 text-center text-muted font-mono text-xs">
+            <i class="bi bi-folder-x d-block fs-4 mb-1.5 opacity-50"></i>
+            No matching documents found.
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(d => {
+        let iconHtml = '<i class="bi bi-file-earmark-text text-muted"></i>';
+        if (d.doc_type === 'pdf') {
+          iconHtml = '<i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>';
+        } else if (d.doc_type === 'word') {
+          iconHtml = '<i class="bi bi-file-earmark-word-fill text-info fs-5"></i>';
+        } else if (d.doc_type === 'note') {
+          iconHtml = '<i class="bi bi-file-earmark-richtext-fill text-warning fs-5"></i>';
         }
+
+        const activeClass = (activeTrDocId === d.id) ? "style='background: rgba(251, 191, 36, 0.15); border-left: 3px solid #fbbf24 !important;'" : "";
+        const item = document.createElement("button");
+        item.type = "button";
+        item.className = "list-group-item list-group-item-action bg-transparent border-0 d-flex align-items-center justify-content-between p-3 transition-all";
+        item.style.borderBottom = "1px solid rgba(255, 255, 255, 0.05)";
+        if (activeClass) item.style.cssText += "background: rgba(251, 191, 36, 0.11); border-left: 4px solid #fbbf24 !important;";
+
+        item.innerHTML = `
+          <div class="d-flex align-items-center gap-3 text-start truncate flex-grow-1" onclick="openTechRichDoc(${d.id})">
+            <div>${iconHtml}</div>
+            <div class="truncate">
+              <span class="text-white text-xs d-block font-semibold truncate" style="max-width: 220px;">${d.title}</span>
+              <span class="text-muted text-xxs block font-mono">${d.doc_type.toUpperCase()} • ${d.file_name || 'Virtual Note'}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <a href="/admin/techrich/download/${d.id}" target="_blank" class="btn btn-xs btn-link p-1 text-muted hover:text-white" title="Download original file"><i class="bi bi-download"></i></a>
+            <button onclick="deleteTechRichDoc(${d.id}, event)" class="btn btn-xs btn-link p-1 text-muted hover:text-danger" title="Purge document"><i class="bi bi-trash3-fill"></i></button>
+          </div>
+        `;
+        listContainer.appendChild(item);
       });
     }
-    
-    // Filter TECHRICH by Category selector
-    function filterTechRichCat(cat) {
-      // Manage active/inactive button states
-      const btns = ["all", "ccna", "ict"];
-      btns.forEach(b => {
-        document.getElementById("tr-filter-" + b).classList.remove("active");
-      });
-      document.getElementById("tr-filter-" + cat).classList.add("active");
+
+    function openTechRichDoc(id) {
+      activeTrDocId = id;
+      drawTechRichDocs(); // Refresh active lists backgrounds
+
+      const textMeta = document.getElementById("tr-active-meta");
+      const textTitle = document.getElementById("tr-active-title");
+      const actionToolbar = document.getElementById("tr-active-actions");
+      const canvas = document.getElementById("tr-editor-canvas");
+
+      canvas.innerHTML = `
+        <div class="m-auto text-center font-mono text-xs text-muted">
+          <div class="spinner-border spinner-border-sm text-warning mb-2"></div>
+          <div>Streaming secure segment logs...</div>
+        </div>
+      `;
+
+      fetch(`/admin/techrich/view/${id}`)
+        .then(res => res.json())
+        .catch(err => {
+          // Fallback if binary file view
+          return { id: id };
+        })
+        .then(doc => {
+          // Lookup active reference metadata from memory
+          const cached = techRichDocs.find(d => d.id === id);
+          if (!cached) return;
+
+          textTitle.innerText = cached.title;
+          textMeta.innerHTML = `<span class="badge bg-warning/15 text-warning font-mono me-1.5">${cached.doc_type.toUpperCase()}</span> ${cached.file_name || 'Direct Markdown Note'}`;
+
+          // Format toolbar based on doc capabilities
+          let toolbarHtml = `
+            <a href="/admin/techrich/download/${id}" target="_blank" class="btn btn-xs btn-neutral-900 border border-secondary/15 py-1 px-3.5 rounded text-white text-xs d-flex align-items-center gap-1.5 font-mono">
+              <i class="bi bi-download text-warning"></i> Download Original
+            </a>
+          `;
+
+          if (cached.doc_type === "note" || cached.doc_type === "word") {
+            toolbarHtml += `
+              <button onclick="printTechRichNote()" class="btn btn-xs btn-outline-warning py-1 px-3 rounded text-warning text-xs d-flex align-items-center gap-1.5 font-mono">
+                <i class="bi bi-file-pdf-fill"></i> Download PDF
+              </button>
+              <button onclick="adaptActiveToBlog()" class="btn btn-xs btn-warning py-1 px-3.5 rounded text-black fw-bold text-xs d-flex align-items-center gap-1.5 font-mono">
+                <i class="bi bi-rocket-takeoff-fill"></i> Push Draft Live
+              </button>
+            `;
+          }
+
+          actionToolbar.innerHTML = toolbarHtml;
+
+          // Render canvas view
+          if (cached.doc_type === "pdf") {
+            canvas.innerHTML = `
+              <div class="embed-responsive h-100 flex-grow-1 border border-secondary/10 rounded-3">
+                <iframe class="embed-responsive-item w-100 h-100 rounded" src="/admin/techrich/view/${id}" style="border:none; min-height: 520px; background: #fff;"></iframe>
+              </div>
+            `;
+          } else {
+            // Edit model for Note or Word docs
+            const defaultText = doc.content || doc.text_content || "# " + cached.title + "\n\nStart typing configuration details or staff procedures here...";
+            canvas.innerHTML = `
+              <div class="d-flex flex-column h-100 flex-grow-1 gap-2.5">
+                <div class="text-xs text-muted font-mono"><i class="bi bi-info-circle text-warning"></i> DIRECTLY EDIT THREAD: Add any staff instructions or technical questions and hit Save.</div>
+                
+                <div class="flex-grow-1 d-flex flex-column">
+                  <input type="text" id="tr-edit-title-input" class="form-control form-control-fire mb-2 text-sm text-white fw-bold font-sans" style="background:#090d16;" value="${cached.title}" placeholder="Document title...">
+                  <textarea id="tr-edit-textarea" class="form-control form-control-fire flex-grow-1 font-mono text-sm text-white p-3 border-secondary/10 rounded-3" style="background: rgba(8, 11, 20, 0.9); min-height:380px; resize:none; line-height: 1.6;" placeholder="Type markdown note text content here...">${defaultText}</textarea>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-secondary/10">
+                  <span class="text-muted text-xxs font-mono" id="tr-save-status">Ready to save modifications</span>
+                  <button onclick="saveActiveTrDocChanges()" class="btn btn-xs btn-success text-black py-1.5 px-4 font-mono fw-bold rounded d-flex align-items-center gap-1.5">
+                    <i class="bi bi-check-circle-fill"></i> Save workspace changes
+                  </button>
+                </div>
+              </div>
+            `;
+          }
+        });
+    }
+
+    function saveActiveTrDocChanges() {
+      if (!activeTrDocId) return;
+      const title = document.getElementById("tr-edit-title-input").value.trim();
+      const content = document.getElementById("tr-edit-textarea").value;
+      const statusSpan = document.getElementById("tr-save-status");
       
-      const items = document.querySelectorAll(".techrich-item");
-      items.forEach(item => {
-        const itemCat = item.getAttribute("data-category");
-        if (cat === "all" || itemCat === cat) {
-          item.classList.remove("d-none");
+      statusSpan.innerHTML = "<span class='text-warning animate-pulse'><i class='bi bi-arrow-repeat spin'></i> Syncing records on remote node...</span>";
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+
+      fetch(`/admin/techrich/update/${activeTrDocId}`, {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          statusSpan.innerHTML = "<span class='text-success'><i class='bi bi-check2-all'></i> Changes saved live successfully!</span>";
+          loadTechRichDocs();
+          setTimeout(() => {
+            statusSpan.innerText = "Ready to save modifications";
+          }, 3500);
         } else {
-          item.classList.add("d-none");
+          statusSpan.innerHTML = "<span class='text-danger'>Error: " + (data.error || "failed") + "</span>";
         }
+      })
+      .catch(err => {
+        console.error(err);
+        statusSpan.innerHTML = "<span class='text-danger'>Sync error</span>";
       });
     }
+
+    function createNewTechRichNote() {
+      const modalTitle = prompt("Enter a title for your new Technow note documentation:", "CCNA Subnet Allocation Protocol");
+      if (!modalTitle) return;
+
+      const formData = new FormData();
+      formData.append("title", modalTitle);
+      formData.append("content", "# " + modalTitle + "\n\n### Direct Support Desk Action Items\n- \n- \n\n### Dynamic CCNA Configurations\n```\n! Run core backup variables\n```");
+
+      fetch("/admin/techrich/create", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success" && data.id) {
+          showToastAlert("🚀 Created new document draft inside local TechRich segment!");
+          loadTechRichDocs();
+          setTimeout(() => {
+            openTechRichDoc(data.id);
+          }, 400);
+        }
+      })
+      .catch(err => console.error(err));
+    }
+
+    function uploadTechRichFile() {
+      const fileInput = document.getElementById("tr-file-input");
+      if (!fileInput.files || fileInput.files.length === 0) return;
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      showToastAlert("⏳ Parsing and encrypting file transmission block...");
+
+      fetch("/admin/techrich/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        fileInput.value = ""; // clear
+        if (data.status === "success") {
+          showToastAlert("🚀 Document committed successfully to secure TechRich cloud storage node!");
+          loadTechRichDocs();
+          if (data.id) {
+            setTimeout(() => {
+              openTechRichDoc(data.id);
+            }, 500);
+          }
+        } else {
+          showToastAlert("⚠️ Transmission abort: " + (data.error || "validation failure"));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToastAlert("⚠️ Network block error during upload.");
+      });
+    }
+
+    function deleteTechRichDoc(id, event) {
+      if (event) event.stopPropagation();
+      const cached = techRichDocs.find(d => d.id === id);
+      const title = cached ? cached.title : "this file";
+      
+      if (!confirm(`Are you absolutely sure you want to permanently delete the document "${title}" from the TechRich Cabinet?`)) {
+        return;
+      }
+
+      fetch(`/admin/techrich/delete/${id}`, { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            showToastAlert("🗑️ Document purged successfully!");
+            if (activeTrDocId === id) {
+              activeTrDocId = null;
+              document.getElementById("tr-active-title").innerText = "Workspace Sandbox";
+              document.getElementById("tr-active-meta").innerText = "Select a document node from the directory browser to open";
+              document.getElementById("tr-active-actions").innerHTML = "";
+              document.getElementById("tr-editor-canvas").innerHTML = `
+                <div class="m-auto text-center text-muted col-10 font-sans">
+                  <i class="bi bi-terminal-split text-warning" style="font-size: 3.5rem; opacity: 0.15; display:block; margin-bottom: 0.5rem;"></i>
+                  <h6 class="text-white-50 fw-bold">ACTIVE WORKSPACE READOUT</h6>
+                  <p class="text-xs text-muted leading-relaxed">Double click any document node from Caleb's left browser cabinet to inspect CCNA configuration guidelines, stream reference PDFs, or update ICT support staff routines directly without download/re-upload cycles.</p>
+                </div>
+              `;
+            }
+            loadTechRichDocs();
+          }
+        })
+        .catch(err => console.error(err));
+    }
+
+    function adaptActiveToBlog() {
+      if (!activeTrDocId) return;
+      const titleInput = document.getElementById("tr-edit-title-input");
+      const textInput = document.getElementById("tr-edit-textarea");
+      if (!titleInput || !textInput) return;
+
+      pushTechRichToDraft(titleInput.value, textInput.value);
+    }
+
+    function printTechRichNote() {
+      const textInput = document.getElementById("tr-edit-textarea");
+      const titleInput = document.getElementById("tr-edit-title-input");
+      if (!textInput || !titleInput) return;
+
+      const printWin = window.open('', '_blank');
+      if (!printWin) {
+        alert("Please enable pop-ups to generate and save PDF documents natively.");
+        return;
+      }
+
+      const contentHtml = marked.parse(textInput.value);
+
+      printWin.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${titleInput.value}</title>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+          <style>
+            body { font-family: 'Inter', system-ui, sans-serif; padding: 40px; color: #1e293b; background: #fff; }
+            h1 { font-weight: 800; border-bottom: 2px solid #ea580c; padding-bottom: 12px; margin-bottom: 20px; font-size: 2rem; }
+            pre { background: #f1f5f9; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid #cbd5e1; }
+            p, li { line-height: 1.6; }
+            header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; margin-bottom: 20px; padding-bottom: 10px; color: #64748b; font-size: 0.75rem; font-family: monospace; }
+          </style>
+        </head>
+        <body>
+          <header>
+            <div>MUGA TECHRICH INTERNAL DOCUMENT SECURITY MANUAL</div>
+            <div>COMPILED AT: ${new Date().toLocaleString()}</div>
+          </header>
+          <h1>${titleInput.value}</h1>
+          <div class="content">${contentHtml}</div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 1500);
+            }
+          </script>
+        </body>
+        </html>
+      `);
+      printWin.document.close();
+    }
+
+    // Attach load trigger on tab click
+    document.addEventListener("DOMContentLoaded", function() {
+      const techrichTabBtn = document.getElementById("techrich-tab");
+      if (techrichTabBtn) {
+        techrichTabBtn.addEventListener("shown.bs.tab", function() {
+          loadTechRichDocs();
+        });
+      }
+      
+      // Seed first index draft
+      setTimeout(() => {
+        if (techRichDocs.length === 0 && document.getElementById("techrich-pane").classList.contains("active")) {
+          loadTechRichDocs();
+        }
+      }, 1000);
+    });
 
     // Global alert tracking for thresholds
     let notifiedThresholds = new Set();
