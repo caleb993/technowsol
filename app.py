@@ -315,20 +315,23 @@ def chatbot_query():
             return jsonify({"text": "⚠️ **Configuration Warning:** `GEMINI_API_KEY` is currently undefined. Please provide your API credentials inside the Settings Secrets drawer to enable live AI generated chats!"})
             
         # Format conversation context
-        formatted_prompt = "You are a professional, thoroughly trained chatbot assistant for Caleb Muga and his company TechKnow Solutions.\n"
+        formatted_prompt = "You are MUGA.DEV (representing Caleb Muga, a professional and highly trained ICT & Cisco Certified CCNA Network Engineer and Cyber Security expert, and a dedicated employee of TechKnow Solutions).\n"
         formatted_prompt += "Your instructions:\n"
-        formatted_prompt += "1. Speak humbly, politely, and extremely technically. Address callers professionally.\n"
-        formatted_prompt += "2. Here are facts about Caleb Muga & TechKnow Solutions:\n"
-        formatted_prompt += "   - Caleb Muga is a meticulous ICT Officer and certified Network Administrator (CCNA & Cisco routing/switching).\n"
-        formatted_prompt += "   - Services: CCNA routing, Cybersecurity assessments/audits, enterprise network topology layout, Python automation, threat mitigation, ICT client support.\n"
-        formatted_prompt += "   - Contact: WhatsApp/Call at +254791204587 (or 0791204587).\n"
-        formatted_prompt += "   - Dynamic Tools: Point visitors to our interactive diagnostic tools (Password hardness rating, subnet mask calculator, and simulated live port vulnerability scanners).\n"
-        formatted_prompt += "3. For complex problems, encourage booking a support session by clicking 'Forward Inquiry to Caleb Muga' (which push the text directly to his WhatsApp at 0791204587).\n"
+        formatted_prompt += "1. Spend the conversation speaking directly in the first person ('I', 'me', 'my role at TechKnow Solutions'). Speak with expertise, precision, and friendly professionalism.\n"
+        formatted_prompt += "2. Here are facts about me & my employer/business, TechKnow Solutions:\n"
+        formatted_prompt += "   - I am a certified network administrator (CCNA 200-301) and security analyst, serving as an ICT Officer representing TechKnow Solutions.\n"
+        formatted_prompt += "   - TechKnow Solutions is a pristine technology services enterprise. I representing them deliver CCNA routing/switching design, network auditing, firewall configurations, enterprise general ICT support, Python automation scripting, and threat assessments.\n"
+        formatted_prompt += "   - Contact: WhatsApp or phone direct: +254791204587.\n"
+        formatted_prompt += "   - Interactive tools: Let users know how they can run our on-site Interactive Cyber Lab & ICT Sandbox (port scanner, password strength tester, and CIDR subnet calculator) right on this page.\n"
+        formatted_prompt += "3. Actively ask the visitor for their name, contact email/phone, and a description of their issue so I can follow up. Be proactive in gathering these details.\n"
+        formatted_prompt += "4. IMPORTANT TELEMETRY TRIGGER: If the user has provided their Name, Contact information (email/phone/whatsapp), or a description of their technical need/problem anywhere in the conversation history or their current prompt, you must append this exact tag on a new line at the very bottom of your response:\n"
+        formatted_prompt += "   `[CLIENT_DATA: Name=<name value>, Contact=<contact value>, Need=<need value>]`\n"
+        formatted_prompt += "   (Replace `<name value>`, `<contact value>`, and `<need value>` with the extracted client details, or write 'Not Provided' if missing. Only include this tag if the client has actually shared their info in the messages.)\n"
         
         if history:
             formatted_prompt += "\nHere is the recent message logs history:\n"
             for msg in history[-6:]: # context window limit
-                role = "User" if msg.get("role") == "user" else "AI"
+                role = "User" if msg.get("role") == "user" else "MUGA.DEV"
                 formatted_prompt += f"{role}: {msg.get('text')}\n"
                 
         formatted_prompt += f"User's incoming question: {user_prompt}\n"
@@ -523,6 +526,126 @@ def toggle_read_json(mid):
     if not ok:
         return jsonify({"error": "not found"}), 404
     return jsonify({"status": new})
+
+# ====== TECHRICH MANAGED ARTICLES & DOCUMENT REPOSITORY ENDPOINTS ======
+@app.route("/admin/techrich/list")
+def admin_techrich_list():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    docs = data.load_techrich_docs()
+    return jsonify({"status": "success", "docs": docs})
+
+@app.route("/admin/techrich/create", methods=["POST"])
+def admin_techrich_create():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    title = request.form.get("title", "").strip() or "Untitled Custom Note"
+    content = request.form.get("content", "").strip()
+    doc_id = data.save_techrich_doc(title, "note", content=content)
+    if doc_id:
+        return jsonify({"status": "success", "id": doc_id})
+    return jsonify({"error": "failed to save"}), 500
+
+@app.route("/admin/techrich/upload", methods=["POST"])
+def admin_techrich_upload():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    
+    title_raw = request.form.get("title", "").strip()
+    if "file" not in request.files:
+        return jsonify({"error": "missing file attachment"}), 400
+        
+    f = request.files["file"]
+    if not f or f.filename == "":
+        return jsonify({"error": "no file selected"}), 400
+        
+    filename = secure_filename(f.filename)
+    file_bytes = f.read()
+    
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if ext == "pdf":
+        doc_type = "pdf"
+        mimetype = "application/pdf"
+    elif ext in ["doc", "docx"]:
+        doc_type = "word"
+        mimetype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document" if ext == "docx" else "application/msword"
+    else:
+        doc_type = "note"
+        mimetype = f.mimetype or "text/plain"
+        
+    title = title_raw or filename.rsplit(".", 1)[0].replace("_", " ").replace("-", " ").capitalize()
+    
+    text_content = ""
+    if doc_type == "note":
+        try:
+            text_content = file_bytes.decode("utf-8", errors="ignore")
+        except Exception:
+            pass
+            
+    doc_id = data.save_techrich_doc(title, doc_type, file_name=filename, file_data=file_bytes, mimetype=mimetype, content=text_content)
+    if doc_id:
+        return jsonify({"status": "success", "id": doc_id})
+    return jsonify({"error": "failed to save"}), 500
+
+@app.route("/admin/techrich/update/<int:doc_id>", methods=["POST"])
+def admin_techrich_update(doc_id):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+    if data.update_techrich_doc(doc_id, title, content):
+        return jsonify({"status": "success"})
+    return jsonify({"error": "failed"}), 500
+
+@app.route("/admin/techrich/delete/<int:doc_id>", methods=["POST"])
+def admin_techrich_delete(doc_id):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+    if data.delete_techrich_doc_by_id(doc_id):
+        return jsonify({"status": "success"})
+    return jsonify({"error": "failed"}), 500
+
+@app.route("/admin/techrich/view/<int:doc_id>")
+def admin_techrich_view(doc_id):
+    if not require_admin():
+        abort(403)
+    doc = data.get_techrich_doc_by_id(doc_id)
+    if not doc:
+        abort(404)
+        
+    if doc["doc_type"] == "pdf" and doc["file_data"]:
+        return send_file(io.BytesIO(doc["file_data"]), mimetype=doc["mimetype"] or "application/pdf")
+    elif doc["doc_type"] == "word" and doc["file_data"]:
+        return send_file(io.BytesIO(doc["file_data"]), mimetype=doc["mimetype"], download_name=doc["file_name"], as_attachment=False)
+    else:
+        return jsonify({
+            "id": doc["id"],
+            "title": doc["title"],
+            "content": doc["content"],
+            "doc_type": doc["doc_type"],
+            "file_name": doc["file_name"]
+        })
+
+@app.route("/admin/techrich/download/<int:doc_id>")
+def admin_techrich_download(doc_id):
+    if not require_admin():
+        abort(403)
+    doc = data.get_techrich_doc_by_id(doc_id)
+    if not doc:
+        abort(404)
+        
+    if doc["doc_type"] in ["pdf", "word"] and doc["file_data"]:
+        return send_file(io.BytesIO(doc["file_data"]), mimetype=doc["mimetype"], download_name=doc["file_name"], as_attachment=True)
+    else:
+        filename = secure_filename(doc["title"]) or "note"
+        if not filename.endswith(".md"):
+            filename += ".md"
+        return send_file(
+            io.BytesIO(doc["content"].encode("utf-8")),
+            mimetype="text/markdown",
+            download_name=filename,
+            as_attachment=True
+        )
 
 # ====== ADMIN Analytics data endpoint (Phase 1) ======
 @app.route("/admin/analytics_data")
