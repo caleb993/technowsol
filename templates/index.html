@@ -1,4 +1,4 @@
-<!doctype html>
+A<!doctype html>
 <html lang="en">
 
 <head>
@@ -1278,6 +1278,96 @@
 
     </section>
 
+    <!-- STRATEGICAL PLACE FOR AI REPRESENTATIVE (CALEB'S DIGITAL TWIN / TECHKNOW REPRESENTATIVE) -->
+    <section id="ai-representative" class="py-5" style="background: linear-gradient(180deg, rgba(8, 12, 22, 0.95) 0%, rgba(11, 15, 25, 0.98) 100%); border-top: 1px solid rgba(16, 185, 129, 0.15); border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
+      <div class="container container-custom">
+        <div class="section-header text-center mb-5">
+          <div class="badge px-3 py-1 bg-success/15 text-success rounded-pill mb-2 font-mono" style="font-size: 0.72rem; letter-spacing: 0.05rem;">
+            ✦ ADVANCED CO-PILOT DEPLOYMENT
+          </div>
+          <h2 class="section-title text-white fw-bold" id="ai-rep-title" data-aos="fade-up">Caleb Muga's AI Representative Console</h2>
+          <p class="section-subtitle text-muted max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="80">
+            Consult my trained digital model representing me at <strong>TechKnow Solutions</strong>. Get instant CCNA technical support, cybersecurity assessments, or book direct consultations.
+          </p>
+        </div>
+
+        <div class="row g-4 justify-content-center" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-12 col-lg-10 col-xl-9">
+            <div class="card-fire p-4 border border-success/20 shadow-lg" style="background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(16px); border-radius: 18px;">
+              
+              <!-- Chat Header Status -->
+              <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-secondary/15">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="position-relative">
+                    {% if profile_url %}
+                      <img src="{{ profile_url }}" alt="Caleb AI" class="rounded-circle border border-success/30" style="width: 44px; height: 44px; object-fit: cover;">
+                    {% else %}
+                      <div class="rounded-circle d-flex align-items-center justify-content-center text-black font-bold border border-success/30" style="width: 44px; height: 44px; background: linear-gradient(135deg, #fbbf24, #f59e0b);">CM</div>
+                    {% endif %}
+                    <span class="position-absolute bottom-0 end-0 bg-success border border-black border-2 rounded-circle" style="width: 12px; height: 12px;"></span>
+                  </div>
+                  <div>
+                    <h5 class="text-white mb-0.5" style="font-size: 0.95rem; font-weight: 700;">MUGA.DEV AI AGENT</h5>
+                    <div class="text-success font-mono d-inline-flex align-items-center gap-1.5" style="font-size: 0.7rem;">
+                      <span class="d-inline-block rounded-circle bg-success shrink-0" style="width: 6px; height: 6px; animation: pulse 1.5s infinite;"></span>
+                      SECURE DIGITAL TWIN PORTAL • TECHKNOW SOLUTIONS
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Voice Mode Indicator Toggles -->
+                <div class="d-flex align-items-center gap-2">
+                  <button id="toggle-home-tts" onclick="toggleHomeSpeechSynthesis()" class="btn btn-outline-secondary btn-sm rounded-3 py-1 px-2.5 font-mono text-xs d-flex align-items-center gap-1.5 border-secondary/10 hover:border-success/30 hover:bg-success/5" title="Toggle response spoken audio reads">
+                    <i id="home-tts-icon" class="bi bi-volume-mute text-muted text-sm"></i>
+                    <span id="home-tts-text" class="text-muted">Auto-read off</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Chat Message Window -->
+              <div id="home-chat-body" class="p-3 overflow-auto d-flex flex-column gap-3 mb-4 scrollbar-custom bg-black/40 border border-secondary/10 rounded-4" style="height: 320px;">
+                <!-- Welcome greeting -->
+                <div class="d-flex gap-2 text-sm max-w-85%">
+                  <div class="bg-success/10 rounded-circle d-flex align-items-center justify-content-center border border-success/25" style="width: 32px; height: 32px; flex-shrink:0;">
+                    <i class="bi bi-robot text-success text-xs"></i>
+                  </div>
+                  <div class="p-3 rounded-4 style-msg text-white font-sans" style="background: rgba(22, 28, 45, 0.85); border: 1px solid rgba(16,185,129,0.15); line-height: 1.5; font-size: 0.85rem;">
+                    <p class="mb-1"><strong>Hello, welcome!</strong> I am Caleb's AI assistant, trained heavily on standard <strong>TechKnow Solutions</strong> ICT operational specifications & my professional CCNA parameters.</p>
+                    <p class="mb-0 text-muted" style="font-size:0.78rem;">You can type your IT service requirements directly, or use the microphone button below to talk to me with voice commands!</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prompt suggestion pills -->
+              <div class="mb-3.5">
+                <span class="text-muted font-mono text-xs d-block mb-2"><i class="bi bi-rocket-takeoff text-success"></i> QUICK TRIGGER SAMPLES:</span>
+                <div class="d-flex flex-wrap gap-2">
+                  <button onclick="fillHomeChatPrompt('What ICT and CCNA core networks support models are implemented at TechKnow Solutions?')" class="btn btn-neutral-900 border border-secondary/10 rounded-pill text-xs px-3 py-1 text-white-50 hover:bg-success/5 hover:border-success/30 hover:text-white transition-all">✦ TechKnow solutions services</button>
+                  <button onclick="fillHomeChatPrompt('How can Caleb automate routine firewalls auditing with python?')" class="btn btn-neutral-900 border border-secondary/10 rounded-pill text-xs px-3 py-1 text-white-50 hover:bg-success/5 hover:border-success/30 hover:text-white transition-all">✦ Python automation scripting</button>
+                  <button onclick="fillHomeChatPrompt('Help me troubleshoot a subnet allocation for a network that needs 50 hosts.')" class="btn btn-neutral-900 border border-secondary/10 rounded-pill text-xs px-3 py-1 text-white-50 hover:bg-success/5 hover:border-success/30 hover:text-white transition-all">✦ CCNA subnetting guidance</button>
+                </div>
+              </div>
+
+              <!-- Main Input Row -->
+              <div class="input-group align-items-center gap-2">
+                <input id="home-chat-input" onkeydown="handleHomeChatKey(event)" type="text" class="form-control form-control-fire py-2.5 px-3.5 text-white text-sm bg-neutral-950 border-secondary/15 rounded-3 flex-grow-1" placeholder="Type or describe your technical inquiry..." style="border: 1px solid rgba(16, 185, 129, 0.2);">
+                
+                <!-- Mic speech dictate button -->
+                <button type="button" id="home-mic-btn" onclick="startHomeSpeechDictation()" class="btn btn-outline-warning d-flex align-items-center justify-content-center p-2.5 rounded-3 border-secondary/10 hover:border-warning/40 hover:bg-warning/10" style="width: 44px; height: 44px;" title="Dictate message with Voice Input">
+                  <i id="home-mic-icon" class="bi bi-mic-fill fs-5 text-warning"></i>
+                </button>
+                
+                <button onclick="sendHomeChatMessage()" class="btn btn-success d-flex align-items-center justify-content-center gap-1.5 px-4 font-mono text-sm fw-bold text-black rounded-3" style="height: 44px;">
+                  <i class="bi bi-send-fill fs-6"></i> Dispatch
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- INTERACTIVE CYBER SECURITY & ICT LAB SANDBOX -->
     <section id="cyber-lab" class="py-5" style="background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 60%);">
       <div class="section-header text-center mb-5">
@@ -2375,6 +2465,243 @@
       }
       document.getElementById("ai-audio-status").classList.add("d-none");
       document.getElementById("ai-mic-btn").classList.remove("btn-success", "text-black");
+    }
+
+    // --- STRATEGIC HOMEPAGE DIGITAL TWIN CHATBOT SYSTEM ---
+    let homeChatHistory = [];
+    let isHomeTtsActive = false;
+    let homeVoiceRecognitionObj = null;
+
+    function toggleHomeSpeechSynthesis() {
+      isHomeTtsActive = !isHomeTtsActive;
+      const icon = document.getElementById("home-tts-icon");
+      const textSpan = document.getElementById("home-tts-text");
+      const btn = document.getElementById("toggle-home-tts");
+      
+      if (isHomeTtsActive) {
+        icon.className = "bi bi-volume-up-fill text-success";
+        textSpan.className = "text-success font-bold";
+        textSpan.textContent = "Auto-read active";
+        btn.classList.add("border-success");
+        speakHomeReplies("Welcome speech active!");
+      } else {
+        icon.className = "bi bi-volume-mute text-muted";
+        textSpan.className = "text-muted";
+        textSpan.textContent = "Auto-read off";
+        btn.classList.remove("border-success");
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      }
+    }
+
+    function speakHomeReplies(rawText) {
+      if (!isHomeTtsActive || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      let cleanStr = rawText.replace(/[\*\#\`\-\>\_\+\{\}\[\]\(\)]/g, "");
+      const utterance = new SpeechSynthesisUtterance(cleanStr);
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find(v => v.lang.includes("en-US") || v.lang.includes("en-GB"));
+      if (engVoice) {
+        utterance.voice = engVoice;
+      }
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function fillHomeChatPrompt(promptText) {
+      document.getElementById("home-chat-input").value = promptText;
+      sendHomeChatMessage();
+    }
+
+    function handleHomeChatKey(e) {
+      if (e.key === "Enter") {
+        sendHomeChatMessage();
+      }
+    }
+
+    function startHomeSpeechDictation() {
+      const SpeechRegClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRegClass) {
+        alert("Voice recognition is not fully supported in this browser version. Accessing via modern desktop browser is recommended.");
+        return;
+      }
+      
+      if (homeVoiceRecognitionObj) {
+        stopHomeVoiceDictation();
+        return;
+      }
+      
+      document.getElementById("home-mic-btn").classList.add("btn-success", "text-black");
+      document.getElementById("home-mic-btn").classList.remove("btn-outline-warning");
+      document.getElementById("home-mic-icon").className = "bi bi-record-circle text-danger animate-pulse";
+      
+      homeVoiceRecognitionObj = new SpeechRegClass();
+      homeVoiceRecognitionObj.continuous = false;
+      homeVoiceRecognitionObj.interimResults = false;
+      homeVoiceRecognitionObj.lang = "en-US";
+      
+      homeVoiceRecognitionObj.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        if (text) {
+          document.getElementById("home-chat-input").value = text;
+        }
+        stopHomeVoiceDictation();
+      };
+      
+      homeVoiceRecognitionObj.onerror = function() {
+        stopHomeVoiceDictation();
+      };
+      
+      homeVoiceRecognitionObj.onend = function() {
+        stopHomeVoiceDictation();
+      };
+      
+      homeVoiceRecognitionObj.start();
+    }
+
+    function stopHomeVoiceDictation() {
+      if (homeVoiceRecognitionObj) {
+        try {
+          homeVoiceRecognitionObj.stop();
+        } catch(e) {}
+        homeVoiceRecognitionObj = null;
+      }
+      document.getElementById("home-mic-btn").classList.remove("btn-success", "text-black");
+      document.getElementById("home-mic-btn").classList.add("btn-outline-warning");
+      document.getElementById("home-mic-icon").className = "bi bi-mic-fill text-warning";
+    }
+
+    function sendHomeChatMessage() {
+      const input = document.getElementById("home-chat-input");
+      const userText = input.value.trim();
+      if (!userText) return;
+      
+      input.value = "";
+      appendHomeMessageBubble("user", userText);
+      
+      const loaderId = "home-chat-loader-" + Date.now();
+      const body = document.getElementById("home-chat-body");
+      
+      const loaderContainer = document.createElement("div");
+      loaderContainer.id = loaderId;
+      loaderContainer.className = "d-flex gap-2 text-sm";
+      loaderContainer.innerHTML = `
+        <div class="bg-success/10 rounded-circle d-flex align-items-center justify-content-center border border-success/30 animate-pulse" style="width: 32px; height: 32px; flex-shrink: 0;">
+          <i class="bi bi-robot text-success text-xs"></i>
+        </div>
+        <div class="p-3.5 rounded-3 border border-secondary/15 text-muted font-mono" style="background: rgba(14, 18, 28, 0.9);">
+          <span class="animate-pulse text-xs">Processing enterprise logs context...</span>
+        </div>
+      `;
+      body.appendChild(loaderContainer);
+      body.scrollTop = body.scrollHeight;
+      
+      homeChatHistory.push({role: "user", text: userText});
+      
+      fetch("/api/chatbot/query", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          prompt: userText,
+          history: homeChatHistory
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById(loaderId)?.remove();
+        let answer = data.text || "Apologies, Caleb's local AI representative seems temporarily offline. Try messaging him directly on WhatsApp at 0791204587!";
+        
+        const regex = /\[CLIENT_DATA:\s*Name=([\s\S]*?),\s*Contact=([\s\S]*?),\s*Need=([\s\S]*?)\]/i;
+        const match = answer.match(regex);
+        
+        if (match) {
+          const clientName = match[1].trim();
+          const clientContact = match[2].trim();
+          const clientNeed = match[3].trim();
+          answer = answer.replace(regex, "").trim();
+          
+          const waText = `📬 *NEW DIRECT PORTAL CLIENT LEAD*:\n============================\n🗣️ *Name*: ${clientName}\n📬 *Contact*: ${clientContact}\n🛠️ *Technical Need*: ${clientNeed}\n🤖 *Dispatched via*: MUGA.dev Homepage Co-pilot\n⏰ *Time*: ${new Date().toLocaleString()}`;
+          const waUrl = "https://wa.me/254791204587?text=" + encodeURIComponent(waText);
+          
+          appendHomeMessageBubble("model", answer);
+          
+          setTimeout(() => {
+            const pop = window.open(waUrl, "_blank");
+            if (!pop) {
+              appendHomeLeadDispatcherCard(clientName, clientContact, clientNeed, waUrl);
+            } else {
+              appendHomeMessageBubble("model", "🚀 **Instant Sync Complete:** I have successfully created your support ticket and routed it directly to Caleb's WhatsApp line automatically!");
+            }
+          }, 800);
+        } else {
+          appendHomeMessageBubble("model", answer);
+        }
+        
+        homeChatHistory.push({role: "model", text: answer});
+        speakHomeReplies(answer);
+      })
+      .catch(err => {
+        document.getElementById(loaderId)?.remove();
+        console.error(err);
+        appendHomeMessageBubble("model", "⚠️ System network timeout. Please verify internet connectivity.");
+      });
+    }
+
+    function appendHomeMessageBubble(role, text) {
+      const body = document.getElementById("home-chat-body");
+      const container = document.createElement("div");
+      container.className = "d-flex gap-2 text-sm";
+      
+      const avatarHtml = role === "user" ? `
+        <div class="bg-secondary/10 rounded-circle d-flex align-items-center justify-content-center border border-secondary/35" style="width: 32px; height: 32px; flex-shrink: 0;">
+          <i class="bi bi-person-fill text-muted text-xs"></i>
+        </div>` : `
+        <div class="bg-success/10 rounded-circle d-flex align-items-center justify-content-center border border-success/35" style="width: 32px; height: 32px; flex-shrink: 0;">
+          <i class="bi bi-robot text-success text-xs"></i>
+        </div>`;
+      
+      const bubbleStyle = role === "user" ? `
+        background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); max-width: 80%; text-white-50; word-break: break-word;` : `
+        background: rgba(14, 18, 28, 0.95); border: 1px solid rgba(16, 185, 129, 0.12); max-width: 80%; text-white; word-break: break-word;`;
+        
+      const content = role === "user" ? text : marked.parse(text);
+      
+      container.innerHTML = `
+        ${avatarHtml}
+        <div class="p-3.5 rounded-4 font-sans" style="${bubbleStyle}">
+          ${content}
+        </div>
+      `;
+      body.appendChild(container);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function appendHomeLeadDispatcherCard(name, contact, need, waUrl) {
+      const body = document.getElementById("home-chat-body");
+      const container = document.createElement("div");
+      container.className = "d-flex gap-2 my-2";
+      
+      container.innerHTML = `
+        <div class="bg-warning/10 rounded-circle d-flex align-items-center justify-content-center border border-warning/30" style="width: 32px; height: 32px; flex-shrink:0;">
+          <i class="bi bi-send-check text-warning text-xs"></i>
+        </div>
+        <div class="p-3.5 rounded-4 text-sm border border-warning/30 text-white" style="background: rgba(22, 18, 10, 0.95); max-width: 80%; word-break: break-word;">
+          <span class="text-xs text-warning font-mono tracking-wider mb-2 d-block fw-bold"><i class="bi bi-whatsapp"></i> IMMEDIATE SUBMISSION RECOMMENDED</span>
+          <p class="text-muted text-xs mb-2">I have framed your client ticket. Click below to confirm routing onto Caleb's WhatsApp line instantly:</p>
+          <div class="font-mono text-xs text-white/90 bg-black/45 p-2 rounded mb-3 border border-secondary/15">
+            <div><strong>Client:</strong> ${name}</div>
+            <div><strong>Contact:</strong> ${contact}</div>
+            <div class="text-warning mt-1"><strong>Requirement:</strong> ${need}</div>
+          </div>
+          <a href="${waUrl}" target="_blank" class="btn btn-warning text-black font-semibold w-100 py-1.5 rounded-3 d-flex align-items-center justify-content-center gap-1.5" style="font-size:0.75rem;">
+            <i class="bi bi-whatsapp"></i> Dispatch Ticket to Caleb
+          </a>
+        </div>
+      `;
+      
+      body.appendChild(container);
+      body.scrollTop = body.scrollHeight;
     }
 
     function submitChatbotMessage() {
