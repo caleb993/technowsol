@@ -890,7 +890,15 @@
 
       <div class="col-lg-4 col-md-6 blog-item" data-category="{{ cat_slug }}">
 
-        <article class="blog-card d-flex flex-column h-100">
+        <article class="blog-card position-relative d-flex flex-column h-100">
+
+          {% if session.get("is_admin") %}
+            <div class="position-absolute top-0 end-0 m-2.5" style="z-index: 10;">
+              <a href="/admin?edit_id={{ b.id }}#blogs-pane" class="btn btn-warning btn-sm d-flex align-items-center gap-1 shadow-sm font-semibold" style="background: #fbbf24; border: none; color: #000; font-size: 0.72rem; padding: 4px 10px; border-radius: 6px;">
+                <i class="bi bi-pencil-square"></i> Edit
+              </a>
+            </div>
+          {% endif %}
 
           {% set thumb = b.content|get_first_image %}
           {% if thumb %}
