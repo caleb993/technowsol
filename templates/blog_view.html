@@ -577,6 +577,27 @@
 
         </div>
 
+        <!-- Audio Read Aloud Capability -->
+        <div class="mt-4 p-3 rounded-4 border border-warning/20 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3" style="background: rgba(251, 191, 36, 0.05); backdrop-filter: blur(4px);">
+          <div class="d-flex align-items-center gap-2.5">
+            <div class="bg-warning/10 rounded-circle d-flex align-items-center justify-content-center border border-warning/20" style="width: 36px; height: 36px;">
+              <i class="bi bi-soundwave text-warning fs-5"></i>
+            </div>
+            <div>
+              <div class="text-white text-xs font-mono fw-bold">NATIVE VOICE READ-ALOUD</div>
+              <div class="text-xs text-muted" style="font-size: 0.72rem;">Listen to this article automatically using web speech synthesized AI voice.</div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2 font-mono">
+            <button onclick="toggleArticleReader()" id="reader-btn" class="btn btn-xs btn-warning text-black py-1 px-3.5 d-flex align-items-center gap-1.5 fw-bold" style="border-radius: 6px; font-size: 0.72rem;">
+              <i class="bi bi-play-fill animate-pulse"></i> Read Aloud
+            </button>
+            <button onclick="stopArticleReader()" id="stop-reader-btn" class="btn btn-xs btn-outline-danger py-1 px-3 d-flex align-items-center gap-1.5 d-none" style="border-radius: 6px; font-size: 0.72rem;">
+              <i class="bi bi-stop-fill"></i> Stop
+            </button>
+          </div>
+        </div>
+
       </div>
 
       <!-- Article -->
@@ -725,6 +746,81 @@
           });
         });
       });
+    });
+
+    // --- Dynamic Speech Synthesizer read aloud engine ---
+    let articleSynth = window.speechSynthesis;
+    let articleUtterance = null;
+    let isReadingArticle = false;
+
+    function toggleArticleReader() {
+      if (!articleSynth) {
+        alert("Web Speech API has been deactivated or is unsupported on this browser platform.");
+        return;
+      }
+      
+      if (articleSynth.speaking) {
+        if (articleSynth.paused) {
+          articleSynth.resume();
+          document.getElementById("reader-btn").innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+          return;
+        } else {
+          articleSynth.pause();
+          document.getElementById("reader-btn").innerHTML = '<i class="bi bi-play-fill animate-pulse"></i> Resume';
+          return;
+        }
+      }
+
+      // Read text content
+      const titleText = "{{ post.title }}";
+      const contentText = document.querySelector(".article-content").innerText;
+      const readText = `Reviewing and summarizing the article: ${titleText}. ... ${contentText}`;
+
+      articleUtterance = new SpeechSynthesisUtterance(readText);
+      articleUtterance.rate = 1.05;
+      
+      // Select standard pleasant english voice if available
+      const voices = articleSynth.getVoices();
+      const engVoice = voices.find(v => v.lang.startsWith("en-") && v.name.includes("Google")) || voices.find(v => v.lang.startsWith("en-"));
+      if (engVoice) {
+        articleUtterance.voice = engVoice;
+      }
+
+      articleUtterance.onstart = function() {
+        isReadingArticle = true;
+        document.getElementById("reader-btn").innerHTML = '<i class="bi bi-pause-fill"></i> Pause';
+        document.getElementById("stop-reader-btn").classList.remove("d-none");
+      };
+
+      articleUtterance.onend = function() {
+        cleanReaderUI();
+      };
+
+      articleUtterance.onerror = function(e) {
+        console.warn("Speech error triggered:", e);
+        cleanReaderUI();
+      };
+
+      articleSynth.speak(articleUtterance);
+    }
+
+    function stopArticleReader() {
+      if (articleSynth) {
+        articleSynth.cancel();
+        cleanReaderUI();
+      }
+    }
+
+    function cleanReaderUI() {
+      isReadingArticle = false;
+      document.getElementById("reader-btn").innerHTML = '<i class="bi bi-play-fill animate-pulse"></i> Read Aloud';
+      document.getElementById("stop-reader-btn").classList.add("d-none");
+    }
+
+    window.addEventListener("beforeunload", () => {
+      if (articleSynth) {
+        articleSynth.cancel();
+      }
     });
 
   </script>
