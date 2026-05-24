@@ -529,15 +529,19 @@
 
     <div class="blog-wrapper">
 
-      <!-- Back Button -->
-
-      <a href="{{ url_for('blog_list') }}"
-         class="back-btn">
-
-        <i class="bi bi-arrow-left"></i>
-        Back to Blog
-
-      </a>
+      <!-- Back Button & Admin controls -->
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+        <a href="{{ url_for('blog_list') }}" class="back-btn mb-0">
+          <i class="bi bi-arrow-left"></i>
+          Back to Blog
+        </a>
+        {% if session.get("is_admin") %}
+          <a href="/admin?edit_id={{ post.id }}#blogs-pane" class="btn btn-warning text-black px-3 py-1.5 rounded-pill font-semibold d-flex align-items-center gap-1.5" style="font-size: 0.85rem; border: none; background: #fbbf24;">
+            <i class="bi bi-pencil-square"></i>
+            Edit This Article
+          </a>
+        {% endif %}
+      </div>
 
       <!-- Hero -->
       {% set words_count = post.content.split()|length %}
