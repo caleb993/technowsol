@@ -79,6 +79,19 @@ def create_tables():
           user_agent TEXT,
           path TEXT
         )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS techrich_docs (
+          id SERIAL PRIMARY KEY,
+          title TEXT,
+          doc_type TEXT,
+          file_name TEXT,
+          file_data BYTEA,
+          mimetype TEXT,
+          content TEXT,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+        )
         """
     ]
     conn = get_conn()
@@ -88,6 +101,27 @@ def create_tables():
                 for ddl in commands:
                     cur.execute(ddl)
         print("✅ Tables created or already exist.")
+        
+        # Seed TechRich Documents if empty
+        try:
+            with conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT COUNT(*) FROM techrich_docs")
+                    cnt = cur.fetchone()[0]
+                    if cnt == 0:
+                        cur.execute(
+                            """
+                            INSERT INTO techrich_docs (title, doc_type, file_name, content, created_at, updated_at) VALUES 
+                            ('Resolving VLAN Leakage and Trunk Port Encapsulation Standards', 'note', '', '# Comprehensive VLAN Encapsulation Standards\n\nThis article outlines enterprise diagnostic criteria for mitigating Inter-VLAN performance loss across Layer 2 and Layer 3 routing equipment.\n\n### Core Engineering Diagnostics\n- Check trunk status: `show interface trunk`\n- Configure dot1q routing encapsulation: `encapsulation dot1Q 10`\n- Native VLAN must match on switch port and subinterface.', now(), now()),
+                            ('Analyzing Stuck OSPF Neighbor States (DR/BDR Election Loop)', 'note', '', '# Demystifying Stuck OSPF Neighbor States\n\nAdjacencies fail to transition into the **FULL** state.\n\n### Immediate Actions\n- Double-check MTU matching: `show ip ospf interface`\n- Run `ip ospf mtu-ignore` to debug descriptors exchange loops.', now(), now()),
+                            ('Managing Sudden DHCP Autoconfiguration Loops (169.254.x.x)', 'note', '', '# Resolving Workstation APIPA (169.254.x.x) Issues\n\nAPIPA assignment points directly to a DHCP client network negotiation failure.\n\n### Diagnosis Protocol\n- Release current gateway configuration.\n- Verify active Layer 3 IP helper parameters pointing to active pools: `ip helper-address 192.168.1.10`', now(), now()),
+                            ('Mitigating Broadcast packet storms inside Spanning Tree Networks', 'note', '', '# Mitigating Access Layer Network Loops with STP BPDU Guard\n\nLoop protection is strictly configured on all trunk and access terminals:\n```\nswitchport mode access\nspanning-tree portfast\nspanning-tree bpduguard enable\n```', now(), now())
+                            """
+                        )
+                        print("✅ Seeded initial TechRich Knowledge Nodes successfully.")
+        except Exception as se:
+            print("⚠️ Skipping TechRich docs seeding:", se)
+            
     except Exception as e:
         print(f"❌ Error creating tables: {e}")
     finally:
@@ -587,6 +621,123 @@ def get_total_visits_count():
     except Exception as e:
         print(f"Error loading total visits: {e}")
         return 0
+    finally:
+        conn.close()
+
+# ---------------- TechRich Document Repository ----------------
+def save_techrich_doc(title, doc_type, file_name=None, file_data=None, mimetype=None, content=None):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO techrich_docs (title, doc_type, file_name, file_data, mimetype, content, created_at, updated_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, now(), now()) RETURNING id
+                    """,
+                    (title.strip(), doc_type, file_name, file_data if file_data else None, mimetype, content)
+                )
+                r = cur.fetchone()
+                return r[0] if r else None
+    except Exception as e:
+        print(f"Error saving techrich doc in DB: {e}")
+        return None
+    finally:
+        conn.close()
+
+def load_techrich_docs():
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT id, title, doc_type, file_name, mimetype, length(file_data) as file_size, content, created_at, updated_at 
+                    FROM techrich_docs ORDER BY updated_at DESC
+                """)
+                rows = cur.fetchall()
+                out = []
+                for r in rows:
+                    created_str = r["created_at"].isoformat() if r["created_at"] else ""
+                    updated_str = r["updated_at"].isoformat() if r["updated_at"] else ""
+                    out.append({
+                        "id": r["id"],
+                        "title": r["title"] or "Untitled Document",
+                        "doc_type": r["doc_type"] or "note",
+                        "file_name": r["file_name"] or "",
+                        "mimetype": r["mimetype"] or "text/plain",
+                        "file_size": r["file_size"] or 0,
+                        "content": r["content"] or "",
+                        "created_at": created_str,
+                        "updated_at": updated_str
+                    })
+                return out
+    except Exception as e:
+        print(f"Error loading techrich docs: {e}")
+        return []
+    finally:
+        conn.close()
+
+def get_techrich_doc_by_id(doc_id):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT id, title, doc_type, file_name, file_data, mimetype, content, created_at, updated_at 
+                    FROM techrich_docs WHERE id = %s
+                """, (doc_id,))
+                r = cur.fetchone()
+                if not r:
+                    return None
+                created_str = r["created_at"].isoformat() if r["created_at"] else ""
+                updated_str = r["updated_at"].isoformat() if r["updated_at"] else ""
+                return {
+                    "id": r["id"],
+                    "title": r["title"] or "Untitled",
+                    "doc_type": r["doc_type"] or "note",
+                    "file_name": r["file_name"] or "",
+                    "file_data": bytes(r["file_data"]) if r["file_data"] else None,
+                    "mimetype": r["mimetype"] or "",
+                    "content": r["content"] or "",
+                    "created_at": created_str,
+                    "updated_at": updated_str
+                }
+    except Exception as e:
+        print(f"Error fetching techrich doc by id: {e}")
+        return None
+    finally:
+        conn.close()
+
+def update_techrich_doc(doc_id, title, content):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    UPDATE techrich_docs 
+                    SET title = %s, content = %s, updated_at = now() 
+                    WHERE id = %s
+                    """,
+                    (title.strip(), content, doc_id)
+                )
+                return True
+    except Exception as e:
+        print(f"Error updating techrich doc: {e}")
+        return False
+    finally:
+        conn.close()
+
+def delete_techrich_doc_by_id(doc_id):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("DELETE FROM techrich_docs WHERE id = %s", (doc_id,))
+                return True
+    except Exception as e:
+        print(f"Error deleting techrich doc: {e}")
+        return False
     finally:
         conn.close()
 
