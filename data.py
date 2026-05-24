@@ -58,6 +58,9 @@ def create_tables():
         )
         """,
         """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS views INTEGER DEFAULT 0;
+        """,
+        """
         CREATE TABLE IF NOT EXISTS files (
           id SERIAL PRIMARY KEY,
           name TEXT,
@@ -299,14 +302,15 @@ def load_blogs():
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, timestamp, title, slug, content FROM blogs ORDER BY id DESC")
+                cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views FROM blogs ORDER BY id DESC")
                 return [
                     {
                         "id": r["id"],
                         "timestamp": (r["timestamp"].isoformat(timespec="seconds") if r["timestamp"] else "") if "timestamp" in r and r["timestamp"] else "",
                         "title": r["title"] or "",
                         "slug": r["slug"] or "",
-                        "content": r["content"] or ""
+                        "content": r["content"] or "",
+                        "views": r["views"] or 0
                     }
                     for r in cur.fetchall()
                 ]
@@ -318,7 +322,7 @@ def get_blog_by_slug(slug):
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, timestamp, title, slug, content FROM blogs WHERE slug=%s LIMIT 1", (slug,))
+                cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views FROM blogs WHERE slug=%s LIMIT 1", (slug,))
                 r = cur.fetchone()
                 if not r:
                     return None
@@ -333,8 +337,20 @@ def get_blog_by_slug(slug):
                     "timestamp": timestamp_str, 
                     "title": r["title"] or "", 
                     "slug": r["slug"] or "", 
-                    "content": r["content"] or ""
+                    "content": r["content"] or "",
+                    "views": r["views"] or 0
                 }
+    finally:
+        conn.close()
+
+def increment_blog_views(slug):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("UPDATE blogs SET views = COALESCE(views, 0) + 1 WHERE slug = %s", (slug,))
+    except Exception as e:
+        print(f"Error incrementing blog views: {e}")
     finally:
         conn.close()
 
