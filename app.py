@@ -87,6 +87,21 @@ def seed_blog_assets():
 seed_blog_assets()
 
 # ====== HELPERS ======
+def get_blog_category(title, content):
+    combined = (title or "" + " " + content or "").lower()
+    if any(k in combined for k in ["cyber", "exploit", "mitigate", "security", "defense", "hack", "penetration", "firewall"]):
+        return "Cybersecurity"
+    elif any(k in combined for k in ["rout", "net", "ip", "cisco", "ccna", "switch", "router", "dhcp", "dns", "lan", "wan"]):
+        return "Networking"
+    elif any(k in combined for k in ["ai", "machine", "learning", "model", "neural", "predict", "automation", "workflow", "cron", "script"]):
+        return "AI & Automation"
+    elif any(k in combined for k in ["web", "html", "css", "flask", "react", "js", "ts", "javascript", "typescript", "frontend", "backend"]):
+        return "Web Development"
+    elif any(k in combined for k in ["ict", "support", "helpdesk", "comput", "hardware", "troubleshoot", "printer"]):
+        return "ICT Support"
+    else:
+        return "Technology"
+
 def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTS
 
@@ -273,6 +288,7 @@ def blog_list():
 def view_blog(slug):
     try:
         data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), f"/blog/{slug}")
+        data.increment_blog_views(slug)
     except Exception as e:
         print(f"Tracking error: {e}")
     post = data.get_blog_by_slug(slug)
@@ -438,6 +454,20 @@ def admin():
     blogs = data.load_blogs()
     subscribers = data.load_subscribers()
 
+    # Calculate blog views stats
+    most_viewed_blog = None
+    most_viewed_category = "Technology"
+    category_summary = {}
+
+    if blogs:
+        most_viewed_blog = max(blogs, key=lambda b: b.get("views", 0))
+        for b in blogs:
+            cat = get_blog_category(b.get("title", ""), b.get("content", ""))
+            category_summary[cat] = category_summary.get(cat, 0) + b.get("views", 0)
+        if category_summary:
+            best_cat = max(category_summary, key=category_summary.get)
+            most_viewed_category = f"{best_cat} ({category_summary[best_cat]} views)"
+
     return render_template(
         "admin.html",
         total_messages=total_messages,
@@ -461,7 +491,9 @@ def admin():
         blogs=blogs,
         subscribers=subscribers,
         daily_visits=data.get_daily_visits_summary(),
-        total_visits=data.get_total_visits_count()
+        total_visits=data.get_total_visits_count(),
+        most_viewed_blog=most_viewed_blog,
+        most_viewed_category=most_viewed_category
     )
 
 # ====== JSON endpoints (admin-only) ======
@@ -499,6 +531,56 @@ def admin_analytics_data():
         return jsonify({"error": "unauthorized"}), 403
     labels, values = data.get_messages_counts_last_n_days(30)
     return jsonify({"labels": labels, "values": values})
+
+@app.route("/api/admin/active_users")
+def active_users_data():
+    # Allow simulated visitors for presentation / testing
+    is_simulating = request.args.get("simulate", "false") == "true"
+    sim_count = int(request.args.get("sim_count", "0"))
+    
+    conn = data.get_conn()
+    count = 1
+    recent_pages = []
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT COUNT(DISTINCT ip_address) FROM site_visits 
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                """)
+                row = cur.fetchone()
+                if row:
+                    count = row[0]
+                
+                cur.execute("""
+                    SELECT path, COUNT(*) as cnt FROM site_visits 
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    GROUP BY path ORDER BY cnt DESC LIMIT 6
+                """)
+                recent_pages = [{"path": r[0] if r[0] else "/", "count": r[1]} for r in cur.fetchall()]
+    except Exception as e:
+        print(f"Error getting active users: {e}")
+    finally:
+        conn.close()
+        
+    if count < 1:
+        count = 1
+        
+    if is_simulating and sim_count > 0:
+        count = sim_count
+        # Inject some simulated trending paths so it is extremely visual and amazing
+        recent_pages = [
+            {"path": "/", "count": int(sim_count * 0.4) or 1},
+            {"path": "/blog", "count": int(sim_count * 0.35) or 1},
+            {"path": "/blog/securing-mpesa-routing", "count": int(sim_count * 0.15) or 1},
+            {"path": "/admin", "count": int(sim_count * 0.1) or 1}
+        ]
+
+    return jsonify({
+        "status": "success",
+        "active_users": count,
+        "recent_pages": recent_pages
+    })
 
 # ====== MESSAGE DELETE ======
 @app.route("/admin/delete_message/<int:mid>", methods=["POST"])
@@ -730,9 +812,16 @@ def admin_add_blog():
     if not (title and content):
         flash("Title and content required.")
         return redirect(url_for("admin"))
-    data.add_blog(title, content)
-    flash("Blog post published.")
-    return redirect(url_for("admin"))
+    post = data.add_blog(title, content)
+    
+    # Store dynamic WhatsApp promotion context
+    if post and "slug" in post:
+        session["promote_blog_slug"] = post["slug"]
+        session["promote_blog_title"] = post["title"]
+        session["promote_blog_event"] = "published"
+        
+    flash("Blog post published successfully. ✅")
+    return redirect(url_for("admin") + "#blogs-pane")
 
 @app.route("/admin/blogs/delete/<bid>", methods=["POST"])
 def admin_delete_blog(bid):
@@ -763,10 +852,23 @@ def admin_edit_blog(bid):
         return redirect(url_for("admin") + "#blogs-pane")
     ok = data.update_blog(bid, title, content)
     if ok:
+        import re
+        slug = re.sub(r"[^\w\s-]", "", title.lower().strip())
+        slug = re.sub(r"[-\s]+", "-", slug)[:200]
+        session["promote_blog_slug"] = slug
+        session["promote_blog_title"] = title
+        session["promote_blog_event"] = "updated"
         flash("Blog post successfully updated. ✅")
     else:
         flash("Failed to update blog post.")
     return redirect(url_for("admin") + "#blogs-pane")
+
+@app.route("/admin/blogs/clear_promo", methods=["POST"])
+def clear_promo_session():
+    session.pop("promote_blog_slug", None)
+    session.pop("promote_blog_title", None)
+    session.pop("promote_blog_event", None)
+    return jsonify({"status": "cleared"})
 
 @app.route('/sitemap.xml')
 def sitemap():
