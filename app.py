@@ -44,6 +44,48 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
 # Initialize DB tables (idempotent)
 data.create_tables()
 
+# Seeding generated blog assets
+def seed_blog_assets():
+    try:
+        import psycopg2
+        import glob
+        conn = data.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT id FROM files WHERE category='blog_media' AND name='mpesa_security.png'")
+                row = cur.fetchone()
+                if not row:
+                    local_path = None
+                    import os
+                    candidates = [
+                        "src/assets/images/mpesa_security_1779629331279.png",
+                        "/src/assets/images/mpesa_security_1779629331279.png",
+                        "./src/assets/images/mpesa_security_1779629331279.png"
+                    ]
+                    for path in candidates:
+                        if os.path.exists(path):
+                            local_path = path
+                            break
+                    if not local_path:
+                        # Find any generic matching image
+                        found = glob.glob("src/assets/images/mpesa_security_*.png") + glob.glob("/src/assets/images/mpesa_security_*.png")
+                        if found:
+                            local_path = found[0]
+                    if local_path and os.path.exists(local_path):
+                        with open(local_path, "rb") as f:
+                            img_data = f.read()
+                        cur.execute(
+                            "INSERT INTO files (name, category, content, mimetype, approved) VALUES (%s, %s, %s, %s, %s)",
+                            ("mpesa_security.png", "blog_media", psycopg2.Binary(img_data), "image/png", True)
+                        )
+                        print("✅ Seeded mpesa_security.png into database!")
+                    else:
+                        print("⚠️ Generated image path not found for seeding database.")
+    except Exception as e:
+        print(f"⚠️ Error seeding database: {e}")
+
+seed_blog_assets()
+
 # ====== HELPERS ======
 def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTS
@@ -121,6 +163,16 @@ def media_url(kind, filename):
 # ====== ROUTES ======
 @app.route("/", methods=["GET"])
 def index():
+    # Track visitor
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/"
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+
     prof_name, _ = latest_file("profile", only_images=True)
     hero_name, _ = latest_file("hero", only_images=True)
     gallery = list_gallery_media()
@@ -210,15 +262,112 @@ def media_file(kind, filename):
 # ====== BLOG PUBLIC ======
 @app.route("/blog")
 def blog_list():
+    try:
+        data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), "/blog")
+    except Exception as e:
+        print(f"Tracking error: {e}")
     blogs = data.load_blogs()
     return render_template("blog_list.html", blogs=blogs)
 
 @app.route("/blog/<slug>")
 def view_blog(slug):
+    try:
+        data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), f"/blog/{slug}")
+    except Exception as e:
+        print(f"Tracking error: {e}")
     post = data.get_blog_by_slug(slug)
     if not post:
         abort(404)
     return render_template("blog_view.html", post=post)
+
+# ====== CHATBOT AND VISITOR ALERTS API ======
+@app.route("/api/chatbot/query", methods=["POST"])
+def chatbot_query():
+    try:
+        req_data = request.json or {}
+        user_prompt = req_data.get("prompt", "").strip()
+        history = req_data.get("history", [])
+        
+        if not user_prompt:
+            return jsonify({"text": "Hello! How can I assist you with standard cybersecurity or ICT services today?"})
+            
+        import urllib.request
+        import json
+        
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            return jsonify({"text": "⚠️ **Configuration Warning:** `GEMINI_API_KEY` is currently undefined. Please provide your API credentials inside the Settings Secrets drawer to enable live AI generated chats!"})
+            
+        # Format conversation context
+        formatted_prompt = "You are a professional, thoroughly trained chatbot assistant for Caleb Muga and his company TechKnow Solutions.\n"
+        formatted_prompt += "Your instructions:\n"
+        formatted_prompt += "1. Speak humbly, politely, and extremely technically. Address callers professionally.\n"
+        formatted_prompt += "2. Here are facts about Caleb Muga & TechKnow Solutions:\n"
+        formatted_prompt += "   - Caleb Muga is a meticulous ICT Officer and certified Network Administrator (CCNA & Cisco routing/switching).\n"
+        formatted_prompt += "   - Services: CCNA routing, Cybersecurity assessments/audits, enterprise network topology layout, Python automation, threat mitigation, ICT client support.\n"
+        formatted_prompt += "   - Contact: WhatsApp/Call at +254791204587 (or 0791204587).\n"
+        formatted_prompt += "   - Dynamic Tools: Point visitors to our interactive diagnostic tools (Password hardness rating, subnet mask calculator, and simulated live port vulnerability scanners).\n"
+        formatted_prompt += "3. For complex problems, encourage booking a support session by clicking 'Forward Inquiry to Caleb Muga' (which push the text directly to his WhatsApp at 0791204587).\n"
+        
+        if history:
+            formatted_prompt += "\nHere is the recent message logs history:\n"
+            for msg in history[-6:]: # context window limit
+                role = "User" if msg.get("role") == "user" else "AI"
+                formatted_prompt += f"{role}: {msg.get('text')}\n"
+                
+        formatted_prompt += f"User's incoming question: {user_prompt}\n"
+        formatted_prompt += "Provide an elegant, helpful, structured response in markdown format:"
+        
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [{"parts": [{"text": formatted_prompt}]}]
+        }
+        
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        try:
+            with urllib.request.urlopen(req) as response:
+                res_data = json.loads(response.read().decode("utf-8"))
+                reply = res_data["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception as e:
+            # Fallback to gemini-1.5-flash
+            try:
+                url_fb = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+                req_fb = urllib.request.Request(url_fb, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+                with urllib.request.urlopen(req_fb) as response_fb:
+                    res_data_fb = json.loads(response_fb.read().decode("utf-8"))
+                    reply = res_data_fb["candidates"][0]["content"]["parts"][0]["text"]
+            except Exception as e2:
+                reply = f"I apologize, I am experiencing temporary challenges connecting to the security server stream: {str(e2)}"
+                
+        return jsonify({"text": reply})
+    except Exception as e:
+        return jsonify({"text": f"Error running chatbot interface: {str(e)}"}), 500
+
+@app.route("/api/track_visit", methods=["POST"])
+def track_visit():
+    try:
+        req_data = request.json or {}
+        path = req_data.get("path", "/")
+        ip = request.remote_addr
+        ua = request.headers.get("User-Agent", "Unknown")
+        
+        data.record_visit(ip, ua, path)
+        
+        # Build live WhatsApp push notification alert link
+        msg_text = f"⚙️ *TechKnow Security Insight Alert*:\n👤 *Active user* landed on: `{path}`\n🌐 *IP Address*: `{ip}`\n📱 *Device*: {ua[:60]}\n⏰ *Timestamp*: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}"
+        encoded_msg = urllib.parse.quote(msg_text)
+        wa_link = f"https://wa.me/254791204587?text={encoded_msg}"
+        
+        return jsonify({
+            "status": "success",
+            "ip_address": ip,
+            "path": path,
+            "wa_link": wa_link,
+            "msg_text": msg_text
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 # ====== AUTH ======
 @app.route("/login", methods=["GET", "POST"])
@@ -310,7 +459,9 @@ def admin():
         gal=gal,
         blog_media=blog_media_list,
         blogs=blogs,
-        subscribers=subscribers
+        subscribers=subscribers,
+        daily_visits=data.get_daily_visits_summary(),
+        total_visits=data.get_total_visits_count()
     )
 
 # ====== JSON endpoints (admin-only) ======
