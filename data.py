@@ -67,6 +67,15 @@ def create_tables():
           uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
           approved BOOLEAN DEFAULT TRUE
         )
+        """,
+        """
+        CREATE TABLE IF NOT EXISTS site_visits (
+          id SERIAL PRIMARY KEY,
+          timestamp TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          ip_address TEXT,
+          user_agent TEXT,
+          path TEXT
+        )
         """
     ]
     conn = get_conn()
@@ -512,6 +521,56 @@ def delete_file(category, name):
                     (category, name)
                 )
                 return bool(cur.fetchone())
+    finally:
+        conn.close()
+
+# ---------------- Site Visit Tracking ----------------
+def record_visit(ip_address: str, user_agent: str, path: str):
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO site_visits (ip_address, user_agent, path, timestamp) VALUES (%s, %s, %s, now())",
+                    (ip_address or "Unknown", user_agent or "Unknown", path or "/")
+                )
+    except Exception as e:
+        print(f"Error recording visit in DB: {e}")
+    finally:
+        conn.close()
+
+def get_daily_visits_summary():
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                # Get daily counts for last 15 days, aggregate by date (ignoring time)
+                cur.execute("""
+                    SELECT TO_CHAR(timestamp, 'YYYY-MM-DD') as visit_date, COUNT(*) as visit_count 
+                    FROM site_visits 
+                    WHERE timestamp >= now() - INTERVAL '15 days'
+                    GROUP BY visit_date 
+                    ORDER BY visit_date ASC
+                """)
+                rows = cur.fetchall()
+                return [{"date": r[0], "count": r[1]} for r in rows]
+    except Exception as e:
+        print(f"Error loading daily visits: {e}")
+        return []
+    finally:
+        conn.close()
+
+def get_total_visits_count():
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT COUNT(*) FROM site_visits")
+                row = cur.fetchone()
+                return row[0] if row else 0
+    except Exception as e:
+        print(f"Error loading total visits: {e}")
+        return 0
     finally:
         conn.close()
 
