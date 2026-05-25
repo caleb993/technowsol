@@ -7,67 +7,67 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- canonical url -->
+  <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
+
+  <!-- Preloads for Performance -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" as="style">
+  <link rel="preload" href="/static/favicon.png" as="image">
+
   <!-- SEO -->
   <title>{{ post.title }} • TechKnow Solutions Blog</title>
 
-  <meta name="description"
-        content="{{ post.content[:155] }}">
-
-  <meta name="keywords"
-        content="Caleb Muga, TechKnow Solutions, Cybersecurity, Networking, ICT Support, AI, Technology Blog">
-
+  <meta name="description" content="Read '{{ post.title }}' by Caleb Muga: cybersecurity auditing protocols, low-jitter packet optimization topologies, and automation diagnostics.">
+  <meta name="keywords" content="Caleb Muga, TechKnow Solutions, Cybersecurity, Networking, ICT Support, AI, Technology Blog">
   <meta name="author" content="Caleb Muga">
 
-  <link rel="canonical"
-        href="https://mga.techknowsols.gt.tc/blog/{{ post.slug }}">
+  <!-- Advanced Brand SEO Meta (Requirement 3) -->
+  <meta name="application-name" content="TechKnow Solutions">
+  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
+  <meta property="og:site_name" content="TechKnow Solutions">
+  <meta name="twitter:site" content="@techknowsols">
+  <meta name="creator" content="Caleb Muga">
+  <meta name="publisher" content="TechKnow Solutions">
+  <meta name="theme-color" content="#07111f">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi">
+  <meta name="language" content="English">
+  <meta name="rating" content="general">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 days">
 
   <!-- Google Verification -->
-  <meta name="google-site-verification"
-        content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
+  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
 
   <!-- AdSense -->
-  <meta name="google-adsense-account"
-        content="ca-pub-4340479899629152">
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
 
   <!-- Open Graph -->
-  <meta property="og:title"
-        content="{{ post.title }} • TechKnow Solutions">
-
-  <meta property="og:description"
-        content="{{ post.content[:150] }}">
-
-  <meta property="og:type"
-        content="article">
-
-  <meta property="og:url"
-        content="https://mga.techknowsols.gt.tc/blog/{{ post.slug }}">
-
-  <meta property="og:image"
-        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+  <meta property="og:title" content="{{ post.title }} • TechKnow Solutions">
+  <meta property="og:description" content="Read {{ post.title }} by Systems & Security Specialist Caleb Muga.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://mga.techknowsols.gt.tc{{ request.path }}">
+  <meta property="og:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
 
   <!-- Twitter -->
-  <meta name="twitter:card"
-        content="summary_large_image">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ post.title }}">
+  <meta name="twitter:description" content="Cybersecurity, networking, AI and digital engineering insights by Caleb Muga.">
+  <meta name="twitter:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
 
-  <meta name="twitter:title"
-        content="{{ post.title }}">
-
-  <meta name="twitter:description"
-        content="{{ post.content[:150] }}">
-
-  <meta name="twitter:image"
-        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+  <!-- Favicon Sets (Requirement 5) -->
+  <link rel="icon" sizes="32x32" href="/static/favicon-32.png">
+  <link rel="icon" sizes="16x16" href="/static/favicon-16.png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
 
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-
   <script>
     window.dataLayer = window.dataLayer || [];
-
     function gtag() {
       dataLayer.push(arguments);
     }
-
     gtag('js', new Date());
     gtag('config', 'G-ELRXZQRGNR');
   </script>
@@ -90,25 +90,63 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
         rel="stylesheet">
 
-  <!-- Structured Data -->
+  <!-- High-Impact Structured Data Graph Implementation (Requirement 4) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"BlogPosting",
-    "headline":"{{ post.title }}",
-    "author":{
-      "@type":"Person",
-      "name":"Caleb Muga"
-    },
-    "publisher":{
-      "@type":"Organization",
-      "name":"TechKnow Solutions"
-    },
-    "datePublished":"{{ post.timestamp }}",
-    "mainEntityOfPage":{
-      "@type":"WebPage",
-      "@id":"https://mga.techknowsols.gt.tc/blog/{{ post.slug }}"
-    }
+    "@graph":[
+      {
+        "@type":"Organization",
+        "name":"TechKnow Solutions",
+        "alternateName":[
+          "TechKnow",
+          "TechKnowSols",
+          "TechNowSolutions",
+          "Muga.dev"
+        ],
+        "url":"https://mga.techknowsols.gt.tc",
+        "logo":"https://mga.techknowsols.gt.tc/static/favicon.png",
+        "founder":{
+          "@type":"Person",
+          "name":"Caleb Muga"
+        },
+        "sameAs":[
+          "https://github.com/",
+          "https://linkedin.com/",
+          "https://x.com/"
+        ]
+      },
+      {
+        "@type":"Person",
+        "name":"Caleb Muga",
+        "url":"https://mga.techknowsols.gt.tc",
+        "jobTitle":"Software Engineer",
+        "worksFor":{
+          "@type":"Organization",
+          "name":"TechKnow Solutions"
+        }
+      },
+      {
+        "@type":"BlogPosting",
+        "headline":"{{ post.title }}",
+        "description":"Read {{ post.title }} by Systems & Security Specialist Caleb Muga.",
+        "datePublished":"{{ post.timestamp }}",
+        "dateModified":"{{ post.timestamp }}",
+        "author":{
+          "@type":"Person",
+          "name":"Caleb Muga"
+        },
+        "publisher":{
+          "@type":"Organization",
+          "name":"TechKnow Solutions"
+        },
+        "mainEntityOfPage":{
+          "@type":"WebPage",
+          "@id":"https://mga.techknowsols.gt.tc/blog/{{ post.slug }}"
+        },
+        "timeRequired":"PT{{ reading_time or 5 }}M"
+      }
+    ]
   }
   </script>
 
@@ -690,34 +728,29 @@
 
       <!-- Share -->
 
-      <div class="share-box">
+      <div class="share-box d-flex flex-wrap gap-2 justify-content-start align-items-center mb-4">
 
         <a target="_blank"
-           href="https://twitter.com/intent/tweet?text={{ post.title }}"
-           class="share-btn">
-
-          <i class="bi bi-twitter-x"></i>
-          Share
-
+           href="https://twitter.com/intent/tweet?text={{ post.title }}&url=https://mga.techknowsols.gt.tc/blog/{{ post.slug }}"
+           class="share-btn flex-grow-1 text-center" style="font-size: 0.85rem; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); border-radius: 8px; color: #fff; text-decoration: none;">
+          <i class="bi bi-twitter-x me-1.5"></i> Tweet
         </a>
 
         <a target="_blank"
-           href="https://wa.me/?text={{ post.title }}"
-           class="share-btn">
-
-          <i class="bi bi-whatsapp"></i>
-          WhatsApp
-
+           href="https://api.whatsapp.com/send?text={{ post.title }}%20https://mga.techknowsols.gt.tc/blog/{{ post.slug }}"
+           class="share-btn flex-grow-1 text-center" style="font-size: 0.85rem; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); border-radius: 8px; color: #fff; text-decoration: none;">
+          <i class="bi bi-whatsapp me-1.5 text-success"></i> WhatsApp
         </a>
 
         <a target="_blank"
-           href="https://www.linkedin.com/"
-           class="share-btn">
-
-          <i class="bi bi-linkedin"></i>
-          LinkedIn
-
+           href="https://www.linkedin.com/sharing/share-offsite/?url=https://mga.techknowsols.gt.tc/blog/{{ post.slug }}"
+           class="share-btn flex-grow-1 text-center" style="font-size: 0.85rem; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); border-radius: 8px; color: #fff; text-decoration: none;">
+          <i class="bi bi-linkedin me-1.5 text-primary"></i> LinkedIn
         </a>
+
+        <button onclick="window.print()" class="share-btn btn btn-outline-secondary flex-grow-1 text-center" style="font-size: 0.85rem; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); border: none; border-radius: 8px; color: #fff; height: 100%;">
+          <i class="bi bi-printer me-1.5"></i> Print &amp; PDF
+        </button>
 
       </div>
 
