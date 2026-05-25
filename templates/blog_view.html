@@ -875,6 +875,31 @@
       }
     });
 
+    // Real-time Blog Duration Tracking Heartbeat (Caleb Muga Analytics)
+    (function() {
+      const slug = "{{ post.slug }}";
+      if (!slug) return;
+
+      // 1. Log view entry
+      fetch("/api/blog/heartbeat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slug, new_view: true })
+      }).catch(err => console.error("Heartbeat telemetry failed:", err));
+
+      // 2. Poll heartbeat tracker increments every 5 seconds to record real-time reading duration
+      setInterval(() => {
+        // Only run heartbeat if document is active (user is actually reading!)
+        if (document.visibilityState === "visible") {
+          fetch("/api/blog/heartbeat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ slug: slug, new_view: false })
+          }).catch(err => console.warn("Incremental heartbeat error:", err));
+        }
+      }, 5000);
+    })();
+
   </script>
 
 </body>
