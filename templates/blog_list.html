@@ -2,101 +2,126 @@
 <html lang="en">
 
 <head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
+
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- canonical url -->
+  <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
+
+  <!-- Preloads for Performance -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
+  <link rel="preload" href="/static/favicon.png" as="image">
+
   <!-- Primary SEO -->
-  <title>Blog • Muga Digital Journal</title>
+  <title>TechKnow Solutions Blog • Cybersecurity, AI & Systems Development</title>
 
-  <meta name="description"
-        content="Explore cybersecurity, networking, AI, web development, automation, and digital engineering insights by Caleb Muga at TechKnow Solutions.">
-
-  <meta name="keywords"
-        content="Caleb Muga, TechKnow Solutions, Cybersecurity, Networking, AI, Python, Web Development, ICT Blog">
-
+  <meta name="description" content="Explore advanced cybersecurity, multi-node routing optimization, python automation scripts, and digital systems architecture insights by Caleb Muga at TechKnow Solutions.">
+  <meta name="keywords" content="Caleb Muga, TechKnow Solutions, Cybersecurity, Networking, AI, Python, Web Development, ICT Blog">
   <meta name="author" content="Caleb Muga">
-
   <meta name="robots" content="index, follow">
 
-
+  <!-- Advanced Brand SEO Meta (Requirement 3) -->
+  <meta name="application-name" content="TechKnow Solutions">
+  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
+  <meta property="og:site_name" content="TechKnow Solutions">
+  <meta name="twitter:site" content="@techknowsols">
+  <meta name="creator" content="Caleb Muga">
+  <meta name="publisher" content="TechKnow Solutions">
+  <meta name="theme-color" content="#07111f">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi">
+  <meta name="language" content="English">
+  <meta name="rating" content="general">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 days">
 
   <!-- Open Graph -->
-  <meta property="og:title"
-        content="Muga Digital Journal">
-
-  <meta property="og:description"
-        content="Cybersecurity, networking, AI and software engineering insights.">
-
-  <meta property="og:type"
-        content="website">
-
-
-
-  <meta property="og:image"
-        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
+  <meta property="og:title" content="TechKnow Solutions Blog • Digital Systems Insights">
+  <meta property="og:description" content="Analytical cybersecurity, low-latency networking, custom scripts and technology frameworks.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mga.techknowsols.gt.tc{{ request.path }}">
+  <meta property="og:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
 
   <!-- Twitter -->
-  <meta name="twitter:card"
-        content="summary_large_image">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TechKnow Solutions Blog">
+  <meta name="twitter:description" content="Cybersecurity, networking, AI and digital engineering insights.">
+  <meta name="twitter:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
 
-  <meta name="twitter:title"
-        content="Muga Digital Journal">
-
-  <meta name="twitter:description"
-        content="Cybersecurity, networking, AI and digital engineering insights.">
-
-  <meta name="twitter:image"
-        content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
-
-  <!-- Favicon -->
-  <link rel="icon"
-        type="image/png"
-        href="/static/favicon.png">
+  <!-- Favicon Sets (Requirement 5) -->
+  <link rel="icon" sizes="32x32" href="/static/favicon-32.png">
+  <link rel="icon" sizes="16x16" href="/static/favicon-16.png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
 
   <!-- Google Site Verification -->
-  <meta name="google-site-verification"
-        content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
 
   <!-- Google Adsense -->
-  <meta name="google-adsense-account"
-        content="ca-pub-4340479899629152">
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
 
-  <script async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340479899629152"
-          crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340479899629152" crossorigin="anonymous"></script>
 
   <!-- Google Analytics -->
-  <script async
-          src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-
     function gtag() {
       dataLayer.push(arguments);
     }
-
     gtag('js', new Date());
-
     gtag('config', 'G-ELRXZQRGNR');
   </script>
 
-  <!-- Structured Data -->
+  <!-- Most Important Structured Data Graph Upgrade (Requirement 4) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"Blog",
-    "name":"Muga Digital Journal",
-    "url":"https://portfolio-sj7l.onrender.com/blog",
-    "description":"Cybersecurity, networking, AI and software engineering insights by Caleb Muga.",
-    "publisher":{
-      "@type":"Person",
-      "name":"Caleb Muga"
-    }
+    "@graph":[
+      {
+        "@type":"Organization",
+        "name":"TechKnow Solutions",
+        "alternateName":[
+          "TechKnow",
+          "TechKnowSols",
+          "TechNowSolutions",
+          "Muga.dev"
+        ],
+        "url":"https://mga.techknowsols.gt.tc",
+        "logo":"https://mga.techknowsols.gt.tc/static/favicon.png",
+        "founder":{
+          "@type":"Person",
+          "name":"Caleb Muga"
+        },
+        "sameAs":[
+          "https://github.com/",
+          "https://linkedin.com/",
+          "https://x.com/"
+        ]
+      },
+      {
+        "@type":"Person",
+        "name":"Caleb Muga",
+        "url":"https://mga.techknowsols.gt.tc",
+        "jobTitle":"Software Engineer",
+        "worksFor":{
+          "@type":"Organization",
+          "name":"TechKnow Solutions"
+        }
+      },
+      {
+        "@type":"Blog",
+        "name":"Muga Digital Journal",
+        "url":"https://mga.techknowsols.gt.tc/blog",
+        "description":"Cybersecurity, networking, AI, software engineering and technology insights by Caleb Muga.",
+        "publisher":{
+          "@type":"Organization",
+          "name":"TechKnow Solutions"
+        }
+      }
+    ]
   }
   </script>
 
@@ -802,16 +827,30 @@
 
       </p>
 
-      <!-- SEARCH -->
+      <!-- SEARCH (Requirement 7) -->
+      <form action="/blog" method="get" class="search-box mx-auto" style="max-width: 500px;">
+        <div class="input-group">
+          <input type="text"
+                 name="q"
+                 id="searchInput"
+                 class="form-control search-input border-0 py-2.5 px-4"
+                 placeholder="Search articles & resources..."
+                 value="{{ search_query or '' }}"
+                 style="background: rgba(11, 15, 25, 0.7); color: #ffffff; border-radius: 12px 0 0 12px !important;">
+          <button type="submit" class="btn btn-success px-4" style="background-color: #10b981 !important; border: none; border-radius: 0 12px 12px 0 !important;">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
 
-      <div class="search-box">
-
-        <input type="text"
-               id="searchInput"
-               class="form-control search-input"
-               placeholder="Search articles & resources...">
-
-      </div>
+      {% if search_query %}
+        <div class="mt-3 text-center">
+          <span class="badge py-2 px-3 bg-success/15 text-success rounded-pill border border-success/20 text-xs font-mono d-inline-flex align-items-center gap-2">
+            👀 Active Query: "{{ search_query }}" 
+            <a href="/blog" class="text-danger text-decoration-none fw-bold ms-1" style="font-size: 0.8rem;">[Clear Filters]</a>
+          </span>
+        </div>
+      {% endif %}
 
     </div>
 
@@ -889,7 +928,12 @@
 
       <div class="col-lg-4 col-md-6 blog-item" data-category="{{ cat_slug }}">
 
-        <article class="blog-card position-relative d-flex flex-column h-100">
+        <article class="blog-card position-relative d-flex flex-column h-100" itemscope itemtype="https://schema.org/BlogPosting">
+
+          <!-- Meta Crawling SEO Signals (Requirement 8 / 23) -->
+          <meta itemprop="author" content="Caleb Muga">
+          <meta itemprop="publisher" content="TechKnow Solutions">
+          <meta itemprop="timeRequired" content="PT{{ reading_time }}M">
 
           {% if session.get("is_admin") %}
             <div class="position-absolute top-0 end-0 m-2.5" style="z-index: 10;">
@@ -914,7 +958,7 @@
                   </div>
                 </div>
               {% else %}
-                <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
+                <img src="{{ thumb }}" alt="{{ b.title }} | TechKnow Solutions" itemprop="image" loading="lazy" referrerPolicy="no-referrer">
               {% endif %}
             </div>
           {% else %}
@@ -939,11 +983,11 @@
 
           </div>
 
-          <h2 class="blog-title">
+          <h2 class="blog-title" itemprop="headline">
             {{ b.title }}
           </h2>
 
-          <p class="blog-content flex-grow-1">
+          <p class="blog-content flex-grow-1" itemprop="description">
 
             {{ b.content|clean_excerpt(180) }}
 
@@ -1028,7 +1072,7 @@
 
     <footer>
 
-      © {{ year }} Caleb Muga • TechKnow Solutions
+      © {{ year }} Caleb Muga • TechKnow Solutions &nbsp;|&nbsp; <a href="https://github.com/caleb993/technowsol.git" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;"><i class="bi bi-github"></i> GitHub Codebase</a>
 
     </footer>
 
