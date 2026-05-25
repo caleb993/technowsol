@@ -15,7 +15,8 @@ try:
 except Exception:
     cloudinary = None
 
-# Load environment variables
+
+# ---------------- Environment ----------------
 load_dotenv()
 
 DB_USER = os.getenv("DB_USER")
@@ -29,7 +30,10 @@ CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
 CLOUDINARY_ENABLED = bool(
-    cloudinary and CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET
+    cloudinary and
+    CLOUDINARY_CLOUD_NAME and
+    CLOUDINARY_API_KEY and
+    CLOUDINARY_API_SECRET
 )
 
 if CLOUDINARY_ENABLED:
@@ -44,7 +48,7 @@ else:
     print("⚠️ Cloudinary not configured. Files will fallback to database storage.")
 
 
-# ✅ Supabase DB connection
+# ---------------- Supabase/PostgreSQL Connection ----------------
 def get_conn():
     return psycopg2.connect(
         user=DB_USER,
@@ -56,7 +60,7 @@ def get_conn():
     )
 
 
-# ----------------- Table creation -----------------
+# ---------------- Table Creation ----------------
 def create_tables():
     commands = [
         """
@@ -194,6 +198,7 @@ def create_tables():
 
     except Exception as e:
         print(f"❌ Error creating tables: {e}")
+
     finally:
         conn.close()
 
@@ -205,7 +210,10 @@ def save_message(name: str, email: str, message: str):
         with conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "INSERT INTO messages (timestamp, name, email, message, status) VALUES (now(), %s, %s, %s, %s)",
+                    """
+                    INSERT INTO messages (timestamp, name, email, message, status)
+                    VALUES (now(), %s, %s, %s, %s)
+                    """,
                     (name.strip(), email.strip(), message.strip(), "unread")
                 )
     finally:
@@ -217,8 +225,13 @@ def load_messages():
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, timestamp, name, email, message, status FROM messages ORDER BY id ASC")
+                cur.execute("""
+                    SELECT id, timestamp, name, email, message, status
+                    FROM messages
+                    ORDER BY id ASC
+                """)
                 rows = cur.fetchall()
+
                 return [
                     {
                         "timestamp": r["timestamp"].isoformat(timespec="seconds") if r["timestamp"] else "",
@@ -240,16 +253,27 @@ def save_all_messages(msgs):
         with conn:
             with conn.cursor() as cur:
                 cur.execute("DELETE FROM messages")
+
                 for m in msgs:
                     ts = m.get("timestamp") or datetime.now(timezone.utc).isoformat()
+
                     try:
                         t = datetime.fromisoformat(ts)
                     except Exception:
                         t = datetime.now(timezone.utc)
 
                     cur.execute(
-                        "INSERT INTO messages (timestamp, name, email, message, status) VALUES (%s, %s, %s, %s, %s)",
-                        (t, m.get("name", ""), m.get("email", ""), m.get("message", ""), m.get("status", "unread"))
+                        """
+                        INSERT INTO messages (timestamp, name, email, message, status)
+                        VALUES (%s, %s, %s, %s, %s)
+                        """,
+                        (
+                            t,
+                            m.get("name", ""),
+                            m.get("email", ""),
+                            m.get("message", ""),
+                            m.get("status", "unread")
+                        )
                     )
     finally:
         conn.close()
@@ -261,7 +285,12 @@ def get_message_by_index(idx):
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute(
-                    "SELECT id, timestamp, name, email, message, status FROM messages ORDER BY id ASC OFFSET %s LIMIT 1",
+                    """
+                    SELECT id, timestamp, name, email, message, status
+                    FROM messages
+                    ORDER BY id ASC
+                    OFFSET %s LIMIT 1
+                    """,
                     (idx,)
                 )
                 r = cur.fetchone()
@@ -286,7 +315,10 @@ def toggle_message_status_by_index(idx):
     try:
         with conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT id, status FROM messages ORDER BY id ASC OFFSET %s LIMIT 1", (idx,))
+                cur.execute(
+                    "SELECT id, status FROM messages ORDER BY id ASC OFFSET %s LIMIT 1",
+                    (idx,)
+                )
                 r = cur.fetchone()
 
                 if not r:
@@ -295,7 +327,11 @@ def toggle_message_status_by_index(idx):
                 mid, status = r
                 new = "read" if status == "unread" else "unread"
 
-                cur.execute("UPDATE messages SET status=%s WHERE id=%s", (new, mid))
+                cur.execute(
+                    "UPDATE messages SET status=%s WHERE id=%s",
+                    (new, mid)
+                )
+
                 return True, new
     finally:
         conn.close()
@@ -306,14 +342,22 @@ def mark_message_read_by_index(idx):
     try:
         with conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT id, status FROM messages ORDER BY id ASC OFFSET %s LIMIT 1", (idx,))
+                cur.execute(
+                    "SELECT id, status FROM messages ORDER BY id ASC OFFSET %s LIMIT 1",
+                    (idx,)
+                )
                 r = cur.fetchone()
 
                 if not r:
                     return False, None
 
                 mid, status = r
-                cur.execute("UPDATE messages SET status='read' WHERE id=%s", (mid,))
+
+                cur.execute(
+                    "UPDATE messages SET status='read' WHERE id=%s",
+                    (mid,)
+                )
+
                 return True, "read"
     finally:
         conn.close()
@@ -324,13 +368,20 @@ def delete_message_by_index(idx):
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, name FROM messages ORDER BY id ASC OFFSET %s LIMIT 1", (idx,))
+                cur.execute(
+                    "SELECT id, name FROM messages ORDER BY id ASC OFFSET %s LIMIT 1",
+                    (idx,)
+                )
                 r = cur.fetchone()
 
                 if not r:
                     return False, None
 
-                cur.execute("DELETE FROM messages WHERE id=%s", (r["id"],))
+                cur.execute(
+                    "DELETE FROM messages WHERE id=%s",
+                    (r["id"],)
+                )
+
                 return True, {"name": r["name"]}
     finally:
         conn.close()
@@ -365,7 +416,13 @@ def get_messages_counts_last_n_days(days=30):
         with conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "SELECT date(timestamp) as d, count(*) FROM messages WHERE timestamp >= now() - interval %s GROUP BY d ORDER BY d",
+                    """
+                    SELECT date(timestamp) as d, count(*)
+                    FROM messages
+                    WHERE timestamp >= now() - interval %s
+                    GROUP BY d
+                    ORDER BY d
+                    """,
                     (f"{days} days",)
                 )
 
@@ -392,7 +449,11 @@ def save_subscriber(email: str):
         with conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    "INSERT INTO subscribers (email, timestamp) VALUES (%s, now()) ON CONFLICT (email) DO NOTHING",
+                    """
+                    INSERT INTO subscribers (email, timestamp)
+                    VALUES (%s, now())
+                    ON CONFLICT (email) DO NOTHING
+                    """,
                     (email.strip().lower(),)
                 )
     finally:
@@ -404,7 +465,12 @@ def load_subscribers():
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, email, timestamp FROM subscribers ORDER BY id DESC")
+                cur.execute("""
+                    SELECT id, email, timestamp
+                    FROM subscribers
+                    ORDER BY id DESC
+                """)
+
                 return [
                     {
                         "email": r["email"],
@@ -419,9 +485,11 @@ def load_subscribers():
 # ---------------- Blogs ----------------
 def slugify(text: str) -> str:
     import re
+
     s = (text or "").lower().strip()
     s = re.sub(r"[^\w\s-]", "", s)
     s = re.sub(r"[-\s]+", "-", s)
+
     return s[:200]
 
 
@@ -442,7 +510,13 @@ def add_blog(title, content, status="published", published_at=None):
                     INSERT INTO blogs (timestamp, title, slug, content, status, published_at)
                     VALUES (now(), %s, %s, %s, %s, %s)
                     """,
-                    (title.strip(), slug, content.strip(), status, pub_time)
+                    (
+                        title.strip(),
+                        slug,
+                        content.strip(),
+                        status,
+                        pub_time
+                    )
                 )
 
                 return {
@@ -570,13 +644,19 @@ def increment_blog_reaction(slug, reaction_type):
         with conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    f"UPDATE blogs SET {column_name} = COALESCE({column_name}, 0) + 1 WHERE slug = %s",
+                    f"""
+                    UPDATE blogs
+                    SET {column_name} = COALESCE({column_name}, 0) + 1
+                    WHERE slug = %s
+                    """,
                     (slug,)
                 )
                 return True
+
     except Exception as e:
         print(f"Error incrementing blog reaction {reaction_type}: {e}")
         return False
+
     finally:
         conn.close()
 
@@ -586,9 +666,18 @@ def increment_blog_views(slug):
     try:
         with conn:
             with conn.cursor() as cur:
-                cur.execute("UPDATE blogs SET views = COALESCE(views, 0) + 1 WHERE slug = %s", (slug,))
+                cur.execute(
+                    """
+                    UPDATE blogs
+                    SET views = COALESCE(views, 0) + 1
+                    WHERE slug = %s
+                    """,
+                    (slug,)
+                )
+
     except Exception as e:
         print(f"Error incrementing blog views: {e}")
+
     finally:
         conn.close()
 
@@ -598,7 +687,10 @@ def delete_blog_by_id(bid):
     try:
         with conn:
             with conn.cursor() as cur:
-                cur.execute("DELETE FROM blogs WHERE id = %s", (bid,))
+                cur.execute(
+                    "DELETE FROM blogs WHERE id = %s",
+                    (bid,)
+                )
     finally:
         conn.close()
 
@@ -609,10 +701,21 @@ def update_blog(bid, title, content):
         with conn:
             with conn.cursor() as cur:
                 slug = slugify(title) or f"post-{bid}"
+
                 cur.execute(
-                    "UPDATE blogs SET title = %s, slug = %s, content = %s WHERE id = %s",
-                    (title.strip(), slug, content.strip(), bid)
+                    """
+                    UPDATE blogs
+                    SET title = %s, slug = %s, content = %s
+                    WHERE id = %s
+                    """,
+                    (
+                        title.strip(),
+                        slug,
+                        content.strip(),
+                        bid
+                    )
                 )
+
                 return True
     finally:
         conn.close()
@@ -624,6 +727,7 @@ def _guess_mimetype(filename, file_storage=None):
         return file_storage.mimetype
 
     mt = mimetypes.guess_type(filename)[0]
+
     return mt or "application/octet-stream"
 
 
@@ -668,6 +772,7 @@ def delete_from_cloudinary(public_id):
         cloudinary.uploader.destroy(public_id, resource_type="video")
         cloudinary.uploader.destroy(public_id, resource_type="raw")
         return True
+
     except Exception as e:
         print(f"⚠️ Could not delete Cloudinary file {public_id}: {e}")
         return False
@@ -702,16 +807,27 @@ def save_file_from_storage(category, file_storage, rename_to=None, approve=True,
             storage_provider = "cloudinary"
 
         conn = get_conn()
+
         try:
             with conn:
                 with conn.cursor() as cur:
                     if single_replace:
                         cur.execute(
-                            "SELECT cloudinary_id FROM files WHERE category = %s AND cloudinary_id IS NOT NULL",
+                            """
+                            SELECT cloudinary_id
+                            FROM files
+                            WHERE category = %s
+                            AND cloudinary_id IS NOT NULL
+                            """,
                             (category,)
                         )
+
                         old_cloudinary_ids = [r[0] for r in cur.fetchall()]
-                        cur.execute("DELETE FROM files WHERE category = %s", (category,))
+
+                        cur.execute(
+                            "DELETE FROM files WHERE category = %s",
+                            (category,)
+                        )
 
                         for old_id in old_cloudinary_ids:
                             delete_from_cloudinary(old_id)
@@ -793,6 +909,7 @@ def get_file_record(category, name, approved=None):
                     "storage_provider": r["storage_provider"] or "database",
                     "file_size": r["file_size"] or 0
                 }
+
     finally:
         conn.close()
 
@@ -845,12 +962,14 @@ def get_latest_file_record(category, only_images=False):
                     "storage_provider": r["storage_provider"] or "database",
                     "file_size": r["file_size"] or 0
                 }
+
     finally:
         conn.close()
 
 
 def get_latest_filename(category):
     rec = get_latest_file_record(category)
+
     return rec["name"] if rec else None
 
 
@@ -861,6 +980,7 @@ def get_file_timestamp(category, filename):
         return None
 
     dt = rec.get("uploaded_at")
+
     return dt.timestamp() if dt else None
 
 
@@ -881,7 +1001,12 @@ def list_gallery_media():
 
                 for r in rows:
                     mimetype = r["mimetype"] or ""
-                    typ = "image" if mimetype.startswith("image") else "video" if mimetype.startswith("video") else "other"
+
+                    typ = (
+                        "image" if mimetype.startswith("image")
+                        else "video" if mimetype.startswith("video")
+                        else "other"
+                    )
 
                     out.append({
                         "name": r["name"],
@@ -891,6 +1016,7 @@ def list_gallery_media():
                     })
 
                 return out
+
     finally:
         conn.close()
 
@@ -904,12 +1030,15 @@ def list_projects(approved=True):
                     """
                     SELECT name
                     FROM files
-                    WHERE category='project' AND approved=%s
+                    WHERE category='project'
+                    AND approved=%s
                     ORDER BY uploaded_at DESC
                     """,
                     (approved,)
                 )
+
                 return [r[0] for r in cur.fetchall()]
+
     finally:
         conn.close()
 
@@ -923,12 +1052,16 @@ def approve_project_by_name(name):
                     """
                     UPDATE files
                     SET approved = TRUE
-                    WHERE category='project' AND name=%s AND approved=FALSE
+                    WHERE category='project'
+                    AND name=%s
+                    AND approved=FALSE
                     RETURNING id
                     """,
                     (name,)
                 )
+
                 return bool(cur.fetchone())
+
     finally:
         conn.close()
 
@@ -943,17 +1076,21 @@ def reject_project_by_name(name):
                 cur.execute(
                     """
                     DELETE FROM files
-                    WHERE category='project' AND name=%s AND approved=FALSE
+                    WHERE category='project'
+                    AND name=%s
+                    AND approved=FALSE
                     RETURNING id
                     """,
                     (name,)
                 )
+
                 deleted = bool(cur.fetchone())
 
                 if deleted and rec and rec.get("cloudinary_id"):
                     delete_from_cloudinary(rec["cloudinary_id"])
 
                 return deleted
+
     finally:
         conn.close()
 
@@ -968,17 +1105,20 @@ def delete_project_by_name(name):
                 cur.execute(
                     """
                     DELETE FROM files
-                    WHERE category='project' AND name=%s
+                    WHERE category='project'
+                    AND name=%s
                     RETURNING id
                     """,
                     (name,)
                 )
+
                 deleted = bool(cur.fetchone())
 
                 if deleted and rec and rec.get("cloudinary_id"):
                     delete_from_cloudinary(rec["cloudinary_id"])
 
                 return deleted
+
     finally:
         conn.close()
 
@@ -993,22 +1133,32 @@ def delete_file(category, name):
                 cur.execute(
                     """
                     DELETE FROM files
-                    WHERE category=%s AND name=%s
+                    WHERE category=%s
+                    AND name=%s
                     RETURNING id
                     """,
                     (category, name)
                 )
+
                 deleted = bool(cur.fetchone())
 
                 if deleted and rec and rec.get("cloudinary_id"):
                     delete_from_cloudinary(rec["cloudinary_id"])
 
                 return deleted
+
     finally:
         conn.close()
 
 
 def sync_missing_files_to_cloudinary(limit=20):
+    """
+    Sync old database-stored files to Cloudinary.
+
+    Important:
+    After successful Cloudinary upload, this function sets content=NULL.
+    That means Supabase/PostgreSQL stops storing the heavy BYTEA file.
+    """
     if not CLOUDINARY_ENABLED:
         print("⚠️ Cloudinary is not configured. Sync skipped.")
         return 0
@@ -1039,24 +1189,38 @@ def sync_missing_files_to_cloudinary(limit=20):
                     if not content:
                         continue
 
-                    cloud = upload_bytes_to_cloudinary(content, r["name"], r["category"])
+                    cloud = upload_bytes_to_cloudinary(
+                        content,
+                        r["name"],
+                        r["category"]
+                    )
 
                     if cloud and cloud.get("url"):
                         cur.execute(
                             """
                             UPDATE files
-                            SET url=%s, cloudinary_id=%s, storage_provider='cloudinary'
+                            SET url=%s,
+                                cloudinary_id=%s,
+                                storage_provider='cloudinary',
+                                content=NULL
                             WHERE id=%s
                             """,
-                            (cloud["url"], cloud["public_id"], r["id"])
+                            (
+                                cloud["url"],
+                                cloud["public_id"],
+                                r["id"]
+                            )
                         )
+
                         synced += 1
 
+        print(f"✅ Synced {synced} file(s) to Cloudinary and cleared BYTEA content.")
         return synced
 
     except Exception as e:
         print(f"⚠️ Error syncing missing files to Cloudinary: {e}")
         return synced
+
     finally:
         conn.close()
 
@@ -1065,7 +1229,18 @@ def sync_missing_files_to_cloudinary(limit=20):
 def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = None):
     if user_agent:
         ua = user_agent.lower()
-        if any(bot in ua for bot in ["bot", "spider", "crawl", "slurp", "tracker", "monitor", "uptime", "lighthouse", "headless"]):
+
+        if any(bot in ua for bot in [
+            "bot",
+            "spider",
+            "crawl",
+            "slurp",
+            "tracker",
+            "monitor",
+            "uptime",
+            "lighthouse",
+            "headless"
+        ]):
             return
 
     conn = get_conn()
@@ -1077,10 +1252,17 @@ def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = 
                     INSERT INTO site_visits (ip_address, user_agent, path, timestamp, session_id)
                     VALUES (%s, %s, %s, now(), %s)
                     """,
-                    (ip_address or "Unknown", user_agent or "Unknown", path or "/", session_id)
+                    (
+                        ip_address or "Unknown",
+                        user_agent or "Unknown",
+                        path or "/",
+                        session_id
+                    )
                 )
+
     except Exception as e:
         print(f"Error recording visit in DB: {e}")
+
     finally:
         conn.close()
 
@@ -1091,17 +1273,22 @@ def get_daily_visits_summary():
         with conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT TO_CHAR(timestamp, 'YYYY-MM-DD') as visit_date, COUNT(*) as visit_count
+                    SELECT TO_CHAR(timestamp, 'YYYY-MM-DD') as visit_date,
+                           COUNT(*) as visit_count
                     FROM site_visits
                     WHERE timestamp >= now() - INTERVAL '15 days'
                     GROUP BY visit_date
                     ORDER BY visit_date ASC
                 """)
+
                 rows = cur.fetchall()
+
                 return [{"date": r[0], "count": r[1]} for r in rows]
+
     except Exception as e:
         print(f"Error loading daily visits: {e}")
         return []
+
     finally:
         conn.close()
 
@@ -1113,15 +1300,18 @@ def get_total_visits_count():
             with conn.cursor() as cur:
                 cur.execute("SELECT COUNT(*) FROM site_visits")
                 row = cur.fetchone()
+
                 return row[0] if row else 0
+
     except Exception as e:
         print(f"Error loading total visits: {e}")
         return 0
+
     finally:
         conn.close()
 
 
-# ----------------- TechRich Document Repository -----------------
+# ---------------- TechRich Document Repository ----------------
 def save_techrich_doc(title, doc_type, file_name=None, file_data=None, mimetype=None, content=None):
     conn = get_conn()
     try:
@@ -1129,17 +1319,29 @@ def save_techrich_doc(title, doc_type, file_name=None, file_data=None, mimetype=
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO techrich_docs (title, doc_type, file_name, file_data, mimetype, content, created_at, updated_at)
+                    INSERT INTO techrich_docs
+                    (title, doc_type, file_name, file_data, mimetype, content, created_at, updated_at)
                     VALUES (%s, %s, %s, %s, %s, %s, now(), now())
                     RETURNING id
                     """,
-                    (title.strip(), doc_type, file_name, file_data if file_data else None, mimetype, content)
+                    (
+                        title.strip(),
+                        doc_type,
+                        file_name,
+                        file_data if file_data else None,
+                        mimetype,
+                        content
+                    )
                 )
+
                 r = cur.fetchone()
+
                 return r[0] if r else None
+
     except Exception as e:
         print(f"Error saving techrich doc in DB: {e}")
         return None
+
     finally:
         conn.close()
 
@@ -1178,6 +1380,7 @@ def load_techrich_docs():
     except Exception as e:
         print(f"Error loading techrich docs: {e}")
         return []
+
     finally:
         conn.close()
 
@@ -1214,6 +1417,7 @@ def get_techrich_doc_by_id(doc_id):
     except Exception as e:
         print(f"Error fetching techrich doc by id: {e}")
         return None
+
     finally:
         conn.close()
 
@@ -1226,15 +1430,24 @@ def update_techrich_doc(doc_id, title, content):
                 cur.execute(
                     """
                     UPDATE techrich_docs
-                    SET title = %s, content = %s, updated_at = now()
+                    SET title = %s,
+                        content = %s,
+                        updated_at = now()
                     WHERE id = %s
                     """,
-                    (title.strip(), content, doc_id)
+                    (
+                        title.strip(),
+                        content,
+                        doc_id
+                    )
                 )
+
                 return True
+
     except Exception as e:
         print(f"Error updating techrich doc: {e}")
         return False
+
     finally:
         conn.close()
 
@@ -1244,16 +1457,22 @@ def delete_techrich_doc_by_id(doc_id):
     try:
         with conn:
             with conn.cursor() as cur:
-                cur.execute("DELETE FROM techrich_docs WHERE id = %s", (doc_id,))
+                cur.execute(
+                    "DELETE FROM techrich_docs WHERE id = %s",
+                    (doc_id,)
+                )
+
                 return True
+
     except Exception as e:
         print(f"Error deleting techrich doc: {e}")
         return False
+
     finally:
         conn.close()
 
 
-# ---------------- Auto-create tables ----------------
+# ---------------- Auto-create Tables ----------------
 try:
     create_tables()
 except Exception as e:
