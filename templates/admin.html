@@ -375,20 +375,10 @@
               <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
             </div>
             
-            <!-- Real-time simulation controller for Caleb to test -->
-            <div class="bg-black/35 rounded p-2.5 border border-secondary/10">
-              <div class="d-flex justify-content-between align-items-center mb-1.5">
-                <span class="text-[10px] text-muted font-mono"><i class="bi bi-cpu"></i> SIMULATION CONSOLE</span>
-                <div class="form-check form-switch p-0 m-0 d-flex align-items-center">
-                  <input class="form-check-input ms-0 scale-75" type="checkbox" id="sim-active-users-check" onchange="toggleUsersSimulation()">
-                </div>
-              </div>
-              <input type="range" class="form-range cursor-pointer" id="sim-user-slider" min="1" max="80" value="12" disabled oninput="updateSimUserCount()">
-              <div class="d-flex justify-content-between text-[10px] text-muted font-mono mt-1">
-                <span>1 User</span>
-                <span id="slider-curr-val" class="text-info font-bold">12 Users</span>
-                <span>80 Max</span>
-              </div>
+            <!-- Real-time human security telemetry -->
+            <div class="bg-success/5 border border-success/15 rounded p-2 px-3 text-mono text-[10.5px] text-success d-flex align-items-center gap-1.5 leading-relaxed bg-[#0a1511]" style="border-radius:6px;">
+              <span class="d-inline-block rounded-circle bg-success animate-pulse" style="width: 7px; height: 7px;"></span>
+              <span>100% SECURE HUMAN FOOTFALL MONITOR ACTIVE</span>
             </div>
           </div>
         </div>
@@ -400,7 +390,7 @@
           <div class="card-body p-4 d-flex flex-column justify-content-between">
             <div>
               <span class="text-xs text-warning font-mono tracking-wider"><i class="bi bi-star-fill text-warning"></i> MOST POPULAR ESSAY</span>
-              <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" style="font-family: 'Space Grotesk', sans-serif;">
+              <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" id="tr-most-viewed-title" style="font-family: 'Space Grotesk', sans-serif;">
                 {% if most_viewed_blog %}
                   {{ most_viewed_blog.title }}
                 {% else %}
@@ -409,7 +399,7 @@
               </h5>
               <div class="text-muted text-xs font-mono">
                 {% if most_viewed_blog %}
-                  <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> {{ most_viewed_blog.views }}</span> accumulative unique views
+                  <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> accumulative unique views
                 {% else %}
                   0 views
                 {% endif %}
@@ -417,7 +407,7 @@
             </div>
             
             {% if most_viewed_blog %}
-            <a href="/blog/{{ most_viewed_blog.slug }}" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
+            <a href="/blog/{{ most_viewed_blog.slug }}" id="tr-most-viewed-link" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
               <i class="bi bi-box-arrow-up-right me-1"></i> Inspect Article Performance
             </a>
             {% endif %}
@@ -431,7 +421,7 @@
           <div class="card-body p-4 d-flex flex-column justify-content-between">
             <div>
               <span class="text-xs text-success font-mono tracking-wider"><i class="bi bi-diagram-3 text-success"></i> DOMINANT CATEGORY PATH</span>
-              <h5 class="text-white font-semibold mt-3 mb-2" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
+              <h5 class="text-white font-semibold mt-3 mb-2" id="tr-dominant-category-header" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
                 {{ most_viewed_category }}
               </h5>
               <p class="text-muted small m-0 leading-relaxed" style="font-size: 0.75rem;">This segment is receiving the highest digital footfall across the blog gateway in Postgres.</p>
@@ -441,6 +431,45 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- REAL-TIME ARTICLE ENGAGEMENT & READS MONITOR -->
+    <div class="card-fire p-4 mb-5 border border-warning/15" style="background: rgba(14, 18, 28, 0.45); border-radius: 8px;">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h5 class="m-0 text-white fw-bold d-flex align-items-center gap-2" style="font-family: 'Space Grotesk', sans-serif;">
+            <i class="bi bi-activity text-warning animate-pulse"></i>
+            Real-Time Article Engagement Intel
+          </h5>
+          <p class="text-muted small m-0">Live reading duration times, exact view counters, and human attention metrics per entry from direct live sessions.</p>
+        </div>
+        <div>
+          <span class="badge bg-warning/10 text-warning font-mono border border-warning/20 py-1.5 px-3" style="font-size:0.7rem;"><i class="bi bi-arrow-repeat animate-spin"></i> AUTO STREAM REFRESH SECURE</span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-dark table-hover border-secondary/10 align-middle mb-0" style="font-size: 0.75rem; background: transparent;">
+          <thead>
+            <tr class="text-muted text-mono border-bottom border-secondary/10" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; width: 35%;">INSIGHT ARTICLE</th>
+              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px;">CATEGORY</th>
+              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">UNIQUE VIEWS</th>
+              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">TOTAL READ DURATION</th>
+              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">AVG DWELL PER CLIENT</th>
+              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: right;">GATEWAY SOURCE</th>
+            </tr>
+          </thead>
+          <tbody id="realtime-blog-stats-body">
+            <tr>
+              <td colspan="6" class="text-center py-5 text-muted font-mono" style="background: transparent; border: none;">
+                <div class="spinner-border spinner-border-sm text-warning mb-2"></div>
+                <div>Establishing secure stream pipeline...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -1626,7 +1655,7 @@
           if (cached.doc_type === "pdf") {
             canvas.innerHTML = `
               <div class="embed-responsive h-100 flex-grow-1 border border-secondary/10 rounded-3">
-                <iframe class="embed-responsive-item w-100 h-100 rounded" src="/admin/techrich/view/${id}" style="border:none; min-height: 520px; background: #fff;"></iframe>
+                <iframe class="embed-responsive-item w-100 h-100 rounded" src="/admin/techrich/view/${id}" style="border:none; min-height: 850px; background: #fff;"></iframe>
               </div>
             `;
           } else {
@@ -1854,59 +1883,98 @@
 
     // Global alert tracking for thresholds
     let notifiedThresholds = new Set();
-    let isTelemetrySimulating = false;
-    let simUserCount = 12;
 
-    function toggleUsersSimulation() {
-      const check = document.getElementById("sim-active-users-check");
-      const slider = document.getElementById("sim-user-slider");
-      isTelemetrySimulating = check.checked;
-      slider.disabled = !isTelemetrySimulating;
-      
-      const badge = document.getElementById("simulation-badge");
-      if (isTelemetrySimulating) {
-        badge.innerText = "SIMULATING";
-        badge.classList.remove("bg-info/10", "text-info", "border-info/20");
-        badge.classList.add("bg-warning/15", "text-warning", "border-warning/30");
-        updateSimUserCount();
-      } else {
-        badge.innerText = "MONITORING";
-        badge.classList.add("bg-info/10", "text-info", "border-info/20");
-        badge.classList.remove("bg-warning/15", "text-warning", "border-warning/30");
-        pollActiveUsers();
-      }
-    }
-
-    function updateSimUserCount() {
-      const slider = document.getElementById("sim-user-slider");
-      simUserCount = parseInt(slider.value);
-      document.getElementById("slider-curr-val").innerText = simUserCount + " Users";
-      
-      // Update UI instantly for sim
-      updateActiveUsersUI(simUserCount);
-      checkActiveUsersAlerts(simUserCount);
-    }
-
-    // Retrieve active real-time stats from endpoint
-    function pollActiveUsers() {
-      if (isTelemetrySimulating) return;
-      
-      fetch("/api/admin/active_users")
+    // Polling function for real-time article engagement stats and active user sessions (100% REAL!)
+    function pollRealTimeMetrics() {
+      fetch("/api/admin/article_stats")
         .then(res => res.json())
         .then(data => {
           if (data.status === "success") {
+            // 1. Update active sessions count
             const count = data.active_users || 1;
-            updateActiveUsersUI(count);
+            document.getElementById("active-user-count").innerText = count;
+            const progressPercent = Math.min(100, Math.max(8, (count / 65) * 100));
+            document.getElementById("active-progress").style.width = progressPercent + "%";
+            
+            // Trigger alerts if milestones reached
             checkActiveUsersAlerts(count);
+
+            // 2. Update dynamic Cards B and C (Popular Essay & Dominant Category)
+            const dominantCategoryHeader = document.getElementById("tr-dominant-category-header");
+            if (dominantCategoryHeader) {
+              dominantCategoryHeader.innerText = data.dominant_category || "Technology";
+            }
+
+            // Find the most popular essay
+            if (data.articles && data.articles.length > 0) {
+              const bestArticle = data.articles[0]; // ordered desc by views primary
+              const mostViewedTitle = document.getElementById("tr-most-viewed-title");
+              const mostViewedViews = document.getElementById("tr-most-viewed-views");
+              const mostViewedLink = document.getElementById("tr-most-viewed-link");
+
+              if (mostViewedTitle) mostViewedTitle.innerText = bestArticle.title;
+              if (mostViewedViews) mostViewedViews.innerText = bestArticle.views;
+              if (mostViewedLink) mostViewedLink.setAttribute("href", "/blog/" + bestArticle.slug);
+            }
+
+            // 3. Update the gorgeous live metrics table
+            const tbody = document.getElementById("realtime-blog-stats-body");
+            if (tbody && data.articles) {
+              if (data.articles.length === 0) {
+                tbody.innerHTML = `
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-muted font-mono" style="background:transparent; border:none;">No articles written yet.</td>
+                  </tr>
+                `;
+              } else {
+                let html = "";
+                data.articles.forEach(art => {
+                  // Format read time beautifully
+                  let formattedDuration = "-";
+                  if (art.total_read_time > 0) {
+                    const mins = Math.floor(art.total_read_time / 60);
+                    const secs = art.total_read_time % 60;
+                    formattedDuration = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                  }
+
+                  let formattedAvg = "-";
+                  if (art.avg_read_time_seconds > 0) {
+                    const avgMins = Math.floor(art.avg_read_time_seconds / 60);
+                    const avgSecs = art.avg_read_time_seconds % 60;
+                    formattedAvg = avgMins > 0 ? `${avgMins}m ${avgSecs}s` : `${avgSecs}s`;
+                  }
+
+                  html += `
+                    <tr class="align-middle border-bottom border-secondary/5 font-sans hover:bg-white/5 transition-colors">
+                      <td class="py-3 text-white font-medium" style="background: transparent; border: none; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <a href="/blog/${art.slug}" target="_blank" class="text-white hover:text-warning text-decoration-none">
+                          <i class="bi bi-file-text text-warning/70 me-1.5"></i> ${art.title}
+                        </a>
+                      </td>
+                      <td style="background: transparent; border: none;">
+                        <span class="badge bg-secondary/20 text-white-50 font-mono" style="font-size:0.65rem; border: 1px solid rgba(255,255,255,0.05);">${art.category}</span>
+                      </td>
+                      <td class="text-center font-mono text-warning font-semibold" style="background: transparent; border: none;">
+                        <i class="bi bi-eye"></i> ${art.views}
+                      </td>
+                      <td class="text-center font-mono text-muted" style="background: transparent; border: none;">
+                        <i class="bi bi-clock"></i> ${formattedDuration}
+                      </td>
+                      <td class="text-center font-mono text-success font-medium" style="background: transparent; border: none;">
+                        <i class="bi bi-stopwatch text-success/70"></i> ${formattedAvg}
+                      </td>
+                      <td class="text-end font-mono text-[10.5px] text-muted/60" style="background: transparent; border: none;">
+                        PGSQL_CONN_DISPATCHED
+                      </td>
+                    </tr>
+                  `;
+                });
+                tbody.innerHTML = html;
+              }
+            }
           }
         })
-        .catch(err => console.error("Active users tracking offline:", err));
-    }
-
-    function updateActiveUsersUI(count) {
-      document.getElementById("active-user-count").innerText = count;
-      const progressPercent = Math.min(100, Math.max(8, (count / 60) * 100));
-      document.getElementById("active-progress").style.width = progressPercent + "%";
+        .catch(err => console.error("Real-time telemetry stats offline:", err));
     }
 
     function checkActiveUsersAlerts(count) {
@@ -2021,8 +2089,8 @@
     document.head.appendChild(styleSheet);
 
     // Initial setups
-    pollActiveUsers();
-    setInterval(pollActiveUsers, 12000); // Check active sessions database stats every 12 seconds
+    pollRealTimeMetrics();
+    setInterval(pollRealTimeMetrics, 8000); // Dynamic article metrics stream polling every 8 seconds
   </script>
 </body>
 </html>
