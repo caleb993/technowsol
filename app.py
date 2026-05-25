@@ -813,7 +813,16 @@ def reject_file(filename):
 def upload_cv_admin():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("cv") or request.files.get("file")
+    up = None
+    if request.files:
+        for key in ["cv", "file"]:
+            if key in request.files and request.files[key].filename != "":
+                up = request.files[key]
+                break
+        if not up:
+            first_key = list(request.files.keys())[0]
+            if request.files[first_key].filename != "":
+                up = request.files[first_key]
     if not up or up.filename == "":
         flash("No CV selected.")
         return redirect(url_for("admin"))
@@ -832,7 +841,16 @@ def upload_cv_admin():
 def upload_profile_image():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("image") or request.files.get("file")
+    up = None
+    if request.files:
+        for key in ["image", "file"]:
+            if key in request.files and request.files[key].filename != "":
+                up = request.files[key]
+                break
+        if not up:
+            first_key = list(request.files.keys())[0]
+            if request.files[first_key].filename != "":
+                up = request.files[first_key]
     if not up or up.filename == "":
         flash("No image selected.")
         return redirect(url_for("admin"))
@@ -850,7 +868,16 @@ def upload_profile_image():
 def upload_hero_image():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("image") or request.files.get("file")
+    up = None
+    if request.files:
+        for key in ["image", "file"]:
+            if key in request.files and request.files[key].filename != "":
+                up = request.files[key]
+                break
+        if not up:
+            first_key = list(request.files.keys())[0]
+            if request.files[first_key].filename != "":
+                up = request.files[first_key]
     if not up or up.filename == "":
         flash("No image selected.")
         return redirect(url_for("admin"))
