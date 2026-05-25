@@ -7,8 +7,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- canonical url -->
+  <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
+
+  <!-- Preloads for Performance -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
+  <link rel="preload" href="/static/favicon.png" as="image">
+
+  <!-- Advanced Brand SEO Meta (Requirement 3) -->
+  <meta name="application-name" content="TechKnow Solutions">
+  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
+  <meta property="og:site_name" content="TechKnow Solutions">
+  <meta name="twitter:site" content="@techknowsols">
+  <meta name="creator" content="Caleb Muga">
+  <meta name="publisher" content="TechKnow Solutions">
+  <meta name="theme-color" content="#07111f">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi">
+  <meta name="language" content="English">
+  <meta name="rating" content="general">
+  <meta name="distribution" content="global">
+  <meta name="revisit-after" content="2 days">
+  <meta property="og:url" content="https://mga.techknowsols.gt.tc{{ request.path }}">
+
   <!-- SEO -->
-  <title>Muga • TechKnow Solutions — Caleb Muga</title>
+  <title>TechKnow Solutions • Cybersecurity, AI & Systems Development by Caleb Muga</title>
 
   <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
@@ -24,37 +47,76 @@
   </script>
 
   <!-- SEO / OpenGraph -->
-  <meta name="description" content="TechKnow Solutions — Caleb Muga: ICT Support, Networking, Cybersecurity, and process automation. Contact for services and view portfolio.">
+  <meta name="description" content="TechKnow Solutions by Caleb Muga: Advanced Enterprise Networking, Cyber Security Vulnerability Assessments, Cloud Integrations, and custom python system forks.">
   <meta name="author" content="Caleb Muga">
-  <meta property="og:title" content="TechKnow Solutions — Caleb Muga">
-  <meta property="og:description" content="ICT Support, Networking, Cybersecurity and automation solutions.">
+  <meta property="og:title" content="TechKnow Solutions — Cybersecurity, AI & Systems Development">
+  <meta property="og:description" content="Enterprise Networking (Cisco CCNA Specialist), System Audits, Python Automation and Cloud systems.">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="TechKnow Solutions">
   {% if hero_url %}
   <meta property="og:image" content="{{ hero_url }}">
   {% endif %}
 
   <!-- Fallback profile image -->
-  <meta property="og:image:alt" content="Profile photo of Caleb Muga">
+  <meta property="og:image:alt" content="Profile photo of Caleb Muga | TechKnow Solutions">
   <meta property="og:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
 
-  <!-- Structured data for Google -->
+  <!-- Most Important Structured Data Graph Upgrade (Requirement 4) -->
   <script type="application/ld+json">
   {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Caleb Muga",
-    "url": "https://mga.techknowsols.gt.tc/",
-    "image": "https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg",
-    "jobTitle": "ICT Support & Cybersecurity",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "TechKnow Solutions"
-    }
+    "@context":"https://schema.org",
+    "@graph":[
+      {
+        "@type":"Organization",
+        "name":"TechKnow Solutions",
+        "alternateName":[
+          "TechKnow",
+          "TechKnowSols",
+          "TechNowSolutions",
+          "Muga.dev"
+        ],
+        "url":"https://mga.techknowsols.gt.tc",
+        "logo":"https://mga.techknowsols.gt.tc/static/favicon.png",
+        "founder":{
+          "@type":"Person",
+          "name":"Caleb Muga"
+        },
+        "sameAs":[
+          "https://github.com/",
+          "https://linkedin.com/",
+          "https://x.com/"
+        ]
+      },
+      {
+        "@type":"Person",
+        "name":"Caleb Muga",
+        "url":"https://mga.techknowsols.gt.tc",
+        "jobTitle":"Software Engineer",
+        "worksFor":{
+          "@type":"Organization",
+          "name":"TechKnow Solutions"
+        }
+      },
+      {
+        "@type":"Blog",
+        "name":"Muga Digital Journal",
+        "url":"https://mga.techknowsols.gt.tc/blog",
+        "description":"Cybersecurity, networking, AI, software engineering and technology insights by Caleb Muga.",
+        "publisher":{
+          "@type":"Organization",
+          "name":"TechKnow Solutions"
+        }
+      }
+    ]
   }
   </script>
+
+  <!-- Favicon Sets (Requirement 5) -->
+  <link rel="icon" sizes="32x32" href="/static/favicon-32.png">
+  <link rel="icon" sizes="16x16" href="/static/favicon-16.png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1744,12 +1806,12 @@
           <div class="p-3 rounded-4 border" style="background: rgba(11, 15, 25, 0.75); border: 1px solid rgba(16,185,129,0.25) !important;">
             <div class="d-flex align-items-center gap-2 mb-2">
               <span class="d-inline-block bg-success rounded-circle animate-pulse" style="width: 7px; height: 7px;"></span>
-              <span class="text-success text-xs font-mono tracking-widest fw-bold" style="font-size: 0.72rem;">SEMANTIC AI SEARCH ENGINES & DISPATCH</span>
+              <span class="text-success text-xs font-mono tracking-widest fw-bold" style="font-size: 0.72rem;">SEARCH ARTICLE</span>
             </div>
             <div class="input-group">
               <span class="input-group-text bg-black/40 border-0 text-success"><i class="bi bi-search"></i></span>
-              <input type="text" id="aiSearchInput" class="form-control bg-black/45 text-white border-0 text-xs font-mono py-2" placeholder="Type what you want to resolve (e.g. 'trunk ports' or 'port scans')..." style="box-shadow: none; font-size: 0.75rem;">
-              <button onclick="triggerAISearch()" class="btn btn-success font-mono text-xs font-semibold py-2 px-3 shadow" style="border: none; font-size: 0.72rem;">DISPATCH</button>
+              <input type="text" id="aiSearchInput" class="form-control bg-black text-white border-0 text-xs font-mono py-2 font-bold" placeholder="Type what you want to resolve (e.g. 'trunk ports' or 'port scans')..." style="box-shadow: none; font-size: 0.85rem; color: #ffffff !important; background-color: #070e17 !important; border: 1px solid rgba(16,185,129,0.3) !important;">
+              <button onclick="triggerAISearch()" class="btn btn-success font-mono text-xs font-semibold py-2 px-3 shadow" style="border: none; font-size: 0.72rem; background-color: #10b981 !important; color: #ffffff !important;">SEARCH</button>
             </div>
             
             <div id="ai-search-results-holder" class="d-none mt-2.5 p-3 bg-black/50 rounded-3 border border-white/5 font-mono">
