@@ -1007,8 +1007,8 @@
         <div class="row g-4">
           
           <!-- LEFT: Document Browser Tree & Upload interface -->
-          <div class="col-lg-5">
-            <div class="card-fire p-4 border border-warning/20 mb-4 animate-fade-in" style="background: rgba(14, 18, 28, 0.45);">
+          <div class="col-lg-5" id="tr-browser-col">
+            <div class="card-fire p-4 border border-warning/20 mb-4 animate-fade-in" style="background: rgba(14, 18, 28, 0.455);">
               <div class="d-flex align-items-center justify-content-between mb-3.5">
                 <div>
                   <h5 class="text-warning fw-bold m-0" style="font-size:1.15rem;"><i class="bi bi-folder2-open me-2 text-warning animate-pulse"></i>TechRich Cabinet</h5>
@@ -1060,7 +1060,7 @@
           </div>
 
           <!-- RIGHT: Interactive Workspace / live editor viewport -->
-          <div class="col-lg-7">
+          <div class="col-lg-7" id="tr-workspace-col">
             <div id="tr-editor-card" class="card-fire p-4 border border-warning/20 h-100 d-flex flex-column" style="min-height: 600px; background: rgba(14, 18, 28, 0.45);">
               <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between border-bottom border-secondary/15 pb-3 mb-3 gap-2">
                 <div>
@@ -1515,6 +1515,46 @@
     let techRichDocs = [];
     let activeTrTab = "all";
     let activeTrDocId = null;
+    let isTrWorkspaceExpanded = false;
+
+    function toggleTrWorkspaceExpand() {
+      const browserCol = document.getElementById("tr-browser-col");
+      const workspaceCol = document.getElementById("tr-workspace-col");
+      const icon = document.getElementById("tr-expand-icon");
+      const text = document.getElementById("tr-expand-text");
+      const pdfIframe = document.getElementById("tr-pdf-iframe");
+
+      isTrWorkspaceExpanded = !isTrWorkspaceExpanded;
+      if (isTrWorkspaceExpanded) {
+        if (browserCol) browserCol.classList.add("d-none");
+        if (workspaceCol) {
+          workspaceCol.classList.remove("col-lg-7");
+          workspaceCol.classList.add("col-lg-12");
+        }
+        if (icon) {
+          icon.classList.remove("bi-arrows-angle-expand");
+          icon.classList.add("bi-arrows-angle-contract");
+        }
+        if (text) text.innerText = "Normal View";
+        if (pdfIframe) {
+          pdfIframe.style.minHeight = "1350px";
+        }
+      } else {
+        if (browserCol) browserCol.classList.remove("d-none");
+        if (workspaceCol) {
+          workspaceCol.classList.remove("col-lg-12");
+          workspaceCol.classList.add("col-lg-7");
+        }
+        if (icon) {
+          icon.classList.remove("bi-arrows-angle-contract");
+          icon.classList.add("bi-arrows-angle-expand");
+        }
+        if (text) text.innerText = "Expand Reader";
+        if (pdfIframe) {
+          pdfIframe.style.minHeight = "950px";
+        }
+      }
+    }
 
     function loadTechRichDocs() {
       fetch("/admin/techrich/list")
@@ -1638,6 +1678,15 @@
             </a>
           `;
 
+          if (cached.doc_type === "pdf") {
+            toolbarHtml += `
+              <button onclick="toggleTrWorkspaceExpand()" class="btn btn-xs btn-outline-warning py-1 px-3 rounded text-warning text-xs d-flex align-items-center gap-1.5 font-mono">
+                <i id="tr-expand-icon" class="bi ${isTrWorkspaceExpanded ? 'bi-arrows-angle-contract' : 'bi-arrows-angle-expand'}"></i> 
+                <span id="tr-expand-text">${isTrWorkspaceExpanded ? 'Normal View' : 'Expand Reader'}</span>
+              </button>
+            `;
+          }
+
           if (cached.doc_type === "note" || cached.doc_type === "word") {
             toolbarHtml += `
               <button onclick="printTechRichNote()" class="btn btn-xs btn-outline-warning py-1 px-3 rounded text-warning text-xs d-flex align-items-center gap-1.5 font-mono">
@@ -1653,9 +1702,10 @@
 
           // Render canvas view
           if (cached.doc_type === "pdf") {
+            const currentHeight = isTrWorkspaceExpanded ? '1350px' : '950px';
             canvas.innerHTML = `
               <div class="embed-responsive h-100 flex-grow-1 border border-secondary/10 rounded-3">
-                <iframe class="embed-responsive-item w-100 h-100 rounded" src="/admin/techrich/view/${id}" style="border:none; min-height: 850px; background: #fff;"></iframe>
+                <iframe id="tr-pdf-iframe" class="embed-responsive-item w-100 h-100 rounded" src="/admin/techrich/view/${id}" style="border:none; min-height: ${currentHeight}; background: #fff; transition: min-height 0.25s ease;"></iframe>
               </div>
             `;
           } else {
