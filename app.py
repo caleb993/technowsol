@@ -42,6 +42,7 @@ VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
 
 
+
 from flask import request, redirect
 
 @app.before_request
@@ -51,7 +52,12 @@ def redirect_to_custom_domain():
             "https://mga.techknowsols.gt.tc" + request.full_path,
             code=301
         )
-
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    return response
 def get_or_create_visitor_id():
     # Retrieve or generate unique guest session identifier
     if "visitor_id" not in session:
