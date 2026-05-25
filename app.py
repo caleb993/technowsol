@@ -57,6 +57,7 @@ def add_security_headers(response):
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()'
     return response
 def get_or_create_visitor_id():
     # Retrieve or generate unique guest session identifier
@@ -305,8 +306,21 @@ def blog_list():
         data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), "/blog", get_or_create_visitor_id())
     except Exception as e:
         print(f"Tracking error: {e}")
+    
+    q = request.args.get("q", "").strip()
     blogs = data.load_blogs()
-    return render_template("blog_list.html", blogs=blogs)
+    
+    if q:
+        q_lower = q.lower()
+        filtered_blogs = []
+        for b in blogs:
+            title_text = b.get("title", "") or ""
+            content_text = b.get("content", "") or ""
+            if q_lower in title_text.lower() or q_lower in content_text.lower():
+                filtered_blogs.append(b)
+        blogs = filtered_blogs
+        
+    return render_template("blog_list.html", blogs=blogs, search_query=q)
 
 @app.route("/blog/<slug>")
 def view_blog(slug):
@@ -1423,7 +1437,68 @@ def clear_promo_session():
 
 @app.route('/sitemap.xml')
 def sitemap():
-    return send_from_directory('static', 'sitemap.xml')
+    try:
+        pages = []
+        base_url = "https://mga.techknowsols.gt.tc"
+        
+        # Add primary routes
+        now_str = datetime.now().strftime("%Y-%m-%d")
+        pages.append({
+            "loc": f"{base_url}/",
+            "lastmod": now_str,
+            "changefreq": "daily",
+            "priority": "1.0"
+        })
+        pages.append({
+            "loc": f"{base_url}/blog",
+            "lastmod": now_str,
+            "changefreq": "daily",
+            "priority": "0.9"
+        })
+        
+        # Load all blogs dynamically from database
+        try:
+            blogs = data.load_blogs(include_drafts=False)
+            for b in blogs:
+                pub_date = now_str
+                if b.get("published_at"):
+                    try:
+                        pub_date = b["published_at"][:10]
+                    except Exception:
+                        pass
+                pages.append({
+                    "loc": f"{base_url}/blog/{b['slug']}",
+                    "lastmod": pub_date,
+                    "changefreq": "weekly",
+                    "priority": "0.8"
+                })
+        except Exception as db_err:
+            print("Sitemap database load failed, fallback:", db_err)
+            
+        xml_feed = []
+        xml_feed.append('<?xml version="1.0" encoding="UTF-8"?>')
+        xml_feed.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+        for page in pages:
+            xml_feed.append('  <url>')
+            xml_feed.append(f'    <loc>{page["loc"]}</loc>')
+            xml_feed.append(f'    <lastmod>{page["lastmod"]}</lastmod>')
+            xml_feed.append(f'    <changefreq>{page["changefreq"]}</changefreq>')
+            xml_feed.append(f'    <priority>{page["priority"]}</priority>')
+            xml_feed.append('  </url>')
+        xml_feed.append('</urlset>')
+        
+        return Response("\n".join(xml_feed), mimetype="application/xml")
+    except Exception as e:
+        return str(e), 500
+
+@app.route('/robots.txt')
+def robots_txt():
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
+"""
+    return Response(content, mimetype="text/plain")
 
 # ====== ERROR HANDLERS (Phase 1) ======
 @app.errorhandler(404)
