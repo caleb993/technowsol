@@ -90,6 +90,24 @@ def create_tables():
         ALTER TABLE blogs ADD COLUMN IF NOT EXISTS read_time_count INTEGER DEFAULT 0;
         """,
         """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS helpful_count INTEGER DEFAULT 0;
+        """,
+        """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS useful_count INTEGER DEFAULT 0;
+        """,
+        """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS learned_count INTEGER DEFAULT 0;
+        """,
+        """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS loved_count INTEGER DEFAULT 0;
+        """,
+        """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'published';
+        """,
+        """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS published_at TIMESTAMP WITH TIME ZONE;
+        """,
+        """
         CREATE TABLE IF NOT EXISTS techrich_docs (
           id SERIAL PRIMARY KEY,
           title TEXT,
@@ -323,7 +341,7 @@ def slugify(text: str) -> str:
     s = re.sub(r"[-\s]+", "-", s)
     return s[:200]
 
-def add_blog(title, content):
+def add_blog(title, content, status="published", published_at=None):
     conn = get_conn()
     try:
         with conn:
@@ -332,20 +350,36 @@ def add_blog(title, content):
                 r = cur.fetchone()
                 nid = (r[0] or 0) + 1
                 slug = slugify(title) or f"post-{nid}"
+                pub_time = published_at if published_at else datetime.now(timezone.utc)
                 cur.execute(
-                    "INSERT INTO blogs (timestamp, title, slug, content) VALUES (now(), %s, %s, %s)",
-                    (title.strip(), slug, content.strip())
+                    "INSERT INTO blogs (timestamp, title, slug, content, status, published_at) VALUES (now(), %s, %s, %s, %s, %s)",
+                    (title.strip(), slug, content.strip(), status, pub_time)
                 )
-                return {"id": nid, "timestamp": datetime.now().isoformat(timespec="seconds"), "title": title, "slug": slug, "content": content}
+                return {
+                    "id": nid, 
+                    "timestamp": datetime.now().isoformat(timespec="seconds"), 
+                    "title": title, 
+                    "slug": slug, 
+                    "content": content,
+                    "status": status,
+                    "published_at": pub_time.isoformat() if hasattr(pub_time, "isoformat") else str(pub_time),
+                    "helpful_count": 0,
+                    "useful_count": 0,
+                    "learned_count": 0,
+                    "loved_count": 0
+                }
     finally:
         conn.close()
 
-def load_blogs():
+def load_blogs(include_drafts=False):
     conn = get_conn()
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views FROM blogs ORDER BY id DESC")
+                if include_drafts:
+                    cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views, COALESCE(helpful_count, 0) as helpful_count, COALESCE(useful_count, 0) as useful_count, COALESCE(learned_count, 0) as learned_count, COALESCE(loved_count, 0) as loved_count, COALESCE(status, 'published') as status, published_at FROM blogs ORDER BY id DESC")
+                else:
+                    cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views, COALESCE(helpful_count, 0) as helpful_count, COALESCE(useful_count, 0) as useful_count, COALESCE(learned_count, 0) as learned_count, COALESCE(loved_count, 0) as loved_count, COALESCE(status, 'published') as status, published_at FROM blogs WHERE COALESCE(status, 'published') = 'published' AND (published_at IS NULL OR published_at <= now()) ORDER BY id DESC")
                 return [
                     {
                         "id": r["id"],
@@ -353,7 +387,13 @@ def load_blogs():
                         "title": r["title"] or "",
                         "slug": r["slug"] or "",
                         "content": r["content"] or "",
-                        "views": r["views"] or 0
+                        "views": r["views"] or 0,
+                        "helpful_count": r["helpful_count"] or 0,
+                        "useful_count": r["useful_count"] or 0,
+                        "learned_count": r["learned_count"] or 0,
+                        "loved_count": r["loved_count"] or 0,
+                        "status": r["status"] or "published",
+                        "published_at": r["published_at"].isoformat() if r["published_at"] else ""
                     }
                     for r in cur.fetchall()
                 ]
@@ -365,7 +405,7 @@ def get_blog_by_slug(slug):
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views FROM blogs WHERE slug=%s LIMIT 1", (slug,))
+                cur.execute("SELECT id, timestamp, title, slug, content, COALESCE(views, 0) as views, COALESCE(helpful_count, 0) as helpful_count, COALESCE(useful_count, 0) as useful_count, COALESCE(learned_count, 0) as learned_count, COALESCE(loved_count, 0) as loved_count, COALESCE(status, 'published') as status, published_at FROM blogs WHERE slug=%s LIMIT 1", (slug,))
                 r = cur.fetchone()
                 if not r:
                     return None
@@ -381,8 +421,30 @@ def get_blog_by_slug(slug):
                     "title": r["title"] or "", 
                     "slug": r["slug"] or "", 
                     "content": r["content"] or "",
-                    "views": r["views"] or 0
+                    "views": r["views"] or 0,
+                    "helpful_count": r["helpful_count"] or 0,
+                    "useful_count": r["useful_count"] or 0,
+                    "learned_count": r["learned_count"] or 0,
+                    "loved_count": r["loved_count"] or 0,
+                    "status": r["status"] or "published",
+                    "published_at": r["published_at"].isoformat() if r["published_at"] else ""
                 }
+    finally:
+        conn.close()
+
+def increment_blog_reaction(slug, reaction_type):
+    if reaction_type not in ["helpful", "useful", "learned", "loved"]:
+        return False
+    column_name = f"{reaction_type}_count"
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(f"UPDATE blogs SET {column_name} = COALESCE({column_name}, 0) + 1 WHERE slug = %s", (slug,))
+                return True
+    except Exception as e:
+        print(f"Error incrementing blog reaction {reaction_type}: {e}")
+        return False
     finally:
         conn.close()
 
@@ -638,7 +700,7 @@ def get_total_visits_count():
     finally:
         conn.close()
 
-# ---------------- TechRich Document Repository ----------------
+# ----------------- TechRich Document Repository -----------------
 def save_techrich_doc(title, doc_type, file_name=None, file_data=None, mimetype=None, content=None):
     conn = get_conn()
     try:
