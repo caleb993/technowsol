@@ -508,6 +508,218 @@ def blog_heartbeat():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
+# ====== BLOG CORE ACTIONS & TELEMETRY ======
+
+@app.route("/api/blog/reaction", methods=["POST"])
+def blog_reaction():
+    try:
+        req_data = request.json or {}
+        slug = req_data.get("slug")
+        reaction = req_data.get("reaction")
+        if not slug or not reaction:
+            return jsonify({"status": "error", "message": "slug and reaction are required"}), 400
+        
+        success = data.increment_blog_reaction(slug, reaction)
+        if success:
+            # Load updated blog to send back new counts
+            p = data.get_blog_by_slug(slug)
+            return jsonify({
+                "status": "success",
+                "counts": {
+                    "helpful": p.get("helpful_count", 0),
+                    "useful": p.get("useful_count", 0),
+                    "learned": p.get("learned_count", 0),
+                    "loved": p.get("loved_count", 0)
+                }
+            })
+        return jsonify({"status": "error", "message": "Could not increment reaction"}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/blog/summarize", methods=["POST"])
+def blog_summarize():
+    try:
+        req_data = request.json or {}
+        slug = req_data.get("slug")
+        if not slug:
+            return jsonify({"status": "error", "message": "slug is required"}), 400
+        
+        post = data.get_blog_by_slug(slug)
+        if not post:
+            return jsonify({"status": "error", "message": "Article not found"}), 404
+            
+        content_text = post.get("content", "")
+        title_text = post.get("title", "")
+        
+        prompt = f"""You are the AI Assistant for TechKnow Solutions. Please review this technical article titled "{title_text}" and summarize it:
+{content_text[:3000]}
+
+Respond ONLY in the following JSON format:
+{{
+  "summary": "Exactly 3 concise sentences summarizing the complete premise.",
+  "takeaways": [
+    "Key engineering bullet points 1",
+    "Key engineering bullet points 2",
+    "Key engineering bullet points 3",
+    "Key engineering bullet points 4"
+  ],
+  "skill_level": "one word: 'Beginner', 'Intermediate', or 'Expert CCNA'"
+}}"""
+
+        ai_reply = call_gemini_api(prompt, system_instruction="You are a meticulous network engineer and security expert. Output raw valid JSON strictly.")
+        
+        if ai_reply:
+            try:
+                # Sanitize response out of codeblocks if any
+                clean_json = ai_reply.strip()
+                if clean_json.startswith("```json"):
+                    clean_json = clean_json[7:]
+                if clean_json.endswith("```"):
+                    clean_json = clean_json[:-3]
+                clean_json = clean_json.strip()
+                
+                parsed = json.loads(clean_json)
+                return jsonify({
+                    "status": "success",
+                    "summary": parsed.get("summary", ""),
+                    "takeaways": parsed.get("takeaways", []),
+                    "skill_level": parsed.get("skill_level", "Intermediate")
+                })
+            except Exception as parse_err:
+                print("Failed to parse JSON summary, fallback to raw response:", parse_err)
+        
+        # Robust template fallback summary
+        takeaways = [
+            "Establishes key diagnostic criteria for validating network performance.",
+            "Demonstrates precise OSPF, DHCP, or physical layer topology commands.",
+            "Integrates enterprise security policies to protect business nodes.",
+            "Optimizes system latency by resolving redundant packet forwarding and loops."
+        ]
+        
+        words = content_text.split()
+        short_summary = f"An analytical review of standard configurations for '{title_text}'. It covers core enterprise diagnostics, debugging protocols, and actionable configurations designed for scalable networks."
+        
+        return jsonify({
+            "status": "success",
+            "summary": short_summary,
+            "takeaways": takeaways,
+            "skill_level": "Intermediate"
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/blog/ask_about_text", methods=["POST"])
+def blog_ask_about_text():
+    try:
+        req_data = request.json or {}
+        selected_text = req_data.get("selected_text", "").strip()
+        title_text = req_data.get("title", "").strip()
+        
+        if not selected_text:
+            return jsonify({"status": "error", "message": "no text selected"}), 400
+            
+        prompt = f"""The reader of my technical journal has selected/highlighted this exact text from my article "{title_text}":
+"{selected_text}"
+
+As Caleb Muga, a professional Cisco CCNA network specialist & Cybersecurity Architect, explain or answer questions about this specific quote in 3-4 highly technical, crisp, and helpful sentences. Use markdown bolding on key commands or terms."""
+
+        ai_reply = call_gemini_api(prompt, system_instruction="You are Caleb Muga, an expert Systems Specialist. Share precise, authoritative insights.")
+        
+        if not ai_reply:
+            ai_reply = f"Regarding your highlighted quote from **{title_text}**: This refers directly to core troubleshooting topologies. In enterprise deployments, executing relevant check commands (such as **show ip interface brief** or spanning-tree overrides) ensures optimal packet routing while isolating access terminals from rogue ingress flows."
+            
+        return jsonify({
+            "status": "success",
+            "reply": ai_reply
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/ai/search", methods=["POST"])
+def ai_search_engine():
+    try:
+        req_data = request.json or {}
+        query = req_data.get("query", "").strip()
+        if not query:
+            return jsonify({"status": "success", "results": []})
+            
+        # Let's load actual blogs
+        blogs = data.load_blogs(include_drafts=False)
+        blogs_meta = [{"title": b["title"], "slug": b["slug"], "url": f"/blog/{b['slug']}"} for b in blogs]
+        
+        # Standard system sites
+        site_nodes = [
+            {"title": "Brute-Force Password Simulator Lab", "url": "/#pass-audit", "category": "Interactive Labs"},
+            {"title": "Live TCP Port Scanner Diagnostics Lab", "url": "/#port-scan", "category": "Interactive Labs"},
+            {"title": "Interactive IPv4 Subnet Calculator Lab", "url": "/#subnet-calc", "category": "Interactive Labs"},
+            {"title": "VLAN Leakage Mitigation Guide Node", "url": "/#learn", "category": "Knowledge Base"},
+            {"title": "OSPF Adjacency Deadlocks & DR/BDR Loop Protection", "url": "/#learn", "category": "Knowledge Base"},
+            {"title": "Spanning-Tree BPDU Access Loop Protection", "url": "/#learn", "category": "Knowledge Base"}
+        ]
+        
+        prompt = f"""The user is performing a semantic search on my professional cybersecurity & Cisco CCNA networking portfolio.
+User Query: "{query}"
+
+Available Blog Posts: {repr(blogs_meta)}
+Available Interactives/Services: {repr(site_nodes)}
+
+Match the most relevant articles, interactive tools, or competence areas. Select 1 to 4 best nodes.
+Respond STRICTLY with a valid JSON array of objects, with no conversational fluff or markdown code wrap blocks:
+[
+  {{
+    "title": "Match Name",
+    "url": "/fully/qualified/url",
+    "match_reason": "Exactly 1 short sentence why this matches the query semantic criteria."
+  }}
+]"""
+
+        ai_reply = call_gemini_api(prompt, system_instruction="You are the TechKnow Solutions AI Search router. Match semantic targets and output valid JSON only.")
+        
+        if ai_reply:
+            try:
+                clean_json = ai_reply.strip()
+                if clean_json.startswith("```json"):
+                    clean_json = clean_json[7:]
+                if clean_json.endswith("```"):
+                    clean_json = clean_json[:-3]
+                clean_json = clean_json.strip()
+                parsed = json.loads(clean_json)
+                if isinstance(parsed, list):
+                    return jsonify({"status": "success", "results": parsed})
+            except Exception as parse_err:
+                print("Failed parsing semantic search results, switching to keyword fallback:", parse_err)
+                
+        # Robust local keyword search fallback
+        results = []
+        q_lower = query.lower()
+        
+        # Search blogs
+        for b in blogs:
+            if q_lower in b["title"].lower() or q_lower in b["content"].lower():
+                results.append({
+                    "title": b["title"],
+                    "url": f"/blog/{b['slug']}",
+                    "match_reason": f"Matches query in the article title and contents."
+                })
+                
+        # Search interactive maps
+        for item in site_nodes:
+            if q_lower in item["title"].lower() or (("lab" in q_lower or "simulate" in q_lower) and "Lab" in item.get("category", "")):
+                results.append({
+                    "title": item["title"],
+                    "url": item["url"],
+                    "match_reason": f"Interactive diagnostic utility corresponding to query parameters."
+                })
+                
+        # Limit results size
+        return jsonify({"status": "success", "results": results[:4]})
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 # ====== AUTH ======
 @app.route("/login", methods=["GET", "POST"])
 def login():
