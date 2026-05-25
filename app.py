@@ -41,6 +41,12 @@ IMAGE_EXTS = {"png", "jpg", "jpeg", "webp", "gif"}
 VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
 
+def get_or_create_visitor_id():
+    # Retrieve or generate unique guest session identifier
+    if "visitor_id" not in session:
+        session["visitor_id"] = secrets.token_hex(16)
+    return session["visitor_id"]
+
 # Initialize DB tables (idempotent)
 data.create_tables()
 
@@ -113,7 +119,7 @@ def allowed_video(filename: str) -> bool:
 
 def require_admin():
     if not session.get("is_admin"):
-        flash("Please log in with your user credentials.")
+        flash("Please log in as admin.")
         return False
     return True
 
@@ -183,7 +189,8 @@ def index():
         data.record_visit(
             request.remote_addr,
             request.headers.get("User-Agent", "Unknown"),
-            "/"
+            "/",
+            get_or_create_visitor_id()
         )
     except Exception as e:
         print(f"Tracking error: {e}")
@@ -278,7 +285,7 @@ def media_file(kind, filename):
 @app.route("/blog")
 def blog_list():
     try:
-        data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), "/blog")
+        data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), "/blog", get_or_create_visitor_id())
     except Exception as e:
         print(f"Tracking error: {e}")
     blogs = data.load_blogs()
@@ -287,7 +294,7 @@ def blog_list():
 @app.route("/blog/<slug>")
 def view_blog(slug):
     try:
-        data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), f"/blog/{slug}")
+        data.record_visit(request.remote_addr, request.headers.get("User-Agent", "Unknown"), f"/blog/{slug}", get_or_create_visitor_id())
         data.increment_blog_views(slug)
     except Exception as e:
         print(f"Tracking error: {e}")
@@ -307,20 +314,47 @@ def track_visit():
         ip = request.remote_addr
         ua = request.headers.get("User-Agent", "Unknown")
         
-        data.record_visit(ip, ua, path)
-        
-        # Build live WhatsApp push notification alert link
-        msg_text = f"⚙️ *TechKnow Security Insight Alert*:\n👤 *Active user* landed on: `{path}`\n🌐 *IP Address*: `{ip}`\n📱 *Device*: {ua[:60]}\n⏰ *Timestamp*: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}"
-        encoded_msg = urllib.parse.quote(msg_text)
-        wa_link = f"https://wa.me/254791204587?text={encoded_msg}"
+        data.record_visit(ip, ua, path, get_or_create_visitor_id())
         
         return jsonify({
-            "status": "success",
-            "ip_address": ip,
-            "path": path,
-            "wa_link": wa_link,
-            "msg_text": msg_text
+            "status": "success"
         })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route("/api/blog/heartbeat", methods=["POST"])
+def blog_heartbeat():
+    try:
+        req_data = request.json or {}
+        slug = req_data.get("slug")
+        is_new_view = req_data.get("new_view", False)
+        
+        if not slug:
+            return jsonify({"status": "error", "message": "slug required"}), 400
+            
+        conn = data.get_conn()
+        try:
+            with conn:
+                with conn.cursor() as cur:
+                    if is_new_view:
+                        cur.execute("""
+                            UPDATE blogs 
+                            SET read_time_count = COALESCE(read_time_count, 0) + 1 
+                            WHERE slug = %s
+                        """, (slug,))
+                    else:
+                        cur.execute("""
+                            UPDATE blogs 
+                            SET total_read_time_seconds = COALESCE(total_read_time_seconds, 0) + 5 
+                            WHERE slug = %s
+                        """, (slug,))
+        except Exception as e:
+            print(f"Error updating blog heartbeat: {e}")
+            return jsonify({"status": "error"}), 500
+        finally:
+            conn.close()
+            
+        return jsonify({"status": "success"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -593,10 +627,7 @@ def admin_analytics_data():
 
 @app.route("/api/admin/active_users")
 def active_users_data():
-    # Allow simulated visitors for presentation / testing
-    is_simulating = request.args.get("simulate", "false") == "true"
-    sim_count = int(request.args.get("sim_count", "0"))
-    
+    # We query the actual DISTINCT visitor count using visitor UUID session cookies, completely removing any simulated capabilities.
     conn = data.get_conn()
     count = 1
     recent_pages = []
@@ -604,7 +635,7 @@ def active_users_data():
         with conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT COUNT(DISTINCT ip_address) FROM site_visits 
+                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address)) FROM site_visits 
                     WHERE timestamp >= now() - INTERVAL '15 minutes'
                 """)
                 row = cur.fetchone()
@@ -624,21 +655,93 @@ def active_users_data():
         
     if count < 1:
         count = 1
-        
-    if is_simulating and sim_count > 0:
-        count = sim_count
-        # Inject some simulated trending paths so it is extremely visual and amazing
-        recent_pages = [
-            {"path": "/", "count": int(sim_count * 0.4) or 1},
-            {"path": "/blog", "count": int(sim_count * 0.35) or 1},
-            {"path": "/blog/securing-mpesa-routing", "count": int(sim_count * 0.15) or 1},
-            {"path": "/admin", "count": int(sim_count * 0.1) or 1}
-        ]
 
     return jsonify({
         "status": "success",
         "active_users": count,
         "recent_pages": recent_pages
+    })
+
+@app.route("/api/admin/article_stats")
+def admin_article_stats():
+    if not session.get("is_admin"):
+        return jsonify({"error": "unauthorized"}), 403
+    
+    conn = data.get_conn()
+    articles = []
+    active_users = 1
+    recent_pages = []
+    
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                # 1. Fetch real active users (recent 15 minutes of site_visits) using distinct session_id
+                cur.execute("""
+                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address)) FROM site_visits 
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                """)
+                row = cur.fetchone()
+                if row:
+                    active_users = row[0] if row[0] > 0 else 1
+                
+                # 2. Fetch recent path metrics
+                cur.execute("""
+                    SELECT path, COUNT(*) as cnt FROM site_visits 
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    GROUP BY path ORDER BY cnt DESC LIMIT 6
+                """)
+                recent_pages = [{"path": r[0] if r[0] else "/", "count": r[1]} for r in cur.fetchall()]
+                
+                # 3. Fetch real blog views & duration trackers
+                cur.execute("""
+                    SELECT id, title, slug, COALESCE(views, 0) as views, 
+                           COALESCE(total_read_time_seconds, 0) as total_read_time,
+                           COALESCE(read_time_count, 0) as read_count
+                    FROM blogs ORDER BY views DESC
+                """)
+                rows = cur.fetchall()
+                for r in rows:
+                    views = r["views"]
+                    rd_cnt = r["read_count"]
+                    ttl_time = r["total_read_time"]
+                    
+                    # Compute average read time based on views or read count
+                    divisor = rd_cnt if rd_cnt > 0 else (views if views > 0 else 1)
+                    avg_seconds = int(ttl_time / divisor)
+                    
+                    category = get_blog_category(r["title"], "")
+                    
+                    articles.append({
+                        "id": r["id"],
+                        "title": r["title"],
+                        "slug": r["slug"],
+                        "views": views,
+                        "total_read_time": ttl_time,
+                        "avg_read_time_seconds": avg_seconds,
+                        "category": category
+                    })
+    except Exception as e:
+        print(f"Error querying article stats: {e}")
+    finally:
+        conn.close()
+        
+    # Calculate dominant category dynamically
+    category_views = {}
+    for a in articles:
+        cat = a["category"]
+        category_views[cat] = category_views.get(cat, 0) + a["views"]
+        
+    dominant_category = "Technology"
+    if category_views:
+        best_cat = max(category_views, key=category_views.get)
+        dominant_category = f"{best_cat} ({category_views[best_cat]} views)"
+        
+    return jsonify({
+        "status": "success",
+        "active_users": max(1, active_users),
+        "recent_pages": recent_pages,
+        "articles": articles,
+        "dominant_category": dominant_category
     })
 
 # ====== MESSAGE DELETE ======
@@ -710,7 +813,7 @@ def reject_file(filename):
 def upload_cv_admin():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("cv")
+    up = request.files.get("cv") or request.files.get("file")
     if not up or up.filename == "":
         flash("No CV selected.")
         return redirect(url_for("admin"))
@@ -729,7 +832,7 @@ def upload_cv_admin():
 def upload_profile_image():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("image")
+    up = request.files.get("image") or request.files.get("file")
     if not up or up.filename == "":
         flash("No image selected.")
         return redirect(url_for("admin"))
@@ -747,7 +850,7 @@ def upload_profile_image():
 def upload_hero_image():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("image")
+    up = request.files.get("image") or request.files.get("file")
     if not up or up.filename == "":
         flash("No image selected.")
         return redirect(url_for("admin"))
