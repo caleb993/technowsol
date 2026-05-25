@@ -321,6 +321,139 @@ def view_blog(slug):
     return render_template("blog_view.html", post=post)
 
 
+# ====== CALEB'S AI DIGITAL TWIN ENDPOINT ======
+
+SYSTEM_INSTRUCTION = """
+You are "Caleb Muga's AI Digital Twin", a professional, highly skilled, and conversational AI avatar representing Caleb Muga on his portfolio website.
+Caleb's Background & Profile:
+- Title: Lead Cisco-Certified Network Specialist, Cybersecurity Auditor, and Automation Architect.
+- Role: Meticulously driven and customer-oriented ICT Officer.
+- Key Certifications: Cisco CCNA, Routing and Switching, Enterprise Network Security.
+- Top Core Skills:
+  1. Routing & Switching Topologies (VLANs, OSPF, DHCP helper protocols, STP BPDU Guard, trunk interfaces).
+  2. Cybersecurity auditing & server hardening (mitigating brute force, entropy calculations, threat vectors).
+  3. Interactive network diagnostics, disaster recovery schemas, and virtualization setup.
+  4. Automation scripting (using Python, Flask, bash, crontabs for model retraining or data routing).
+- Personality: Smart, highly technical yet understandable, reassuring, respectful, and direct. You write crisp, helpful, and concise answers, often using numbered lists or brief code/command blocks where relevant.
+- Goals of this Chatbot:
+  1. Educate visitors on Caleb's credentials, experience, and specialized expertise.
+  2. Answer technical questions about networking, router configs, or security audits (briefly and accurately!).
+  3. Guide potential clients or employers to "Get in Touch" or hire Caleb using the Portfolio section or Contact Form.
+  4. Be professional and strictly pretend to be Caleb's digital avatar, speaking in first-person ("I have built...", "In my CCNA practice...") or referring to Caleb's work with proud expertise.
+- Maintain a tone that reflects a polished, secure command-line engineer. Keep answers short and under 3-4 structural blocks so the client can easily read them in a standard-sized chat widget. Use markdown properly.
+"""
+
+def call_gemini_api(prompt, system_instruction=None):
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        return None
+    
+    # We choose gemini-2.5-flash as it is fast, stable, and highly capable for general Q&A
+    model_name = "gemini-2.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": prompt
+                    }
+                ]
+            }
+        ]
+    }
+    
+    if system_instruction:
+        payload["systemInstruction"] = {
+            "parts": [
+                {
+                    "text": system_instruction
+                }
+            ]
+        }
+        
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "aistudio-build"
+    }
+    
+    import urllib.request
+    import urllib.error
+    import json
+    try:
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=12) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            candidates = res_data.get("candidates", [])
+            if candidates:
+                content = candidates[0].get("content", {})
+                parts = content.get("parts", [])
+                if parts:
+                    return parts[0].get("text", "")
+            return "Failed to parse reply from AI model."
+    except urllib.error.HTTPError as he:
+        err_msg = he.read().decode("utf-8")
+        print(f"Gemini API HttpError: {he.code} - {err_msg}")
+        try:
+            err_json = json.loads(err_msg)
+            return f"Gemini API Error: {err_json.get('error', {}).get('message', 'HTTP Error')}"
+        except Exception:
+            return f"Gemini API HTTP Error occurred: {he.reason}"
+    except Exception as e:
+        print(f"Gemini API Exception: {e}")
+        return f"Could not establish connection to the AI engine: {str(e)}"
+
+@app.route("/api/ai/chat", methods=["POST"])
+def ai_chat():
+    try:
+        req_data = request.json or {}
+        user_message = req_data.get("message", "").strip()
+        history = req_data.get("history", []) # list of {"role": "user"|"model", "text": "..."}
+        
+        if not user_message:
+            return jsonify({"status": "error", "message": "message is required"}), 400
+            
+        print(f"👤 AI Twin Question: '{user_message}'")
+        
+        # Format chat history context for the model
+        context_prompt = ""
+        for turn in history[-6:]: # Keep last 6 turns for context
+            role_label = "User" if turn.get("role") == "user" else "AI"
+            context_prompt += f"{role_label}: {turn.get('text')}\n"
+        context_prompt += f"User: {user_message}\nAI:"
+        
+        # Attempt calling real Gemini API
+        ai_response = call_gemini_api(context_prompt, system_instruction=SYSTEM_INSTRUCTION)
+        
+        is_mock = False
+        if ai_response is None:
+            # Fallback static agent matcher if GEMINI_API_KEY is not defined
+            is_mock = True
+            msg_lower = user_message.lower()
+            if any(k in msg_lower for k in ["skills", "cert", "credential", "ccna", "switching", "routing"]):
+                ai_response = "I am Cisco CCNA certified in Routing & Switching, specializing in robust LAN/WAN infrastructure. I design resilient VLAN partitions, troubleshoot DR/BDR election loops, configure OSPF, and enforce STP BPDU Guards to prevent rogue loops."
+            elif any(k in msg_lower for k in ["contact", "hire", "email", "work", "meeting"]):
+                ai_response = "I am based in Nairobi, Kenya. You can reach out directly via the **Get in touch / Contact form** section of this site. Just type your details and shoot a dispatch; I usually respond within 120 minutes!"
+            elif any(k in msg_lower for k in ["audit", "secure", "protection", "firewall", "entropy"]):
+                ai_response = "I conduct enterprise cybersecurity audits. This includes active endpoint policy monitoring, firmware inspections, and testing brute-force resilience. Try my Brute-Force Password Simulator under the Interactive Labs above!"
+            elif any(k in msg_lower for k in ["project", "code", "portfolio"]):
+                ai_response = "I have built interactive labs on this portfolio: standard Subnet Calculators, Port Audit sandboxes, and an active Admin telemetry suite. Go take a spin with them!"
+            else:
+                ai_response = "Hello there! I am Caleb Muga's AI Digital Twin, configured with system parameters of a Leading Network Specialist and Security Architect. Ask me about CCNA configurations, current security recommendations, or how we can collaborate!"
+                
+            ai_response += "\n\n*(Note: Set up a `GEMINI_API_KEY` in settings to activate full real-time Gemini LLM reasoning).* "
+
+        return jsonify({
+            "status": "success",
+            "reply": ai_response,
+            "mock": is_mock
+        })
+    except Exception as e:
+        print(f"Error in ai_chat endpoint: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 # ====== VISITOR ALERTS API ======
 
 @app.route("/api/track_visit", methods=["POST"])
@@ -652,17 +785,17 @@ def active_users_data():
         with conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address)) FROM site_visits 
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address)) FROM site_visits \
+                    WHERE timestamp >= now() - INTERVAL '15 minutes' \
                 """)
                 row = cur.fetchone()
                 if row:
                     count = row[0]
                 
                 cur.execute("""
-                    SELECT path, COUNT(*) as cnt FROM site_visits 
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
-                    GROUP BY path ORDER BY cnt DESC LIMIT 6
+                    SELECT path, COUNT(*) as cnt FROM site_visits \
+                    WHERE timestamp >= now() - INTERVAL '15 minutes' \
+                    GROUP BY path ORDER BY cnt DESC LIMIT 6 \
                 """)
                 recent_pages = [{"path": r[0] if r[0] else "/", "count": r[1]} for r in cur.fetchall()]
     except Exception as e:
@@ -694,8 +827,8 @@ def admin_article_stats():
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 # 1. Fetch real active users (recent 15 minutes of site_visits) using distinct session_id
                 cur.execute("""
-                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address)) FROM site_visits 
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address)) FROM site_visits \
+                    WHERE timestamp >= now() - INTERVAL '15 minutes' \
                 """)
                 row = cur.fetchone()
                 if row:
@@ -703,18 +836,18 @@ def admin_article_stats():
                 
                 # 2. Fetch recent path metrics
                 cur.execute("""
-                    SELECT path, COUNT(*) as cnt FROM site_visits 
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
-                    GROUP BY path ORDER BY cnt DESC LIMIT 6
+                    SELECT path, COUNT(*) as cnt FROM site_visits \
+                    WHERE timestamp >= now() - INTERVAL '15 minutes' \
+                    GROUP BY path ORDER BY cnt DESC LIMIT 6 \
                 """)
                 recent_pages = [{"path": r[0] if r[0] else "/", "count": r[1]} for r in cur.fetchall()]
                 
                 # 3. Fetch real blog views & duration trackers
                 cur.execute("""
-                    SELECT id, title, slug, COALESCE(views, 0) as views, 
-                           COALESCE(total_read_time_seconds, 0) as total_read_time,
-                           COALESCE(read_time_count, 0) as read_count
-                    FROM blogs ORDER BY views DESC
+                    SELECT id, title, slug, COALESCE(views, 0) as views, \
+                           COALESCE(total_read_time_seconds, 0) as total_read_time, \
+                           COALESCE(read_time_count, 0) as read_count \
+                    FROM blogs ORDER BY views DESC \
                 """)
                 rows = cur.fetchall()
                 for r in rows:
