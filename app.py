@@ -4,8 +4,7 @@ import math
 import secrets
 import urllib.parse
 import json
-from datetime import datetime, timedelta
-from collections import Counter
+from datetime import datetime
 
 import markdown
 import psycopg2
@@ -18,15 +17,13 @@ from flask import (
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
-import data  # our DB layer
+import data
 
-# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(16))
 
-# ====== CONFIG ======
 ADMIN_KEY = os.environ.get("ADMIN_KEY", "calebadmin")
 
 ALLOWED_EXTS = {
@@ -36,10 +33,9 @@ ALLOWED_EXTS = {
 IMAGE_EXTS = {"png", "jpg", "jpeg", "webp", "gif"}
 VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
 
-app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
+app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
 
-# ====== DOMAIN + SECURITY ======
 @app.before_request
 def redirect_to_custom_domain():
     if "onrender.com" in request.host:
@@ -64,14 +60,12 @@ def get_or_create_visitor_id():
     return session["visitor_id"]
 
 
-# Initialize DB tables
 try:
     data.create_tables()
 except Exception as e:
     print("⚠️ Could not initialize DB tables:", e)
 
 
-# ====== SEED GENERATED BLOG ASSETS ======
 def seed_blog_assets():
     try:
         import glob
@@ -136,7 +130,6 @@ def seed_blog_assets():
 seed_blog_assets()
 
 
-# ====== HELPERS ======
 def get_blog_category(title, content):
     combined = ((title or "") + " " + (content or "")).lower()
 
@@ -261,11 +254,9 @@ def serve_file_record(rec, filename, as_attachment=False):
     if not rec:
         abort(404)
 
-    # Cloudinary-first
     if rec.get("url"):
         return redirect(rec["url"], code=302)
 
-    # Database fallback
     content = rec.get("content") or b""
     if not content:
         abort(404)
@@ -280,7 +271,31 @@ def serve_file_record(rec, filename, as_attachment=False):
     )
 
 
-# ====== ROUTES ======
+def log_upload_result(category, fname):
+    try:
+        if not fname:
+            print(f"⚠️ Upload failed before DB check for category={category}")
+            return
+
+        rec = data.get_file_record(category, fname)
+
+        if not rec:
+            print(f"⚠️ Upload saved name={fname}, but no DB record found.")
+            return
+
+        print(
+            "📦 UPLOAD RESULT:",
+            f"name={rec.get('name')}",
+            f"category={rec.get('category')}",
+            f"storage_provider={rec.get('storage_provider')}",
+            f"url_present={bool(rec.get('url'))}",
+            f"content_removed={not bool(rec.get('content'))}"
+        )
+
+    except Exception as e:
+        print("⚠️ Could not log upload result:", e)
+
+
 @app.route("/", methods=["GET"])
 def index():
     try:
@@ -340,6 +355,8 @@ def contact():
 
 @app.route("/upload_project", methods=["POST"])
 def upload_project():
+    print("🔥 Upload route called: /upload_project")
+
     up = request.files.get("file")
 
     if not up or up.filename == "":
@@ -351,6 +368,7 @@ def upload_project():
         return redirect(url_for("index") + "#portfolio")
 
     fname, err = data.save_file_from_storage("project", up, approve=False)
+    log_upload_result("project", fname)
 
     if err:
         flash(err)
@@ -384,7 +402,6 @@ def media_file(kind, filename):
     return serve_file_record(rec, safe, as_attachment=False)
 
 
-# ====== BLOG PUBLIC ======
 @app.route("/blog")
 def blog_list():
     try:
@@ -432,7 +449,6 @@ def view_blog(slug):
     return render_template("blog_view.html", post=post)
 
 
-# ====== CALEB'S AI DIGITAL TWIN ENDPOINT ======
 SYSTEM_INSTRUCTION = """
 You are "Caleb Muga's AI Digital Twin", a professional, highly skilled, and conversational AI avatar representing Caleb Muga on his portfolio website.
 Caleb's Background & Profile:
@@ -441,16 +457,10 @@ Caleb's Background & Profile:
 - Key Certifications: Cisco CCNA, Routing and Switching, Enterprise Network Security.
 - Top Core Skills:
   1. Routing & Switching Topologies (VLANs, OSPF, DHCP helper protocols, STP BPDU Guard, trunk interfaces).
-  2. Cybersecurity auditing & server hardening (mitigating brute force, entropy calculations, threat vectors).
+  2. Cybersecurity auditing & server hardening.
   3. Interactive network diagnostics, disaster recovery schemas, and virtualization setup.
-  4. Automation scripting (using Python, Flask, bash, crontabs for model retraining or data routing).
-- Personality: Smart, highly technical yet understandable, reassuring, respectful, and direct. You write crisp, helpful, and concise answers, often using numbered lists or brief code/command blocks where relevant.
-- Goals of this Chatbot:
-  1. Educate visitors on Caleb's credentials, experience, and specialized expertise.
-  2. Answer technical questions about networking, router configs, or security audits (briefly and accurately!).
-  3. Guide potential clients or employers to "Get in Touch" or hire Caleb using the Portfolio section or Contact Form.
-  4. Be professional and strictly pretend to be Caleb's digital avatar, speaking in first-person ("I have built...", "In my CCNA practice...") or referring to Caleb's work with proud expertise.
-- Maintain a tone that reflects a polished, secure command-line engineer. Keep answers short and under 3-4 structural blocks so the client can easily read them in a standard-sized chat widget. Use markdown properly.
+  4. Automation scripting using Python, Flask, bash, and cron.
+- Personality: Smart, highly technical yet understandable, reassuring, respectful, and direct.
 """
 
 
@@ -534,8 +544,6 @@ def ai_chat():
         if not user_message:
             return jsonify({"status": "error", "message": "message is required"}), 400
 
-        print(f"👤 AI Twin Question: '{user_message}'")
-
         context_prompt = ""
 
         for turn in history[-6:]:
@@ -553,11 +561,11 @@ def ai_chat():
             msg_lower = user_message.lower()
 
             if any(k in msg_lower for k in ["skills", "cert", "credential", "ccna", "switching", "routing"]):
-                ai_response = "I am Cisco CCNA certified in Routing & Switching, specializing in robust LAN/WAN infrastructure. I design resilient VLAN partitions, troubleshoot DR/BDR election loops, configure OSPF, and enforce STP BPDU Guards to prevent rogue loops."
+                ai_response = "I am Cisco CCNA certified in Routing & Switching, specializing in LAN/WAN infrastructure, VLANs, OSPF, and secure switching."
             elif any(k in msg_lower for k in ["contact", "hire", "email", "work", "meeting"]):
-                ai_response = "I am based in Nairobi, Kenya. You can reach out directly via the **Get in touch / Contact form** section of this site."
+                ai_response = "You can reach out directly through the Get in Touch / Contact form section of this site."
             elif any(k in msg_lower for k in ["audit", "secure", "protection", "firewall", "entropy"]):
-                ai_response = "I conduct enterprise cybersecurity audits, including endpoint policy review, firmware inspections, and brute-force resilience checks."
+                ai_response = "I conduct cybersecurity audits, endpoint policy reviews, and brute-force resilience checks."
             elif any(k in msg_lower for k in ["project", "code", "portfolio"]):
                 ai_response = "I have built interactive labs on this portfolio, including subnet tools, port diagnostics, and admin telemetry features."
             else:
@@ -576,7 +584,6 @@ def ai_chat():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-# ====== VISITOR ALERTS API ======
 @app.route("/api/track_visit", methods=["POST"])
 def track_visit():
     try:
@@ -619,10 +626,6 @@ def blog_heartbeat():
                             SET total_read_time_seconds = COALESCE(total_read_time_seconds, 0) + 5
                             WHERE slug = %s
                         """, (slug,))
-
-        except Exception as e:
-            print(f"Error updating blog heartbeat: {e}")
-            return jsonify({"status": "error"}), 500
         finally:
             conn.close()
 
@@ -632,7 +635,6 @@ def blog_heartbeat():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-# ====== BLOG CORE ACTIONS & TELEMETRY ======
 @app.route("/api/blog/reaction", methods=["POST"])
 def blog_reaction():
     try:
@@ -680,24 +682,15 @@ def blog_summarize():
         content_text = post.get("content", "")
         title_text = post.get("title", "")
 
-        prompt = f"""You are the AI Assistant for TechKnow Solutions. Please review this technical article titled "{title_text}" and summarize it:
+        prompt = f"""Summarize this technical article titled "{title_text}":
 {content_text[:3000]}
 
-Respond ONLY in the following JSON format:
-{{
-  "summary": "Exactly 3 concise sentences summarizing the complete premise.",
-  "takeaways": [
-    "Key engineering bullet points 1",
-    "Key engineering bullet points 2",
-    "Key engineering bullet points 3",
-    "Key engineering bullet points 4"
-  ],
-  "skill_level": "one word: 'Beginner', 'Intermediate', or 'Expert CCNA'"
-}}"""
+Respond only in JSON with summary, takeaways, and skill_level.
+"""
 
         ai_reply = call_gemini_api(
             prompt,
-            system_instruction="You are a meticulous network engineer and security expert. Output raw valid JSON strictly."
+            system_instruction="Output raw valid JSON strictly."
         )
 
         if ai_reply:
@@ -720,24 +713,17 @@ Respond ONLY in the following JSON format:
                 })
 
             except Exception as parse_err:
-                print("Failed to parse JSON summary, fallback to raw response:", parse_err)
-
-        takeaways = [
-            "Establishes key diagnostic criteria for validating network performance.",
-            "Demonstrates precise OSPF, DHCP, or physical layer topology commands.",
-            "Integrates enterprise security policies to protect business nodes.",
-            "Optimizes system latency by resolving redundant packet forwarding and loops."
-        ]
-
-        short_summary = (
-            f"An analytical review of standard configurations for '{title_text}'. "
-            "It covers core enterprise diagnostics, debugging protocols, and actionable configurations designed for scalable networks."
-        )
+                print("Failed to parse JSON summary:", parse_err)
 
         return jsonify({
             "status": "success",
-            "summary": short_summary,
-            "takeaways": takeaways,
+            "summary": f"An analytical review of standard configurations for '{title_text}'.",
+            "takeaways": [
+                "Establishes diagnostic criteria for network performance.",
+                "Demonstrates practical troubleshooting commands.",
+                "Integrates security policies for safer infrastructure.",
+                "Optimizes performance by reducing network issues."
+            ],
             "skill_level": "Intermediate"
         })
 
@@ -755,22 +741,17 @@ def blog_ask_about_text():
         if not selected_text:
             return jsonify({"status": "error", "message": "no text selected"}), 400
 
-        prompt = f"""The reader of my technical journal has selected/highlighted this exact text from my article "{title_text}":
+        prompt = f"""Explain this selected text from "{title_text}":
 "{selected_text}"
-
-As Caleb Muga, a professional Cisco CCNA network specialist & Cybersecurity Architect, explain or answer questions about this specific quote in 3-4 highly technical, crisp, and helpful sentences. Use markdown bolding on key commands or terms."""
+"""
 
         ai_reply = call_gemini_api(
             prompt,
-            system_instruction="You are Caleb Muga, an expert Systems Specialist. Share precise, authoritative insights."
+            system_instruction="You are Caleb Muga, an expert Systems Specialist."
         )
 
         if not ai_reply:
-            ai_reply = (
-                f"Regarding your highlighted quote from **{title_text}**: "
-                "This refers directly to core troubleshooting topologies. "
-                "In enterprise deployments, executing relevant check commands such as **show ip interface brief** ensures optimal packet routing."
-            )
+            ai_reply = f"Regarding your highlighted quote from **{title_text}**, this refers to a practical technical concept that should be checked using proper diagnostics."
 
         return jsonify({
             "status": "success",
@@ -791,59 +772,6 @@ def ai_search_engine():
             return jsonify({"status": "success", "results": []})
 
         blogs = data.load_blogs(include_drafts=False)
-        blogs_meta = [
-            {"title": b["title"], "slug": b["slug"], "url": f"/blog/{b['slug']}"}
-            for b in blogs
-        ]
-
-        site_nodes = [
-            {"title": "Brute-Force Password Simulator Lab", "url": "/#pass-audit", "category": "Interactive Labs"},
-            {"title": "Live TCP Port Scanner Diagnostics Lab", "url": "/#port-scan", "category": "Interactive Labs"},
-            {"title": "Interactive IPv4 Subnet Calculator Lab", "url": "/#subnet-calc", "category": "Interactive Labs"},
-            {"title": "VLAN Leakage Mitigation Guide Node", "url": "/#learn", "category": "Knowledge Base"},
-            {"title": "OSPF Adjacency Deadlocks & DR/BDR Loop Protection", "url": "/#learn", "category": "Knowledge Base"},
-            {"title": "Spanning-Tree BPDU Access Loop Protection", "url": "/#learn", "category": "Knowledge Base"}
-        ]
-
-        prompt = f"""The user is performing a semantic search on my professional cybersecurity & Cisco CCNA networking portfolio.
-User Query: "{query}"
-
-Available Blog Posts: {repr(blogs_meta)}
-Available Interactives/Services: {repr(site_nodes)}
-
-Match the most relevant articles, interactive tools, or competence areas. Select 1 to 4 best nodes.
-Respond STRICTLY with a valid JSON array of objects:
-[
-  {{
-    "title": "Match Name",
-    "url": "/fully/qualified/url",
-    "match_reason": "Exactly 1 short sentence why this matches the query semantic criteria."
-  }}
-]"""
-
-        ai_reply = call_gemini_api(
-            prompt,
-            system_instruction="You are the TechKnow Solutions AI Search router. Match semantic targets and output valid JSON only."
-        )
-
-        if ai_reply:
-            try:
-                clean_json = ai_reply.strip()
-
-                if clean_json.startswith("```json"):
-                    clean_json = clean_json[7:]
-
-                if clean_json.endswith("```"):
-                    clean_json = clean_json[:-3]
-
-                parsed = json.loads(clean_json.strip())
-
-                if isinstance(parsed, list):
-                    return jsonify({"status": "success", "results": parsed})
-
-            except Exception as parse_err:
-                print("Failed parsing semantic search results, switching to keyword fallback:", parse_err)
-
         results = []
         q_lower = query.lower()
 
@@ -855,24 +783,12 @@ Respond STRICTLY with a valid JSON array of objects:
                     "match_reason": "Matches query in the article title or contents."
                 })
 
-        for item in site_nodes:
-            if q_lower in item["title"].lower() or (
-                ("lab" in q_lower or "simulate" in q_lower)
-                and "Lab" in item.get("category", "")
-            ):
-                results.append({
-                    "title": item["title"],
-                    "url": item["url"],
-                    "match_reason": "Interactive diagnostic utility corresponding to query parameters."
-                })
-
         return jsonify({"status": "success", "results": results[:4]})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-# ====== AUTH ======
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -896,7 +812,6 @@ def logout():
     return redirect(url_for("index"))
 
 
-# ====== ADMIN PANEL ======
 @app.route("/admin")
 def admin():
     if not require_admin():
@@ -1003,7 +918,6 @@ def admin():
     )
 
 
-# ====== JSON endpoints admin-only ======
 @app.route("/admin/message_json/<int:mid>", methods=["GET"])
 def message_json(mid):
     if not require_admin():
@@ -1043,7 +957,6 @@ def toggle_read_json(mid):
     return jsonify({"status": new})
 
 
-# ====== TECHRICH MANAGED ARTICLES & DOCUMENT REPOSITORY ======
 @app.route("/admin/techrich/list")
 def admin_techrich_list():
     if not require_admin():
@@ -1217,7 +1130,6 @@ def admin_techrich_download(doc_id):
     )
 
 
-# ====== ADMIN ANALYTICS ======
 @app.route("/admin/analytics_data")
 def admin_analytics_data():
     if not require_admin():
@@ -1369,7 +1281,6 @@ def admin_article_stats():
     })
 
 
-# ====== MESSAGE DELETE ======
 @app.route("/admin/delete_message/<int:mid>", methods=["POST"])
 def delete_message(mid):
     if not require_admin():
@@ -1403,7 +1314,6 @@ def export_messages():
     )
 
 
-# ====== PROJECT MANAGEMENT ======
 @app.route("/admin/delete_project/<path:filename>", methods=["POST"])
 def delete_project(filename):
     if not require_admin():
@@ -1452,7 +1362,6 @@ def reject_file(filename):
     return redirect(url_for("admin"))
 
 
-# ====== CV UPLOAD ======
 @app.route("/admin/upload_cv", methods=["POST"])
 def upload_cv_admin():
     if not require_admin():
@@ -1487,6 +1396,7 @@ def upload_cv_admin():
         approve=True,
         single_replace=True
     )
+    log_upload_result("cv", fname)
 
     if err:
         flash(err)
@@ -1496,7 +1406,6 @@ def upload_cv_admin():
     return redirect(url_for("admin"))
 
 
-# ====== MEDIA UPLOADS ======
 @app.route("/admin/upload_profile_image", methods=["POST"])
 def upload_profile_image():
     if not require_admin():
@@ -1524,6 +1433,7 @@ def upload_profile_image():
         return redirect(url_for("admin"))
 
     fname, err = data.save_file_from_storage("profile", up, approve=True, single_replace=True)
+    log_upload_result("profile", fname)
 
     if err:
         flash(err)
@@ -1560,6 +1470,7 @@ def upload_hero_image():
         return redirect(url_for("admin"))
 
     fname, err = data.save_file_from_storage("hero", up, approve=True, single_replace=True)
+    log_upload_result("hero", fname)
 
     if err:
         flash(err)
@@ -1590,6 +1501,7 @@ def upload_gallery():
 
         if ext in IMAGE_EXTS or ext in VIDEO_EXTS:
             fname, err = data.save_file_from_storage("gallery", up, approve=True)
+            log_upload_result("gallery", fname)
             if fname:
                 uploaded += 1
 
@@ -1657,6 +1569,7 @@ def upload_blog_media():
 
         if ext in IMAGE_EXTS or ext in VIDEO_EXTS:
             fname, err = data.save_file_from_storage("blog_media", up, approve=True)
+            log_upload_result("blog_media", fname)
 
             if fname:
                 uploaded += 1
@@ -1704,7 +1617,7 @@ def delete_blog_media(filename):
     return redirect(url_for("admin") + target_pane)
 
 
-@app.route("/admin/sync_cloudinary", methods=["POST"])
+@app.route("/admin/sync_cloudinary", methods=["GET", "POST"])
 def admin_sync_cloudinary():
     if not require_admin():
         return redirect(url_for("login"))
@@ -1718,7 +1631,33 @@ def admin_sync_cloudinary():
     return redirect(url_for("admin"))
 
 
-# ====== BLOG ADMIN ======
+@app.route("/admin/cloudinary_status")
+def admin_cloudinary_status():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT id, name, category, url, cloudinary_id, storage_provider,
+                           content IS NULL AS content_removed,
+                           uploaded_at
+                    FROM files
+                    ORDER BY uploaded_at DESC
+                    LIMIT 20
+                """)
+                rows = cur.fetchall()
+
+                return jsonify({
+                    "cloudinary_enabled": getattr(data, "CLOUDINARY_ENABLED", False),
+                    "latest_files": [dict(r) for r in rows]
+                })
+    finally:
+        conn.close()
+
+
 @app.route("/admin/blogs/add", methods=["POST"])
 def admin_add_blog():
     if not require_admin():
@@ -1805,7 +1744,6 @@ def clear_promo_session():
     return jsonify({"status": "cleared"})
 
 
-# ====== SEO FILES ======
 @app.route("/sitemap.xml")
 def sitemap():
     try:
@@ -1878,7 +1816,6 @@ Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
     return Response(content, mimetype="text/plain")
 
 
-# ====== ERROR HANDLERS ======
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
@@ -1896,7 +1833,6 @@ def server_error(e):
     return render_template("500.html", traceback=tb), 500
 
 
-# ====== TEMPLATE FILTERS ======
 @app.template_filter("render_markdown")
 def render_markdown(text):
     if not text:
@@ -2021,7 +1957,6 @@ def get_category(text, title=""):
     return "Technology"
 
 
-# ====== MAIN ======
 if __name__ == "__main__":
     print("🔄 Creating tables...")
     data.create_tables()
