@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
+
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +18,9 @@
 
   <meta name="author" content="Caleb Muga">
 
- 
+  <link rel="canonical"
+        href="https://mga.techknowsols.gt.tc/blog/{{ post.slug }}">
+
   <!-- Google Verification -->
   <meta name="google-site-verification"
         content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
@@ -39,7 +39,8 @@
   <meta property="og:type"
         content="article">
 
-
+  <meta property="og:url"
+        content="https://mga.techknowsols.gt.tc/blog/{{ post.slug }}">
 
   <meta property="og:image"
         content="https://otxksqyjllidcsgyreve.supabase.co/storage/v1/object/public/media/profile/20250902_144247_IMG_20240214_081320_transcpr2.jpg">
@@ -106,7 +107,7 @@
     "datePublished":"{{ post.timestamp }}",
     "mainEntityOfPage":{
       "@type":"WebPage",
-      "@id":"https://portfolio-sj7l.onrender.com/blog/{{ post.slug }}"
+      "@id":"https://mga.techknowsols.gt.tc/blog/{{ post.slug }}"
     }
   }
   </script>
@@ -610,15 +611,82 @@
 
       </div>
 
-      <!-- Article -->
-
-      <article class="article-container">
-
-        <div class="article-content">
-          {{ post.content|render_markdown|safe }}
+      <!-- Article Grid Layout (Requirement 1, 5, 7) -->
+      <div class="row g-4 mt-2">
+        <div class="col-lg-8">
+          <article class="article-container" id="articleBody" style="background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 40px; position: relative;">
+            <div class="article-content" style="color: #d6deea;">
+              {{ post.content|render_markdown|safe }}
+            </div>
+          </article>
+          
+          <!-- Reaction Buttons Component (Requirement 7.A) -->
+          <div class="mt-4 p-4 rounded-4" style="background: rgba(11, 15, 25, 0.75); border: 1px solid rgba(255,255,255,0.06);">
+            <h5 class="text-white text-xs font-mono mb-3 tracking-widest"><i class="bi bi-heart-fill text-danger"></i> DID THIS HELP THE TOPOLOGY? REACT INSTANTLY</h5>
+            <div class="d-flex flex-wrap gap-2.5">
+              <button onclick="sendBlogReaction('helpful')" id="react-helpful" class="btn border border-success/20 bg-success/5 text-success hover_scale py-1.5 px-3 rounded-pill text-xs font-mono d-inline-flex align-items-center gap-1.5 transition-all">
+                🔥 Helpful <span class="badge py-0.5 px-1 bg-success/25 text-success rounded-pill ms-1" id="count-helpful">{{ post.helpful_count or 0 }}</span>
+              </button>
+              <button onclick="sendBlogReaction('useful')" id="react-useful" class="btn border border-primary/20 bg-primary/5 text-primary hover_scale py-1.5 px-3 rounded-pill text-xs font-mono d-inline-flex align-items-center gap-1.5 transition-all">
+                👍 Useful <span class="badge py-0.5 px-1 bg-primary/25 text-primary rounded-pill ms-1" id="count-useful">{{ post.useful_count or 0 }}</span>
+              </button>
+              <button onclick="sendBlogReaction('learned')" id="react-learned" class="btn border border-warning/20 bg-warning/5 text-warning hover_scale py-1.5 px-3 rounded-pill text-xs font-mono d-inline-flex align-items-center gap-1.5 transition-all">
+                💡 Learned Something <span class="badge py-0.5 px-1 bg-warning/25 text-warning rounded-pill ms-1" id="count-learned">{{ post.learned_count or 0 }}</span>
+              </button>
+              <button onclick="sendBlogReaction('loved')" id="react-loved" class="btn border border-danger/20 bg-danger/5 text-danger hover_scale py-1.5 px-3 rounded-pill text-xs font-mono d-inline-flex align-items-center gap-1.5 transition-all">
+                ❤️ Loved It <span class="badge py-0.5 px-1 bg-danger/25 text-danger rounded-pill ms-1" id="count-loved">{{ post.loved_count or 0 }}</span>
+              </button>
+            </div>
+          </div>
         </div>
-
-      </article>
+        
+        <div class="col-lg-4 d-none d-lg-block">
+          <div class="sticky-top" style="top: 24px; z-index: 10;">
+            <!-- AI Blog Assistant Companion Card -->
+            <div class="card-fire p-4 mb-4" style="background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;">
+              <h6 class="text-white text-xs font-mono tracking-widest mb-3 d-flex align-items-center gap-2">
+                <span class="d-inline-block bg-success rounded-circle animate-pulse" style="width: 8px; height: 8px;"></span> AI INTEL & KEY CONCEPTS
+              </h6>
+              <p class="text-muted small leading-relaxed mb-4" style="font-size: 0.8rem;">
+                Let Caleb Muga's system twin summarize the code blocks, parse configurations, and give recommended difficulty level criteria.
+              </p>
+              <button onclick="triggerAISummarize()" id="ai-summarize-btn" class="btn btn-warning text-black w-100 py-2 px-3 rounded-3 font-mono font-semibold text-xs d-flex align-items-center justify-content-center gap-2 shadow" style="background: #fbbf24; border: none; transition: 0.3s;">
+                <i class="bi bi-magic"></i> Summarize This Article
+              </button>
+            </div>
+            
+            <!-- Floating HUD parameters / statistics tracker card -->
+            <div class="card-fire p-4 mb-4" style="background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;">
+              <h6 class="text-white text-xs font-mono tracking-widest mb-3">SCROLL PROGRESS STATUS</h6>
+              <div class="d-flex align-items-center gap-3">
+                <!-- Canvas Percentage Circle SVG -->
+                <div class="position-relative" style="width: 58px; height: 58px;">
+                  <svg class="w-100 h-100 transform -rotate-90" viewBox="0 0 36 36">
+                    <path class="text-white/10" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path id="svgProgressCircle" class="text-success" stroke-width="3" stroke-dasharray="0, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <div class="position-absolute start-50 top-50 translate-middle text-success font-mono font-bold text-xs" id="hudProgressText">0%</div>
+                </div>
+                <div>
+                  <div id="hudTimeText" class="text-white font-mono font-medium text-xs">{{ reading_time }} min remaining</div>
+                  <div id="hudScrolledText" class="text-muted text-xs font-mono" style="font-size: 0.72rem;">0% total scrollover</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Dynamic Table of Contents card (Requirement 1.C) -->
+            <div class="card-fire p-4 shadow-lg" style="background: rgba(11, 15, 25, 0.75); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;">
+              <h6 class="text-white text-xs font-mono tracking-widest mb-3.5 d-flex align-items-center justify-content-between">
+                <span>TABLE OF CONTENTS</span>
+                <i class="bi bi-list-task text-success"></i>
+              </h6>
+              <div id="table-of-contents-container" class="small font-mono text-muted overflow-auto" style="max-height: 250px;">
+                <p class="text-xs text-secondary-subtle">Analyzing headings...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Share -->
 
@@ -669,7 +737,7 @@
       </div>
 
       <div class="footer-note">
-        Crafted with insight • Powered by TechKnow Solutions
+        Crafted with insight • Powered by TechKnow Solutions &nbsp;|&nbsp; <a href="https://github.com/caleb993/technowsol.git" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;"><i class="bi bi-github"></i> GitHub Codebase</a>
       </div>
 
     </div>
@@ -899,6 +967,363 @@
       }, 5000);
     })();
 
+  </script>
+
+  <!-- Floating Circular Percentage Indicator (Requirement 1.A) -->
+  <div id="floating-progress-hud" class="position-fixed" style="bottom: 24px; right: 24px; z-index: 1040; width: 66px; height: 66px; background: rgba(7, 17, 31, 0.95); border: 2px solid rgba(16,185,129,0.35); border-radius: 50%; padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); opacity: 0; pointer-events: none; transition: all 0.35s ease;">
+    <div class="position-relative w-100 h-100">
+      <svg class="w-100 h-100" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+        <path class="text-white/5" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-dasharray="100, 100" />
+        <path id="floatingProgressCircle" class="text-success" stroke-width="3.5" stroke-dasharray="0, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+      </svg>
+      <div class="position-absolute start-50 top-50 translate-middle text-success font-mono font-bold" style="font-size: 11px;" id="floatingProgressText">0%</div>
+    </div>
+  </div>
+
+  <!-- AI Summary Modal (Requirement 1.E) -->
+  <div class="modal fade" id="aiSummaryModal" tabindex="-1" aria-labelledby="aiSummaryModalLabel" aria-hidden="true" style="backdrop-filter: blur(8px);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-white" style="background: rgba(11, 15, 25, 0.95); border: 1px solid rgba(251, 191, 36, 0.25); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.7);">
+        <div class="modal-header border-bottom border-white/5 pb-3">
+          <h5 class="modal-title font-mono text-warning text-sm d-flex align-items-center gap-2" id="aiSummaryModalLabel">
+            <i class="bi bi-cpu-fill text-warning"></i> TECHKNOW ENGINE SUMMARY DISPATCH
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4 font-mono">
+          <div id="ai-summary-loading" class="text-center py-3">
+            <div class="spinner-border text-warning" role="status" style="width: 2rem; height: 2rem;"></div>
+            <p class="text-muted text-xs mt-3">Synthesizing article nodes, resolving topologies...</p>
+          </div>
+          <div id="ai-summary-error" class="alert alert-danger text-xs mb-0 d-none" style="background: rgba(220,53,69,0.1); border-color: rgba(220,53,69,0.3); color: #ea868f;">
+            Failed to fetch summary from system twin. Note: configure valid GEMINI_API_KEY inside workspace settings.
+          </div>
+          <div id="ai-summary-content" class="d-none">
+            <div class="mb-4">
+              <span class="badge py-1 px-2.5 bg-warning/15 text-warning rounded-pill text-xs border border-warning/20 mb-2">SUMMARY SENTENCE DECRYPTED</span>
+              <p class="text-secondary-subtle small leading-relaxed mb-0" id="ai-summary-text"></p>
+            </div>
+            
+            <div class="mb-4">
+              <span class="badge py-1 px-2.5 bg-success/15 text-success rounded-pill text-xs border border-success/20 mb-2.5">ENGINEERING TAKEAWAYS</span>
+              <ul class="text-muted small ps-3 mb-0" id="ai-summary-takeaways" style="list-style-type: square; line-height: 1.8;">
+                <!-- Filled dynamically -->
+              </ul>
+            </div>
+            
+            <div class="p-3 bg-black/40 border border-white/5 rounded-3 d-flex align-items-center justify-content-between">
+              <span class="text-muted text-xs">RECOMMENDED DIFFICULTY LEVEL:</span>
+              <span class="badge py-1 px-3 bg-primary/20 text-white font-mono text-xs border border-primary/30" id="ai-summary-skill">Expert CCNA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Smart Quote Prompt Popover (Requirement 1.F) -->
+  <div id="quote-selector-hud" class="position-absolute d-none bg-black border border-warning-subtle p-1 rounded-3 d-flex gap-1 shadow-lg" style="z-index: 1050; border-radius: 8px; border: 1px solid rgba(251,191,36,0.35); background: #07111f; padding: 4px !important;">
+    <button onclick="handleQuoteAction('copy')" class="btn btn-xs btn-dark py-1 px-2 text-white font-mono text-xs d-flex align-items-center gap-1 border-0" style="font-size: 0.7rem; background: transparent; cursor: pointer;"><i class="bi bi-clipboard"></i> Copy</button>
+    <button onclick="handleQuoteAction('ask_ai')" class="btn btn-xs btn-warning py-1 px-2 text-black font-mono text-xs d-flex align-items-center gap-1 border-0 rounded-2" style="font-size: 0.7rem; background: #fbbf24; font-weight: bold; cursor: pointer;"><i class="bi bi-magic"></i> Ask AI</button>
+  </div>
+
+  <!-- AI Query Explainer Result Overlay Modal -->
+  <div class="modal fade" id="aiQuoteModal" tabindex="-1" aria-labelledby="aiQuoteModalLabel" aria-hidden="true" style="backdrop-filter: blur(8px);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-white" style="background: rgba(11, 15, 25, 0.95); border: 1px solid rgba(251, 191, 36, 0.25); border-radius: 20px;">
+        <div class="modal-header border-bottom border-white/5 pb-3">
+          <h5 class="modal-title font-mono text-warning text-sm d-flex align-items-center gap-2" id="aiQuoteModalLabel">
+            <i class="bi bi-robot text-warning"></i> CALEB'S AI SPECIALIST EXPLAINER
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4 font-mono">
+          <div class="p-3 rounded-3 bg-black/40 border border-white/5 mb-3">
+            <div class="text-muted text-xs mb-1">HIGHLIGHTED PHRASE:</div>
+            <p class="text-success small fst-italic mb-0" id="ai-quote-highlighted-text"></p>
+          </div>
+          <div class="pt-2">
+            <div class="text-muted text-xs mb-1.5"><i class="bi bi-chat-left-text-fill text-warning"></i> DYNAMIC ANALYSIS:</div>
+            <div id="ai-quote-loading" class="text-center py-2 d-none">
+              <div class="spinner-border spinner-border-sm text-warning" role="status"></div>
+              <span class="text-muted text-xs ms-2">Synthesizing command criteria...</span>
+            </div>
+            <div id="ai-quote-result" class="text-secondary-subtle small leading-relaxed" style="font-size: 0.85rem; line-height: 1.8;">
+              <!-- Explainer loads here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Bootstrap JS to fully support modals -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // --- Front-end Core Blog Enhancements (Requirement 1 & 7) ---
+
+    let selectedQuoteText = "";
+
+    document.addEventListener("DOMContentLoaded", function() {
+      // 1. Generate Table of Contents
+      const articleTextContainer = document.querySelector(".article-content");
+      if (articleTextContainer) {
+        const hTags = articleTextContainer.querySelectorAll("h1, h2, h3");
+        const tocContainer = document.getElementById("table-of-contents-container");
+        if (tocContainer && hTags.length > 0) {
+          tocContainer.innerHTML = "";
+          const list = document.createElement("ul");
+          list.className = "list-unstyled mb-0 d-flex flex-column gap-2.5";
+          
+          hTags.forEach((heading, idx) => {
+            if (!heading.id) {
+              heading.id = "heading-node-" + idx;
+            }
+            
+            const item = document.createElement("li");
+            
+            let indentClass = "";
+            let tagPrefix = "■";
+            if (heading.tagName.toLowerCase() === "h2") {
+              indentClass = "ps-2 text-xs";
+              tagPrefix = "▸";
+            } else if (heading.tagName.toLowerCase() === "h3") {
+              indentClass = "ps-4 text-xs";
+              tagPrefix = "▪";
+            } else {
+              indentClass = "fw-semibold text-xs";
+              tagPrefix = "✦";
+            }
+            
+            item.innerHTML = `<a href="#${heading.id}" class="text-decoration-none text-muted-hover active-toc-ref" data-target-id="${heading.id}" style="color: #64748b; transition: color 0.15s;"><span class="text-success text-xs me-1.5">${tagPrefix}</span>${heading.innerText}</a>`;
+            item.className = indentClass;
+            list.appendChild(item);
+          });
+          tocContainer.appendChild(list);
+        } else if (tocContainer) {
+          tocContainer.innerHTML = "<p class='text-xs text-secondary-subtle mb-0'>No headings detected in article framework.</p>";
+        }
+      }
+
+      // 2. Setup Selection Text Highlighter
+      const articleEl = document.getElementById("articleBody");
+      const selectorHud = document.getElementById("quote-selector-hud");
+      
+      if (articleEl && selectorHud) {
+        document.addEventListener("selectionchange", function() {
+          const selection = window.getSelection();
+          const selectedText = selection.toString().trim();
+          
+          if (selectedText.length > 6 && articleEl.contains(selection.anchorNode)) {
+            selectedQuoteText = selectedText;
+            
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            
+            selectorHud.classList.remove("d-none");
+            selectorHud.style.top = (window.scrollY + rect.top - 45) + "px";
+            selectorHud.style.left = (window.scrollX + rect.left + (rect.width / 2) - 45) + "px";
+          } else {
+            // Keep active slightly to prevent click race conditions
+            setTimeout(() => {
+              if (window.getSelection().toString().trim() === "") {
+                selectorHud.classList.add("d-none");
+              }
+            }, 250);
+          }
+        });
+      }
+    });
+
+    // 3. Live Scroll Indicators & Section Tracking
+    window.addEventListener("scroll", function() {
+      const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? Math.round((winScroll / height) * 100) : 0;
+      
+      const bar = document.getElementById("progressBar");
+      if (bar) bar.style.width = scrolled + "%";
+      
+      const progressPathSidebar = document.getElementById("svgProgressCircle");
+      if (progressPathSidebar) {
+        progressPathSidebar.setAttribute("stroke-dasharray", `${scrolled}, 100`);
+      }
+      const progressTextSidebar = document.getElementById("hudProgressText");
+      if (progressTextSidebar) {
+        progressTextSidebar.innerText = scrolled + "%";
+      }
+      const textScrolledLabel = document.getElementById("hudScrolledText");
+      if (textScrolledLabel) {
+        textScrolledLabel.innerText = `${scrolled}% scrolled`;
+      }
+      
+      const flHud = document.getElementById("floating-progress-hud");
+      if (flHud) {
+        if (scrolled > 5 && scrolled < 99) {
+          flHud.style.opacity = "1";
+          flHud.style.pointerEvents = "auto";
+        } else {
+          flHud.style.opacity = "0";
+          flHud.style.pointerEvents = "none";
+        }
+      }
+      const progressPathFloat = document.getElementById("floatingProgressCircle");
+      if (progressPathFloat) {
+        progressPathFloat.setAttribute("stroke-dasharray", `${scrolled}, 100`);
+      }
+      const progressTextFloat = document.getElementById("floatingProgressText");
+      if (progressTextFloat) {
+        progressTextFloat.innerText = scrolled + "%";
+      }
+      
+      const totalTimeSpan = parseInt("{{ reading_time }}") || 5;
+      const calculatedRem = Math.ceil(totalTimeSpan * (1 - scrolled / 100));
+      const textTimeLabel = document.getElementById("hudTimeText");
+      if (textTimeLabel) {
+        if (scrolled >= 98) {
+          textTimeLabel.innerHTML = "<i class='bi bi-check-circle-fill text-success'></i> Completed";
+        } else {
+          textTimeLabel.innerText = `${calculatedRem} min remaining`;
+        }
+      }
+      
+      const headings = document.querySelectorAll(".article-content h1, .article-content h2, .article-content h3");
+      let activeId = "";
+      headings.forEach(heading => {
+        const top = heading.getBoundingClientRect().top;
+        if (top < 150) {
+          activeId = heading.id;
+        }
+      });
+      
+      if (activeId) {
+        document.querySelectorAll(".active-toc-ref").forEach(ln => {
+          ln.style.setProperty("color", "#64748b", "important");
+        });
+        const activeLink = document.querySelector(`.active-toc-ref[data-target-id="${activeId}"]`);
+        if (activeLink) {
+          activeLink.style.setProperty("color", "#10b981", "important");
+        }
+      }
+    });
+
+    // 4. Reactions Dispatcher
+    function sendBlogReaction(type) {
+      const slug = "{{ post.slug }}";
+      fetch("/api/blog/reaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slug, reaction: type })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          const helpfulIn = document.getElementById("count-helpful");
+          const usefulIn = document.getElementById("count-useful");
+          const learnedIn = document.getElementById("count-learned");
+          const lovedIn = document.getElementById("count-loved");
+          
+          if (helpfulIn && data.counts.helpful !== undefined) helpfulIn.innerText = data.counts.helpful;
+          if (usefulIn && data.counts.useful !== undefined) usefulIn.innerText = data.counts.useful;
+          if (learnedIn && data.counts.learned !== undefined) learnedIn.innerText = data.counts.learned;
+          if (lovedIn && data.counts.loved !== undefined) lovedIn.innerText = data.counts.loved;
+          
+          const btn = document.getElementById("react-" + type);
+          if (btn) {
+            btn.classList.add("bg-success/20");
+            btn.style.setProperty("transform", "scale(1.15)");
+            setTimeout(() => { btn.style.setProperty("transform", "scale(1)"); }, 300);
+          }
+        }
+      }).catch(err => console.error("Could not register reaction:", err));
+    }
+
+    // 5. Trigger AI Article Summarizer
+    function triggerAISummarize() {
+      const slug = "{{ post.slug }}";
+      const modalObj = new bootstrap.Modal(document.getElementById('aiSummaryModal'));
+      modalObj.show();
+      
+      document.getElementById("ai-summary-loading").classList.remove("d-none");
+      document.getElementById("ai-summary-error").classList.add("d-none");
+      document.getElementById("ai-summary-content").classList.add("d-none");
+      
+      fetch("/api/blog/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: slug })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("ai-summary-loading").classList.add("d-none");
+        if (data.status === "success") {
+          document.getElementById("ai-summary-text").innerText = data.summary;
+          
+          const takUl = document.getElementById("ai-summary-takeaways");
+          takUl.innerHTML = "";
+          data.takeaways.forEach(item => {
+            const li = document.createElement("li");
+            li.innerText = item;
+            takUl.appendChild(li);
+          });
+          
+          document.getElementById("ai-summary-skill").innerText = data.skill_level;
+          document.getElementById("ai-summary-content").classList.remove("d-none");
+        } else {
+          document.getElementById("ai-summary-error").classList.remove("d-none");
+        }
+      })
+      .catch(err => {
+        document.getElementById("ai-summary-loading").classList.add("d-none");
+        document.getElementById("ai-summary-error").classList.remove("d-none");
+      });
+    }
+
+    // 6. Highlight popup and Smart Quote Ask AI
+    function handleQuoteAction(action) {
+      if (!selectedQuoteText) return;
+      
+      // Hide HUD immediately
+      document.getElementById("quote-selector-hud").classList.add("d-none");
+      
+      if (action === "copy") {
+        navigator.clipboard.writeText(selectedQuoteText).then(() => {
+          alert("Quote copied to diagnostic clipboard!");
+        });
+      } else if (action === "ask_ai") {
+        const modalObj = new bootstrap.Modal(document.getElementById('aiQuoteModal'));
+        modalObj.show();
+        
+        document.getElementById("ai-quote-highlighted-text").innerText = `"${selectedQuoteText}"`;
+        document.getElementById("ai-quote-loading").classList.remove("d-none");
+        document.getElementById("ai-quote-result").innerText = "";
+        
+        fetch("/api/blog/ask_about_text", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ selected_text: selectedQuoteText, title: "{{ post.title }}" })
+        })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("ai-quote-loading").classList.add("d-none");
+          if (data.status === "success" && data.reply) {
+            // Safe format markdown slightly to HTML
+            let formatted = data.reply.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            document.getElementById("ai-quote-result").innerHTML = formatted;
+          } else {
+            document.getElementById("ai-quote-result").innerText = "Under current firewall restrictions, cannot build routing to Caleb's specialized twin engine.";
+          }
+        })
+        .catch(err => {
+          document.getElementById("ai-quote-loading").classList.add("d-none");
+          document.getElementById("ai-quote-result").innerText = "Under current firewall restrictions, cannot build routing to Caleb's specialized twin engine.";
+        });
+      }
+      
+      // Clear selections gracefully
+      window.getSelection().removeAllRanges();
+    }
   </script>
 
 </body>
