@@ -86,6 +86,11 @@ def add_security_headers(response):
 
 
 def get_or_create_visitor_id():
+    cookie_vid = request.cookies.get("visitor_id")
+    if cookie_vid:
+        session["visitor_id"] = cookie_vid
+        return cookie_vid
+
     if "visitor_id" not in session:
         session["visitor_id"] = secrets.token_hex(16)
     return session["visitor_id"]
@@ -173,10 +178,16 @@ def is_probably_bot(user_agent: str) -> bool:
 
 
 def get_client_ip():
-    forwarded = request.headers.get("X-Forwarded-For", "")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.headers.get("X-Real-IP") or request.remote_addr or "Unknown"
+    for header in ["X-Forwarded-For", "X-Real-IP", "CF-Connecting-IP"]:
+        val = request.headers.get(header, "")
+        if val:
+            return val.split(",")[0].strip()
+    
+    environ_forwarded = request.environ.get("HTTP_X_FORWARDED_FOR", "")
+    if environ_forwarded:
+        return environ_forwarded.split(",")[0].strip()
+        
+    return request.remote_addr or "Unknown"
 
 
 def ensure_realtime_tracking_tables():
@@ -235,7 +246,7 @@ except Exception as e:
     print("⚠️ Realtime presence table setup skipped:", e)
 
 
-def record_presence_event(path=None, event_type="heartbeat"):
+def record_presence_event(path=None, event_type="heartbeat", client_visitor_id=None):
     """
     Real-time visitor presence.
     enter/heartbeat marks active immediately.
@@ -245,8 +256,8 @@ def record_presence_event(path=None, event_type="heartbeat"):
     if is_probably_bot(ua):
         return None
 
-    visitor_id = get_or_create_visitor_id()
-    session_id = session.get("visitor_id")
+    visitor_id = client_visitor_id or get_or_create_visitor_id()
+    session_id = client_visitor_id or session.get("visitor_id")
     ip = get_client_ip()
     current_path = path or "/"
     event_type = event_type if event_type in ["enter", "heartbeat", "leave"] else "heartbeat"
@@ -310,10 +321,21 @@ def presence_tracking_script():
 
   const path = window.location.pathname || "/";
 
+  function getVisitorId() {
+    let vid = localStorage.getItem("__muga_visitor_id");
+    if (!vid) {
+      vid = 'muga_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 11);
+      localStorage.setItem("__muga_visitor_id", vid);
+    }
+    document.cookie = "visitor_id=" + vid + "; path=/; max-age=31536000; SameSite=Lax";
+    return vid;
+  }
+
   function payload(eventType) {
     return JSON.stringify({
       path: path,
       event_type: eventType,
+      visitor_id: getVisitorId(),
       ts: Date.now()
     });
   }
@@ -349,7 +371,7 @@ def presence_tracking_script():
 
   const heartbeat = setInterval(function () {
     if (!document.hidden) postPresence('heartbeat');
-  }, 4000); // Optimized rapid heartbeat (4 seconds)
+  }, 4500); // Optimized rapid heartbeat (4.5 seconds)
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -833,6 +855,7 @@ def track_visit():
         req_data = request.json or {}
         path = req_data.get("path", "/")
         event_type = req_data.get("event_type", "heartbeat")
+        client_visitor_id = req_data.get("visitor_id")
 
         # Keep your historical counter table for analytics.
         if event_type == "enter":
@@ -840,10 +863,14 @@ def track_visit():
                 get_client_ip(),
                 request.headers.get("User-Agent", "Unknown"),
                 path,
-                get_or_create_visitor_id()
+                client_visitor_id or get_or_create_visitor_id()
             )
 
-        presence = record_presence_event(path, event_type if event_type in ["enter", "heartbeat"] else "heartbeat")
+        presence = record_presence_event(
+            path, 
+            event_type if event_type in ["enter", "heartbeat"] else "heartbeat",
+            client_visitor_id=client_visitor_id
+        )
 
         return jsonify({
             "status": "success",
@@ -859,8 +886,9 @@ def track_leave():
     try:
         req_data = request.json or {}
         path = req_data.get("path", "/")
+        client_visitor_id = req_data.get("visitor_id")
 
-        presence = record_presence_event(path, "leave")
+        presence = record_presence_event(path, "leave", client_visitor_id=client_visitor_id)
 
         return jsonify({
             "status": "success",
