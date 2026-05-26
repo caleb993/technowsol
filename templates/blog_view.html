@@ -7,11 +7,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
+  <link rel="canonical"
+        href="https://mga.techknowsols.gt.tc/blog/{{ post.slug }}">
 
   <!-- Performance / Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+  <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
 
   <link rel="preload"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
@@ -20,8 +25,9 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap">
 
+  <!-- Brand Image -->
   <link rel="preload"
-        href="/static/apple-touch-icon.png"
+        href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png"
         as="image">
 
   <!-- Primary SEO -->
@@ -33,27 +39,52 @@
   <meta name="keywords"
         content="Cybersecurity, Networking, AI, ICT Support, Python Automation, TechKnow Solutions, Caleb Muga">
 
-  <meta name="author" content="Caleb Muga">
-  <meta name="creator" content="Caleb Muga">
-  <meta name="publisher" content="TechKnow Solutions">
-  <meta name="robots" content="index, follow">
+  <meta name="author"
+        content="Caleb Muga">
+
+  <meta name="creator"
+        content="Caleb Muga">
+
+  <meta name="publisher"
+        content="TechKnow Solutions">
+
+  <meta name="robots"
+        content="index, follow">
 
   <!-- Brand SEO -->
-  <meta name="application-name" content="TechKnow Solutions">
-  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
-  <meta name="theme-color" content="#07111f">
-  <meta name="language" content="English">
-  <meta name="rating" content="general">
-  <meta name="distribution" content="global">
-  <meta name="geo.region" content="KE-30">
-  <meta name="geo.placename" content="Nairobi">
+  <meta name="application-name"
+        content="TechKnow Solutions">
+
+  <meta name="apple-mobile-web-app-title"
+        content="TechKnow Solutions">
+
+  <meta name="theme-color"
+        content="#07111f">
+
+  <meta name="language"
+        content="English">
+
+  <meta name="rating"
+        content="general">
+
+  <meta name="distribution"
+        content="global">
+
+  <meta name="geo.region"
+        content="KE-30">
+
+  <meta name="geo.placename"
+        content="Nairobi">
 
   <!-- Open Graph / Facebook / WhatsApp -->
-  <meta property="og:site_name" content="TechKnow Solutions">
+  <meta property="og:site_name"
+        content="TechKnow Solutions">
+
   <meta property="og:url"
         content="https://mga.techknowsols.gt.tc/blog/{{ post.slug }}">
 
-  <meta property="og:type" content="article">
+  <meta property="og:type"
+        content="article">
 
   <meta property="og:title"
         content="{{ post.title }}">
@@ -61,14 +92,26 @@
   <meta property="og:description"
         content="{{ post.content|clean_excerpt(180) }}">
 
+  {% set first_image = post.content|get_first_image %}
+
   <meta property="og:image"
-        content="{{ post.content|get_first_image or 'https://mga.techknowsols.gt.tc/static/apple-touch-icon.png' }}">
+        content="{% if first_image and first_image.startswith('http') %}{{ first_image }}{% elif first_image %}https://mga.techknowsols.gt.tc{{ first_image }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
+
+  <meta property="og:image:secure_url"
+        content="{% if first_image and first_image.startswith('http') %}{{ first_image }}{% elif first_image %}https://mga.techknowsols.gt.tc{{ first_image }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
+
+  <meta property="og:image:width"
+        content="1200">
+
+  <meta property="og:image:height"
+        content="630">
 
   <meta property="og:image:alt"
         content="{{ post.title }} | TechKnow Solutions">
 
   <!-- Twitter / X -->
-  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:card"
+        content="summary_large_image">
 
   <meta name="twitter:site"
         content="@techknowsols">
@@ -80,21 +123,21 @@
         content="{{ post.content|clean_excerpt(180) }}">
 
   <meta name="twitter:image"
-        content="{{ post.content|get_first_image or 'https://mga.techknowsols.gt.tc/static/apple-touch-icon.png' }}">
+        content="{% if first_image and first_image.startswith('http') %}{{ first_image }}{% elif first_image %}https://mga.techknowsols.gt.tc{{ first_image }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
 
   <!-- Unified Brand Icons -->
   <link rel="icon"
         type="image/png"
         sizes="32x32"
-        href="/static/apple-touch-icon.png">
+        href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
 
   <link rel="icon"
         type="image/png"
         sizes="16x16"
-        href="/static/apple-touch-icon.png">
+        href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
 
   <link rel="apple-touch-icon"
-        href="/static/apple-touch-icon.png">
+        href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
 
   <link rel="manifest"
         href="/site.webmanifest">
@@ -168,7 +211,7 @@
 
         "description":"{{ post.content|clean_excerpt(170) }}",
 
-        "image":"{{ post.content|get_first_image or 'https://mga.techknowsols.gt.tc/static/apple-touch-icon.png' }}",
+        "image":"{% if first_image and first_image.startswith('http') %}{{ first_image }}{% elif first_image %}https://mga.techknowsols.gt.tc{{ first_image }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}",
 
         "datePublished":"{{ post.timestamp }}",
 
