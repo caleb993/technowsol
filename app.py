@@ -22,7 +22,7 @@ import data
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "mga_techknowsols_secure_key_1a2b3c4d")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(16))
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY", "calebadmin")
 
@@ -38,19 +38,17 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
 @app.before_request
 def redirect_to_custom_domain():
-    # If currently accessing via the custom domain, do NOT redirect!
-    forwarded_host = request.headers.get("X-Forwarded-Host", "")
-    if "techknowsols.gt.tc" in forwarded_host or "techknowsols.gt.tc" in request.host:
-        return
-
     if "onrender.com" in request.host:
-        path = request.path or "/"
-        excluded = ("/admin", "/login", "/logout", "/api")
-        if not path.startswith(excluded):
-            return redirect(
-                "https://mga.techknowsols.gt.tc" + request.full_path,
-                code=301
-            )
+        target = request.path
+
+        # preserve query string safely
+        if request.query_string:
+            target += "?" + request.query_string.decode()
+
+        return redirect(
+            f"https://mga.techknowsols.gt.tc{target}",
+            code=301
+        )
 
 
 @app.after_request
@@ -165,9 +163,8 @@ seed_blog_assets()
 def is_probably_bot(user_agent: str) -> bool:
     ua = (user_agent or "").lower()
     return any(bot in ua for bot in [
-        "googlebot", "bingbot", "yandexbot", "baiduspider", "duckduckbot",
-        "yahoo! slurp", "ia_archiver", "spider", "crawl", "slurp", "monitor",
-        "uptime", "lighthouse", "facebookexternalhit",
+        "bot", "spider", "crawl", "slurp", "tracker", "monitor",
+        "uptime", "lighthouse", "headless", "preview", "facebookexternalhit",
         "whatsapp", "telegrambot", "discordbot", "linkedinbot"
     ])
 
@@ -349,7 +346,7 @@ def presence_tracking_script():
 
   const heartbeat = setInterval(function () {
     if (!document.hidden) postPresence('heartbeat');
-  }, 4000); // Optimized rapid heartbeat (4 seconds)
+  }, 10000);
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
@@ -1179,10 +1176,8 @@ def admin():
         prof=prof_name,
         hero=hero_name,
         gal=gal,
-        gallery_images=gal,
         blog_media=blog_media_list,
         blogs=blogs,
-        blog_posts=blogs,
         subscribers=subscribers,
         daily_visits=data.get_daily_visits_summary(),
         total_visits=data.get_total_visits_count(),
@@ -1427,7 +1422,7 @@ def active_users_data():
                     SET is_active=FALSE,
                         left_at=COALESCE(left_at, last_seen)
                     WHERE is_active=TRUE
-                    AND last_seen < now() - INTERVAL '12 seconds'
+                    AND last_seen < now() - INTERVAL '75 seconds'
                 """)
 
                 cur.execute("""
@@ -1435,7 +1430,7 @@ def active_users_data():
                     FROM visitor_sessions
                     WHERE is_active=TRUE
                     AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    AND last_seen >= now() - INTERVAL '75 seconds'
                 """)
                 row = cur.fetchone()
                 count = row[0] if row else 0
@@ -1445,7 +1440,7 @@ def active_users_data():
                     FROM visitor_sessions
                     WHERE is_active=TRUE
                     AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    AND last_seen >= now() - INTERVAL '75 seconds'
                     GROUP BY current_path
                     ORDER BY cnt DESC
                     LIMIT 6
@@ -1464,7 +1459,7 @@ def active_users_data():
                     FROM visitor_sessions
                     WHERE is_active=TRUE
                     AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    AND last_seen >= now() - INTERVAL '75 seconds'
                     ORDER BY last_seen DESC
                     LIMIT 10
                 """)
@@ -1511,7 +1506,7 @@ def admin_article_stats():
                     SET is_active=FALSE,
                         left_at=COALESCE(left_at, last_seen)
                     WHERE is_active=TRUE
-                    AND last_seen < now() - INTERVAL '12 seconds'
+                    AND last_seen < now() - INTERVAL '75 seconds'
                 """)
 
                 cur.execute("""
@@ -1519,7 +1514,7 @@ def admin_article_stats():
                     FROM visitor_sessions
                     WHERE is_active=TRUE
                     AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    AND last_seen >= now() - INTERVAL '75 seconds'
                 """)
                 row = cur.fetchone()
                 active_users = row[0] if row else 0
@@ -1529,7 +1524,7 @@ def admin_article_stats():
                     FROM visitor_sessions
                     WHERE is_active=TRUE
                     AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    AND last_seen >= now() - INTERVAL '75 seconds'
                     GROUP BY current_path
                     ORDER BY cnt DESC
                     LIMIT 6
@@ -1548,7 +1543,7 @@ def admin_article_stats():
                     FROM visitor_sessions
                     WHERE is_active=TRUE
                     AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    AND last_seen >= now() - INTERVAL '75 seconds'
                     ORDER BY last_seen DESC
                     LIMIT 10
                 """)
