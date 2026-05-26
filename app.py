@@ -39,10 +39,13 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 @app.before_request
 def redirect_to_custom_domain():
     if "onrender.com" in request.host:
-        return redirect(
-            "https://mga.techknowsols.gt.tc" + request.full_path,
-            code=301
-        )
+        path = request.path or "/"
+        excluded = ("/admin", "/login", "/logout", "/api")
+        if not path.startswith(excluded):
+            return redirect(
+                "https://mga.techknowsols.gt.tc" + request.full_path,
+                code=301
+            )
 
 
 @app.after_request
