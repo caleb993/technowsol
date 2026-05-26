@@ -2,121 +2,125 @@
 <html lang="en">
 
 <head>
-
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- canonical url -->
+  <!-- Canonical URL -->
   <link rel="canonical" href="https://mga.techknowsols.gt.tc{{ request.path }}">
 
-  <!-- Preloads for Performance -->
+  <!-- Performance / Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
-  <link rel="preload" href="/static/favicon.png" as="image">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="preload" href="/static/apple-touch-icon.png" as="image">
 
-  <!-- Advanced Brand SEO Meta (Requirement 3) -->
-  <meta name="application-name" content="TechKnow Solutions">
-  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
-  <meta property="og:site_name" content="TechKnow Solutions">
-  <meta name="twitter:site" content="@techknowsols">
+  <!-- SEO -->
+  <title>TechKnow Solutions by Caleb Muga | Cybersecurity, Networking, AI & Web Systems</title>
+  <meta name="description" content="TechKnow Solutions by Caleb Muga offers cybersecurity awareness, enterprise networking, ICT support, AI automation, cloud integrations, and modern web system development.">
+  <meta name="author" content="Caleb Muga">
   <meta name="creator" content="Caleb Muga">
   <meta name="publisher" content="TechKnow Solutions">
+  <meta name="application-name" content="TechKnow Solutions">
+  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
   <meta name="theme-color" content="#07111f">
-  <meta name="geo.region" content="KE-30">
-  <meta name="geo.placename" content="Nairobi">
   <meta name="language" content="English">
   <meta name="rating" content="general">
   <meta name="distribution" content="global">
-  <meta name="revisit-after" content="2 days">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi">
+
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+  <meta property="og:site_name" content="TechKnow Solutions">
   <meta property="og:url" content="https://mga.techknowsols.gt.tc{{ request.path }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TechKnow Solutions — Cybersecurity, AI & Systems Development">
+  <meta property="og:description" content="Cybersecurity awareness, Cisco networking, ICT support, Python automation, AI systems, cloud solutions, and modern web engineering by Caleb Muga.">
+  <meta property="og:image" content="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <meta property="og:image:alt" content="TechKnow Solutions by Caleb Muga">
 
-  <!-- SEO -->
-  <title>TechKnow Solutions • Cybersecurity, AI & Systems Development by Caleb Muga</title>
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@techknowsols">
+  <meta name="twitter:title" content="TechKnow Solutions — Cybersecurity, AI & Systems Development">
+  <meta name="twitter:description" content="Cybersecurity awareness, Cisco networking, ICT support, AI automation, cloud systems, and modern web development by Caleb Muga.">
+  <meta name="twitter:image" content="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
 
+  <!-- Unified Brand Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Privacy / Ads / Verification -->
   <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
-  
+  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR');
+    gtag("js", new Date());
+    gtag("config", "G-ELRXZQRGNR");
   </script>
 
-  <!-- SEO / OpenGraph -->
-  <meta name="description" content="TechKnow Solutions by Caleb Muga: Advanced Enterprise Networking, Cyber Security Vulnerability Assessments, Cloud Integrations, and custom python system forks.">
-  <meta name="author" content="Caleb Muga">
-  <meta property="og:title" content="TechKnow Solutions — Cybersecurity, AI & Systems Development">
-  <meta property="og:description" content="Enterprise Networking (Cisco CCNA Specialist), System Audits, Python Automation and Cloud systems.">
-  <meta property="og:type" content="website">
-  {% if hero_url %}
-  <meta property="og:image" content="{{ hero_url }}">
-  {% endif %}
-
-  <!-- Fallback profile image -->
-  <meta property="og:image:alt" content="Profile photo of Caleb Muga | TechKnow Solutions">
-  <meta property="og:image" content="{% if profile_url %}{{ profile_url }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{% if profile_url %}{{ profile_url }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
-
-  <!-- Most Important Structured Data Graph Upgrade (Requirement 4) -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
-    "@context":"https://schema.org",
-    "@graph":[
+    "@context": "https://schema.org",
+    "@graph": [
       {
-        "@type":"Organization",
-        "name":"TechKnow Solutions",
-        "alternateName":[
+        "@type": "Organization",
+        "name": "TechKnow Solutions",
+        "alternateName": [
           "TechKnow",
           "TechKnowSols",
           "TechNowSolutions",
           "Muga.dev"
         ],
-        "url":"https://mga.techknowsols.gt.tc",
-        "logo":"https://mga.techknowsols.gt.tc/static/favicon.png",
-        "founder":{
-          "@type":"Person",
-          "name":"Caleb Muga"
-        },
-        "sameAs":[
-          "https://linkedin.com/",
-          "https://x.com/"
-        ]
-      },
-      {
-        "@type":"Person",
-        "name":"Caleb Muga",
-        "url":"https://mga.techknowsols.gt.tc",
-        "jobTitle":"Software Engineer",
-        "worksFor":{
-          "@type":"Organization",
-          "name":"TechKnow Solutions"
+        "url": "https://mga.techknowsols.gt.tc",
+        "logo": "https://mga.techknowsols.gt.tc/static/apple-touch-icon.png",
+        "founder": {
+          "@type": "Person",
+          "name": "Caleb Muga"
         }
       },
       {
-        "@type":"Blog",
-        "name":"Muga Digital Journal",
-        "url":"https://mga.techknowsols.gt.tc/blog",
-        "description":"Cybersecurity, networking, AI, software engineering and technology insights by Caleb Muga.",
-        "publisher":{
-          "@type":"Organization",
-          "name":"TechKnow Solutions"
+        "@type": "Person",
+        "name": "Caleb Muga",
+        "url": "https://mga.techknowsols.gt.tc",
+        "jobTitle": "Cybersecurity, Networking and Systems Developer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "TechKnow Solutions"
+        },
+        "knowsAbout": [
+          "Cybersecurity",
+          "Networking",
+          "Cisco CCNA",
+          "ICT Support",
+          "Python Automation",
+          "AI Systems",
+          "Cloud Computing",
+          "Web Development"
+        ]
+      },
+      {
+        "@type": "Blog",
+        "name": "Muga Digital Journal",
+        "url": "https://mga.techknowsols.gt.tc/blog",
+        "description": "Cybersecurity, networking, AI, software engineering, ICT support and technology insights by Caleb Muga.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "TechKnow Solutions"
         }
       }
     ]
   }
   </script>
-
-  <!-- Favicon Sets (Requirement 5) -->
-  <link rel="icon" sizes="32x32" href="/static/favicon-32.png">
-  <link rel="icon" sizes="16x16" href="/static/favicon-16.png">
-  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
