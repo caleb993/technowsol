@@ -22,7 +22,7 @@ import data
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(16))
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "mga_techknowsols_secure_key_1a2b3c4d")
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY", "calebadmin")
 
@@ -38,6 +38,11 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
 @app.before_request
 def redirect_to_custom_domain():
+    # If currently accessing via the custom domain, do NOT redirect!
+    forwarded_host = request.headers.get("X-Forwarded-Host", "")
+    if "techknowsols.gt.tc" in forwarded_host or "techknowsols.gt.tc" in request.host:
+        return
+
     if "onrender.com" in request.host:
         path = request.path or "/"
         excluded = ("/admin", "/login", "/logout", "/api")
