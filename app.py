@@ -157,8 +157,9 @@ seed_blog_assets()
 def is_probably_bot(user_agent: str) -> bool:
     ua = (user_agent or "").lower()
     return any(bot in ua for bot in [
-        "bot", "spider", "crawl", "slurp", "tracker", "monitor",
-        "uptime", "lighthouse", "headless", "preview", "facebookexternalhit",
+        "googlebot", "bingbot", "yandexbot", "baiduspider", "duckduckbot",
+        "yahoo! slurp", "ia_archiver", "spider", "crawl", "slurp", "monitor",
+        "uptime", "lighthouse", "facebookexternalhit",
         "whatsapp", "telegrambot", "discordbot", "linkedinbot"
     ])
 
