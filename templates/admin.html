@@ -380,16 +380,6 @@
               <span class="d-inline-block rounded-circle bg-success animate-pulse" style="width: 7px; height: 7px;"></span>
               <span>100% SECURE HUMAN FOOTFALL MONITOR ACTIVE</span>
             </div>
-
-            <!-- Active Client IPs listing -->
-            <div id="active-ips-container" class="mt-3 pt-3 border-top border-secondary/15 d-none">
-              <div class="text-xs text-info font-mono mb-2 d-flex align-items-center gap-1">
-                <i class="bi bi-cpu text-info animate-pulse"></i> LIVE CLIENT CONNECTIONS:
-              </div>
-              <div id="active-ips-list" class="d-flex flex-column gap-1.5 font-mono text-[10.2px]" style="max-height: 120px; overflow-y: auto;">
-                <!-- Filled dynamically via javascript polling -->
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -1958,39 +1948,6 @@
             
             // Trigger alerts if milestones reached
             checkActiveUsersAlerts(count);
-
-            // Render live client connections lists (IPs + paths + dwell-time logs)
-            const activeIpsContainer = document.getElementById("active-ips-container");
-            const activeIpsList = document.getElementById("active-ips-list");
-            if (activeIpsContainer && activeIpsList && data.active_clients) {
-              if (data.active_clients.length > 0) {
-                activeIpsContainer.classList.remove("d-none");
-                let listHtml = "";
-                data.active_clients.forEach(client => {
-                  let pathLabel = client.path || "/";
-                  if (pathLabel.length > 18) {
-                    pathLabel = pathLabel.substring(0, 15) + "...";
-                  }
-                  
-                  let duration = client.seconds_online || 0;
-                  let durText = duration + "s";
-                  if (duration >= 60) {
-                    durText = Math.floor(duration / 60) + "m " + (duration % 60) + "s";
-                  }
-                  
-                  listHtml += `
-                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom border-white/5 text-muted" style="border-style: dashed !important; font-size: 10px;">
-                      <span class="text-white-50"><i class="bi bi-broadcast text-info me-1 animate-pulse"></i>${client.ip_address}</span>
-                      <span class="badge bg-secondary/10 text-white-50 px-1 py-0.5 rounded text-[9.5px]" style="border: 1px solid rgba(255,255,255,0.05);" title="${client.path}">${pathLabel}</span>
-                      <span class="text-[9.5px] text-success font-semibold"><i class="bi bi-clock"></i> ${durText}</span>
-                    </div>
-                  `;
-                });
-                activeIpsList.innerHTML = listHtml;
-              } else {
-                activeIpsContainer.classList.add("d-none");
-              }
-            }
 
             // 2. Update dynamic Cards B and C (Popular Essay & Dominant Category)
             const dominantCategoryHeader = document.getElementById("tr-dominant-category-header");
