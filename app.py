@@ -4,7 +4,7 @@ import math
 import secrets
 import urllib.parse
 import json
-from datetime import datetime, timezone
+from datetime import datetime
 
 import markdown
 import psycopg2
@@ -22,7 +22,7 @@ import data
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("FLASK_SECRET_KEY", "mga_techknowsols_secure_key_1a2b3c4d")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(16))
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY", "calebadmin")
 
@@ -38,19 +38,11 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
 @app.before_request
 def redirect_to_custom_domain():
-    # If currently accessing via the custom domain, do NOT redirect!
-    forwarded_host = request.headers.get("X-Forwarded-Host", "")
-    if "techknowsols.gt.tc" in forwarded_host or "techknowsols.gt.tc" in request.host:
-        return
-
     if "onrender.com" in request.host:
-        path = request.path or "/"
-        excluded = ("/admin", "/login", "/logout", "/api")
-        if not path.startswith(excluded):
-            return redirect(
-                "https://mga.techknowsols.gt.tc" + request.full_path,
-                code=301
-            )
+        return redirect(
+            "https://mga.techknowsols.gt.tc" + request.full_path,
+            code=301
+        )
 
 
 @app.after_request
@@ -59,38 +51,10 @@ def add_security_headers(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-
-    # Inject live presence tracking into public HTML pages only.
-    try:
-        path = request.path or "/"
-        excluded_prefixes = (
-            "/admin", "/api", "/media", "/static", "/login",
-            "/logout", "/sitemap.xml", "/robots.txt"
-        )
-
-        if (
-            response.content_type
-            and response.content_type.startswith("text/html")
-            and not response.direct_passthrough
-            and not path.startswith(excluded_prefixes)
-        ):
-            html = response.get_data(as_text=True)
-            if "</body>" in html and "__techKnowPresenceLoaded" not in html:
-                html = html.replace("</body>", presence_tracking_script() + "\n</body>")
-                response.set_data(html)
-                response.headers["Content-Length"] = len(response.get_data())
-    except Exception as e:
-        print(f"Presence script injection skipped: {e}")
-
     return response
 
 
 def get_or_create_visitor_id():
-    cookie_vid = request.cookies.get("visitor_id")
-    if cookie_vid:
-        session["visitor_id"] = cookie_vid
-        return cookie_vid
-
     if "visitor_id" not in session:
         session["visitor_id"] = secrets.token_hex(16)
     return session["visitor_id"]
@@ -164,232 +128,6 @@ def seed_blog_assets():
 
 
 seed_blog_assets()
-
-
-# ---------------- Real-Time Presence Tracking ----------------
-def is_probably_bot(user_agent: str) -> bool:
-    ua = (user_agent or "").lower()
-    return any(bot in ua for bot in [
-        "googlebot", "bingbot", "yandexbot", "baiduspider", "duckduckbot",
-        "yahoo! slurp", "ia_archiver", "spider", "crawl", "slurp", "monitor",
-        "uptime", "lighthouse", "facebookexternalhit",
-        "whatsapp", "telegrambot", "discordbot", "linkedinbot"
-    ])
-
-
-def get_client_ip():
-    for header in ["X-Forwarded-For", "X-Real-IP", "CF-Connecting-IP"]:
-        val = request.headers.get(header, "")
-        if val:
-            return val.split(",")[0].strip()
-    
-    environ_forwarded = request.environ.get("HTTP_X_FORWARDED_FOR", "")
-    if environ_forwarded:
-        return environ_forwarded.split(",")[0].strip()
-        
-    return request.remote_addr or "Unknown"
-
-
-def ensure_realtime_tracking_tables():
-    """
-    Creates lightweight presence tables used for real-time enter/leave tracking.
-    site_visits remains your historical visit log.
-    visitor_sessions shows who is currently active.
-    visitor_events keeps enter/heartbeat/leave events for audit trails.
-    """
-    conn = data.get_conn()
-    try:
-        with conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    CREATE TABLE IF NOT EXISTS visitor_sessions (
-                        visitor_id TEXT PRIMARY KEY,
-                        session_id TEXT,
-                        ip_address TEXT,
-                        user_agent TEXT,
-                        current_path TEXT,
-                        entered_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-                        last_seen TIMESTAMP WITH TIME ZONE DEFAULT now(),
-                        left_at TIMESTAMP WITH TIME ZONE,
-                        is_active BOOLEAN DEFAULT TRUE
-                    )
-                """)
-                cur.execute("""
-                    CREATE TABLE IF NOT EXISTS visitor_events (
-                        id SERIAL PRIMARY KEY,
-                        visitor_id TEXT,
-                        session_id TEXT,
-                        ip_address TEXT,
-                        user_agent TEXT,
-                        path TEXT,
-                        event_type TEXT,
-                        created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
-                    )
-                """)
-                cur.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_visitor_sessions_active
-                    ON visitor_sessions (is_active, last_seen DESC)
-                """)
-                cur.execute("""
-                    CREATE INDEX IF NOT EXISTS idx_visitor_events_created
-                    ON visitor_events (created_at DESC)
-                """)
-    except Exception as e:
-        print(f"⚠️ Could not initialize realtime tracking tables: {e}")
-    finally:
-        conn.close()
-
-
-try:
-    ensure_realtime_tracking_tables()
-except Exception as e:
-    print("⚠️ Realtime presence table setup skipped:", e)
-
-
-def record_presence_event(path=None, event_type="heartbeat", client_visitor_id=None):
-    """
-    Real-time visitor presence.
-    enter/heartbeat marks active immediately.
-    leave marks inactive immediately when browser sends pagehide/beacon.
-    """
-    ua = request.headers.get("User-Agent", "Unknown")
-    if is_probably_bot(ua):
-        return None
-
-    visitor_id = client_visitor_id or get_or_create_visitor_id()
-    session_id = client_visitor_id or session.get("visitor_id")
-    ip = get_client_ip()
-    current_path = path or "/"
-    event_type = event_type if event_type in ["enter", "heartbeat", "leave"] else "heartbeat"
-
-    conn = data.get_conn()
-    try:
-        with conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                if event_type == "leave":
-                    cur.execute("""
-                        UPDATE visitor_sessions
-                        SET current_path=%s,
-                            last_seen=now(),
-                            left_at=now(),
-                            is_active=FALSE
-                        WHERE visitor_id=%s
-                    """, (current_path, visitor_id))
-                else:
-                    cur.execute("""
-                        INSERT INTO visitor_sessions
-                            (visitor_id, session_id, ip_address, user_agent, current_path,
-                             entered_at, last_seen, left_at, is_active)
-                        VALUES (%s, %s, %s, %s, %s, now(), now(), NULL, TRUE)
-                        ON CONFLICT (visitor_id)
-                        DO UPDATE SET
-                            session_id=EXCLUDED.session_id,
-                            ip_address=EXCLUDED.ip_address,
-                            user_agent=EXCLUDED.user_agent,
-                            current_path=EXCLUDED.current_path,
-                            last_seen=now(),
-                            left_at=NULL,
-                            is_active=TRUE
-                    """, (visitor_id, session_id, ip, ua, current_path))
-
-                cur.execute("""
-                    INSERT INTO visitor_events
-                        (visitor_id, session_id, ip_address, user_agent, path, event_type, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, now())
-                """, (visitor_id, session_id, ip, ua, current_path, event_type))
-
-                return {
-                    "visitor_id": visitor_id,
-                    "ip_address": ip,
-                    "path": current_path,
-                    "event_type": event_type
-                }
-    except Exception as e:
-        print(f"Realtime presence error: {e}")
-        return None
-    finally:
-        conn.close()
-
-
-def presence_tracking_script():
-    """Injected into public HTML pages so entry, heartbeat and leave are captured."""
-    return """
-<script>
-(function () {
-  if (window.__techKnowPresenceLoaded) return;
-  window.__techKnowPresenceLoaded = true;
-
-  const path = window.location.pathname || "/";
-
-  function getVisitorId() {
-    let vid = localStorage.getItem("__muga_visitor_id");
-    if (!vid) {
-      vid = 'muga_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 11);
-      localStorage.setItem("__muga_visitor_id", vid);
-    }
-    document.cookie = "visitor_id=" + vid + "; path=/; max-age=31536000; SameSite=Lax";
-    return vid;
-  }
-
-  function payload(eventType) {
-    return JSON.stringify({
-      path: path,
-      event_type: eventType,
-      visitor_id: getVisitorId(),
-      ts: Date.now()
-    });
-  }
-
-  function postPresence(eventType) {
-    try {
-      fetch('/api/track_visit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload(eventType),
-        keepalive: true
-      }).catch(function () {});
-    } catch (e) {}
-  }
-
-  function leavePresence() {
-    try {
-      const blob = new Blob([payload('leave')], { type: 'application/json' });
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon('/api/track_leave', blob);
-      } else {
-        fetch('/api/track_leave', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: payload('leave'),
-          keepalive: true
-        }).catch(function () {});
-      }
-    } catch (e) {}
-  }
-
-  postPresence('enter');
-
-  const heartbeat = setInterval(function () {
-    if (!document.hidden) postPresence('heartbeat');
-  }, 4500); // Optimized rapid heartbeat (4.5 seconds)
-
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) {
-      leavePresence();
-    } else {
-      postPresence('enter');
-    }
-  });
-
-  window.addEventListener('pagehide', function () {
-    clearInterval(heartbeat);
-    leavePresence();
-  });
-
-  window.addEventListener('beforeunload', leavePresence);
-})();
-</script>
-"""
 
 
 def get_blog_category(title, content):
@@ -562,12 +300,11 @@ def log_upload_result(category, fname):
 def index():
     try:
         data.record_visit(
-            get_client_ip(),
+            request.remote_addr,
             request.headers.get("User-Agent", "Unknown"),
             "/",
             get_or_create_visitor_id()
         )
-        record_presence_event("/", "enter")
     except Exception as e:
         print(f"Tracking error: {e}")
 
@@ -669,12 +406,11 @@ def media_file(kind, filename):
 def blog_list():
     try:
         data.record_visit(
-            get_client_ip(),
+            request.remote_addr,
             request.headers.get("User-Agent", "Unknown"),
             "/blog",
             get_or_create_visitor_id()
         )
-        record_presence_event("/blog", "enter")
     except Exception as e:
         print(f"Tracking error: {e}")
 
@@ -696,12 +432,11 @@ def blog_list():
 def view_blog(slug):
     try:
         data.record_visit(
-            get_client_ip(),
+            request.remote_addr,
             request.headers.get("User-Agent", "Unknown"),
             f"/blog/{slug}",
             get_or_create_visitor_id()
         )
-        record_presence_event(f"/blog/{slug}", "enter")
         data.increment_blog_views(slug)
     except Exception as e:
         print(f"Tracking error: {e}")
@@ -854,46 +589,12 @@ def track_visit():
     try:
         req_data = request.json or {}
         path = req_data.get("path", "/")
-        event_type = req_data.get("event_type", "heartbeat")
-        client_visitor_id = req_data.get("visitor_id")
+        ip = request.remote_addr
+        ua = request.headers.get("User-Agent", "Unknown")
 
-        # Keep your historical counter table for analytics.
-        if event_type == "enter":
-            data.record_visit(
-                get_client_ip(),
-                request.headers.get("User-Agent", "Unknown"),
-                path,
-                client_visitor_id or get_or_create_visitor_id()
-            )
+        data.record_visit(ip, ua, path, get_or_create_visitor_id())
 
-        presence = record_presence_event(
-            path, 
-            event_type if event_type in ["enter", "heartbeat"] else "heartbeat",
-            client_visitor_id=client_visitor_id
-        )
-
-        return jsonify({
-            "status": "success",
-            "presence": presence
-        })
-
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-
-@app.route("/api/track_leave", methods=["POST"])
-def track_leave():
-    try:
-        req_data = request.json or {}
-        path = req_data.get("path", "/")
-        client_visitor_id = req_data.get("visitor_id")
-
-        presence = record_presence_event(path, "leave", client_visitor_id=client_visitor_id)
-
-        return jsonify({
-            "status": "success",
-            "presence": presence
-        })
+        return jsonify({"status": "success"})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
@@ -1207,10 +908,8 @@ def admin():
         prof=prof_name,
         hero=hero_name,
         gal=gal,
-        gallery_images=gal,
         blog_media=blog_media_list,
         blogs=blogs,
-        blog_posts=blogs,
         subscribers=subscribers,
         daily_visits=data.get_daily_visits_summary(),
         total_visits=data.get_total_visits_count(),
@@ -1443,67 +1142,33 @@ def admin_analytics_data():
 @app.route("/api/admin/active_users")
 def active_users_data():
     conn = data.get_conn()
-    count = 0
+    count = 1
     recent_pages = []
-    active_clients = []
 
     try:
         with conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+            with conn.cursor() as cur:
                 cur.execute("""
-                    UPDATE visitor_sessions
-                    SET is_active=FALSE,
-                        left_at=COALESCE(left_at, last_seen)
-                    WHERE is_active=TRUE
-                    AND last_seen < now() - INTERVAL '12 seconds'
-                """)
-
-                cur.execute("""
-                    SELECT COUNT(*)
-                    FROM visitor_sessions
-                    WHERE is_active=TRUE
-                    AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address))
+                    FROM site_visits
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
                 """)
                 row = cur.fetchone()
-                count = row[0] if row else 0
+
+                if row:
+                    count = row[0]
 
                 cur.execute("""
-                    SELECT COALESCE(current_path, '/') AS path, COUNT(*) AS cnt
-                    FROM visitor_sessions
-                    WHERE is_active=TRUE
-                    AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
-                    GROUP BY current_path
+                    SELECT path, COUNT(*) as cnt
+                    FROM site_visits
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    GROUP BY path
                     ORDER BY cnt DESC
                     LIMIT 6
                 """)
-                recent_pages = [
-                    {"path": r["path"] if r["path"] else "/", "count": r["cnt"]}
-                    for r in cur.fetchall()
-                ]
 
-                cur.execute("""
-                    SELECT ip_address,
-                           COALESCE(current_path, '/') AS path,
-                           entered_at,
-                           last_seen,
-                           EXTRACT(EPOCH FROM (now() - entered_at))::INT AS seconds_online
-                    FROM visitor_sessions
-                    WHERE is_active=TRUE
-                    AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
-                    ORDER BY last_seen DESC
-                    LIMIT 10
-                """)
-                active_clients = [
-                    {
-                        "ip_address": r["ip_address"],
-                        "path": r["path"],
-                        "entered_at": r["entered_at"].isoformat() if r["entered_at"] else "",
-                        "last_seen": r["last_seen"].isoformat() if r["last_seen"] else "",
-                        "seconds_online": r["seconds_online"] or 0
-                    }
+                recent_pages = [
+                    {"path": r[0] if r[0] else "/", "count": r[1]}
                     for r in cur.fetchall()
                 ]
 
@@ -1512,11 +1177,13 @@ def active_users_data():
     finally:
         conn.close()
 
+    if count < 1:
+        count = 1
+
     return jsonify({
         "status": "success",
         "active_users": count,
-        "recent_pages": recent_pages,
-        "active_clients": active_clients
+        "recent_pages": recent_pages
     })
 
 
@@ -1527,67 +1194,33 @@ def admin_article_stats():
 
     conn = data.get_conn()
     articles = []
-    active_users = 0
+    active_users = 1
     recent_pages = []
-    active_clients = []
 
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute("""
-                    UPDATE visitor_sessions
-                    SET is_active=FALSE,
-                        left_at=COALESCE(left_at, last_seen)
-                    WHERE is_active=TRUE
-                    AND last_seen < now() - INTERVAL '12 seconds'
-                """)
-
-                cur.execute("""
-                    SELECT COUNT(*)
-                    FROM visitor_sessions
-                    WHERE is_active=TRUE
-                    AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address))
+                    FROM site_visits
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
                 """)
                 row = cur.fetchone()
-                active_users = row[0] if row else 0
+
+                if row:
+                    active_users = row[0] if row[0] > 0 else 1
 
                 cur.execute("""
-                    SELECT COALESCE(current_path, '/') AS path, COUNT(*) AS cnt
-                    FROM visitor_sessions
-                    WHERE is_active=TRUE
-                    AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
-                    GROUP BY current_path
+                    SELECT path, COUNT(*) as cnt
+                    FROM site_visits
+                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    GROUP BY path
                     ORDER BY cnt DESC
                     LIMIT 6
                 """)
-                recent_pages = [
-                    {"path": r["path"] if r["path"] else "/", "count": r["cnt"]}
-                    for r in cur.fetchall()
-                ]
 
-                cur.execute("""
-                    SELECT ip_address,
-                           COALESCE(current_path, '/') AS path,
-                           entered_at,
-                           last_seen,
-                           EXTRACT(EPOCH FROM (now() - entered_at))::INT AS seconds_online
-                    FROM visitor_sessions
-                    WHERE is_active=TRUE
-                    AND left_at IS NULL
-                    AND last_seen >= now() - INTERVAL '12 seconds'
-                    ORDER BY last_seen DESC
-                    LIMIT 10
-                """)
-                active_clients = [
-                    {
-                        "ip_address": r["ip_address"],
-                        "path": r["path"],
-                        "entered_at": r["entered_at"].isoformat() if r["entered_at"] else "",
-                        "last_seen": r["last_seen"].isoformat() if r["last_seen"] else "",
-                        "seconds_online": r["seconds_online"] or 0
-                    }
+                recent_pages = [
+                    {"path": r[0] if r[0] else "/", "count": r[1]}
                     for r in cur.fetchall()
                 ]
 
@@ -1641,9 +1274,8 @@ def admin_article_stats():
 
     return jsonify({
         "status": "success",
-        "active_users": active_users,
+        "active_users": max(1, active_users),
         "recent_pages": recent_pages,
-        "active_clients": active_clients,
         "articles": articles,
         "dominant_category": dominant_category
     })
