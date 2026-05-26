@@ -456,118 +456,173 @@
       pointer-events:none;
     }
 
+    /* Professional article typography system */
     .article-content{
-
       position:relative;
       z-index:2;
-
-      font-size:1.12rem;
-
-      line-height:2;
-
       color:#d6deea;
-
-      white-space:pre-wrap;
+      font-family:'Inter',sans-serif;
+      font-size:1.08rem;
+      font-weight:400;
+      line-height:1.95;
+      letter-spacing:0.015em;
+      word-break:break-word;
+      overflow-wrap:break-word;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
     }
 
     .article-content p{
-      margin-bottom:26px;
+      margin-top:0;
+      margin-bottom:1.7rem;
+      color:#dbe4ef;
     }
 
-    .article-content h1 {
-      font-size: 2.2rem;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      margin-top: 40px;
-      margin-bottom: 20px;
-      color: white;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding-bottom: 10px;
+    .article-content h1{
+      font-size:2.5rem;
+      font-weight:800;
+      line-height:1.2;
+      margin-top:3rem;
+      margin-bottom:1.3rem;
+      color:#ffffff;
+      font-family:'Space Grotesk',sans-serif;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      padding-bottom:12px;
     }
 
-    .article-content h2,
+    .article-content h2{
+      font-size:1.9rem;
+      font-weight:700;
+      line-height:1.3;
+      margin-top:2.8rem;
+      margin-bottom:1rem;
+      color:#ffffff;
+      font-family:'Space Grotesk',sans-serif;
+    }
+
     .article-content h3{
-      margin-top:40px;
-      margin-bottom:18px;
-      color:white;
-      font-family: 'Space Grotesk', sans-serif;
-    }
-
-    .article-content h2 {
-      font-size: 1.8rem;
-      font-weight: 700;
-    }
-
-    .article-content h3 {
-      font-size: 1.4rem;
-      font-weight: 600;
+      font-size:1.45rem;
+      font-weight:700;
+      line-height:1.4;
+      margin-top:2.2rem;
+      margin-bottom:0.9rem;
+      color:#f8fafc;
+      font-family:'Space Grotesk',sans-serif;
     }
 
     .article-content a{
       color:#60a5fa;
       text-decoration:none;
+      transition:0.25s ease;
     }
 
     .article-content a:hover{
+      color:#93c5fd;
       text-decoration:underline;
     }
 
     .article-content ul,
-    .article-content ol {
-      margin-top: 15px;
-      margin-bottom: 25px;
-      padding-left: 25px;
+    .article-content ol{
+      margin-top:1rem;
+      margin-bottom:1.8rem;
+      padding-left:1.7rem;
     }
 
-    .article-content li {
-      margin-bottom: 8px;
+    .article-content li{
+      margin-bottom:0.9rem;
+      line-height:1.85;
+      color:#d6deea;
     }
 
-    /* Style blockquotes in parsed markdown */
-    .article-content blockquote {
-      border-left: 4px solid #3b82f6;
-      background: rgba(255, 255, 255, 0.02);
-      padding: 15px 20px;
-      margin: 25px 0;
-      border-radius: 0 12px 12px 0;
-      font-style: italic;
-      color: #94a3b8;
+    .article-content strong{
+      color:#ffffff;
+      font-weight:700;
+    }
+
+    .article-content blockquote{
+      border-left:4px solid #3b82f6;
+      background:rgba(255,255,255,0.03);
+      padding:1.3rem 1.5rem;
+      margin:2rem 0;
+      border-radius:0 18px 18px 0;
+      color:#cbd5e1;
+      font-style:italic;
+      line-height:1.9;
     }
 
     .article-content img,
     .article-content video,
-    .article-content .embedded-video {
-      max-width: 100%;
-      height: auto;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-      margin: 30px auto;
-      display: block;
+    .article-content .embedded-video{
+      width:100%;
+      max-width:100%;
+      height:auto;
+      display:block;
+      margin:2.4rem auto;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:0 20px 45px rgba(0,0,0,0.35);
     }
 
-    .article-content code {
-      font-family: monospace;
-      font-size: 0.9em;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 3px 6px;
-      border-radius: 4px;
-      color: #60a5fa;
+    .article-content code{
+      background:rgba(0,0,0,0.35);
+      color:#7dd3fc;
+      padding:4px 8px;
+      border-radius:7px;
+      font-size:0.92em;
+      font-family:monospace;
     }
 
-    .article-content pre {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 20px;
-      border-radius: 12px;
-      overflow-x: auto;
-      border: 1px solid rgba(255,255,255,0.05);
-      margin: 25px 0;
+    .article-content pre{
+      background:#020617;
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:20px;
+      padding:1.5rem;
+      overflow-x:auto;
+      margin:2.2rem 0;
+      box-shadow:0 10px 35px rgba(0,0,0,0.25);
     }
 
-    .article-content pre code {
-      background: transparent;
-      padding: 0;
-      color: #f1f5f9;
+    .article-content pre code{
+      background:none;
+      padding:0;
+      color:#e2e8f0;
+    }
+
+    .article-content table{
+      width:100%;
+      border-collapse:collapse;
+      margin:2rem 0;
+      overflow:hidden;
+      border-radius:16px;
+    }
+
+    .article-content th,
+    .article-content td{
+      border:1px solid rgba(255,255,255,0.08);
+      padding:15px;
+      text-align:left;
+    }
+
+    .article-content th{
+      background:rgba(255,255,255,0.05);
+      color:#ffffff;
+      font-weight:700;
+    }
+
+    .article-content td{
+      background:rgba(255,255,255,0.02);
+    }
+
+    .article-content hr{
+      border:none;
+      height:1px;
+      background:rgba(255,255,255,0.08);
+      margin:3rem 0;
+    }
+
+    .article-content ::selection{
+      background:rgba(96,165,250,0.35);
+      color:#ffffff;
     }
 
     /* Share Buttons */
@@ -633,6 +688,23 @@
 
       .blog-title{
         line-height:1.2;
+      }
+
+      .article-content{
+        font-size:1rem;
+        line-height:1.85;
+      }
+
+      .article-content h1{
+        font-size:2rem;
+      }
+
+      .article-content h2{
+        font-size:1.6rem;
+      }
+
+      .article-content h3{
+        font-size:1.3rem;
       }
 
     }
@@ -861,7 +933,7 @@
       </div>
 
       <div class="footer-note">
-        Crafted with insight • Powered by TechKnow Solutions &nbsp;|&nbsp; <a href="https://https://www.facebook.com/caleb.muga.1" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;"><i class="bi bi-github"></i> FACEBOOK PAGE</a>
+        Crafted with insight • Powered by TechKnow Solutions &nbsp;|&nbsp; <a href="https://www.facebook.com/caleb.muga.1" target="_blank" rel="noopener" style="color: var(--accent); text-decoration: none;"><i class="bi bi-facebook"></i> FACEBOOK PAGE</a>
       </div>
 
     </div>
