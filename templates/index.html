@@ -12,7 +12,7 @@
 
   <!-- Preloads for Performance -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
-  <link rel="preload" href="/static/apple-touch-icon.png" as="image">
+  <link rel="preload" href="/static/favicon.png" as="image">
 
   <!-- Advanced Brand SEO Meta (Requirement 3) -->
   <meta name="application-name" content="TechKnow Solutions">
@@ -31,7 +31,7 @@
   <meta property="og:url" content="https://mga.techknowsols.gt.tc{{ request.path }}">
 
   <!-- SEO -->
-  <title>TechKnow Solutions by Caleb Muga | Cybersecurity, Networking, AI & Web Systems</title>
+  <title>TechKnow Solutions • Cybersecurity, AI & Systems Development by Caleb Muga</title>
 
   <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
@@ -58,9 +58,9 @@
 
   <!-- Fallback profile image -->
   <meta property="og:image:alt" content="Profile photo of Caleb Muga | TechKnow Solutions">
-  <meta property="og:image" content="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <meta property="og:image" content="{% if profile_url %}{{ profile_url }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <meta name="twitter:image" content="{% if profile_url %}{{ profile_url }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
 
   <!-- Most Important Structured Data Graph Upgrade (Requirement 4) -->
   <script type="application/ld+json">
@@ -77,13 +77,12 @@
           "Muga.dev"
         ],
         "url":"https://mga.techknowsols.gt.tc",
-        "logo":"https://mga.techknowsols.gt.tc/static/apple-touch-icon.png",
+        "logo":"https://mga.techknowsols.gt.tc/static/favicon.png",
         "founder":{
           "@type":"Person",
           "name":"Caleb Muga"
         },
         "sameAs":[
-          "https://github.com/",
           "https://linkedin.com/",
           "https://x.com/"
         ]
@@ -113,8 +112,8 @@
   </script>
 
   <!-- Favicon Sets (Requirement 5) -->
-  <link rel="icon" sizes="32x32" href="/static/apple-touch-icon.png">
-  <link rel="icon" sizes="16x16" href="/static/favicon.png">
+  <link rel="icon" sizes="32x32" href="/static/favicon-32.png">
+  <link rel="icon" sizes="16x16" href="/static/favicon-16.png">
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
 
@@ -1269,7 +1268,7 @@
             </h3>
 
             <p class="mb-4">
-              A meticulously driven and customer-oriented ICT Officer. Leveraging deep expertise in routing/switching topologies, cybersecurity audits, client support automation, and custom scripting frameworks to enable secure, scalable, and low-latency digital infrastructures for enterprises.
+              A meticulously driven and customer-oriented ICT Officer. Leveraging deep expertise in routing/switching topologies, cybersecurity audits, client support automation, and custom scripting frameworks to enable secure, scales, and low-latency digital infrastructures for enterprises.
             </p>
 
             <div class="row mt-4">
@@ -2455,18 +2454,70 @@
       }
     });
 
-    // Dynamic Live Visit Tracking & Pre-emptive alert links
+    // Dynamic Live Visit Tracking & Presence Heartbeats
     try {
-      fetch("/api/track_visit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: window.location.pathname })
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Analytics tracker active: visit logged.", data.ip_address);
-      })
-      .catch(err => console.log("Analytics loading passive status: ", err));
+      (function () {
+        if (window.__techKnowPresenceLoaded) return;
+        window.__techKnowPresenceLoaded = true;
+
+        const path = window.location.pathname || "/";
+
+        function payload(eventType) {
+          return JSON.stringify({
+            path: path,
+            event_type: eventType,
+            ts: Date.now()
+          });
+        }
+
+        function postPresence(eventType) {
+          try {
+            fetch('/api/track_visit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: payload(eventType),
+              keepalive: true
+            }).catch(function () {});
+          } catch (e) {}
+        }
+
+        function leavePresence() {
+          try {
+            const blob = new Blob([payload('leave')], { type: 'application/json' });
+            if (navigator.sendBeacon) {
+              navigator.sendBeacon('/api/track_leave', blob);
+            } else {
+              fetch('/api/track_leave', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: payload('leave'),
+                keepalive: true
+              }).catch(function () {});
+            }
+          } catch (e) {}
+        }
+
+        postPresence('enter');
+
+        const heartbeat = setInterval(function () {
+          if (!document.hidden) postPresence('heartbeat');
+        }, 4000); // Optimized rapid heartbeat (4 seconds)
+
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) {
+            leavePresence();
+          } else {
+            postPresence('enter');
+          }
+        });
+
+        window.addEventListener('pagehide', function () {
+          clearInterval(heartbeat);
+          leavePresence();
+        });
+
+        window.addEventListener('beforeunload', leavePresence);
+      })();
     } catch(e) {}
 
     // Cursor Glow Tracking implementation
