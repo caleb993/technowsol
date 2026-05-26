@@ -1,142 +1,425 @@
-# app.py
-from flask import Flask, render_template_string, request, redirect, url_for, send_from_directory, flash, abort, session, jsonify
-from werkzeug.utils import secure_filename
 import os
-from datetime import datetime, timedelta
-import csv
-import secrets
-import shutil
+import io
 import math
+import secrets
 import urllib.parse
-import re
 import json
-from collections import Counter, defaultdict
+from datetime import datetime, timezone
+
+import markdown
+import psycopg2
+import psycopg2.extras
+
+from flask import (
+    Flask, render_template, request, redirect, url_for,
+    send_file, flash, abort, session, jsonify, Response
+)
+from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+import data
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "mga_techknowsols_secure_key_1a2b3c4d")
 
-# ====== CONFIG ======
-ADMIN_KEY = "calebadmin"  # change this for production
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "data")
+ADMIN_KEY = os.environ.get("ADMIN_KEY", "calebadmin")
 
-# Existing file areas
-UPLOAD_DIR_APPROVED = os.path.join(BASE_DIR, "uploads_projects")
-UPLOAD_DIR_PENDING = os.path.join(BASE_DIR, "uploads_pending")
-UPLOAD_DIR_CV = os.path.join(BASE_DIR, "uploads_cv")
-
-# Media areas
-MEDIA_DIR = os.path.join(BASE_DIR, "media")
-MEDIA_PROFILE = os.path.join(MEDIA_DIR, "profile")
-MEDIA_HERO = os.path.join(MEDIA_DIR, "hero")
-MEDIA_GALLERY = os.path.join(MEDIA_DIR, "gallery")
-
-# Blog storage
-BLOG_DIR = os.path.join(DATA_DIR, "blog")
-BLOG_CSV = os.path.join(BLOG_DIR, "blogs.csv")
-
-# Newsletter subscribers CSV (Phase 1 addition)
-NEWSLETTER_CSV = os.path.join(DATA_DIR, "newsletter.csv")
-NEWSLETTER_FIELDS = ["timestamp", "email"]
-
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(UPLOAD_DIR_APPROVED, exist_ok=True)
-os.makedirs(UPLOAD_DIR_PENDING, exist_ok=True)
-os.makedirs(UPLOAD_DIR_CV, exist_ok=True)
-os.makedirs(MEDIA_DIR, exist_ok=True)
-os.makedirs(MEDIA_PROFILE, exist_ok=True)
-os.makedirs(MEDIA_HERO, exist_ok=True)
-os.makedirs(MEDIA_GALLERY, exist_ok=True)
-os.makedirs(BLOG_DIR, exist_ok=True)
-
-# allowed extensions (includes common video types for gallery)
-ALLOWED_EXTS = {"pdf", "doc", "docx", "png", "jpg", "jpeg", "zip", "txt", "ppt", "pptx", "webp", "gif", "mp4", "webm", "ogg", "mov", "m4v"}
+ALLOWED_EXTS = {
+    "pdf", "doc", "docx", "png", "jpg", "jpeg", "zip", "txt",
+    "ppt", "pptx", "webp", "gif", "mp4", "webm", "ogg", "mov", "m4v"
+}
 IMAGE_EXTS = {"png", "jpg", "jpeg", "webp", "gif"}
 VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
-app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
 
-MESSAGES_CSV = os.path.join(DATA_DIR, "messages.csv")
-MSG_FIELDNAMES = ["timestamp", "name", "email", "message", "status"]
-BLOG_FIELDNAMES = ["id", "timestamp", "title", "slug", "content"]
+app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
-# ====== HELPERS ======
+
+@app.before_request
+def redirect_to_custom_domain():
+    # If currently accessing via the custom domain, do NOT redirect!
+    forwarded_host = request.headers.get("X-Forwarded-Host", "")
+    if "techknowsols.gt.tc" in forwarded_host or "techknowsols.gt.tc" in request.host:
+        return
+
+    if "onrender.com" in request.host:
+        path = request.path or "/"
+        excluded = ("/admin", "/login", "/logout", "/api")
+        if not path.startswith(excluded):
+            return redirect(
+                "https://mga.techknowsols.gt.tc" + request.full_path,
+                code=301
+            )
+
+
+@app.after_request
+def add_security_headers(response):
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+
+    # Inject live presence tracking into public HTML pages only.
+    try:
+        path = request.path or "/"
+        excluded_prefixes = (
+            "/admin", "/api", "/media", "/static", "/login",
+            "/logout", "/sitemap.xml", "/robots.txt"
+        )
+
+        if (
+            response.content_type
+            and response.content_type.startswith("text/html")
+            and not response.direct_passthrough
+            and not path.startswith(excluded_prefixes)
+        ):
+            html = response.get_data(as_text=True)
+            if "</body>" in html and "__techKnowPresenceLoaded" not in html:
+                html = html.replace("</body>", presence_tracking_script() + "\n</body>")
+                response.set_data(html)
+                response.headers["Content-Length"] = len(response.get_data())
+    except Exception as e:
+        print(f"Presence script injection skipped: {e}")
+
+    return response
+
+
+def get_or_create_visitor_id():
+    cookie_vid = request.cookies.get("visitor_id")
+    if cookie_vid:
+        session["visitor_id"] = cookie_vid
+        return cookie_vid
+
+    if "visitor_id" not in session:
+        session["visitor_id"] = secrets.token_hex(16)
+    return session["visitor_id"]
+
+
+try:
+    data.create_tables()
+except Exception as e:
+    print("⚠️ Could not initialize DB tables:", e)
+
+
+def seed_blog_assets():
+    try:
+        import glob
+
+        conn = data.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT id FROM files WHERE category='blog_media' AND name='mpesa_security.png'"
+                )
+                row = cur.fetchone()
+
+                if not row:
+                    local_path = None
+                    candidates = [
+                        "src/assets/images/mpesa_security_1779629331279.png",
+                        "/src/assets/images/mpesa_security_1779629331279.png",
+                        "./src/assets/images/mpesa_security_1779629331279.png"
+                    ]
+
+                    for path in candidates:
+                        if os.path.exists(path):
+                            local_path = path
+                            break
+
+                    if not local_path:
+                        found = (
+                            glob.glob("src/assets/images/mpesa_security_*.png") +
+                            glob.glob("/src/assets/images/mpesa_security_*.png")
+                        )
+                        if found:
+                            local_path = found[0]
+
+                    if local_path and os.path.exists(local_path):
+                        with open(local_path, "rb") as f:
+                            img_data = f.read()
+
+                        cur.execute(
+                            """
+                            INSERT INTO files
+                            (name, category, content, mimetype, approved, storage_provider, file_size)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)
+                            """,
+                            (
+                                "mpesa_security.png",
+                                "blog_media",
+                                psycopg2.Binary(img_data),
+                                "image/png",
+                                True,
+                                "database",
+                                len(img_data)
+                            )
+                        )
+                        print("✅ Seeded mpesa_security.png into database.")
+                    else:
+                        print("⚠️ Generated image path not found for seeding database.")
+
+    except Exception as e:
+        print(f"⚠️ Error seeding database: {e}")
+
+
+seed_blog_assets()
+
+
+# ---------------- Real-Time Presence Tracking ----------------
+def is_probably_bot(user_agent: str) -> bool:
+    ua = (user_agent or "").lower()
+    return any(bot in ua for bot in [
+        "googlebot", "bingbot", "yandexbot", "baiduspider", "duckduckbot",
+        "yahoo! slurp", "ia_archiver", "spider", "crawl", "slurp", "monitor",
+        "uptime", "lighthouse", "facebookexternalhit",
+        "whatsapp", "telegrambot", "discordbot", "linkedinbot"
+    ])
+
+
+def get_client_ip():
+    for header in ["X-Forwarded-For", "X-Real-IP", "CF-Connecting-IP"]:
+        val = request.headers.get(header, "")
+        if val:
+            return val.split(",")[0].strip()
+    
+    environ_forwarded = request.environ.get("HTTP_X_FORWARDED_FOR", "")
+    if environ_forwarded:
+        return environ_forwarded.split(",")[0].strip()
+        
+    return request.remote_addr or "Unknown"
+
+
+def ensure_realtime_tracking_tables():
+    """
+    Creates lightweight presence tables used for real-time enter/leave tracking.
+    site_visits remains your historical visit log.
+    visitor_sessions shows who is currently active.
+    visitor_events keeps enter/heartbeat/leave events for audit trails.
+    """
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS visitor_sessions (
+                        visitor_id TEXT PRIMARY KEY,
+                        session_id TEXT,
+                        ip_address TEXT,
+                        user_agent TEXT,
+                        current_path TEXT,
+                        entered_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+                        last_seen TIMESTAMP WITH TIME ZONE DEFAULT now(),
+                        left_at TIMESTAMP WITH TIME ZONE,
+                        is_active BOOLEAN DEFAULT TRUE
+                    )
+                """)
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS visitor_events (
+                        id SERIAL PRIMARY KEY,
+                        visitor_id TEXT,
+                        session_id TEXT,
+                        ip_address TEXT,
+                        user_agent TEXT,
+                        path TEXT,
+                        event_type TEXT,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+                    )
+                """)
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_visitor_sessions_active
+                    ON visitor_sessions (is_active, last_seen DESC)
+                """)
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_visitor_events_created
+                    ON visitor_events (created_at DESC)
+                """)
+    except Exception as e:
+        print(f"⚠️ Could not initialize realtime tracking tables: {e}")
+    finally:
+        conn.close()
+
+
+try:
+    ensure_realtime_tracking_tables()
+except Exception as e:
+    print("⚠️ Realtime presence table setup skipped:", e)
+
+
+def record_presence_event(path=None, event_type="heartbeat", client_visitor_id=None):
+    """
+    Real-time visitor presence.
+    enter/heartbeat marks active immediately.
+    leave marks inactive immediately when browser sends pagehide/beacon.
+    """
+    ua = request.headers.get("User-Agent", "Unknown")
+    if is_probably_bot(ua):
+        return None
+
+    visitor_id = client_visitor_id or get_or_create_visitor_id()
+    session_id = client_visitor_id or session.get("visitor_id")
+    ip = get_client_ip()
+    current_path = path or "/"
+    event_type = event_type if event_type in ["enter", "heartbeat", "leave"] else "heartbeat"
+
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                if event_type == "leave":
+                    cur.execute("""
+                        UPDATE visitor_sessions
+                        SET current_path=%s,
+                            last_seen=now(),
+                            left_at=now(),
+                            is_active=FALSE
+                        WHERE visitor_id=%s
+                    """, (current_path, visitor_id))
+                else:
+                    cur.execute("""
+                        INSERT INTO visitor_sessions
+                            (visitor_id, session_id, ip_address, user_agent, current_path,
+                             entered_at, last_seen, left_at, is_active)
+                        VALUES (%s, %s, %s, %s, %s, now(), now(), NULL, TRUE)
+                        ON CONFLICT (visitor_id)
+                        DO UPDATE SET
+                            session_id=EXCLUDED.session_id,
+                            ip_address=EXCLUDED.ip_address,
+                            user_agent=EXCLUDED.user_agent,
+                            current_path=EXCLUDED.current_path,
+                            last_seen=now(),
+                            left_at=NULL,
+                            is_active=TRUE
+                    """, (visitor_id, session_id, ip, ua, current_path))
+
+                cur.execute("""
+                    INSERT INTO visitor_events
+                        (visitor_id, session_id, ip_address, user_agent, path, event_type, created_at)
+                    VALUES (%s, %s, %s, %s, %s, %s, now())
+                """, (visitor_id, session_id, ip, ua, current_path, event_type))
+
+                return {
+                    "visitor_id": visitor_id,
+                    "ip_address": ip,
+                    "path": current_path,
+                    "event_type": event_type
+                }
+    except Exception as e:
+        print(f"Realtime presence error: {e}")
+        return None
+    finally:
+        conn.close()
+
+
+def presence_tracking_script():
+    """Injected into public HTML pages so entry, heartbeat and leave are captured."""
+    return """
+<script>
+(function () {
+  if (window.__techKnowPresenceLoaded) return;
+  window.__techKnowPresenceLoaded = true;
+
+  const path = window.location.pathname || "/";
+
+  function getVisitorId() {
+    let vid = localStorage.getItem("__muga_visitor_id");
+    if (!vid) {
+      vid = 'muga_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 11);
+      localStorage.setItem("__muga_visitor_id", vid);
+    }
+    document.cookie = "visitor_id=" + vid + "; path=/; max-age=31536000; SameSite=Lax";
+    return vid;
+  }
+
+  function payload(eventType) {
+    return JSON.stringify({
+      path: path,
+      event_type: eventType,
+      visitor_id: getVisitorId(),
+      ts: Date.now()
+    });
+  }
+
+  function postPresence(eventType) {
+    try {
+      fetch('/api/track_visit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload(eventType),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  function leavePresence() {
+    try {
+      const blob = new Blob([payload('leave')], { type: 'application/json' });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/track_leave', blob);
+      } else {
+        fetch('/api/track_leave', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload('leave'),
+          keepalive: true
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
+  postPresence('enter');
+
+  const heartbeat = setInterval(function () {
+    if (!document.hidden) postPresence('heartbeat');
+  }, 4500); // Optimized rapid heartbeat (4.5 seconds)
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      leavePresence();
+    } else {
+      postPresence('enter');
+    }
+  });
+
+  window.addEventListener('pagehide', function () {
+    clearInterval(heartbeat);
+    leavePresence();
+  });
+
+  window.addEventListener('beforeunload', leavePresence);
+})();
+</script>
+"""
+
+
+def get_blog_category(title, content):
+    combined = ((title or "") + " " + (content or "")).lower()
+
+    if any(k in combined for k in ["cyber", "exploit", "mitigate", "security", "defense", "hack", "penetration", "firewall"]):
+        return "Cybersecurity"
+    elif any(k in combined for k in ["rout", "net", "ip", "cisco", "ccna", "switch", "router", "dhcp", "dns", "lan", "wan"]):
+        return "Networking"
+    elif any(k in combined for k in ["ai", "machine", "learning", "model", "neural", "predict", "automation", "workflow", "cron", "script"]):
+        return "AI & Automation"
+    elif any(k in combined for k in ["web", "html", "css", "flask", "react", "js", "ts", "javascript", "typescript", "frontend", "backend"]):
+        return "Web Development"
+    elif any(k in combined for k in ["ict", "support", "helpdesk", "comput", "hardware", "troubleshoot", "printer"]):
+        return "ICT Support"
+
+    return "Technology"
+
+
 def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTS
+
 
 def allowed_image(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in IMAGE_EXTS
 
+
 def allowed_video(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in VIDEO_EXTS
 
-def save_message(name: str, email: str, message: str) -> None:
-    newfile = not os.path.exists(MESSAGES_CSV)
-    with open(MESSAGES_CSV, "a", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        if newfile:
-            w.writerow(MSG_FIELDNAMES)
-        w.writerow([datetime.now().isoformat(timespec="seconds"), name.strip(), email.strip(), message.strip(), "unread"])
-
-def load_messages():
-    msgs = []
-    if os.path.exists(MESSAGES_CSV):
-        with open(MESSAGES_CSV, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                entry = {k: (row.get(k, "") if k in row else "") for k in MSG_FIELDNAMES}
-                if not entry.get("status"):
-                    entry["status"] = "unread"
-                msgs.append(entry)
-    return msgs
-
-def save_all_messages(msgs):
-    if not msgs:
-        try:
-            if os.path.exists(MESSAGES_CSV):
-                os.remove(MESSAGES_CSV)
-        except OSError:
-            pass
-        return
-    with open(MESSAGES_CSV, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=MSG_FIELDNAMES)
-        writer.writeheader()
-        for r in msgs:
-            out = {k: r.get(k, "") for k in MSG_FIELDNAMES}
-            writer.writerow(out)
-
-def list_projects():
-    try:
-        return sorted(os.listdir(UPLOAD_DIR_APPROVED))
-    except FileNotFoundError:
-        return []
-
-def list_pending():
-    try:
-        return sorted(os.listdir(UPLOAD_DIR_PENDING))
-    except FileNotFoundError:
-        return []
-
-def owner_cv_filename():
-    files = sorted(os.listdir(UPLOAD_DIR_CV))
-    return files[0] if files else None
-
-def handle_upload(up, folder, rename_to=None):
-    if not up or up.filename == "":
-        return None, "No file selected."
-    if not allowed_file(up.filename):
-        return None, "Invalid file type."
-    fname = rename_to or (datetime.now().strftime("%Y%m%d_%H%M%S_") + secure_filename(up.filename))
-    up.save(os.path.join(folder, fname))
-    return fname, None
-
-def handle_image_upload(up, folder, rename_to=None):
-    if not up or up.filename == "":
-        return None, "No image selected."
-    if not allowed_image(up.filename):
-        return None, "Invalid image type."
-    fname = rename_to or (datetime.now().strftime("%Y%m%d_%H%M%S_") + secure_filename(up.filename))
-    up.save(os.path.join(folder, fname))
-    return fname, None
 
 def require_admin():
     if not session.get("is_admin"):
@@ -144,709 +427,682 @@ def require_admin():
         return False
     return True
 
-def latest_file(folder, only_images=False):
-    try:
-        entries = []
-        for f in os.listdir(folder):
-            if only_images and not allowed_image(f):
-                continue
-            p = os.path.join(folder, f)
-            if os.path.isfile(p):
-                entries.append((f, os.path.getmtime(p)))
-        if not entries:
-            return None, None
-        entries.sort(key=lambda x: x[1], reverse=True)
-        return entries[0]
-    except FileNotFoundError:
+
+def category_from_kind(kind):
+    if kind == "profile":
+        return "profile"
+    if kind == "hero":
+        return "hero"
+    if kind == "blog_media":
+        return "blog_media"
+    return "gallery"
+
+
+def latest_file(category, only_images=False):
+    rec = data.get_latest_file_record(category, only_images=only_images)
+    if not rec:
         return None, None
 
-def list_images(folder):
-    """Return only image filenames in folder, newest-first (keeps backward compatibility)."""
-    try:
-        imgs = [f for f in os.listdir(folder) if allowed_image(f)]
-        imgs.sort(key=lambda n: os.path.getmtime(os.path.join(folder, n)), reverse=True)
-        return imgs
-    except FileNotFoundError:
-        return []
+    ts = int(rec["uploaded_at"].timestamp()) if rec.get("uploaded_at") else 0
+    return rec.get("name"), ts
 
-def list_gallery_media(folder=MEDIA_GALLERY):
-    """
-    Return list of gallery media items (images + videos), each item is a dict:
-      { "name": "<filename>", "type": "image" or "video", "url": "<url>" }
-    Sorted newest-first.
-    """
+
+def owner_cv_filename():
+    return data.get_latest_filename("cv")
+
+
+def list_projects():
+    return data.list_projects(approved=True)
+
+
+def list_pending():
+    return data.list_projects(approved=False)
+
+
+def list_gallery_media():
+    return data.list_gallery_media()
+
+
+def list_blog_media():
+    conn = data.get_conn()
     try:
-        entries = []
-        for f in os.listdir(folder):
-            p = os.path.join(folder, f)
-            if not os.path.isfile(p):
-                continue
-            ext = f.rsplit(".", 1)[-1].lower() if "." in f else ""
-            if ext in IMAGE_EXTS or ext in VIDEO_EXTS:
-                entries.append((f, os.path.getmtime(p)))
-        if not entries:
-            return []
-        entries.sort(key=lambda x: x[1], reverse=True)
-        out = []
-        for fname, _ in entries:
-            typ = "image" if allowed_image(fname) else "video" if allowed_video(fname) else "other"
-            out.append({"name": fname, "type": typ, "url": media_url("gallery", fname)})
-        return out
-    except FileNotFoundError:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT name, mimetype, uploaded_at, url, storage_provider
+                    FROM files
+                    WHERE category='blog_media'
+                    ORDER BY uploaded_at DESC
+                """)
+
+                rows = cur.fetchall()
+                out = []
+
+                for r in rows:
+                    mimetype = r["mimetype"] or ""
+                    typ = (
+                        "image" if mimetype.startswith("image")
+                        else "video" if mimetype.startswith("video")
+                        else "other"
+                    )
+
+                    out.append({
+                        "name": r["name"],
+                        "type": typ,
+                        "url": r["url"] or f"/media/blog_media/{r['name']}",
+                        "storage_provider": r["storage_provider"] or "database"
+                    })
+
+                return out
+
+    except Exception as e:
+        print(f"Error listing blog media: {e}")
         return []
+    finally:
+        conn.close()
+
 
 def media_url(kind, filename):
     if not filename:
         return None
-    folder = MEDIA_PROFILE if kind == "profile" else MEDIA_HERO if kind == "hero" else MEDIA_GALLERY
-    path = os.path.join(folder, filename)
-    v = int(os.path.getmtime(path)) if os.path.exists(path) else 0
-    return url_for("media_file", kind=kind, filename=filename) + f"?v={v}"
 
-def slugify(text: str) -> str:
-    s = text.lower().strip()
-    s = re.sub(r"[^\w\s-]", "", s)
-    s = re.sub(r"[-\s]+", "-", s)
-    return s[:200]
+    category = category_from_kind(kind)
+    ts = data.get_file_timestamp(category, filename) or 0
 
-# ====== BLOG HELPERS ======
-def load_blogs():
-    blogs = []
-    if os.path.exists(BLOG_CSV):
-        with open(BLOG_CSV, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                blogs.append(row)
-    return blogs
+    return url_for("media_file", kind=kind, filename=filename) + f"?v={int(ts)}"
 
-def save_all_blogs(blogs):
-    if not blogs:
-        try:
-            if os.path.exists(BLOG_CSV):
-                os.remove(BLOG_CSV)
-        except OSError:
-            pass
-        return
-    with open(BLOG_CSV, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=BLOG_FIELDNAMES)
-        writer.writeheader()
-        for b in blogs:
-            writer.writerow({k: b.get(k, "") for k in BLOG_FIELDNAMES})
 
-def add_blog(title, content):
-    blogs = load_blogs()
-    nid = 1
-    if blogs:
-        try:
-            nid = max(int(b.get("id", 0)) for b in blogs) + 1
-        except Exception:
-            nid = len(blogs) + 1
-    slug = slugify(title) or f"post-{nid}"
-    b = {
-        "id": str(nid),
-        "timestamp": datetime.now().isoformat(timespec="seconds"),
-        "title": title.strip(),
-        "slug": slug,
-        "content": content.strip()
-    }
-    blogs.insert(0, b)  # newest first
-    save_all_blogs(blogs)
-    return b
+def serve_file_record(rec, filename, as_attachment=False):
+    if not rec:
+        abort(404)
 
-def delete_blog_by_id(bid):
-    blogs = load_blogs()
-    remaining = [b for b in blogs if b.get("id") != str(bid)]
-    save_all_blogs(remaining)
+    if rec.get("url"):
+        return redirect(rec["url"], code=302)
 
-# ====== NEWSLETTER HELPERS (Phase 1) ======
-def save_subscriber(email: str) -> None:
-    newfile = not os.path.exists(NEWSLETTER_CSV)
-    with open(NEWSLETTER_CSV, "a", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        if newfile:
-            w.writerow(NEWSLETTER_FIELDS)
-        w.writerow([datetime.now().isoformat(timespec="seconds"), email.strip().lower()])
+    content = rec.get("content") or b""
+    if not content:
+        abort(404)
 
-def load_subscribers():
-    subs = []
-    if os.path.exists(NEWSLETTER_CSV):
-        with open(NEWSLETTER_CSV, newline="", encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                subs.append(row)
-    return subs
+    mimetype = rec.get("mimetype") or "application/octet-stream"
 
-# ====== TEMPLATES (main page + blog and sections) ======
-# Main PAGE with SEO meta + Open Graph and newsletter section and accessibility touches
-PAGE = """<!doctype html>
-<html lang="en">
-<head>
-  <meta name="google-site-verification" content="dn_Eh0rj2xwyHjM_Qf9_wvb1-wy7HbiEmjeEAQDK_uA" />
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Muga • Portfolio — Caleb Muga</title>
+    return send_file(
+        io.BytesIO(content),
+        download_name=filename,
+        as_attachment=as_attachment,
+        mimetype=mimetype
+    )
 
-  <!-- SEO / OpenGraph -->
-  <meta name="google-site-verification" content="dn_Eh0rj2xwyHjM_Qf9_wvb1-wy7HbiEmjeEAQDK_uA" />
-  <meta name="description" content="TechKnow Solutions — Caleb Muga: ICT Support, Networking, Cybersecurity, and process automation. Contact for services and view portfolio.">
-  <meta name="author" content="Caleb Muga">
-  <meta property="og:title" content="TechKnow Solutions — Caleb Muga">
-  <meta property="og:description" content="ICT Support, Networking, Cybersecurity and automation solutions.">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="TechKnow Solutions">
-  {% if hero_url %}
-  <meta property="og:image" content="{{ hero_url }}">
-  {% endif %}
-  <meta name="twitter:card" content="summary_large_image">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{ --brand1:#0d6efd; --brand2:#6f42c1; --muted:#6b7280; }
-    * { box-sizing: border-box; }
-    body{
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:#0b1220; color:#e6eef8; min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden;
-      transition: background .25s, color .25s;
-    }
-    /* LIGHT MODE */
-    body.light { background: #f5f7fb; color: #0b1220; }
-    .navbar{ font-size:1.05rem; backdrop-filter: saturate(160%) blur(6px); }
-    .brand-avatar{ display:flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; letter-spacing:.2px; }
-    .brand-avatar img{ width:38px; height:38px; border-radius:50%; object-fit:cover; box-shadow:0 0 0 3px rgba(255,255,255,.15); }
-    .brand-avatar span { color:#e5e7eb; }
-    body.light .brand-avatar span { color: #0b1220; }
-    .hero{ position:relative; color:#fff; padding:140px 24px 120px; text-align:center; border-bottom-left-radius:24px; border-bottom-right-radius:24px; overflow:hidden; }
-    body.light .hero{ color:#0b1220; }
-    .hero .overlay { position:absolute; inset:0; z-index:0; opacity:.28; background-size:cover; background-position:center; filter:saturate(120%) contrast(105%); }
-    .hero h1{ position:relative; z-index:1; font-weight:800; font-size:3.2rem; letter-spacing:.3px; }
-    .hero p{ position:relative; z-index:1; font-size:1.25rem; opacity:.95; }
-    .chip{ display:inline-block; background:rgba(255,255,255,.12); padding:.35rem .7rem; border-radius:999px; font-size:.95rem; margin:0 .25rem .5rem; border:1px solid rgba(255,255,255,.2) }
-    body.light .chip { background: rgba(10,10,10,.04); color:#0b1220; border:1px solid rgba(0,0,0,.06); }
-    .floaters span{ position:absolute; width:120px; height:120px; border-radius:50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), rgba(255,255,255,.02)); animation: drift 16s ease-in-out infinite; filter: blur(1px); }
-    .floaters span:nth-child(1){ left:5%; top:40%; animation-delay:0s; }
-    .floaters span:nth-child(2){ right:8%; top:20%; animation-delay:2s; width:160px; height:160px; }
-    .floaters span:nth-child(3){ left:20%; bottom:10%; animation-delay:4s; width:90px; height:90px; }
-    .floaters span:nth-child(4){ right:20%; bottom:15%; animation-delay:6s; width:110px; height:110px; }
-    @keyframes drift{ 0%,100%{ transform: translateY(0) translateX(0); } 50%{ transform: translateY(-18px) translateX(8px); } }
-    section{ padding:80px 0; }
-    h2.section-title{ font-weight:800; font-size:2rem; text-align:center; margin-bottom:24px; }
-    .lead-lg{ font-size:1.15rem; color:#d0d8e6; }
-    body.light .lead-lg { color: #374151; }
-    .card{ border:0; border-radius:18px; background:#0f1724; box-shadow:0 8px 24px rgba(0,0,0,.55); color:#e6eef8; }
-    body.light .card { background: #fff; color: #0b1220; box-shadow: 0 6px 18px rgba(0,0,0,.06); }
-    .form-control, .form-select{ background:#0c1426; border:1px solid #1d2b4a; color:#dbe6ff; border-radius:12px; }
-    body.light .form-control, body.light .form-select { background: #fff; color:#0b1220; border:1px solid #e6eef8; }
-    .btn-primary{ background:linear-gradient(135deg, var(--brand1), var(--brand2)); border:0; }
-    .gallery-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:14px; }
-    .gallery-item{ position:relative; border-radius:14px; overflow:hidden; background:#0c1426; cursor:pointer; display:flex; align-items:center; justify-content:center; height:180px; }
-    .gallery-item img, .gallery-item video{ width:100%; height:100%; object-fit:cover; transition: transform .4s ease; display:block; }
-    .gallery-item:hover img, .gallery-item:hover video{ transform: scale(1.05); }
-    .video-overlay { position:absolute; z-index:5; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-    .video-play-icon { width:56px; height:56px; background: rgba(0,0,0,0.45); border-radius:50%; display:flex; align-items:center; justify-content:center; }
-    .video-play-icon:after{ content:""; border-style:solid; border-width:10px 0 10px 16px; border-color: transparent transparent transparent #fff; margin-left:4px; display:inline-block; }
-    .reveal{ opacity:0; transform: translateY(18px); transition: all .7s ease; }
-    .reveal.visible{ opacity:1; transform: translateY(0); }
-    #loader{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#0b1220; z-index:9999; }
-    .spinner{ width:56px; height:56px; border-radius:50%; border:6px solid rgba(255,255,255,.15); border-top-color:#8aa4ff; animation:spin 1s linear infinite; }
-    @keyframes spin{ to{ transform: rotate(360deg); } }
-    .blog-card { padding:18px; border-radius:12px; background: rgba(255,255,255,0.02); }
-    body.light .blog-card { background: #fff; border:1px solid #eef2ff; }
-    .top-right-controls { display:flex; gap:8px; align-items:center; }
-    .dark-toggle { cursor:pointer; border-radius:999px; padding:.35rem .6rem; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); color:inherit; }
-    body.light .dark-toggle { background: rgba(0,0,0,.03); }
-    /* small responsive tweak for video thumbnails */
-    @media (max-width:576px){ .gallery-item { height:140px; } }
-  </style>
-</head>
-<body>
+def log_upload_result(category, fname):
+    try:
+        if not fname:
+            print(f"⚠️ Upload failed before DB check for category={category}")
+            return
 
-<div id="loader" role="status" aria-hidden="false"><div class="spinner" aria-hidden="true"></div></div>
+        rec = data.get_file_record(category, fname)
 
-<nav class="navbar navbar-expand-lg bg-transparent sticky-top" role="navigation" aria-label="Main navigation">
-  <div class="container">
-    <a class="brand-avatar" href="#home" aria-label="Go to home">
-      {% if profile_url %}
-        <img src="{{ profile_url }}" alt="profile">
-        <span>Muga.dev</span>
-      {% else %}
-        <span class="fs-5">Muga<span style="color:#8aa4ff">.dev</span></span>
-      {% endif %}
-    </a>
+        if not rec:
+            print(f"⚠️ Upload saved name={fname}, but no DB record found.")
+            return
 
-    <div class="top-right-controls ms-auto d-flex align-items-center">
-      <button id="themeBtn" class="dark-toggle" title="Toggle light / dark" aria-pressed="false">Toggle theme</button>
-      <a class="btn btn-sm btn-outline-primary ms-2" href="{{ url_for('blog_list') }}">Blog</a>
-      <a class="btn btn-sm btn-outline-secondary ms-2" href="{{ url_for('login') }}">Admin</a>
-    </div>
-  </div>
-</nav>
+        print(
+            "📦 UPLOAD RESULT:",
+            f"name={rec.get('name')}",
+            f"category={rec.get('category')}",
+            f"storage_provider={rec.get('storage_provider')}",
+            f"url_present={bool(rec.get('url'))}",
+            f"content_removed={not bool(rec.get('content'))}"
+        )
 
-<header id="home" class="hero" role="banner">
-  {% if hero_url %}
-    <div class="overlay" style="background-image: url('{{ hero_url }}');" aria-hidden="true"></div>
-  {% endif %}
-  <div class="floaters" aria-hidden="true">
-    <span></span><span></span><span></span><span></span>
-  </div>
-  <div class="container position-relative">
-    <h1 class="reveal">WELCOME TO TECHKNOW SOLUTIONS - Caleb Muga 👋</h1>
-    <p class="mt-3 reveal" style="max-width:900px;margin:0 auto;">
-      <span class="chip" aria-hidden="true">ICT Support</span>
-      <span class="chip" aria-hidden="true">Networking</span>
-      <span class="chip" aria-hidden="true">Cybersecurity</span>
-      <span class="chip" aria-hidden="true">Process Automation</span>
-    </p>
-    <a href="#portfolio" class="btn btn-primary btn-lg mt-4 reveal">See My Work</a>
-  </div>
-</header>
+    except Exception as e:
+        print("⚠️ Could not log upload result:", e)
 
-<main class="container flex-grow-1" role="main">
-  {% with msgs=get_flashed_messages() %}
-    {% if msgs %}
-      <div class="mt-4" aria-live="polite">
-        {% for m in msgs %}
-          <div class="alert alert-info">{{ m }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
 
-  <!-- About -->
-  <section id="about" class="reveal" aria-labelledby="about-title">
-    <h2 class="section-title" id="about-title">About Me</h2>
-    <div class="card p-4 mx-auto" style="max-width:1000px">
-      <div class="row g-4">
-        <div class="col-md-4 text-center">
-          {% if profile_url %}
-            <img src="{{ profile_url }}" style="width:160px;height:160px;object-fit:cover;border-radius:12px;" alt="Profile image of Caleb Muga">
-          {% else %}
-            <div style="width:160px;height:160px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#0c1426;font-weight:700;font-size:28px;" aria-hidden="true">
-              CM
-            </div>
-          {% endif %}
-        </div>
-        <div class="col-md-8">
-          <p class="lead-lg">
-            Customer-focused ICT Officer with a BSc in Business & IT. Practical experience in network administration, end-user support,
-            and cybersecurity. I build reliable tools and automate repetitive tasks to increase efficiency.
-          </p>
-          <ul>
-            <li><strong>Strengths:</strong> Problem-solving, documentation, stakeholder communication, systems hardening.</li>
-            <li><strong>Certifications:</strong> CCNA 1,OPSWAT File Security Associate, ALX Virtual Assistant.</li>
-            <li><strong>Languages:</strong> English, Swahili.</li>
-          </ul>
-          {% if cv_file %}
-            <a href="{{ url_for('download_file', kind='cv', filename=cv_file) }}" class="btn btn-outline-primary">Download CV</a>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Portfolio / Gallery -->
-  <section id="portfolio" class="reveal" aria-labelledby="portfolio-title">
-    <h2 class="section-title" id="portfolio-title">Portfolio & Gallery</h2>
-    <p class="text-center lead-lg">Featured gallery and private project submission.</p>
-
-    <div class="card p-3 mb-4" aria-live="polite">
-      <h5 class="mb-3">Featured Gallery ({{ gallery_images|length }})</h5>
-      {% if gallery_images %}
-        <div class="gallery-grid">
-          {% for g in gallery_images %}
-            <div class="gallery-item" onclick="openGalleryItem({{ loop.index0 }})" role="button" tabindex="0" aria-label="Open gallery item {{ loop.index }}">
-              {% if g.type == 'image' %}
-                <img src="{{ g.url }}" alt="Gallery image {{ loop.index }}">
-              {% elif g.type == 'video' %}
-                <video muted playsinline preload="metadata" aria-hidden="true">
-                  <source src="{{ g.url }}">
-                </video>
-                <div class="video-overlay" aria-hidden="true"><div class="video-play-icon"></div></div>
-              {% else %}
-                <img src="{{ g.url }}" alt="Gallery {{ loop.index }}">
-              {% endif %}
-            </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <p class="text-muted mb-0">Gallery is empty. (Admin can add photos or videos in the Admin Panel.)</p>
-      {% endif %}
-    </div>
-
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Submit Your Project (Private)</h5>
-        <p class="text-muted mb-2">Your file is uploaded privately and only the admin can view/approve it.</p>
-        <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_project') }}">
-          <input type="file" name="file" class="form-control mb-2" required aria-label="Choose file to upload">
-          <button class="btn btn-primary">Upload</button>
-        </form>
-        <small class="text-muted d-block mt-2">Allowed: {{ allowed_exts|join(', ') }} • up to 32MB</small>
-      </div>
-    </div>
-  </section>
-
-  <!-- Newsletter (Phase 1 addition) -->
-  <section id="newsletter" class="reveal" aria-labelledby="newsletter-title">
-    <h2 class="section-title" id="newsletter-title">Stay Updated</h2>
-    <p class="text-center lead-lg">Subscribe to occasional updates and new blog posts.</p>
-    <div class="card p-3 mx-auto" style="max-width:720px">
-      <form method="post" action="{{ url_for('subscribe') }}" class="d-flex gap-2 align-items-center" aria-label="Subscribe to newsletter">
-        <label for="sub-email" class="visually-hidden">Email address</label>
-        <input id="sub-email" type="email" name="email" class="form-control" placeholder="Email address" required>
-        <button class="btn btn-primary">Subscribe</button>
-      </form>
-      <div class="small text-muted mt-2">No spam. Unsubscribe anytime by contacting admin.</div>
-    </div>
-  </section>
-
-  <!-- Services -->
-  <section id="services" class="reveal">
-    <h2 class="section-title">Services</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 p-3">
-          <h5>Network Administration</h5>
-          <p class="mb-0">Design, deploy and maintain reliable networks (LAN/WAN, switches, routers, VPNs).</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 p-3">
-          <h5>Cybersecurity</h5>
-          <p class="mb-0">Vulnerability scanning, hardening, access control and incident response support.</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 p-3">
-          <h5>Automation & Data Solutions</h5>
-          <p class="mb-0">Dashboards, scripts and small automations that save time and reduce errors.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Blog preview -->
-  <section id="blog" class="reveal">
-    <h2 class="section-title">Latest from my blog</h2>
-    <div class="row g-4">
-      {% if blog_posts %}
-        {% for b in blog_posts[:3] %}
-          <div class="col-md-4">
-            <div class="blog-card">
-              <h5>{{ b.title }}</h5>
-              <div class="text-muted" style="font-size:.9rem">{{ b.timestamp }}</div>
-              <p style="margin-top:.6rem; color:inherit;">{{ b.content[:180] }}{% if b.content|length > 180 %}...{% endif %}</p>
-              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('view_blog', slug=b.slug) }}">Read</a>
-            </div>
-          </div>
-        {% endfor %}
-      {% else %}
-        <div class="col-12"><p class="text-muted">No blog posts yet. (Admin can add posts.)</p></div>
-      {% endif %}
-    </div>
-    <div class="text-center mt-3"><a class="btn btn-outline-secondary" href="{{ url_for('blog_list') }}">See all posts</a></div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact" class="reveal">
-    <h2 class="section-title">Contact</h2>
-    <div class="row g-4">
-      <div class="col-lg-6">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">Send a Message</h5>
-            <form method="post" action="{{ url_for('contact') }}">
-              <input type="text" name="name" class="form-control mb-2" placeholder="Your name" required>
-              <input type="email" name="email" class="form-control mb-2" placeholder="Your email" required>
-              <textarea name="message" class="form-control mb-2" rows="4" placeholder="Your message" required></textarea>
-              <button class="btn btn-primary">Send</button>
-            </form>
-            <small class="text-muted d-block mt-2">Your message is saved privately (admin can view).</small>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">Quick Contacts</h5>
-            <p class="lead mb-1"><strong>Phone:</strong> 0791 204 587</p>
-            <a class="btn btn-whatsapp btn-lg" href="https://wa.me/254791204587" target="_blank" rel="noopener">Chat on WhatsApp</a>
-            <p class="text-muted mt-3 mb-0">Available Mon–Sat. Nairobi time (EAT).</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="container d-flex flex-wrap justify-content-between align-items-center py-3">
-    <div>© {{ year }} <strong>Caleb Muga</strong>. All rights reserved.</div>
-    <div><a class="text-decoration-none" href="#home">Back to top ↑</a></div>
-  </div>
-</footer>
-
-<!-- Media modal (images & videos) -->
-<div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true" aria-labelledby="mediaModalLabel">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content" style="background:transparent;border:0;">
-      <div class="modal-body p-0">
-        <div id="mediaContainer" style="width:100%;height:auto;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:transparent;">
-          <!-- JS injects media -->
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Loader
-  window.addEventListener('load', () => {
-    const l = document.getElementById('loader');
-    if(l){ l.style.opacity = '0'; setTimeout(() => l.style.display='none', 300); }
-  });
-
-  // Reveal on scroll
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if(e.isIntersecting){ e.target.classList.add('visible'); }
-    });
-  }, { threshold:.12 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-  // Gallery items as array
-  const galleryItems = {{ gallery_images|tojson }};
-
-  function openGalleryItem(idx){
-    if(!galleryItems || idx < 0 || idx >= galleryItems.length) return;
-    const it = galleryItems[idx];
-    const container = document.getElementById('mediaContainer');
-    container.innerHTML = '';
-    if(it.type === 'image'){
-      const img = document.createElement('img');
-      img.src = it.url;
-      img.alt = 'Gallery image';
-      img.style.width = '100%';
-      img.style.height = 'auto';
-      img.style.display = 'block';
-      img.style.borderRadius = '12px';
-      container.appendChild(img);
-    } else if(it.type === 'video'){
-      const vid = document.createElement('video');
-      vid.src = it.url;
-      vid.controls = true;
-      vid.autoplay = false;
-      vid.playsInline = true;
-      vid.style.width = '100%';
-      vid.style.height = 'auto';
-      vid.style.display = 'block';
-      vid.style.borderRadius = '12px';
-      container.appendChild(vid);
-    } else {
-      const a = document.createElement('a');
-      a.href = it.url;
-      a.innerText = 'Open media';
-      a.target = '_blank';
-      container.appendChild(a);
-    }
-    const modalEl = document.getElementById('mediaModal');
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-  }
-
-  // Theme toggle (persist in localStorage)
-  const themeKey = 'muga_theme';
-  const themeBtn = document.getElementById('themeBtn');
-  function applyTheme(t){
-    if(t==='light') {
-      document.body.classList.add('light');
-      themeBtn.setAttribute('aria-pressed', 'true');
-    } else {
-      document.body.classList.remove('light');
-      themeBtn.setAttribute('aria-pressed', 'false');
-    }
-  }
-  function initTheme(){
-    const t = localStorage.getItem(themeKey) || 'dark';
-    applyTheme(t);
-  }
-  initTheme();
-  themeBtn.addEventListener('click', () => {
-    const t = document.body.classList.contains('light') ? 'dark' : 'light';
-    localStorage.setItem(themeKey, t);
-    applyTheme(t);
-  });
-
-  // keyboard accessibility for gallery items (Enter to open)
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter' && document.activeElement && document.activeElement.classList.contains('gallery-item')){
-      const nodeList = Array.from(document.querySelectorAll('.gallery-item'));
-      const idx = nodeList.indexOf(document.activeElement);
-      if(idx >= 0) openGalleryItem(idx);
-    }
-  });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-"""
-
-# ====== ROUTES ======
 @app.route("/", methods=["GET"])
 def index():
-    prof, _ = latest_file(MEDIA_PROFILE, only_images=True)
-    hero, _ = latest_file(MEDIA_HERO, only_images=True)
-    gallery = list_gallery_media(MEDIA_GALLERY)  # list of dicts {name,type,url}
-    blogs = load_blogs()
+    try:
+        data.record_visit(
+            get_client_ip(),
+            request.headers.get("User-Agent", "Unknown"),
+            "/",
+            get_or_create_visitor_id()
+        )
+        record_presence_event("/", "enter")
+    except Exception as e:
+        print(f"Tracking error: {e}")
 
-    return render_template_string(
-        PAGE,
+    prof_name, _ = latest_file("profile", only_images=True)
+    hero_name, _ = latest_file("hero", only_images=True)
+    gallery = list_gallery_media()
+    blogs = data.load_blogs()
+
+    return render_template(
+        "index.html",
         cv_file=owner_cv_filename(),
         allowed_exts=sorted(ALLOWED_EXTS),
         year=datetime.now().year,
-        profile_url=media_url("profile", prof) if prof else None,
-        hero_url=media_url("hero", hero) if hero else None,
+        profile_url=media_url("profile", prof_name) if prof_name else None,
+        hero_url=media_url("hero", hero_name) if hero_name else None,
         gallery_images=gallery,
         blog_posts=blogs
     )
 
-# ====== Newsletter subscribe (Phase 1) ======
+
 @app.route("/subscribe", methods=["POST"])
 def subscribe():
     email = (request.form.get("email") or "").strip().lower()
+
     if not email or "@" not in email:
         flash("Please provide a valid email address.")
         return redirect(url_for("index") + "#newsletter")
-    save_subscriber(email)
+
+    data.save_subscriber(email)
     flash("Thanks! You are subscribed to updates.")
     return redirect(url_for("index") + "#newsletter")
+
 
 @app.route("/contact", methods=["POST"])
 def contact():
     name = request.form.get("name", "").strip()
     email = request.form.get("email", "").strip()
     message = request.form.get("message", "").strip()
+
     if not (name and email and message):
         flash("Please fill in all fields.")
         return redirect(url_for("index") + "#contact")
-    save_message(name, email, message)
+
+    data.save_message(name, email, message)
     flash("Thanks, your message was received! ✅")
     return redirect(url_for("index") + "#contact")
 
+
 @app.route("/upload_project", methods=["POST"])
 def upload_project():
+    print("🔥 Upload route called: /upload_project")
+
     up = request.files.get("file")
-    fname, err = handle_upload(up, UPLOAD_DIR_PENDING)
+
+    if not up or up.filename == "":
+        flash("No file selected.")
+        return redirect(url_for("index") + "#portfolio")
+
+    if not allowed_file(up.filename):
+        flash("Invalid file type.")
+        return redirect(url_for("index") + "#portfolio")
+
+    fname, err = data.save_file_from_storage("project", up, approve=False)
+    log_upload_result("project", fname)
+
     if err:
         flash(err)
     else:
         flash(f"Project '{fname}' uploaded (private). Admin will review. ✅")
+
     return redirect(url_for("index") + "#portfolio")
+
 
 @app.route("/download/<kind>/<path:filename>")
 def download_file(kind, filename):
+    safe = secure_filename(urllib.parse.unquote(filename))
+
     if kind == "project":
-        return send_from_directory(UPLOAD_DIR_APPROVED, filename, as_attachment=True)
+        rec = data.get_file_record("project", safe, approved=True)
+        return serve_file_record(rec, safe, as_attachment=True)
+
     elif kind == "cv":
-        return send_from_directory(UPLOAD_DIR_CV, filename, as_attachment=True)
+        rec = data.get_file_record("cv", safe)
+        return serve_file_record(rec, safe, as_attachment=True)
+
     abort(404)
+
 
 @app.route("/media/<kind>/<path:filename>")
 def media_file(kind, filename):
-    safe = secure_filename(filename)
-    if kind == "profile":
-        return send_from_directory(MEDIA_PROFILE, safe)
-    if kind == "hero":
-        return send_from_directory(MEDIA_HERO, safe)
-    if kind == "gallery":
-        return send_from_directory(MEDIA_GALLERY, safe)
-    abort(404)
+    safe = secure_filename(urllib.parse.unquote(filename))
+    category = category_from_kind(kind)
 
-# ====== BLOG PUBLIC ======
+    rec = data.get_file_record(category, safe)
+    return serve_file_record(rec, safe, as_attachment=False)
+
+
 @app.route("/blog")
 def blog_list():
-    blogs = load_blogs()
-    BLOG_PAGE = """
-    <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Blog • Muga</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head><body style="background:#0b1220;color:#e6eef8">
-      <div class="container py-5">
-        <h1>Blog</h1>
-        <p class="text-muted">Insights, tips and updates.</p>
-        {% if blogs %}
-          <div class="row g-4">
-            {% for b in blogs %}
-              <div class="col-md-4">
-                <div style="background:#0f1724;padding:18px;border-radius:12px;">
-                  <h5>{{ b.title }}</h5>
-                  <div class="text-muted">{{ b.timestamp }}</div>
-                  <p>{{ b.content[:160] }}{% if b.content|length>160 %}...{% endif %}</p>
-                  <a class="btn btn-sm btn-outline-primary" href="{{ url_for('view_blog', slug=b.slug) }}">Read</a>
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p class="text-muted">No posts yet.</p>
-        {% endif %}
-        <a class="d-block mt-4 btn btn-outline-secondary" href="{{ url_for('index') }}">← Back</a>
-      </div>
-    </body></html>
-    """
-    return render_template_string(BLOG_PAGE, blogs=blogs)
+    try:
+        data.record_visit(
+            get_client_ip(),
+            request.headers.get("User-Agent", "Unknown"),
+            "/blog",
+            get_or_create_visitor_id()
+        )
+        record_presence_event("/blog", "enter")
+    except Exception as e:
+        print(f"Tracking error: {e}")
+
+    q = request.args.get("q", "").strip()
+    blogs = data.load_blogs()
+
+    if q:
+        q_lower = q.lower()
+        blogs = [
+            b for b in blogs
+            if q_lower in (b.get("title", "") or "").lower()
+            or q_lower in (b.get("content", "") or "").lower()
+        ]
+
+    return render_template("blog_list.html", blogs=blogs, search_query=q)
+
 
 @app.route("/blog/<slug>")
 def view_blog(slug):
-    blogs = load_blogs()
-    post = next((b for b in blogs if b.get("slug") == slug), None)
+    try:
+        data.record_visit(
+            get_client_ip(),
+            request.headers.get("User-Agent", "Unknown"),
+            f"/blog/{slug}",
+            get_or_create_visitor_id()
+        )
+        record_presence_event(f"/blog/{slug}", "enter")
+        data.increment_blog_views(slug)
+    except Exception as e:
+        print(f"Tracking error: {e}")
+
+    post = data.get_blog_by_slug(slug)
+
     if not post:
         abort(404)
-    BLOG_VIEW = """
-    <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>{{ post.title }} • Blog</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head><body style="background:#0b1220;color:#e6eef8">
-      <div class="container py-5">
-        <a href="{{ url_for('blog_list') }}" class="btn btn-sm btn-outline-secondary mb-3">← Back to Blog</a>
-        <h1>{{ post.title }}</h1>
-        <div class="text-muted mb-3">{{ post.timestamp }}</div>
-        <div style="background:#0f1724;padding:18px;border-radius:12px;white-space:pre-wrap;">{{ post.content }}</div>
-      </div>
-    </body></html>
-    """
-    return render_template_string(BLOG_VIEW, post=post)
 
-# ====== AUTH ======
+    return render_template("blog_view.html", post=post)
+
+
+SYSTEM_INSTRUCTION = """
+You are "Caleb Muga's AI Digital Twin", a professional, highly skilled, and conversational AI avatar representing Caleb Muga on his portfolio website.
+Caleb's Background & Profile:
+- Title: Lead Cisco-Certified Network Specialist, Cybersecurity Auditor, and Automation Architect.
+- Role: Meticulously driven and customer-oriented ICT Officer.
+- Key Certifications: Cisco CCNA, Routing and Switching, Enterprise Network Security.
+- Top Core Skills:
+  1. Routing & Switching Topologies (VLANs, OSPF, DHCP helper protocols, STP BPDU Guard, trunk interfaces).
+  2. Cybersecurity auditing & server hardening.
+  3. Interactive network diagnostics, disaster recovery schemas, and virtualization setup.
+  4. Automation scripting using Python, Flask, bash, and cron.
+- Personality: Smart, highly technical yet understandable, reassuring, respectful, and direct.
+"""
+
+
+def call_gemini_api(prompt, system_instruction=None):
+    api_key = os.environ.get("GEMINI_API_KEY")
+
+    if not api_key:
+        return None
+
+    model_name = "gemini-2.5-flash"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": prompt}
+                ]
+            }
+        ]
+    }
+
+    if system_instruction:
+        payload["systemInstruction"] = {
+            "parts": [
+                {"text": system_instruction}
+            ]
+        }
+
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "aistudio-build"
+    }
+
+    import urllib.request
+    import urllib.error
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers=headers,
+            method="POST"
+        )
+
+        with urllib.request.urlopen(req, timeout=12) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            candidates = res_data.get("candidates", [])
+
+            if candidates:
+                content = candidates[0].get("content", {})
+                parts = content.get("parts", [])
+
+                if parts:
+                    return parts[0].get("text", "")
+
+            return "Failed to parse reply from AI model."
+
+    except urllib.error.HTTPError as he:
+        err_msg = he.read().decode("utf-8")
+        print(f"Gemini API HttpError: {he.code} - {err_msg}")
+
+        try:
+            err_json = json.loads(err_msg)
+            return f"Gemini API Error: {err_json.get('error', {}).get('message', 'HTTP Error')}"
+        except Exception:
+            return f"Gemini API HTTP Error occurred: {he.reason}"
+
+    except Exception as e:
+        print(f"Gemini API Exception: {e}")
+        return f"Could not establish connection to the AI engine: {str(e)}"
+
+
+@app.route("/api/ai/chat", methods=["POST"])
+def ai_chat():
+    try:
+        req_data = request.json or {}
+        user_message = req_data.get("message", "").strip()
+        history = req_data.get("history", [])
+
+        if not user_message:
+            return jsonify({"status": "error", "message": "message is required"}), 400
+
+        context_prompt = ""
+
+        for turn in history[-6:]:
+            role_label = "User" if turn.get("role") == "user" else "AI"
+            context_prompt += f"{role_label}: {turn.get('text')}\n"
+
+        context_prompt += f"User: {user_message}\nAI:"
+
+        ai_response = call_gemini_api(context_prompt, system_instruction=SYSTEM_INSTRUCTION)
+
+        is_mock = False
+
+        if ai_response is None:
+            is_mock = True
+            msg_lower = user_message.lower()
+
+            if any(k in msg_lower for k in ["skills", "cert", "credential", "ccna", "switching", "routing"]):
+                ai_response = "I am Cisco CCNA certified in Routing & Switching, specializing in LAN/WAN infrastructure, VLANs, OSPF, and secure switching."
+            elif any(k in msg_lower for k in ["contact", "hire", "email", "work", "meeting"]):
+                ai_response = "You can reach out directly through the Get in Touch / Contact form section of this site."
+            elif any(k in msg_lower for k in ["audit", "secure", "protection", "firewall", "entropy"]):
+                ai_response = "I conduct cybersecurity audits, endpoint policy reviews, and brute-force resilience checks."
+            elif any(k in msg_lower for k in ["project", "code", "portfolio"]):
+                ai_response = "I have built interactive labs on this portfolio, including subnet tools, port diagnostics, and admin telemetry features."
+            else:
+                ai_response = "Hello there! I am Caleb Muga's AI Digital Twin. Ask me about CCNA configurations, cybersecurity, ICT support, or collaboration."
+
+            ai_response += "\n\n*(Note: Set up a `GEMINI_API_KEY` in settings to activate full real-time Gemini LLM reasoning.)*"
+
+        return jsonify({
+            "status": "success",
+            "reply": ai_response,
+            "mock": is_mock
+        })
+
+    except Exception as e:
+        print(f"Error in ai_chat endpoint: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/track_visit", methods=["POST"])
+def track_visit():
+    try:
+        req_data = request.json or {}
+        path = req_data.get("path", "/")
+        event_type = req_data.get("event_type", "heartbeat")
+        client_visitor_id = req_data.get("visitor_id")
+
+        # Keep your historical counter table for analytics.
+        if event_type == "enter":
+            data.record_visit(
+                get_client_ip(),
+                request.headers.get("User-Agent", "Unknown"),
+                path,
+                client_visitor_id or get_or_create_visitor_id()
+            )
+
+        presence = record_presence_event(
+            path, 
+            event_type if event_type in ["enter", "heartbeat"] else "heartbeat",
+            client_visitor_id=client_visitor_id
+        )
+
+        return jsonify({
+            "status": "success",
+            "presence": presence
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/track_leave", methods=["POST"])
+def track_leave():
+    try:
+        req_data = request.json or {}
+        path = req_data.get("path", "/")
+        client_visitor_id = req_data.get("visitor_id")
+
+        presence = record_presence_event(path, "leave", client_visitor_id=client_visitor_id)
+
+        return jsonify({
+            "status": "success",
+            "presence": presence
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/blog/heartbeat", methods=["POST"])
+def blog_heartbeat():
+    try:
+        req_data = request.json or {}
+        slug = req_data.get("slug")
+        is_new_view = req_data.get("new_view", False)
+
+        if not slug:
+            return jsonify({"status": "error", "message": "slug required"}), 400
+
+        conn = data.get_conn()
+        try:
+            with conn:
+                with conn.cursor() as cur:
+                    if is_new_view:
+                        cur.execute("""
+                            UPDATE blogs
+                            SET read_time_count = COALESCE(read_time_count, 0) + 1
+                            WHERE slug = %s
+                        """, (slug,))
+                    else:
+                        cur.execute("""
+                            UPDATE blogs
+                            SET total_read_time_seconds = COALESCE(total_read_time_seconds, 0) + 5
+                            WHERE slug = %s
+                        """, (slug,))
+        finally:
+            conn.close()
+
+        return jsonify({"status": "success"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/blog/reaction", methods=["POST"])
+def blog_reaction():
+    try:
+        req_data = request.json or {}
+        slug = req_data.get("slug")
+        reaction = req_data.get("reaction")
+
+        if not slug or not reaction:
+            return jsonify({"status": "error", "message": "slug and reaction are required"}), 400
+
+        success = data.increment_blog_reaction(slug, reaction)
+
+        if success:
+            p = data.get_blog_by_slug(slug)
+            return jsonify({
+                "status": "success",
+                "counts": {
+                    "helpful": p.get("helpful_count", 0),
+                    "useful": p.get("useful_count", 0),
+                    "learned": p.get("learned_count", 0),
+                    "loved": p.get("loved_count", 0)
+                }
+            })
+
+        return jsonify({"status": "error", "message": "Could not increment reaction"}), 500
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/blog/summarize", methods=["POST"])
+def blog_summarize():
+    try:
+        req_data = request.json or {}
+        slug = req_data.get("slug")
+
+        if not slug:
+            return jsonify({"status": "error", "message": "slug is required"}), 400
+
+        post = data.get_blog_by_slug(slug)
+
+        if not post:
+            return jsonify({"status": "error", "message": "Article not found"}), 404
+
+        content_text = post.get("content", "")
+        title_text = post.get("title", "")
+
+        prompt = f"""Summarize this technical article titled "{title_text}":
+{content_text[:3000]}
+
+Respond only in JSON with summary, takeaways, and skill_level.
+"""
+
+        ai_reply = call_gemini_api(
+            prompt,
+            system_instruction="Output raw valid JSON strictly."
+        )
+
+        if ai_reply:
+            try:
+                clean_json = ai_reply.strip()
+
+                if clean_json.startswith("```json"):
+                    clean_json = clean_json[7:]
+
+                if clean_json.endswith("```"):
+                    clean_json = clean_json[:-3]
+
+                parsed = json.loads(clean_json.strip())
+
+                return jsonify({
+                    "status": "success",
+                    "summary": parsed.get("summary", ""),
+                    "takeaways": parsed.get("takeaways", []),
+                    "skill_level": parsed.get("skill_level", "Intermediate")
+                })
+
+            except Exception as parse_err:
+                print("Failed to parse JSON summary:", parse_err)
+
+        return jsonify({
+            "status": "success",
+            "summary": f"An analytical review of standard configurations for '{title_text}'.",
+            "takeaways": [
+                "Establishes diagnostic criteria for network performance.",
+                "Demonstrates practical troubleshooting commands.",
+                "Integrates security policies for safer infrastructure.",
+                "Optimizes performance by reducing network issues."
+            ],
+            "skill_level": "Intermediate"
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/blog/ask_about_text", methods=["POST"])
+def blog_ask_about_text():
+    try:
+        req_data = request.json or {}
+        selected_text = req_data.get("selected_text", "").strip()
+        title_text = req_data.get("title", "").strip()
+
+        if not selected_text:
+            return jsonify({"status": "error", "message": "no text selected"}), 400
+
+        prompt = f"""Explain this selected text from "{title_text}":
+"{selected_text}"
+"""
+
+        ai_reply = call_gemini_api(
+            prompt,
+            system_instruction="You are Caleb Muga, an expert Systems Specialist."
+        )
+
+        if not ai_reply:
+            ai_reply = f"Regarding your highlighted quote from **{title_text}**, this refers to a practical technical concept that should be checked using proper diagnostics."
+
+        return jsonify({
+            "status": "success",
+            "reply": ai_reply
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route("/api/ai/search", methods=["POST"])
+def ai_search_engine():
+    try:
+        req_data = request.json or {}
+        query = req_data.get("query", "").strip()
+
+        if not query:
+            return jsonify({"status": "success", "results": []})
+
+        blogs = data.load_blogs(include_drafts=False)
+        results = []
+        q_lower = query.lower()
+
+        for b in blogs:
+            if q_lower in b["title"].lower() or q_lower in b["content"].lower():
+                results.append({
+                    "title": b["title"],
+                    "url": f"/blog/{b['slug']}",
+                    "match_reason": "Matches query in the article title or contents."
+                })
+
+        return jsonify({"status": "success", "results": results[:4]})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         code = request.form.get("code", "")
+
         if code == ADMIN_KEY:
             session["is_admin"] = True
             flash("Logged in as admin.")
             return redirect(url_for("admin"))
+
         flash("Wrong passcode.")
         return redirect(url_for("login"))
-    LOGIN_PAGE = """
-    <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Admin Login</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head><body style="background:#0b1220;color:#e6eef8">
-      <div class="container py-5" style="max-width:480px;">
-        <div style="background:#0f1724;padding:18px;border-radius:12px;">
-          <h3>Admin Login</h3>
-          {% with msgs=get_flashed_messages() %}{% if msgs %}{% for m in msgs %}<div class="alert alert-info">{{ m }}</div>{% endfor %}{% endif %}{% endwith %}
-          <form method="post">
-            <input class="form-control mb-2" type="password" name="code" placeholder="Enter admin passcode" required>
-            <button class="btn btn-primary w-100">Login</button>
-          </form>
-          <a class="d-block mt-3" href="{{ url_for('index') }}">← Back to site</a>
-        </div>
-      </div>
-    </body></html>
-    """
-    return render_template_string(LOGIN_PAGE)
+
+    return render_template("login.html")
+
 
 @app.route("/logout")
 def logout():
@@ -854,13 +1110,13 @@ def logout():
     flash("Logged out.")
     return redirect(url_for("index"))
 
-# ====== ADMIN PANEL ======
+
 @app.route("/admin")
 def admin():
     if not require_admin():
         return redirect(url_for("login"))
 
-    full_msgs = load_messages()
+    full_msgs = data.load_messages()
     total_messages = len(full_msgs)
     unread_count = sum(1 for m in full_msgs if m.get("status") == "unread")
 
@@ -876,9 +1132,17 @@ def admin():
     per_page = max(6, min(50, int(request.args.get("per_page", 12))))
 
     indexed = list(enumerate(full_msgs))
+
     if q:
         q_l = q.lower()
-        filtered = [(i, m) for (i, m) in indexed if q_l in (m.get("name","").lower() + " " + m.get("email","").lower() + " " + m.get("message","").lower())]
+        filtered = [
+            (i, m) for (i, m) in indexed
+            if q_l in (
+                m.get("name", "").lower() + " " +
+                m.get("email", "").lower() + " " +
+                m.get("message", "").lower()
+            )
+        ]
     else:
         filtered = indexed
 
@@ -887,378 +1151,45 @@ def admin():
 
     total_filtered = len(filtered)
     pages = max(1, math.ceil(total_filtered / per_page))
-    if page > pages: page = pages
+
+    if page > pages:
+        page = pages
+
     start = (page - 1) * per_page
     end = start + per_page
     page_items = filtered[start:end]
+
     display_msgs = []
+
     for (gid, m) in page_items:
         item = dict(m)
         item["gid"] = gid
         display_msgs.append(item)
 
-    prof, _ = latest_file(MEDIA_PROFILE, only_images=True)
-    hero, _ = latest_file(MEDIA_HERO, only_images=True)
-    gal = list_gallery_media(MEDIA_GALLERY)  # gallery items (images + videos)
-    blogs = load_blogs()
-    subscribers = load_subscribers()
+    prof_name, _ = latest_file("profile", only_images=True)
+    hero_name, _ = latest_file("hero", only_images=True)
+    gal = list_gallery_media()
+    blog_media_list = list_blog_media()
+    blogs = data.load_blogs()
+    subscribers = data.load_subscribers()
 
-    # ADMIN_PAGE includes Chart.js analytics and improved message modal scripts
-    ADMIN_PAGE = """<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin • Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      body{background:#0b1220;color:#e6eef8;padding:18px}
-      .card{border:0;border-radius:12px;background:#0f1724;padding:12px}
-      .small-muted{ color:#9aa1b0 }
-    </style>
-    </head><body>
-    <div class="container-fluid">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><h1 class="mb-0">Admin Panel</h1><div class="text-muted">Manage messages, uploads & media</div></div>
-        <div class="d-flex gap-2">
-          <a class="btn btn-outline-secondary" href="{{ url_for('export_messages') }}">Export CSV</a>
-          <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Logout</a>
-        </div>
-      </div>
+    most_viewed_blog = None
+    most_viewed_category = "Technology"
+    category_summary = {}
 
-      {% with msgs_flash = get_flashed_messages() %}
-        {% if msgs_flash %}
-          <div class="mb-3">
-            {% for fm in msgs_flash %}<div class="alert alert-info">{{ fm }}</div>{% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
+    if blogs:
+        most_viewed_blog = max(blogs, key=lambda b: b.get("views", 0))
 
-      <div class="row g-4">
-        <div class="col-lg-7">
-          <div class="card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5>Messages ({{ total_filtered }})</h5>
-              <form class="d-flex" method="get" style="gap:8px;">
-                <input name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search messages..." aria-label="Search messages">
-                <select name="show" class="form-select form-select-sm" aria-label="Filter messages">
-                  <option value="all" {% if show=='all' %}selected{% endif %}>All</option>
-                  <option value="unread" {% if show=='unread' %}selected{% endif %}>Unread</option>
-                </select>
-                <input type="hidden" name="page" value="1">
-                <button class="btn btn-primary btn-sm">Search</button>
-              </form>
-            </div>
+        for b in blogs:
+            cat = get_blog_category(b.get("title", ""), b.get("content", ""))
+            category_summary[cat] = category_summary.get(cat, 0) + b.get("views", 0)
 
-            {% if display_msgs %}
-              <div class="table-responsive">
-                <table class="table table-sm table-striped" style="color:inherit;">
-                  <thead><tr><th>#</th><th>When</th><th>Name</th><th>Email</th><th>Snippet</th><th>Actions</th></tr></thead>
-                  <tbody>
-                    {% for m in display_msgs %}
-                      <tr>
-                        <td>{{ loop.index + (page-1)*per_page }}</td>
-                        <td>{{ m.timestamp }}</td>
-                        <td>{{ m.name }} {% if m.status=='unread' %}<span style="color:#fff;background:#d63384;padding:2px 6px;border-radius:8px;font-size:.8rem;">unread</span>{% endif %}</td>
-                        <td><a style="color:inherit" href="mailto:{{ m.email }}">{{ m.email }}</a></td>
-                        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">{{ m.message[:120] }}{% if m.message|length>120 %}...{% endif %}</td>
-                        <td>
-                          <button class="btn btn-sm btn-outline-primary" onclick="openMessageModal({{ m.gid }})">View</button>
-                          <form method="post" action="{{ url_for('delete_message', mid=m.gid) }}" style="display:inline">
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>
-                          </form>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+        if category_summary:
+            best_cat = max(category_summary, key=category_summary.get)
+            most_viewed_category = f"{best_cat} ({category_summary[best_cat]} views)"
 
-              <nav class="mt-2"><ul class="pagination pagination-sm">
-                <li class="page-item {% if page<=1 %}disabled{% endif %}"><a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ page-1 }}&per_page={{ per_page }}">Previous</a></li>
-                {% for p in range(1, pages+1) %}<li class="page-item {% if p==page %}active{% endif %}"><a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ p }}&per_page={{ per_page }}">{{ p }}</a></li>{% endfor %}
-                <li class="page-item {% if page>=pages %}disabled{% endif %}"><a class="page-link" href="{{ url_for('admin') }}?q={{ q|urlencode }}&show={{ show }}&page={{ page+1 }}&per_page={{ per_page }}">Next</a></li>
-              </ul></nav>
-            {% else %}
-              <p class="text-muted">No messages match your criteria.</p>
-            {% endif %}
-          </div>
-
-          <!-- Analytics chart (Chart.js) -->
-          <div class="card mt-3">
-            <h5>Analytics (Messages last 30 days)</h5>
-            <canvas id="messagesChart" width="400" height="120" aria-label="Messages chart"></canvas>
-            <small class="text-muted d-block mt-2">This chart shows number of messages per day (last 30 days).</small>
-          </div>
-
-        </div>
-
-        <div class="col-lg-5">
-          <div class="card">
-            <h5>Visitor Uploads (Pending) <small>({{ pending|length }})</small></h5>
-            {% if pending %}
-              <ul class="list-group mb-2">
-                {% for f in pending %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;border:1px solid #1d2b4a;">
-                    <span style="max-width:60%;overflow:hidden;text-overflow:ellipsis;">{{ f }}</span>
-                    <span class="d-flex gap-2">
-                      <form method="post" action="{{ url_for('approve_file', filename=f) }}"><button class="btn btn-sm btn-success">Approve</button></form>
-                      <form method="post" action="{{ url_for('reject_file', filename=f) }}"><button class="btn btn-sm btn-danger">Reject</button></form>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted">No pending uploads.</p>
-            {% endif %}
-
-            <hr>
-            <h5>Approved Files</h5>
-            {% if projects %}
-              <ul class="list-group mb-2">
-                {% for f in projects %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;border:1px solid #1d2b4a;">
-                    <span style="max-width:60%;overflow:hidden;text-overflow:ellipsis;">{{ f }}</span>
-                    <span>
-                      <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('download_file', kind='project', filename=f) }}">Download</a>
-                      <form method="post" action="{{ url_for('delete_project', filename=f) }}" style="display:inline"><button class="btn btn-sm btn-danger">Delete</button></form>
-                    </span>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted">No approved files yet.</p>
-            {% endif %}
-
-            <hr>
-            <h5>Owner CV</h5>
-            {% if cv_file %}
-              <p>Latest CV: <strong>{{ cv_file }}</strong></p>
-              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('download_file', kind='cv', filename=cv_file) }}">Download CV</a>
-            {% else %}
-              <p class="text-muted">No CV uploaded yet.</p>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_cv_admin') }}" class="mt-2">
-              <input type="file" name="cv" class="form-control form-control-sm mb-2" required>
-              <button class="btn btn-warning btn-sm">Upload / Replace CV</button>
-            </form>
-          </div>
-
-          <div class="card mt-3">
-            <h5>Site Media</h5>
-            <div class="mb-2">
-              <div class="small-muted">Profile</div>
-              {% if prof %}<img src="{{ url_for('media_file', kind='profile', filename=prof) }}" style="width:64px;height:64px;border-radius:8px;">{% else %}<div class="text-muted">None</div>{% endif %}
-              <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_profile_image') }}" class="mt-2">
-                <input type="file" name="image" accept="image/*" class="form-control form-control-sm mb-2" required>
-                <button class="btn btn-outline-primary btn-sm">Upload</button>
-              </form>
-            </div>
-            <div class="mb-2">
-              <div class="small-muted">Hero Background</div>
-              {% if hero %}<img src="{{ url_for('media_file', kind='hero', filename=hero) }}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;">{% else %}<div class="text-muted">None</div>{% endif %}
-              <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_hero_image') }}" class="mt-2">
-                <input type="file" name="image" accept="image/*" class="form-control form-control-sm mb-2" required>
-                <button class="btn btn-outline-primary btn-sm">Upload</button>
-              </form>
-            </div>
-
-            <hr>
-            <h6>Gallery</h6>
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_gallery') }}">
-              <input type="file" name="images" accept="image/*,video/*" multiple class="form-control form-control-sm mb-2" required>
-              <button class="btn btn-primary btn-sm">Upload Image(s) / Video(s)</button>
-            </form>
-            {% if gal %}
-              <ul class="list-group mt-2">
-                {% for g in gal %}
-                  <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;">
-                    <div style="display:flex;align-items:center;gap:8px;">
-                      {% if g.type == 'image' %}
-                        <img src="{{ g.url }}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
-                      {% elif g.type == 'video' %}
-                        <video muted playsinline preload="metadata" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
-                          <source src="{{ g.url }}">
-                        </video>
-                      {% else %}
-                        <img src="{{ g.url }}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
-                      {% endif %}
-                      <span style="max-width:220px;overflow:hidden;text-overflow:ellipsis;">{{ g.name }}</span>
-                    </div>
-                    <form method="post" action="{{ url_for('delete_gallery_image', filename=g.name) }}"><button class="btn btn-sm btn-danger">Delete</button></form>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="text-muted mt-2">No gallery media yet.</p>
-            {% endif %}
-          </div>
-
-        </div>
-      </div>
-
-      <hr>
-      <h5>Blog Posts</h5>
-      <div class="card">
-        <form method="post" action="{{ url_for('admin_add_blog') }}">
-          <input name="title" class="form-control mb-2" placeholder="Post title" required>
-          <textarea name="content" class="form-control mb-2" rows="4" placeholder="Write post content (plain text)..." required></textarea>
-          <button class="btn btn-primary btn-sm">Publish</button>
-        </form>
-
-        <hr>
-        {% if blogs %}
-          <ul class="list-group">
-            {% for b in blogs %}
-              <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;">
-                <div>
-                  <strong>{{ b.title }}</strong><div class="text-muted">{{ b.timestamp }}</div>
-                </div>
-                <div>
-                  <a class="btn btn-sm btn-outline-primary" href="{{ url_for('view_blog', slug=b.slug) }}" target="_blank">View</a>
-                  <form method="post" action="{{ url_for('admin_delete_blog', bid=b.id) }}" style="display:inline"><button class="btn btn-sm btn-danger">Delete</button></form>
-                </div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No blog posts yet.</p>
-        {% endif %}
-      </div>
-
-      <hr>
-      <h5>Subscribers ({{ subscribers|length }})</h5>
-      <div class="card">
-        {% if subscribers %}
-          <ul class="list-group">
-            {% for s in subscribers %}
-              <li class="list-group-item d-flex justify-content-between align-items-center" style="background:#0f1724;color:inherit;">
-                <div>{{ s.get('email') }} <div class="text-muted small">{{ s.get('timestamp') }}</div></div>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No subscribers yet.</p>
-        {% endif %}
-      </div>
-
-    </div>
-
-    <!-- Message modal -->
-    <div class="modal fade" id="msgModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content" style="background:#0b1220;border:1px solid #1d2b4a;">
-          <div class="modal-header"><h5 class="modal-title">Message details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-          <div class="modal-body">
-            <div><strong>From:</strong> <span id="modal-name"></span></div>
-            <div class="mb-2"><strong>Email:</strong> <a id="modal-email" href=""></a></div>
-            <div class="mb-2"><strong>When:</strong> <span id="modal-when"></span></div>
-            <hr>
-            <div id="modal-message" style="white-space:pre-wrap;"></div>
-          </div>
-          <div class="modal-footer">
-            <button id="modal-toggle-read" class="btn btn-outline-primary">Mark read</button>
-            <form id="modal-delete-form" method="post" action=""><button class="btn btn-danger" onclick="return confirm('Delete this message?')">Delete</button></form>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script>
-      // openMessageModal uses credentials and improved error handling
-      function openMessageModal(gid){
-        try {
-          const base = '{{ url_for("message_json", mid=0) }}';
-          const url = base.replace('/0', '/' + encodeURIComponent(gid));
-          fetch(url, { credentials: 'same-origin' })
-            .then(r => {
-              if (!r.ok) {
-                console.error('Failed to fetch message JSON, status:', r.status, r.statusText);
-                throw new Error('Status ' + r.status);
-              }
-              return r.json();
-            })
-            .then(data => {
-              document.getElementById('modal-name').innerText = data.name || '(no name)';
-              const emailEl = document.getElementById('modal-email');
-              emailEl.innerText = data.email || '(no email)'; emailEl.href = 'mailto:' + (data.email || '');
-              document.getElementById('modal-when').innerText = data.timestamp || '';
-              document.getElementById('modal-message').innerText = data.message || '';
-              const form = document.getElementById('modal-delete-form'); form.action = '/admin/delete_message/' + encodeURIComponent(gid);
-              const toggleBtn = document.getElementById('modal-toggle-read');
-              // handler
-              toggleBtn.onclick = function(){
-                fetch('/admin/toggle_read_json/' + encodeURIComponent(gid), { method: 'POST', credentials: 'same-origin' })
-                  .then(r => {
-                    if (!r.ok) {
-                      console.error('Toggle read failed, status:', r.status);
-                      throw new Error('Toggle status ' + r.status);
-                    }
-                    return r.json();
-                  })
-                  .then(res => {
-                    if (res.status) {
-                      toggleBtn.innerText = res.status === 'read' ? 'Mark unread' : 'Mark read';
-                    }
-                  }).catch(e => {
-                    alert('Could not toggle read/unread. See console for details.');
-                    console.error(e);
-                  });
-              };
-              toggleBtn.innerText = data.status === 'unread' ? 'Mark read' : 'Mark unread';
-              const modal = new bootstrap.Modal(document.getElementById('msgModal')); modal.show();
-            })
-            .catch(e => {
-              alert('Could not load message — check console for details.');
-              console.error('openMessageModal error:', e);
-            });
-        } catch (err) {
-          alert('An unexpected error occurred while opening the message.');
-          console.error(err);
-        }
-      }
-
-      // Chart: fetch analytics data endpoint and render
-      async function loadMessagesChart() {
-        try {
-          const resp = await fetch('{{ url_for("admin_analytics_data") }}', { credentials: 'same-origin' });
-          if(!resp.ok) throw new Error('Fetch analytics failed: ' + resp.status);
-          const data = await resp.json();
-          const ctx = document.getElementById('messagesChart').getContext('2d');
-          const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: data.labels,
-              datasets: [{
-                label: 'Messages',
-                data: data.values,
-                borderRadius: 6,
-                barPercentage: 0.8,
-                categoryPercentage: 0.8
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { display: false },
-                tooltip: { mode: 'index', intersect: false }
-              },
-              scales: {
-                x: { ticks: { color: '#cbd5e1' } },
-                y: { ticks: { color: '#cbd5e1' }, beginAtZero: true }
-              }
-            }
-          });
-        } catch (e) {
-          console.error('loadMessagesChart error:', e);
-        }
-      }
-      loadMessagesChart();
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    </body></html>
-    """
-    return render_template_string(
-        ADMIN_PAGE,
+    return render_template(
+        "admin.html",
         total_messages=total_messages,
         unread_count=unread_count,
         pending_count=pending_count,
@@ -1273,289 +1204,1129 @@ def admin():
         pages=pages,
         per_page=per_page,
         total_filtered=total_filtered,
-        prof=prof,
-        hero=hero,
+        prof=prof_name,
+        hero=hero_name,
         gal=gal,
+        gallery_images=gal,
+        blog_media=blog_media_list,
         blogs=blogs,
-        subscribers=subscribers
+        blog_posts=blogs,
+        subscribers=subscribers,
+        daily_visits=data.get_daily_visits_summary(),
+        total_visits=data.get_total_visits_count(),
+        most_viewed_blog=most_viewed_blog,
+        most_viewed_category=most_viewed_category
     )
 
-# ====== JSON endpoints (admin-only) ======
+
 @app.route("/admin/message_json/<int:mid>", methods=["GET"])
 def message_json(mid):
     if not require_admin():
         return jsonify({"error": "unauthorized"}), 403
-    msgs = load_messages()
-    if mid < 0 or mid >= len(msgs):
+
+    m = data.get_message_by_index(mid)
+
+    if not m:
         return jsonify({"error": "not found"}), 404
-    return jsonify(msgs[mid])
+
+    return jsonify(m)
+
+
+@app.route("/admin/mark_read_json/<int:mid>", methods=["POST"])
+def mark_read_json(mid):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    ok, status = data.mark_message_read_by_index(mid)
+
+    if not ok:
+        return jsonify({"error": "not found"}), 404
+
+    return jsonify({"status": "read"})
+
 
 @app.route("/admin/toggle_read_json/<int:mid>", methods=["POST"])
 def toggle_read_json(mid):
     if not require_admin():
         return jsonify({"error": "unauthorized"}), 403
-    msgs = load_messages()
-    if mid < 0 or mid >= len(msgs):
+
+    ok, new = data.toggle_message_status_by_index(mid)
+
+    if not ok:
         return jsonify({"error": "not found"}), 404
-    current = msgs[mid].get("status", "unread")
-    new = "read" if current == "unread" else "unread"
-    msgs[mid]["status"] = new
-    save_all_messages(msgs)
+
     return jsonify({"status": new})
 
-# ====== ADMIN Analytics data endpoint (Phase 1) ======
+
+@app.route("/admin/techrich/list")
+def admin_techrich_list():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    docs = data.load_techrich_docs()
+    return jsonify({"status": "success", "docs": docs})
+
+
+@app.route("/admin/techrich/create", methods=["POST"])
+def admin_techrich_create():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    title = request.form.get("title", "").strip() or "Untitled Custom Note"
+    content = request.form.get("content", "").strip()
+
+    doc_id = data.save_techrich_doc(title, "note", content=content)
+
+    if doc_id:
+        return jsonify({"status": "success", "id": doc_id})
+
+    return jsonify({"error": "failed to save"}), 500
+
+
+@app.route("/admin/techrich/upload", methods=["POST"])
+def admin_techrich_upload():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    title_raw = request.form.get("title", "").strip()
+
+    if "file" not in request.files:
+        return jsonify({"error": "missing file attachment"}), 400
+
+    f = request.files["file"]
+
+    if not f or f.filename == "":
+        return jsonify({"error": "no file selected"}), 400
+
+    filename = secure_filename(f.filename)
+    file_bytes = f.read()
+
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+
+    if ext == "pdf":
+        doc_type = "pdf"
+        mimetype = "application/pdf"
+    elif ext in ["doc", "docx"]:
+        doc_type = "word"
+        mimetype = (
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            if ext == "docx"
+            else "application/msword"
+        )
+    else:
+        doc_type = "note"
+        mimetype = f.mimetype or "text/plain"
+
+    title = title_raw or filename.rsplit(".", 1)[0].replace("_", " ").replace("-", " ").capitalize()
+
+    text_content = ""
+
+    if doc_type == "note":
+        try:
+            text_content = file_bytes.decode("utf-8", errors="ignore")
+        except Exception:
+            pass
+
+    doc_id = data.save_techrich_doc(
+        title,
+        doc_type,
+        file_name=filename,
+        file_data=file_bytes,
+        mimetype=mimetype,
+        content=text_content
+    )
+
+    if doc_id:
+        return jsonify({"status": "success", "id": doc_id})
+
+    return jsonify({"error": "failed to save"}), 500
+
+
+@app.route("/admin/techrich/update/<int:doc_id>", methods=["POST"])
+def admin_techrich_update(doc_id):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+
+    if data.update_techrich_doc(doc_id, title, content):
+        return jsonify({"status": "success"})
+
+    return jsonify({"error": "failed"}), 500
+
+
+@app.route("/admin/techrich/delete/<int:doc_id>", methods=["POST"])
+def admin_techrich_delete(doc_id):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    if data.delete_techrich_doc_by_id(doc_id):
+        return jsonify({"status": "success"})
+
+    return jsonify({"error": "failed"}), 500
+
+
+@app.route("/admin/techrich/view/<int:doc_id>")
+def admin_techrich_view(doc_id):
+    if not require_admin():
+        abort(403)
+
+    doc = data.get_techrich_doc_by_id(doc_id)
+
+    if not doc:
+        abort(404)
+
+    if doc["doc_type"] == "pdf" and doc["file_data"]:
+        return send_file(
+            io.BytesIO(doc["file_data"]),
+            mimetype=doc["mimetype"] or "application/pdf"
+        )
+
+    elif doc["doc_type"] == "word" and doc["file_data"]:
+        return send_file(
+            io.BytesIO(doc["file_data"]),
+            mimetype=doc["mimetype"],
+            download_name=doc["file_name"],
+            as_attachment=False
+        )
+
+    return jsonify({
+        "id": doc["id"],
+        "title": doc["title"],
+        "content": doc["content"],
+        "doc_type": doc["doc_type"],
+        "file_name": doc["file_name"]
+    })
+
+
+@app.route("/admin/techrich/download/<int:doc_id>")
+def admin_techrich_download(doc_id):
+    if not require_admin():
+        abort(403)
+
+    doc = data.get_techrich_doc_by_id(doc_id)
+
+    if not doc:
+        abort(404)
+
+    if doc["doc_type"] in ["pdf", "word"] and doc["file_data"]:
+        return send_file(
+            io.BytesIO(doc["file_data"]),
+            mimetype=doc["mimetype"],
+            download_name=doc["file_name"],
+            as_attachment=True
+        )
+
+    filename = secure_filename(doc["title"]) or "note"
+
+    if not filename.endswith(".md"):
+        filename += ".md"
+
+    return send_file(
+        io.BytesIO(doc["content"].encode("utf-8")),
+        mimetype="text/markdown",
+        download_name=filename,
+        as_attachment=True
+    )
+
+
 @app.route("/admin/analytics_data")
 def admin_analytics_data():
     if not require_admin():
         return jsonify({"error": "unauthorized"}), 403
-    # messages per day for last 30 days
-    msgs = load_messages()
-    now = datetime.now()
-    days = 30
-    counts = Counter()
-    for m in msgs:
-        ts = m.get("timestamp", "")
-        try:
-            dt = datetime.fromisoformat(ts)
-            # only last 30 days
-            if dt >= now - timedelta(days=days-1):
-                day = dt.date().isoformat()
-                counts[day] += 1
-        except Exception:
-            continue
-    labels = []
-    values = []
-    for d in (now.date() - timedelta(days=i) for i in reversed(range(days))):
-        s = d.isoformat()
-        labels.append(s)
-        values.append(counts.get(s, 0))
+
+    labels, values = data.get_messages_counts_last_n_days(30)
     return jsonify({"labels": labels, "values": values})
 
-# ====== MESSAGE DELETE ======
+
+@app.route("/api/admin/active_users")
+def active_users_data():
+    conn = data.get_conn()
+    count = 0
+    recent_pages = []
+    active_clients = []
+
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    UPDATE visitor_sessions
+                    SET is_active=FALSE,
+                        left_at=COALESCE(left_at, last_seen)
+                    WHERE is_active=TRUE
+                    AND last_seen < now() - INTERVAL '12 seconds'
+                """)
+
+                cur.execute("""
+                    SELECT COUNT(*)
+                    FROM visitor_sessions
+                    WHERE is_active=TRUE
+                    AND left_at IS NULL
+                    AND last_seen >= now() - INTERVAL '12 seconds'
+                """)
+                row = cur.fetchone()
+                count = row[0] if row else 0
+
+                cur.execute("""
+                    SELECT COALESCE(current_path, '/') AS path, COUNT(*) AS cnt
+                    FROM visitor_sessions
+                    WHERE is_active=TRUE
+                    AND left_at IS NULL
+                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    GROUP BY current_path
+                    ORDER BY cnt DESC
+                    LIMIT 6
+                """)
+                recent_pages = [
+                    {"path": r["path"] if r["path"] else "/", "count": r["cnt"]}
+                    for r in cur.fetchall()
+                ]
+
+                cur.execute("""
+                    SELECT ip_address,
+                           COALESCE(current_path, '/') AS path,
+                           entered_at,
+                           last_seen,
+                           EXTRACT(EPOCH FROM (now() - entered_at))::INT AS seconds_online
+                    FROM visitor_sessions
+                    WHERE is_active=TRUE
+                    AND left_at IS NULL
+                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    ORDER BY last_seen DESC
+                    LIMIT 10
+                """)
+                active_clients = [
+                    {
+                        "ip_address": r["ip_address"],
+                        "path": r["path"],
+                        "entered_at": r["entered_at"].isoformat() if r["entered_at"] else "",
+                        "last_seen": r["last_seen"].isoformat() if r["last_seen"] else "",
+                        "seconds_online": r["seconds_online"] or 0
+                    }
+                    for r in cur.fetchall()
+                ]
+
+    except Exception as e:
+        print(f"Error getting active users: {e}")
+    finally:
+        conn.close()
+
+    return jsonify({
+        "status": "success",
+        "active_users": count,
+        "recent_pages": recent_pages,
+        "active_clients": active_clients
+    })
+
+
+@app.route("/api/admin/article_stats")
+def admin_article_stats():
+    if not session.get("is_admin"):
+        return jsonify({"error": "unauthorized"}), 403
+
+    conn = data.get_conn()
+    articles = []
+    active_users = 0
+    recent_pages = []
+    active_clients = []
+
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    UPDATE visitor_sessions
+                    SET is_active=FALSE,
+                        left_at=COALESCE(left_at, last_seen)
+                    WHERE is_active=TRUE
+                    AND last_seen < now() - INTERVAL '12 seconds'
+                """)
+
+                cur.execute("""
+                    SELECT COUNT(*)
+                    FROM visitor_sessions
+                    WHERE is_active=TRUE
+                    AND left_at IS NULL
+                    AND last_seen >= now() - INTERVAL '12 seconds'
+                """)
+                row = cur.fetchone()
+                active_users = row[0] if row else 0
+
+                cur.execute("""
+                    SELECT COALESCE(current_path, '/') AS path, COUNT(*) AS cnt
+                    FROM visitor_sessions
+                    WHERE is_active=TRUE
+                    AND left_at IS NULL
+                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    GROUP BY current_path
+                    ORDER BY cnt DESC
+                    LIMIT 6
+                """)
+                recent_pages = [
+                    {"path": r["path"] if r["path"] else "/", "count": r["cnt"]}
+                    for r in cur.fetchall()
+                ]
+
+                cur.execute("""
+                    SELECT ip_address,
+                           COALESCE(current_path, '/') AS path,
+                           entered_at,
+                           last_seen,
+                           EXTRACT(EPOCH FROM (now() - entered_at))::INT AS seconds_online
+                    FROM visitor_sessions
+                    WHERE is_active=TRUE
+                    AND left_at IS NULL
+                    AND last_seen >= now() - INTERVAL '12 seconds'
+                    ORDER BY last_seen DESC
+                    LIMIT 10
+                """)
+                active_clients = [
+                    {
+                        "ip_address": r["ip_address"],
+                        "path": r["path"],
+                        "entered_at": r["entered_at"].isoformat() if r["entered_at"] else "",
+                        "last_seen": r["last_seen"].isoformat() if r["last_seen"] else "",
+                        "seconds_online": r["seconds_online"] or 0
+                    }
+                    for r in cur.fetchall()
+                ]
+
+                cur.execute("""
+                    SELECT id, title, slug,
+                           COALESCE(views, 0) as views,
+                           COALESCE(total_read_time_seconds, 0) as total_read_time,
+                           COALESCE(read_time_count, 0) as read_count
+                    FROM blogs
+                    ORDER BY views DESC
+                """)
+
+                rows = cur.fetchall()
+
+                for r in rows:
+                    views = r["views"]
+                    rd_cnt = r["read_count"]
+                    ttl_time = r["total_read_time"]
+
+                    divisor = rd_cnt if rd_cnt > 0 else (views if views > 0 else 1)
+                    avg_seconds = int(ttl_time / divisor)
+
+                    category = get_blog_category(r["title"], "")
+
+                    articles.append({
+                        "id": r["id"],
+                        "title": r["title"],
+                        "slug": r["slug"],
+                        "views": views,
+                        "total_read_time": ttl_time,
+                        "avg_read_time_seconds": avg_seconds,
+                        "category": category
+                    })
+
+    except Exception as e:
+        print(f"Error querying article stats: {e}")
+    finally:
+        conn.close()
+
+    category_views = {}
+
+    for a in articles:
+        cat = a["category"]
+        category_views[cat] = category_views.get(cat, 0) + a["views"]
+
+    dominant_category = "Technology"
+
+    if category_views:
+        best_cat = max(category_views, key=category_views.get)
+        dominant_category = f"{best_cat} ({category_views[best_cat]} views)"
+
+    return jsonify({
+        "status": "success",
+        "active_users": active_users,
+        "recent_pages": recent_pages,
+        "active_clients": active_clients,
+        "articles": articles,
+        "dominant_category": dominant_category
+    })
+
+
 @app.route("/admin/delete_message/<int:mid>", methods=["POST"])
 def delete_message(mid):
     if not require_admin():
         return redirect(url_for("login"))
-    msgs = load_messages()
-    if mid < 0 or mid >= len(msgs):
+
+    ok, deleted = data.delete_message_by_index(mid)
+
+    if not ok:
         flash("Message not found.")
         return redirect(url_for("admin"))
-    deleted = msgs.pop(mid)
-    save_all_messages(msgs)
-    flash(f"Deleted message from {deleted.get('name','unknown')}.")
+
+    flash(f"Deleted message from {deleted.get('name', 'unknown')}.")
     return redirect(url_for("admin"))
 
-# ====== Export messages CSV ======
+
 @app.route("/admin/export_messages")
 def export_messages():
     if not require_admin():
         return redirect(url_for("login"))
-    if not os.path.exists(MESSAGES_CSV):
+
+    csv_bytes = data.export_messages_csv()
+
+    if not csv_bytes:
         flash("No messages to export.")
         return redirect(url_for("admin"))
-    return send_from_directory(DATA_DIR, os.path.basename(MESSAGES_CSV), as_attachment=True)
 
-# ====== PROJECT MANAGEMENT (admin) ======
+    return Response(
+        csv_bytes,
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=messages.csv"},
+    )
+
+
 @app.route("/admin/delete_project/<path:filename>", methods=["POST"])
 def delete_project(filename):
     if not require_admin():
         return redirect(url_for("login"))
+
     fname = urllib.parse.unquote(filename)
-    safe_name = secure_filename(fname)
-    path = os.path.join(UPLOAD_DIR_APPROVED, safe_name)
-    if os.path.exists(path):
-        try:
-            os.remove(path)
-            flash(f"Deleted file '{safe_name}'.")
-        except OSError:
-            flash("Could not delete file.")
+    ok = data.delete_project_by_name(fname)
+
+    if ok:
+        flash(f"Deleted file '{fname}'.")
     else:
         flash("File not found.")
+
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/approve/<path:filename>", methods=["POST"])
 def approve_file(filename):
     if not require_admin():
         return redirect(url_for("login"))
+
     fname = urllib.parse.unquote(filename)
-    safe_name = secure_filename(fname)
-    src = os.path.join(UPLOAD_DIR_PENDING, safe_name)
-    dst = os.path.join(UPLOAD_DIR_APPROVED, safe_name)
-    if os.path.exists(src):
-        shutil.move(src, dst)
-        flash(f"Approved '{safe_name}'.")
+    ok = data.approve_project_by_name(fname)
+
+    if ok:
+        flash(f"Approved '{fname}'.")
     else:
         flash("File not found.")
+
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/reject/<path:filename>", methods=["POST"])
 def reject_file(filename):
     if not require_admin():
         return redirect(url_for("login"))
+
     fname = urllib.parse.unquote(filename)
-    safe_name = secure_filename(fname)
-    path = os.path.join(UPLOAD_DIR_PENDING, safe_name)
-    if os.path.exists(path):
-        os.remove(path)
-        flash(f"Rejected '{safe_name}'.")
+    ok = data.reject_project_by_name(fname)
+
+    if ok:
+        flash(f"Rejected '{fname}'.")
     else:
         flash("File not found.")
+
     return redirect(url_for("admin"))
 
-# ====== CV UPLOAD (admin only) ======
+
 @app.route("/admin/upload_cv", methods=["POST"])
 def upload_cv_admin():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("cv")
+
+    up = None
+
+    if request.files:
+        for key in ["cv", "file"]:
+            if key in request.files and request.files[key].filename != "":
+                up = request.files[key]
+                break
+
+        if not up:
+            first_key = list(request.files.keys())[0]
+            if request.files[first_key].filename != "":
+                up = request.files[first_key]
+
     if not up or up.filename == "":
         flash("No CV selected.")
         return redirect(url_for("admin"))
+
     if not allowed_file(up.filename):
         flash("Invalid file type.")
         return redirect(url_for("admin"))
+
     ext = up.filename.rsplit(".", 1)[1].lower()
-    for f in os.listdir(UPLOAD_DIR_CV):
-        try:
-            os.remove(os.path.join(UPLOAD_DIR_CV, f))
-        except OSError:
-            pass
-    fname = f"Caleb_Muga_CV.{ext}"
-    up.save(os.path.join(UPLOAD_DIR_CV, secure_filename(fname)))
-    flash("CV uploaded successfully! ✅")
+    fname, err = data.save_file_from_storage(
+        "cv",
+        up,
+        rename_to=f"Caleb_Muga_CV.{ext}",
+        approve=True,
+        single_replace=True
+    )
+    log_upload_result("cv", fname)
+
+    if err:
+        flash(err)
+    else:
+        flash("CV uploaded successfully! ✅")
+
     return redirect(url_for("admin"))
 
-# ====== MEDIA UPLOADS (admin) ======
+
 @app.route("/admin/upload_profile_image", methods=["POST"])
 def upload_profile_image():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("image")
-    fname, err = handle_image_upload(up, MEDIA_PROFILE, rename_to=None)
+
+    up = None
+
+    if request.files:
+        for key in ["image", "file"]:
+            if key in request.files and request.files[key].filename != "":
+                up = request.files[key]
+                break
+
+        if not up:
+            first_key = list(request.files.keys())[0]
+            if request.files[first_key].filename != "":
+                up = request.files[first_key]
+
+    if not up or up.filename == "":
+        flash("No image selected.")
+        return redirect(url_for("admin"))
+
+    if not allowed_image(up.filename):
+        flash("Invalid image type.")
+        return redirect(url_for("admin"))
+
+    fname, err = data.save_file_from_storage("profile", up, approve=True, single_replace=True)
+    log_upload_result("profile", fname)
+
     if err:
         flash(err)
-        return redirect(url_for("admin"))
-    for f in os.listdir(MEDIA_PROFILE):
-        if f != fname:
-            try:
-                os.remove(os.path.join(MEDIA_PROFILE, f))
-            except OSError:
-                pass
-    flash("Profile image updated. ✅")
+    else:
+        flash("Profile image updated. ✅")
+
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/upload_hero_image", methods=["POST"])
 def upload_hero_image():
     if not require_admin():
         return redirect(url_for("login"))
-    up = request.files.get("image")
-    fname, err = handle_image_upload(up, MEDIA_HERO, rename_to=None)
+
+    up = None
+
+    if request.files:
+        for key in ["image", "file"]:
+            if key in request.files and request.files[key].filename != "":
+                up = request.files[key]
+                break
+
+        if not up:
+            first_key = list(request.files.keys())[0]
+            if request.files[first_key].filename != "":
+                up = request.files[first_key]
+
+    if not up or up.filename == "":
+        flash("No image selected.")
+        return redirect(url_for("admin"))
+
+    if not allowed_image(up.filename):
+        flash("Invalid image type.")
+        return redirect(url_for("admin"))
+
+    fname, err = data.save_file_from_storage("hero", up, approve=True, single_replace=True)
+    log_upload_result("hero", fname)
+
     if err:
         flash(err)
-        return redirect(url_for("admin"))
-    for f in os.listdir(MEDIA_HERO):
-        if f != fname:
-            try:
-                os.remove(os.path.join(MEDIA_HERO, f))
-            except OSError:
-                pass
-    flash("Hero background updated. ✅")
+    else:
+        flash("Hero background updated. ✅")
+
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/upload_gallery", methods=["POST"])
 def upload_gallery():
     if not require_admin():
         return redirect(url_for("login"))
+
     files = request.files.getlist("images")
+
     if not files:
         flash("Select at least one file.")
         return redirect(url_for("admin"))
+
     uploaded = 0
+
     for up in files:
         if not up or not up.filename:
             continue
+
         ext = up.filename.rsplit(".", 1)[-1].lower() if "." in up.filename else ""
+
         if ext in IMAGE_EXTS or ext in VIDEO_EXTS:
-            fname = (datetime.now().strftime("%Y%m%d_%H%M%S_") + secure_filename(up.filename))
-            up.save(os.path.join(MEDIA_GALLERY, fname))
-            uploaded += 1
+            fname, err = data.save_file_from_storage("gallery", up, approve=True)
+            log_upload_result("gallery", fname)
+            if fname:
+                uploaded += 1
+
     if uploaded:
         flash(f"Uploaded {uploaded} item(s) to gallery. ✅")
     else:
         flash("No valid images or videos were uploaded.")
+
     return redirect(url_for("admin"))
+
 
 @app.route("/admin/delete_gallery/<path:filename>", methods=["POST"])
 def delete_gallery_image(filename):
     if not require_admin():
         return redirect(url_for("login"))
+
     fname = secure_filename(urllib.parse.unquote(filename))
-    path = os.path.join(MEDIA_GALLERY, fname)
-    if os.path.exists(path):
-        try:
-            os.remove(path)
-            flash(f"Deleted gallery media '{fname}'.")
-        except OSError:
-            flash("Could not delete media.")
+
+    blogs = data.load_blogs()
+    found_ref = False
+    ref_slugs = []
+
+    for b in blogs:
+        if fname in b["content"]:
+            found_ref = True
+            ref_slugs.append(b["title"])
+
+    if found_ref:
+        flash(
+            f"⚠️ Cannot delete '{fname}' because it is currently used in the blog post(s): "
+            f"{', '.join(ref_slugs)}. Please edit those posts first!"
+        )
+        return redirect(url_for("admin") + "#blog_media_section")
+
+    ok = data.delete_file("gallery", fname)
+
+    if ok:
+        flash(f"Deleted gallery media '{fname}'.")
     else:
         flash("Media not found.")
+
     return redirect(url_for("admin"))
 
-# ====== BLOG (admin create/delete) ======
+
+@app.route("/admin/upload_blog_media", methods=["POST"])
+def upload_blog_media():
+    if not require_admin():
+        return redirect(url_for("login"))
+
+    files = request.files.getlist("images")
+    ret = request.args.get("ret", "")
+    target_pane = "#blogs-pane" if ret == "blogs" else "#blog-media-pane"
+
+    if not files:
+        flash("Select at least one file.")
+        return redirect(url_for("admin") + target_pane)
+
+    uploaded = 0
+
+    for up in files:
+        if not up or not up.filename:
+            continue
+
+        ext = up.filename.rsplit(".", 1)[-1].lower() if "." in up.filename else ""
+
+        if ext in IMAGE_EXTS or ext in VIDEO_EXTS:
+            fname, err = data.save_file_from_storage("blog_media", up, approve=True)
+            log_upload_result("blog_media", fname)
+
+            if fname:
+                uploaded += 1
+
+    if uploaded:
+        flash(f"Uploaded {uploaded} item(s) to Blog Media Library. ✅")
+    else:
+        flash("No valid images or videos were uploaded.")
+
+    return redirect(url_for("admin") + target_pane)
+
+
+@app.route("/admin/delete_blog_media/<path:filename>", methods=["POST"])
+def delete_blog_media(filename):
+    if not require_admin():
+        return redirect(url_for("login"))
+
+    fname = secure_filename(urllib.parse.unquote(filename))
+    ret = request.args.get("ret", "")
+    target_pane = "#blogs-pane" if ret == "blogs" else "#blog-media-pane"
+
+    blogs = data.load_blogs()
+    found_ref = False
+    ref_slugs = []
+
+    for b in blogs:
+        if fname in b["content"]:
+            found_ref = True
+            ref_slugs.append(b["title"])
+
+    if found_ref:
+        flash(
+            f"⚠️ Cannot delete '{fname}' because it is currently used in the blog post(s): "
+            f"{', '.join(ref_slugs)}. Please edit those posts first!"
+        )
+        return redirect(url_for("admin") + target_pane)
+
+    ok = data.delete_file("blog_media", fname)
+
+    if ok:
+        flash(f"Deleted blog media '{fname}'.")
+    else:
+        flash("Media not found.")
+
+    return redirect(url_for("admin") + target_pane)
+
+
+@app.route("/admin/sync_cloudinary", methods=["GET", "POST"])
+def admin_sync_cloudinary():
+    if not require_admin():
+        return redirect(url_for("login"))
+
+    try:
+        synced = data.sync_missing_files_to_cloudinary(limit=50)
+        flash(f"Cloudinary sync complete. Synced {synced} old file(s). ✅")
+    except Exception as e:
+        flash(f"Cloudinary sync failed: {e}")
+
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/cloudinary_status")
+def admin_cloudinary_status():
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT id, name, category, url, cloudinary_id, storage_provider,
+                           content IS NULL AS content_removed,
+                           uploaded_at
+                    FROM files
+                    ORDER BY uploaded_at DESC
+                    LIMIT 20
+                """)
+                rows = cur.fetchall()
+
+                return jsonify({
+                    "cloudinary_enabled": getattr(data, "CLOUDINARY_ENABLED", False),
+                    "latest_files": [dict(r) for r in rows]
+                })
+    finally:
+        conn.close()
+
+
 @app.route("/admin/blogs/add", methods=["POST"])
 def admin_add_blog():
     if not require_admin():
         return redirect(url_for("login"))
+
     title = request.form.get("title", "").strip()
     content = request.form.get("content", "").strip()
+
     if not (title and content):
         flash("Title and content required.")
         return redirect(url_for("admin"))
-    add_blog(title, content)
-    flash("Blog post published.")
-    return redirect(url_for("admin"))
+
+    post = data.add_blog(title, content)
+
+    if post and "slug" in post:
+        session["promote_blog_slug"] = post["slug"]
+        session["promote_blog_title"] = post["title"]
+        session["promote_blog_event"] = "published"
+
+    flash("Blog post published successfully. ✅")
+    return redirect(url_for("admin") + "#blogs-pane")
+
 
 @app.route("/admin/blogs/delete/<bid>", methods=["POST"])
 def admin_delete_blog(bid):
     if not require_admin():
         return redirect(url_for("login"))
-    delete_blog_by_id(bid)
-    flash("Blog post deleted.")
-    return redirect(url_for("admin"))
 
-# ====== ERROR HANDLERS (Phase 1) ======
+    data.delete_blog_by_id(bid)
+    flash("Blog post deleted.")
+    return redirect(url_for("admin") + "#blogs-pane")
+
+
+@app.route("/admin/blogs/get/<int:bid>", methods=["GET"])
+def admin_get_blog_json(bid):
+    if not require_admin():
+        return jsonify({"error": "unauthorized"}), 403
+
+    blogs = data.load_blogs()
+
+    for b in blogs:
+        if b["id"] == bid:
+            return jsonify(b)
+
+    return jsonify({"error": "not found"}), 404
+
+
+@app.route("/admin/blogs/edit/<int:bid>", methods=["POST"])
+def admin_edit_blog(bid):
+    if not require_admin():
+        return redirect(url_for("login"))
+
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+
+    if not (title and content):
+        flash("Title and content required.")
+        return redirect(url_for("admin") + "#blogs-pane")
+
+    ok = data.update_blog(bid, title, content)
+
+    if ok:
+        import re
+        slug = re.sub(r"[^\w\s-]", "", title.lower().strip())
+        slug = re.sub(r"[-\s]+", "-", slug)[:200]
+
+        session["promote_blog_slug"] = slug
+        session["promote_blog_title"] = title
+        session["promote_blog_event"] = "updated"
+
+        flash("Blog post successfully updated. ✅")
+    else:
+        flash("Failed to update blog post.")
+
+    return redirect(url_for("admin") + "#blogs-pane")
+
+
+@app.route("/admin/blogs/clear_promo", methods=["POST"])
+def clear_promo_session():
+    session.pop("promote_blog_slug", None)
+    session.pop("promote_blog_title", None)
+    session.pop("promote_blog_event", None)
+
+    return jsonify({"status": "cleared"})
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    try:
+        pages = []
+        base_url = "https://mga.techknowsols.gt.tc"
+        now_str = datetime.now().strftime("%Y-%m-%d")
+
+        pages.append({
+            "loc": f"{base_url}/",
+            "lastmod": now_str,
+            "changefreq": "daily",
+            "priority": "1.0"
+        })
+
+        pages.append({
+            "loc": f"{base_url}/blog",
+            "lastmod": now_str,
+            "changefreq": "daily",
+            "priority": "0.9"
+        })
+
+        try:
+            blogs = data.load_blogs(include_drafts=False)
+
+            for b in blogs:
+                pub_date = now_str
+
+                if b.get("published_at"):
+                    try:
+                        pub_date = b["published_at"][:10]
+                    except Exception:
+                        pass
+
+                pages.append({
+                    "loc": f"{base_url}/blog/{b['slug']}",
+                    "lastmod": pub_date,
+                    "changefreq": "weekly",
+                    "priority": "0.8"
+                })
+
+        except Exception as db_err:
+            print("Sitemap database load failed, fallback:", db_err)
+
+        xml_feed = ['<?xml version="1.0" encoding="UTF-8"?>']
+        xml_feed.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+
+        for page in pages:
+            xml_feed.append("  <url>")
+            xml_feed.append(f"    <loc>{page['loc']}</loc>")
+            xml_feed.append(f"    <lastmod>{page['lastmod']}</lastmod>")
+            xml_feed.append(f"    <changefreq>{page['changefreq']}</changefreq>")
+            xml_feed.append(f"    <priority>{page['priority']}</priority>")
+            xml_feed.append("  </url>")
+
+        xml_feed.append("</urlset>")
+
+        return Response("\n".join(xml_feed), mimetype="application/xml")
+
+    except Exception as e:
+        return str(e), 500
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
+"""
+    return Response(content, mimetype="text/plain")
+
+
 @app.errorhandler(404)
 def page_not_found(e):
-    PAGE_404 = """
-    <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>404 Not Found</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head><body style="background:#0b1220;color:#e6eef8">
-      <div class="container py-5 text-center">
-        <h1>404 — Page not found</h1>
-        <p>The page you're looking for doesn't exist.</p>
-        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Back to home</a>
-      </div>
-    </body></html>
-    """
-    return render_template_string(PAGE_404), 404
+    return render_template("404.html"), 404
+
 
 @app.errorhandler(500)
 def server_error(e):
-    PAGE_500 = """
-    <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Server Error</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head><body style="background:#0b1220;color:#e6eef8">
-      <div class="container py-5 text-center">
-        <h1>500 — Server error</h1>
-        <p>Something went wrong. Try again later.</p>
-        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Back to home</a>
-      </div>
-    </body></html>
-    """
-    return render_template_string(PAGE_500), 500
+    import traceback
+    tb = traceback.format_exc()
 
-# ====== MAIN ======
+    print("--- SERVER 500 TRACEBACK ---")
+    print(tb)
+    print("----------------------------")
+
+    return render_template("500.html", traceback=tb), 500
+
+
+@app.template_filter("render_markdown")
+def render_markdown(text):
+    if not text:
+        return ""
+
+    try:
+        return markdown.markdown(text, extensions=["fenced_code", "codehilite"])
+    except Exception as e:
+        print(f"Error rendering markdown custom extensions: {e}")
+
+        try:
+            return markdown.markdown(text)
+        except Exception as e2:
+            print(f"Fallback markdown failed too: {e2}")
+            import html
+            return f"<pre>{html.escape(text)}</pre>"
+
+
+@app.template_filter("get_first_image")
+def get_first_image(text):
+    if not text:
+        return ""
+
+    import re
+
+    md_img = re.search(r"!\[.*?\]\((.*?)\)", text)
+
+    if md_img:
+        return md_img.group(1).strip()
+
+    html_img = re.search(r'<img[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
+
+    if html_img:
+        return html_img.group(1).strip()
+
+    html_video = re.search(r'<video[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
+
+    if html_video:
+        return html_video.group(1).strip()
+
+    html_source = re.search(r'<source[^>]+src=["\'](.*?)["\']', text, re.IGNORECASE)
+
+    if html_source:
+        return html_source.group(1).strip()
+
+    md_link = re.findall(r"\[.*?\]\((.*?)\)", text)
+
+    for link in md_link:
+        if any(ext in link.lower() for ext in [".mp4", ".webm", ".ogg", ".mov", ".m4v"]):
+            return link.strip()
+
+    html_img_fallback = re.search(r'src=["\'](.*?)["\']', text, re.IGNORECASE)
+
+    if html_img_fallback:
+        val = html_img_fallback.group(1).strip()
+
+        if any(ext in val.lower() for ext in [
+            ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg",
+            ".mp4", ".webm", ".ogg", ".mov", ".m4v", "/media/",
+            "res.cloudinary.com"
+        ]):
+            return val
+
+    return ""
+
+
+@app.template_filter("clean_excerpt")
+def clean_excerpt(text, length=160):
+    if not text:
+        return ""
+
+    import re
+
+    text_no_caption = re.sub(
+        r"<figcaption[^>]*>.*?</figcaption>",
+        "",
+        text,
+        flags=re.DOTALL | re.IGNORECASE
+    )
+
+    text_no_html = re.sub(r"<[^>]+>", " ", text_no_caption)
+    text_no_md_img = re.sub(r"!\[.*?\]\(.*?\)", " ", text_no_html)
+    text_no_md_links = re.sub(r"\[(.*?)\]\(.*?\)", r"\1", text_no_md_img)
+
+    cleaned = re.sub(r"#+\s+", "", text_no_md_links)
+    cleaned = re.sub(r"\*+", "", cleaned)
+    cleaned = re.sub(r"`+", "", cleaned)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+
+    if len(cleaned) <= length:
+        return cleaned
+
+    return cleaned[:length] + "..."
+
+
+@app.template_filter("get_reading_time")
+def get_reading_time(text):
+    if not text:
+        return 1
+
+    words = len(text.split())
+    minutes = max(1, int(words / 200))
+
+    return minutes
+
+
+@app.template_filter("get_category")
+def get_category(text, title=""):
+    combined = (str(title or "") + " " + str(text or "")).lower()
+
+    if any(keyword in combined for keyword in ["cyber", "exploit", "mitigate", "security", "defense", "hack", "penetration", "firewall"]):
+        return "Cybersecurity"
+    elif any(keyword in combined for keyword in ["rout", "net", "ip", "cisco", "ccna", "switch", "router", "dhcp", "dns", "lan", "wan"]):
+        return "Networking"
+    elif any(keyword in combined for keyword in ["ai", "machine learning", "model", "neural", "prediction", "automation", "workflow", "cron", "script"]):
+        return "AI & Automation"
+    elif any(keyword in combined for keyword in ["web", "html", "css", "flask", "react", "js", "ts", "javascript", "typescript", "frontend", "backend"]):
+        return "Web Development"
+    elif any(keyword in combined for keyword in ["ict", "support", "helpdesk", "comput", "hardware", "troubleshoot", "printer"]):
+        return "ICT Support"
+
+    return "Technology"
+
+
 if __name__ == "__main__":
+    print("🔄 Creating tables...")
+    data.create_tables()
+    print("✅ Tables ready!")
     app.run(host="0.0.0.0", port=5000, debug=True)
