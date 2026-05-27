@@ -104,10 +104,19 @@ def redirect_to_custom_domain():
 
 @app.route("/robots.txt")
 def robots_txt():
-    return Response(
-        "User-agent: *\nAllow: /\n\nSitemap: https://mga.techknowsols.gt.tc/sitemap.xml\n",
-        mimetype="text/plain"
-    )
+
+    robots = """
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /console
+
+Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
+"""
+
+    return Response(robots, mimetype="text/plain")
 @app.after_request
 def add_security_headers(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
