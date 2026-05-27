@@ -1,7 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
+  <script>
+    // Immediately check and apply saved theme before body renders
+    (function() {
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      if (savedTheme === "light") {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+      } else {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+      }
+    })();
+  </script>
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -587,6 +598,11 @@
 </head>
 
 <body>
+  <script>
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+    }
+  </script>
   <!-- Ambient glow fields -->
   <div class="ambient-glow glow-1" aria-hidden="true"></div>
   <div class="ambient-glow glow-2" aria-hidden="true"></div>
@@ -1006,9 +1022,11 @@
       docBody.classList.toggle("light");
       if (docBody.classList.contains("light")) {
         localStorage.setItem("theme", "light");
+        document.documentElement.setAttribute("data-bs-theme", "light");
         themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
       } else {
         localStorage.setItem("theme", "dark");
+        document.documentElement.setAttribute("data-bs-theme", "dark");
         themeBtn.innerHTML = '<i class="bi bi-moon-stars"></i>';
       }
     });
@@ -1142,4 +1160,3 @@
 </body>
 
 </html>
-v
