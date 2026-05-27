@@ -626,13 +626,16 @@
           <li class="nav-item">
             <a class="nav-custom-link active" href="{{ url_for('blog_list') }}">Journal Library</a>
           </li>
-          <li class="nav-item flex-shrink-0 d-flex gap-2 ms-lg-3 mt-3 mt-lg-0">
+          <li class="nav-item flex-shrink-0 d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
             <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
               <i class="bi bi-moon-stars"></i>
             </button>
             <a class="btn btn-sm btn-fire-primary px-3" href="{{ url_for('admin') }}">
               <i class="bi bi-shield-lock"></i> TechKnow
             </a>
+            <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="Caleb Muga - Founder">
+              <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
+            </div>
           </li>
         </ul>
       </div>
@@ -1156,6 +1159,77 @@
         if (label) label.textContent = count;
       }
     }
+
+    // Real Human Presence & Telemetry Session Verifier
+    (function() {
+      let tracked = false;
+      let timer = null;
+
+      function sendTrackRequest(byInteraction = false) {
+        if (tracked) return;
+        tracked = true;
+        if (timer) clearTimeout(timer);
+
+        const hostname = window.location.hostname;
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || window.location.pathname.startsWith('/admin')) {
+          console.log("Analytics: Bypassed tracking.");
+          return;
+        }
+
+        const getBrowserAndDevice = () => {
+          const ua = navigator.userAgent;
+          let browser = "Unknown Browser";
+          let deviceType = "Desktop";
+          if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
+          else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
+          else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
+          else if (ua.indexOf("Trident") > -1) browser = "Microsoft Internet Explorer";
+          else if (ua.indexOf("Edge") > -1 || ua.indexOf("Edg") > -1) browser = "Microsoft Edge";
+          else if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
+          else if (ua.indexOf("Safari") > -1) browser = "Apple Safari";
+          
+          if (/Mobi|Android|iPhone|iPad|Tablet/i.test(ua)) {
+            deviceType = "Mobile/Tablet";
+          }
+          return { browser, deviceType };
+        };
+
+        const bAndD = getBrowserAndDevice();
+
+        fetch('/api/track_visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            js_enabled: true,
+            screen_resolution: `${window.screen.width}x${window.screen.height}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+            browser: bAndD.browser,
+            device_type: bAndD.deviceType,
+            engaged: byInteraction || false,
+            mouse_moved: byInteraction
+          })
+        }).catch(err => console.error("Telemetry report offline:", err));
+      }
+
+      window.addEventListener('load', () => {
+        timer = setTimeout(() => {
+          sendTrackRequest(false);
+        }, 5000);
+
+        const onScroll = () => {
+          sendTrackRequest(true);
+          window.removeEventListener('scroll', onScroll);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        const onClick = () => {
+          sendTrackRequest(true);
+          window.removeEventListener('click', onClick);
+        };
+        window.addEventListener('click', onClick);
+      });
+    })();
   </script>
 </body>
 
