@@ -140,6 +140,18 @@ def create_tables():
         ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS mouse_moved BOOLEAN DEFAULT false;
         """,
         """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS browser TEXT;
+        """,
+        """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS timezone TEXT;
+        """,
+        """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS device_type TEXT;
+        """,
+        """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS engaged BOOLEAN DEFAULT false;
+        """,
+        """
         ALTER TABLE blogs ADD COLUMN IF NOT EXISTS total_read_time_seconds INTEGER DEFAULT 0;
         """,
         """
@@ -1238,33 +1250,44 @@ def sync_missing_files_to_cloudinary(limit=20):
 
 
 # ---------------- Site Visit Tracking ----------------
-def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = None, js_enabled: bool = False, screen_resolution: str = None, mouse_moved: bool = False):
-    visit_type = 'real'
+def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = None, js_enabled: bool = False, screen_resolution: str = None, mouse_moved: bool = False, is_admin: bool = False, timezone: str = None, browser: str = None, device_type: str = None, engaged: bool = False):
+    visit_type = 'pageview'
     ua_lower = (user_agent or "").lower()
 
-    # Bot keywords
-    bot_keywords = [
-        "bot", "spider", "crawler", "crawl", "slurp", "tracker", "monitor", "uptime", "lighthouse", "headless",
-        "googlebot", "bingbot", "yandex", "duckduckgo", "baiduspider", "sogou", "exabot",
-        "ahrefs", "semrush", "moz", "dotbot", "rogerbot", "screaming frog", "siteaudit", "megaurl",
-        "gptbot", "chatgpt", "claudebot", "anthropic", "cohere-ai", "google-extended", "facebookexternalhit", "commoncrawl", "omegabot",
-        "twitterbot", "linkedinbot", "pinterest", "slackbot", "telegrambot", "whatsappoutbound",
-        "pingdom", "statuscake", "nmap", "masscan", "zgrab", "shodan", "censys",
-        "curl", "wget", "python-requests", "urllib", "libwww", "scanner", "scan", "attack"
-    ]
+    # Admin visits / localhost / local dev checks to completely ignore/exclude from counts
+    is_local = ip_address in ["127.0.0.1", "::1", "localhost", "0.0.0.0"]
+    if is_local or is_admin or (path and path.startswith("/admin")):
+        visit_type = 'admin'
+    else:
+        # Bot keywords
+        bot_keywords = [
+            "bot", "spider", "crawler", "crawl", "slurp", "tracker", "monitor", "uptime", "lighthouse", "headless",
+            "googlebot", "bingbot", "yandex", "duckduckgo", "baiduspider", "sogou", "exabot",
+            "ahrefs", "semrush", "moz", "dotbot", "rogerbot", "screaming frog", "siteaudit", "megaurl",
+            "gptbot", "chatgpt", "claudebot", "anthropic", "cohere-ai", "google-extended", "facebookexternalhit", "commoncrawl", "omegabot",
+            "twitterbot", "linkedinbot", "pinterest", "slackbot", "telegrambot", "whatsappoutbound",
+            "pingdom", "statuscake", "nmap", "masscan", "zgrab", "shodan", "censys",
+            "curl", "wget", "python-requests", "urllib", "libwww", "scanner", "scan", "attack"
+        ]
 
-    # Outbound health checks
-    health_keywords = [
-        "kube-probe", "render-healthcheck", "railway-healthcheck", "uptimerobot", "github-camo", "github-uptime"
-    ]
+        # Outbound health checks
+        health_keywords = [
+            "kube-probe", "render-healthcheck", "railway-healthcheck", "uptimerobot", "github-camo", "github-uptime"
+        ]
 
-    is_bot = any(bot in ua_lower for bot in bot_keywords)
-    is_health = any(h in ua_lower for h in health_keywords) or (ip_address in ["127.0.0.1", "localhost"])
+        is_bot = any(bot in ua_lower for bot in bot_keywords)
+        is_health = any(h in ua_lower for h in health_keywords)
 
-    if is_bot or is_health:
-        visit_type = 'bot'
-    elif not user_agent or len(user_agent) < 10 or "sqlmap" in ua_lower:
-        visit_type = 'suspicious'
+        if is_bot or is_health:
+            visit_type = 'bot'
+        elif not user_agent or len(user_agent) < 10 or "sqlmap" in ua_lower:
+            visit_type = 'suspicious'
+        else:
+            # If JavaScript is enabled (which indicates real browser loading), raise status to 'real'
+            if js_enabled:
+                visit_type = 'real'
+            else:
+                visit_type = 'pageview'
 
     conn = get_conn()
     try:
@@ -1279,13 +1302,25 @@ def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = 
                     (session_id, ip_address)
                 )
                 recent_count = cur.fetchone()[0]
-                if recent_count > 65:
+                if recent_count > 65 and visit_type != 'admin':
                     visit_type = 'suspicious'
+
+                # Session Expiry / Deduplication Logic:
+                # Check if this session has already registered a 'real' human visit
+                if visit_type == 'real' and session_id:
+                    cur.execute(
+                        "SELECT COUNT(*) FROM site_visits WHERE session_id = %s AND visit_type = 'real'",
+                        (session_id,)
+                    )
+                    already_exists = cur.fetchone()[0] > 0
+                    if already_exists:
+                        # Demote subsequent hits under the same session to simple pageview
+                        visit_type = 'pageview'
 
                 cur.execute(
                     """
-                    INSERT INTO site_visits (ip_address, user_agent, path, timestamp, session_id, visit_type, js_enabled, screen_resolution, mouse_moved)
-                    VALUES (%s, %s, %s, now(), %s, %s, %s, %s, %s)
+                    INSERT INTO site_visits (ip_address, user_agent, path, timestamp, session_id, visit_type, js_enabled, screen_resolution, mouse_moved, browser, timezone, device_type, engaged)
+                    VALUES (%s, %s, %s, now(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
                     (
                         ip_address or "Unknown",
@@ -1295,7 +1330,11 @@ def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = 
                         visit_type,
                         js_enabled,
                         screen_resolution,
-                        mouse_moved
+                        mouse_moved,
+                        browser,
+                        timezone,
+                        device_type,
+                        engaged
                     )
                 )
     except Exception as e:
@@ -1306,7 +1345,7 @@ def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = 
 
 def get_visits_by_type():
     conn = get_conn()
-    stats = {"total": 0, "real": 0, "bot": 0, "suspicious": 0}
+    stats = {"total": 0, "real": 0, "bot": 0, "suspicious": 0, "pageview": 0, "admin": 0}
     try:
         with conn:
             with conn.cursor() as cur:
@@ -1315,9 +1354,14 @@ def get_visits_by_type():
                 for v_type, count in rows:
                     if v_type in stats:
                         stats[v_type] = count
-                cur.execute("SELECT COUNT(*) FROM site_visits")
-                total_cnt = cur.fetchone()[0]
-                stats["total"] = total_cnt
+                
+                # Verified human pageviews + sessions
+                cur.execute("SELECT COUNT(*) FROM site_visits WHERE visit_type IN ('real', 'pageview')")
+                stats["total"] = cur.fetchone()[0]
+
+                # Active Engaged Users count
+                cur.execute("SELECT COUNT(*) FROM site_visits WHERE engaged = TRUE")
+                stats["engaged"] = cur.fetchone()[0]
     except Exception as e:
         print("Error getting visits by type:", e)
     finally:
