@@ -698,15 +698,26 @@ def track_visit():
         js_enabled = req_data.get("js_enabled", True)
         screen_resolution = req_data.get("screen_resolution", "Unknown")
         mouse_moved = req_data.get("mouse_moved", False)
+        timezone = req_data.get("timezone", "UTC")
+        browser = req_data.get("browser", "Unknown Browser")
+        device_type = req_data.get("device_type", "Desktop")
+        engaged = req_data.get("engaged", False)
+        
         ip = request.remote_addr
         ua = request.headers.get("User-Agent", "Unknown")
+        is_admin = session.get("admin_logged_in", False)
 
         data.record_visit(
             ip, ua, path, 
             get_or_create_visitor_id(),
             js_enabled=js_enabled,
             screen_resolution=screen_resolution,
-            mouse_moved=mouse_moved
+            mouse_moved=mouse_moved,
+            is_admin=is_admin,
+            timezone=timezone,
+            browser=browser,
+            device_type=device_type,
+            engaged=engaged
         )
 
         return jsonify({"status": "success"})
