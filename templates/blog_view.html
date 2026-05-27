@@ -1,7 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
+  <script>
+    // Immediately check and apply saved theme before body renders
+    (function() {
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      if (savedTheme === "light") {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+      } else {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+      }
+    })();
+  </script>
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -517,6 +528,11 @@
 </head>
 
 <body>
+  <script>
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+    }
+  </script>
   <!-- Ambient glows -->
   <div class="ambient-glow glow-1" aria-hidden="true"></div>
   <div class="ambient-glow glow-2" aria-hidden="true"></div>
@@ -699,7 +715,7 @@
                 <span class="text-success text-xxs font-mono fw-bold mb-1.5 d-block">CHOSEN BLOCKS</span>
                 <p id="explain-quote" class="text-muted text-xs italic border-start border-success/30 ps-2 mb-3 leading-normal"></p>
 
-                <button onclick="queryHighlightExplanation()" id="explain-cmd-btn" class="btn btn-success btn-xs w-100 font-mono mb-3 py-1.5 text-xs text-white" style="border:none;">Ask AI Twin</button>
+                <button onclick="queryHighlightExplanation()" id="explain-cmd-btn" class="btn btn-fire-primary w-100 font-mono mb-3 py-1.5 text-xs text-white border-0">Ask AI Twin</button>
 
                 <!-- Explanation Reply Box -->
                 <div id="explain-reply-box" class="d-none pt-2.5 border-top border-success/15 text-xs text-white/90 leading-relaxed">
@@ -850,9 +866,11 @@
       docBody.classList.toggle("light");
       if (docBody.classList.contains("light")) {
         localStorage.setItem("theme", "light");
+        document.documentElement.setAttribute("data-bs-theme", "light");
         themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
       } else {
         localStorage.setItem("theme", "dark");
+        document.documentElement.setAttribute("data-bs-theme", "dark");
         themeBtn.innerHTML = '<i class="bi bi-moon-stars"></i>';
       }
     });
