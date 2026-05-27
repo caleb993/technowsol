@@ -66,11 +66,14 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="{{ seo_title }}">
   <meta property="og:description" content="{{ seo_description }}">
-  <meta property="og:image" content="{{ seo_image }}">
-  <meta property="og:image:secure_url" content="{{ seo_image }}">
+  
+  <meta property="og:image" content="{{ url_for('static', filename='ogimage.png', _external=True) }}">
+  <meta property="og:image:secure_url" content="{{ url_for('static', filename='ogimage.png', _external=True) }}">
+  
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  
   <meta property="og:image:alt" content="TechKnow Solutions Digital Journal by Caleb Muga">
 
   <!-- Twitter / X -->
