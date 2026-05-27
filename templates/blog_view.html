@@ -13,21 +13,145 @@
       }
     })();
   </script>
+
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ post.title }} • TechKnow Solutions Digital Journal</title>
 
-  <!-- Google Fonts -->
+  <!-- Dynamic Blog SEO Variables -->
+  {% set seo_description = (post.excerpt if post.excerpt is defined and post.excerpt else post.content|striptags|replace('\n', ' ')|truncate(160, True, '...')) %}
+  {% set seo_image_raw = (post.featured_image if post.featured_image is defined and post.featured_image else post.content|get_first_image) %}
+  {% set seo_image = seo_image_raw if seo_image_raw else 'https://mga.techknowsols.gt.tc/static/apple-touch-icon.png' %}
+  {% set canonical_url = 'https://mga.techknowsols.gt.tc' ~ request.path %}
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <!-- Fonts & Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://unpkg.com">
 
-  <!-- Bootstrap + AOS + Icons -->
+  <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        as="style">
+
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+
+  <link rel="preload"
+        href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png"
+        as="image">
+
+  <!-- Primary SEO -->
+  <title>{{ post.title }} • TechKnow Solutions Digital Journal</title>
+  <meta name="description" content="{{ seo_description }}">
+  <meta name="author" content="Caleb Muga">
+  <meta name="creator" content="Caleb Muga">
+  <meta name="publisher" content="TechKnow Solutions">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Brand SEO -->
+  <meta name="application-name" content="TechKnow Solutions">
+  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
+  <meta name="theme-color" content="#07111f">
+  <meta name="language" content="English">
+  <meta name="rating" content="general">
+  <meta name="distribution" content="global">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi">
+
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+  <meta property="og:site_name" content="TechKnow Solutions">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ post.title }}">
+  <meta property="og:description" content="{{ seo_description }}">
+  <meta property="og:image" content="{{ seo_image }}">
+  <meta property="og:image:secure_url" content="{{ seo_image }}">
+  <meta property="og:image:alt" content="{{ post.title }}">
+  <meta property="article:author" content="Caleb Muga">
+  <meta property="article:publisher" content="TechKnow Solutions">
+  <meta property="article:section" content="Technology">
+  {% if post.timestamp %}<meta property="article:published_time" content="{{ post.timestamp }}">{% endif %}
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@techknowsols">
+  <meta name="twitter:title" content="{{ post.title }}">
+  <meta name="twitter:description" content="{{ seo_description }}">
+  <meta name="twitter:image" content="{{ seo_image }}">
+
+  <!-- Unified Brand Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Privacy / Ads / Verification -->
+  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
+  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-ELRXZQRGNR");
+  </script>
+
+  <!-- Structured Data: Organization + Person + BlogPosting -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "TechKnow Solutions",
+        "alternateName": ["TechKnow", "TechKnowSols", "TechNowSolutions", "Muga.dev"],
+        "url": "https://mga.techknowsols.gt.tc",
+        "logo": "https://mga.techknowsols.gt.tc/static/apple-touch-icon.png",
+        "founder": {"@type": "Person", "name": "Caleb Muga"}
+      },
+      {
+        "@type": "Person",
+        "name": "Caleb Muga",
+        "url": "https://mga.techknowsols.gt.tc",
+        "jobTitle": "Cybersecurity, Networking and Systems Developer",
+        "worksFor": {"@type": "Organization", "name": "TechKnow Solutions"},
+        "knowsAbout": ["Cybersecurity", "Networking", "Cisco CCNA", "ICT Support", "Python Automation", "AI Systems", "Cloud Computing", "Web Development"]
+      },
+      {
+        "@type": "BlogPosting",
+        "headline": {{ post.title|tojson }},
+        "description": {{ seo_description|tojson }},
+        "image": {{ seo_image|tojson }},
+        "url": {{ canonical_url|tojson }},
+        "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical_url|tojson }}},
+        "author": {"@type": "Person", "name": "Caleb Muga"},
+        "publisher": {
+          "@type": "Organization",
+          "name": "TechKnow Solutions",
+          "logo": {"@type": "ImageObject", "url": "https://mga.techknowsols.gt.tc/static/apple-touch-icon.png"}
+        },
+        "datePublished": {{ post.timestamp|tojson }},
+        "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.timestamp)|tojson }}
+      }
+    ]
+  }
+  </script>
+
+  <!-- UI Libraries -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <!-- Utility Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
       --bg: #070b15;
@@ -388,6 +512,265 @@
     .article-content li {
       margin-bottom: 8px;
     }
+
+
+    /* =========================================================
+       STANDARD BLOG CONTENT SYSTEM
+       This forces all posts to render uniformly, even if old posts
+       contain different raw HTML, image sizes, videos, tables, etc.
+       ========================================================= */
+
+    .article-content {
+      font-family: var(--font-body);
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .article-content > *:first-child {
+      margin-top: 0 !important;
+    }
+
+    .article-content > *:last-child {
+      margin-bottom: 0 !important;
+    }
+
+    .article-content a {
+      color: var(--brand1);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .article-content a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .article-content strong,
+    .article-content b {
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    body.light .article-content strong,
+    body.light .article-content b {
+      color: #0f172a;
+    }
+
+    .article-content em,
+    .article-content i {
+      color: var(--text);
+    }
+
+    .article-content blockquote {
+      margin: 30px 0;
+      padding: 18px 22px;
+      border-left: 4px solid var(--brand1);
+      border-radius: 14px;
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--text);
+      font-size: 1.03rem;
+    }
+
+    body.light .article-content blockquote {
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    .article-content hr {
+      border: 0;
+      height: 1px;
+      margin: 34px 0;
+      background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+      opacity: 1;
+    }
+
+    .article-content table {
+      width: 100%;
+      margin: 30px 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .article-content th,
+    .article-content td {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .article-content th {
+      font-family: var(--font-display);
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--text);
+    }
+
+    .article-content tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .article-content .table-responsive {
+      margin: 30px 0;
+      border-radius: 14px;
+    }
+
+    /* Universal image/video/iframe standard */
+    .article-content img,
+    .article-content video,
+    .article-content iframe,
+    .article-content embed,
+    .article-content object {
+      width: 100% !important;
+      max-width: 100% !important;
+      display: block;
+      border: 0;
+    }
+
+    .article-content img {
+      height: auto !important;
+      max-height: 540px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .article-content video {
+      height: auto !important;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #020617;
+    }
+
+    .article-content iframe {
+      aspect-ratio: 16 / 9;
+      height: auto !important;
+      min-height: 360px;
+      background: #020617;
+    }
+
+    .article-media-frame {
+      width: 100%;
+      margin: 32px auto;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        #020617;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+    }
+
+    body.light .article-media-frame {
+      background: #ffffff;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+    }
+
+    .article-media-frame img,
+    .article-media-frame video,
+    .article-media-frame iframe {
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    .article-media-frame.portrait-media img {
+      max-height: 620px;
+      object-fit: contain;
+      background: #020617;
+    }
+
+    .article-media-caption {
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .embedded-video,
+    .blog-video,
+    .blog-media,
+    .article-media {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 20px;
+    }
+
+    /* Prevent old inserted width/height styles from breaking articles */
+    .article-content [style*="width"],
+    .article-content [style*="height"] {
+      max-width: 100% !important;
+    }
+
+    @media (max-width: 991.98px) {
+      .sticky-sidebar {
+        position: static;
+        top: auto;
+      }
+
+      .card-fire {
+        border-radius: 18px;
+      }
+
+      .article-content {
+        font-size: 1.02rem;
+        line-height: 1.78;
+      }
+
+      .article-content img {
+        max-height: 440px;
+      }
+
+      .article-content iframe {
+        min-height: 260px;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      main.container {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .article-content {
+        font-size: 1rem;
+        line-height: 1.75;
+      }
+
+      .article-content p {
+        margin-bottom: 18px;
+      }
+
+      .article-content h2 {
+        font-size: 1.35rem;
+      }
+
+      .article-content h3 {
+        font-size: 1.18rem;
+      }
+
+      .article-media-frame {
+        margin: 24px auto;
+        border-radius: 16px;
+      }
+
+      .article-content img {
+        max-height: 360px;
+      }
+
+      .article-content iframe {
+        min-height: 210px;
+      }
+
+      .article-content pre {
+        padding: 18px 16px !important;
+        font-size: 0.82rem !important;
+      }
+    }
+
 
     /* Premium Code Highlight overrides */
     .article-content pre {
@@ -943,6 +1326,9 @@
       // Live build Table of Contents
       generateTableOfContents();
 
+      // Normalize old and new blog media so every article looks uniform
+      normalizeArticleMedia();
+
       // Configure copy button helpers on pre blocks
       setupPreCodeCopyButtons();
     });
@@ -1022,6 +1408,91 @@
         tocList.appendChild(li);
       });
     }
+
+
+    // Standardize images, videos, iframes, and tables inserted from Markdown/TinyMCE/gallery
+    function normalizeArticleMedia() {
+      const contentPane = document.getElementById("blogContentPane");
+      if (!contentPane) return;
+
+      // Make tables responsive
+      contentPane.querySelectorAll("table").forEach((table) => {
+        if (table.closest(".table-responsive")) return;
+        const wrapper = document.createElement("div");
+        wrapper.className = "table-responsive";
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
+
+      // Normalize images
+      contentPane.querySelectorAll("img").forEach((img) => {
+        if (img.closest(".related-card") || img.classList.contains("header-author-avatar")) return;
+
+        img.removeAttribute("width");
+        img.removeAttribute("height");
+        img.loading = img.loading || "lazy";
+        img.decoding = "async";
+        img.classList.add("article-media", "article-image");
+
+        if (!img.alt || img.alt.trim() === "") {
+          img.alt = "{{ post.title|e }}";
+        }
+
+        wrapMediaElement(img, "image");
+      });
+
+      // Normalize videos
+      contentPane.querySelectorAll("video").forEach((video) => {
+        video.removeAttribute("width");
+        video.removeAttribute("height");
+        video.setAttribute("controls", "controls");
+        video.setAttribute("playsinline", "playsinline");
+        video.setAttribute("preload", "metadata");
+        video.classList.add("article-media", "article-video", "embedded-video");
+
+        wrapMediaElement(video, "video");
+      });
+
+      // Normalize iframes/embeds
+      contentPane.querySelectorAll("iframe, embed, object").forEach((frame) => {
+        frame.removeAttribute("width");
+        frame.removeAttribute("height");
+        frame.classList.add("article-media", "article-embed");
+        wrapMediaElement(frame, "embed");
+      });
+    }
+
+    function wrapMediaElement(element, type) {
+      if (!element || element.closest(".article-media-frame")) return;
+
+      const wrapper = document.createElement("figure");
+      wrapper.className = `article-media-frame article-${type}-frame`;
+
+      const parent = element.parentNode;
+      parent.insertBefore(wrapper, element);
+      wrapper.appendChild(element);
+
+      if (type === "image") {
+        element.addEventListener("load", () => {
+          if (element.naturalHeight > element.naturalWidth * 1.15) {
+            wrapper.classList.add("portrait-media");
+          }
+        });
+
+        if (element.complete && element.naturalHeight > element.naturalWidth * 1.15) {
+          wrapper.classList.add("portrait-media");
+        }
+      }
+
+      const existingCaption = element.getAttribute("data-caption") || element.getAttribute("title");
+      if (existingCaption) {
+        const caption = document.createElement("figcaption");
+        caption.className = "article-media-caption";
+        caption.textContent = existingCaption;
+        wrapper.appendChild(caption);
+      }
+    }
+
 
     // Dynamic setups for copy buttons in code hilite pre containers
     function setupPreCodeCopyButtons() {
