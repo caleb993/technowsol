@@ -87,15 +87,18 @@
 <body>
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-3">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2">
+    <div class="container d-flex align-items-center justify-content-between">
       <a class="navbar-brand text-white fw-bold" href="/" style="font-family:'Space Grotesk';">
         MUGA <span style="color:var(--brand1)">.dev</span>
       </a>
-      <div class="ms-auto">
-        <a class="btn btn-sm btn-outline-secondary text-white px-3" href="/">
-          <i class="bi bi-arrow-left"></i> Back to Home
+      <div class="d-flex align-items-center gap-2.5">
+        <a class="btn btn-sm btn-outline-secondary text-white px-3" href="/" style="border-radius:10px; font-weight:500; font-family:var(--font-mono); font-size:12px;">
+          <i class="bi bi-arrow-left"></i> <span class="d-none d-sm-inline">Back to Home</span>
         </a>
+        <div class="founder-avatar-wrapper d-inline-flex align-items-center" title="Caleb Muga - Founder">
+          <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
+        </div>
       </div>
     </div>
   </nav>
