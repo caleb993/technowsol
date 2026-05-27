@@ -128,6 +128,18 @@ def create_tables():
         ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS session_id TEXT;
         """,
         """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS visit_type TEXT DEFAULT 'real';
+        """,
+        """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS js_enabled BOOLEAN DEFAULT false;
+        """,
+        """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS screen_resolution TEXT;
+        """,
+        """
+        ALTER TABLE site_visits ADD COLUMN IF NOT EXISTS mouse_moved BOOLEAN DEFAULT false;
+        """,
+        """
         ALTER TABLE blogs ADD COLUMN IF NOT EXISTS total_read_time_seconds INTEGER DEFAULT 0;
         """,
         """
@@ -1226,45 +1238,91 @@ def sync_missing_files_to_cloudinary(limit=20):
 
 
 # ---------------- Site Visit Tracking ----------------
-def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = None):
-    if user_agent:
-        ua = user_agent.lower()
+def record_visit(ip_address: str, user_agent: str, path: str, session_id: str = None, js_enabled: bool = False, screen_resolution: str = None, mouse_moved: bool = False):
+    visit_type = 'real'
+    ua_lower = (user_agent or "").lower()
 
-        if any(bot in ua for bot in [
-            "bot",
-            "spider",
-            "crawl",
-            "slurp",
-            "tracker",
-            "monitor",
-            "uptime",
-            "lighthouse",
-            "headless"
-        ]):
-            return
+    # Bot keywords
+    bot_keywords = [
+        "bot", "spider", "crawler", "crawl", "slurp", "tracker", "monitor", "uptime", "lighthouse", "headless",
+        "googlebot", "bingbot", "yandex", "duckduckgo", "baiduspider", "sogou", "exabot",
+        "ahrefs", "semrush", "moz", "dotbot", "rogerbot", "screaming frog", "siteaudit", "megaurl",
+        "gptbot", "chatgpt", "claudebot", "anthropic", "cohere-ai", "google-extended", "facebookexternalhit", "commoncrawl", "omegabot",
+        "twitterbot", "linkedinbot", "pinterest", "slackbot", "telegrambot", "whatsappoutbound",
+        "pingdom", "statuscake", "nmap", "masscan", "zgrab", "shodan", "censys",
+        "curl", "wget", "python-requests", "urllib", "libwww", "scanner", "scan", "attack"
+    ]
+
+    # Outbound health checks
+    health_keywords = [
+        "kube-probe", "render-healthcheck", "railway-healthcheck", "uptimerobot", "github-camo", "github-uptime"
+    ]
+
+    is_bot = any(bot in ua_lower for bot in bot_keywords)
+    is_health = any(h in ua_lower for h in health_keywords) or (ip_address in ["127.0.0.1", "localhost"])
+
+    if is_bot or is_health:
+        visit_type = 'bot'
+    elif not user_agent or len(user_agent) < 10 or "sqlmap" in ua_lower:
+        visit_type = 'suspicious'
 
     conn = get_conn()
     try:
         with conn:
             with conn.cursor() as cur:
+                # Spam rate limiting: more than 65 per min
                 cur.execute(
                     """
-                    INSERT INTO site_visits (ip_address, user_agent, path, timestamp, session_id)
-                    VALUES (%s, %s, %s, now(), %s)
+                    SELECT COUNT(*) FROM site_visits 
+                    WHERE (session_id = %s OR ip_address = %s) AND timestamp >= now() - INTERVAL '1 minute'
+                    """,
+                    (session_id, ip_address)
+                )
+                recent_count = cur.fetchone()[0]
+                if recent_count > 65:
+                    visit_type = 'suspicious'
+
+                cur.execute(
+                    """
+                    INSERT INTO site_visits (ip_address, user_agent, path, timestamp, session_id, visit_type, js_enabled, screen_resolution, mouse_moved)
+                    VALUES (%s, %s, %s, now(), %s, %s, %s, %s, %s)
                     """,
                     (
                         ip_address or "Unknown",
                         user_agent or "Unknown",
                         path or "/",
-                        session_id
+                        session_id,
+                        visit_type,
+                        js_enabled,
+                        screen_resolution,
+                        mouse_moved
                     )
                 )
-
     except Exception as e:
         print(f"Error recording visit in DB: {e}")
-
     finally:
         conn.close()
+
+
+def get_visits_by_type():
+    conn = get_conn()
+    stats = {"total": 0, "real": 0, "bot": 0, "suspicious": 0}
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT visit_type, COUNT(*) FROM site_visits GROUP BY visit_type")
+                rows = cur.fetchall()
+                for v_type, count in rows:
+                    if v_type in stats:
+                        stats[v_type] = count
+                cur.execute("SELECT COUNT(*) FROM site_visits")
+                total_cnt = cur.fetchone()[0]
+                stats["total"] = total_cnt
+    except Exception as e:
+        print("Error getting visits by type:", e)
+    finally:
+        conn.close()
+    return stats
 
 
 def get_daily_visits_summary():
