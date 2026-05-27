@@ -9,7 +9,6 @@ from datetime import datetime
 import markdown
 import psycopg2
 import psycopg2.extras
-from flask import Response
 from flask import (
     Flask, render_template, request, redirect, url_for,
     send_file, flash, abort, session, jsonify, Response
@@ -37,6 +36,7 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
 @app.route("/sitemap.xml")
 def sitemap_xml():
+    """Dynamically generate sitemap for SEO and Google Search Console."""
     base_url = "https://mga.techknowsols.gt.tc"
 
     static_pages = [
@@ -51,20 +51,22 @@ def sitemap_xml():
     ]
 
     today = datetime.utcnow().strftime("%Y-%m-%d")
-
     urls = []
 
     for page in static_pages:
         urls.append(f"""
   <url>
-    <loc>{base_url}{page["loc"]}</loc>
+    <loc>{base_url}{page['loc']}</loc>
     <lastmod>{today}</lastmod>
-    <changefreq>{page["changefreq"]}</changefreq>
-    <priority>{page["priority"]}</priority>
+    <changefreq>{page['changefreq']}</changefreq>
+    <priority>{page['priority']}</priority>
   </url>""")
 
     try:
-        blogs = data.load_blogs()
+        try:
+            blogs = data.load_blogs(include_drafts=False)
+        except TypeError:
+            blogs = data.load_blogs()
 
         for blog in blogs:
             slug = blog.get("slug")
@@ -74,6 +76,8 @@ def sitemap_xml():
             lastmod = today
             if blog.get("updated_at"):
                 lastmod = str(blog.get("updated_at"))[:10]
+            elif blog.get("published_at"):
+                lastmod = str(blog.get("published_at"))[:10]
             elif blog.get("timestamp"):
                 lastmod = str(blog.get("timestamp"))[:10]
 
@@ -88,25 +92,29 @@ def sitemap_xml():
     except Exception as e:
         print("Sitemap blog loading error:", e)
 
-    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    xml = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">
 {''.join(urls)}
 </urlset>"""
 
-    return Response(xml, mimetype="application/xml")
+    response = Response(xml, mimetype="application/xml")
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return response
+
 @app.before_request
 def redirect_to_custom_domain():
+    """Force the public custom domain to avoid duplicate indexing on Render."""
     if "onrender.com" in request.host:
-        return redirect(
-            "https://mga.techknowsols.gt.tc" + request.full_path,
-            code=301
-        )
+        query = request.query_string.decode("utf-8")
+        target = "https://mga.techknowsols.gt.tc" + request.path
+        if query:
+            target += "?" + query
+        return redirect(target, code=301)
 
 @app.route("/robots.txt")
 def robots_txt():
-
-    robots = """
-User-agent: *
+    """Expose robots.txt dynamically for search engines."""
+    robots = """User-agent: *
 Allow: /
 
 Disallow: /admin
@@ -116,13 +124,17 @@ Disallow: /console
 Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
 """
 
-    return Response(robots, mimetype="text/plain")
+    response = Response(robots, mimetype="text/plain")
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return response
+
 @app.after_request
 def add_security_headers(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
 
@@ -1941,78 +1953,6 @@ def clear_promo_session():
     session.pop("promote_blog_event", None)
 
     return jsonify({"status": "cleared"})
-
-
-@app.route("/sitemap.xml")
-def sitemap():
-    try:
-        pages = []
-        base_url = "https://mga.techknowsols.gt.tc"
-        now_str = datetime.now().strftime("%Y-%m-%d")
-
-        pages.append({
-            "loc": f"{base_url}/",
-            "lastmod": now_str,
-            "changefreq": "daily",
-            "priority": "1.0"
-        })
-
-        pages.append({
-            "loc": f"{base_url}/blog",
-            "lastmod": now_str,
-            "changefreq": "daily",
-            "priority": "0.9"
-        })
-
-        try:
-            blogs = data.load_blogs(include_drafts=False)
-
-            for b in blogs:
-                pub_date = now_str
-
-                if b.get("published_at"):
-                    try:
-                        pub_date = b["published_at"][:10]
-                    except Exception:
-                        pass
-
-                pages.append({
-                    "loc": f"{base_url}/blog/{b['slug']}",
-                    "lastmod": pub_date,
-                    "changefreq": "weekly",
-                    "priority": "0.8"
-                })
-
-        except Exception as db_err:
-            print("Sitemap database load failed, fallback:", db_err)
-
-        xml_feed = ['<?xml version="1.0" encoding="UTF-8"?>']
-        xml_feed.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
-
-        for page in pages:
-            xml_feed.append("  <url>")
-            xml_feed.append(f"    <loc>{page['loc']}</loc>")
-            xml_feed.append(f"    <lastmod>{page['lastmod']}</lastmod>")
-            xml_feed.append(f"    <changefreq>{page['changefreq']}</changefreq>")
-            xml_feed.append(f"    <priority>{page['priority']}</priority>")
-            xml_feed.append("  </url>")
-
-        xml_feed.append("</urlset>")
-
-        return Response("\n".join(xml_feed), mimetype="application/xml")
-
-    except Exception as e:
-        return str(e), 500
-
-
-@app.route("/robots.txt")
-def robots_txt():
-    content = """User-agent: *
-Allow: /
-
-Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
-"""
-    return Response(content, mimetype="text/plain")
 
 
 @app.errorhandler(404)
