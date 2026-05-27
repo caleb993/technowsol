@@ -176,9 +176,93 @@
       background: var(--card-hover-bg);
     }
 
+    /* Buttons */
+    .btn-fire-primary {
+      background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
+      border: none;
+      color: #ffffff !important;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.2);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn-fire-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(59, 130, 246, 0.3);
+      opacity: 0.95;
+    }
+
+    .btn-fire-secondary {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text) !important;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn-fire-secondary:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--border-hover);
+    }
+    body.light .btn-fire-secondary {
+      background: rgba(0, 0, 0, 0.02);
+      color: #0f172a !important;
+      border-color: #cbd5e1;
+    }
+    body.light .btn-fire-secondary:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: #94a3b8;
+    }
+
+    /* Light Theme Author Styles Visibility Fixes */
+    body.light .header-author-section span.text-white {
+      color: #0f172a !important;
+    }
+    body.light .header-author-section .text-muted,
+    body.light .header-author-section .meta-row,
+    body.light .header-author-section .meta-row span,
+    body.light .header-author-section .meta-row i {
+      color: #475569 !important;
+    }
+
+    /* Mobile Adaptivity Overrides */
+    @media (max-width: 768px) {
+      .article-header {
+        padding: 95px 0 25px !important;
+      }
+      .article-title {
+        font-size: 1.95rem !important;
+        line-height: 1.25 !important;
+        letter-spacing: -0.8px !important;
+      }
+      .meta-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        border-start: 2px solid var(--brand1);
+        padding-left: 12px;
+        margin-top: 8px;
+      }
+      .navbar-custom {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+      }
+    }
+
     /* Luxury Article Header */
     .article-header {
-      padding: 150px 0 45px;
+      padding: 140px 0 45px;
       background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
       border-bottom: 1px solid var(--border);
     }
@@ -543,34 +627,41 @@
   </div>
 
   <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-3" role="navigation" aria-label="Main navigation">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2" role="navigation" aria-label="Main navigation">
+    <div class="container d-flex align-items-center justify-content-between">
       <a class="brand-avatar" href="/" aria-label="Go to home">
         <span>MUGA <span style="color:var(--brand1)">.dev</span></span>
       </a>
 
-      <button class="navbar-toggler border-0 text-white rounded-3 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05);">
-        <i class="bi bi-list fs-3 text-white"></i>
-      </button>
+      <!-- Always visible controls outside collapse -->
+      <div class="d-flex align-items-center gap-2 ms-auto order-lg-last">
+        <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+        <a class="btn btn-sm btn-fire-primary px-3 d-none d-sm-inline-flex" href="{{ url_for('admin') }}">
+          <i class="bi bi-shield-lock"></i> TechKnow
+        </a>
+        <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="Caleb Muga - Founder">
+          <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
+        </div>
+        <button class="navbar-toggler border-0 text-white rounded-3 shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05); padding: 6px 10px;">
+          <i class="bi bi-list fs-4 text-white"></i>
+        </button>
+      </div>
 
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto align-items-center mt-3 mt-lg-0 gap-2">
+        <ul class="navbar-nav ms-lg-4 align-items-center gap-1.5 py-2 py-lg-0">
           <li class="nav-item">
             <a class="nav-custom-link" href="/">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-custom-link active" href="{{ url_for('blog_list') }}">Journal Library</a>
           </li>
-          <li class="nav-item flex-shrink-0 d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
-            <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
-              <i class="bi bi-moon-stars"></i>
-            </button>
-            <a class="btn btn-sm btn-fire-primary px-3" href="{{ url_for('admin') }}">
-              <i class="bi bi-shield-lock"></i> TechKnow
+          <!-- Mobile Specific Extra Menu Actions -->
+          <li class="nav-item d-sm-none mt-2 w-100">
+            <a class="btn btn-sm btn-fire-primary w-100 justify-content-center" href="{{ url_for('admin') }}">
+              <i class="bi bi-shield-lock"></i> TechKnow Portal
             </a>
-            <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="Caleb Muga - Founder">
-              <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
-            </div>
           </li>
         </ul>
       </div>
