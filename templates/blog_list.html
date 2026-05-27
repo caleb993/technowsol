@@ -13,21 +13,145 @@
       }
     })();
   </script>
+
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Muga Digital Journal • Cybersecurity, CCNA & Tech Resources</title>
 
-  <!-- Preloads/Fonts -->
+  <!-- Dynamic Blog SEO Variables -->
+  {% set seo_description = (post.excerpt if post.excerpt is defined and post.excerpt else post.content|striptags|replace('\n', ' ')|truncate(160, True, '...')) %}
+  {% set seo_image_raw = (post.featured_image if post.featured_image is defined and post.featured_image else post.content|get_first_image) %}
+  {% set seo_image = seo_image_raw if seo_image_raw else 'https://mga.techknowsols.gt.tc/static/apple-touch-icon.png' %}
+  {% set canonical_url = 'https://mga.techknowsols.gt.tc' ~ request.path %}
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <!-- Fonts & Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://unpkg.com">
 
-  <!-- Bootstrap + AOS + Icons -->
+  <link rel="preload"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        as="style">
+
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+
+  <link rel="preload"
+        href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png"
+        as="image">
+
+  <!-- Primary SEO -->
+  <title>{{ post.title }} • TechKnow Solutions Digital Journal</title>
+  <meta name="description" content="{{ seo_description }}">
+  <meta name="author" content="Caleb Muga">
+  <meta name="creator" content="Caleb Muga">
+  <meta name="publisher" content="TechKnow Solutions">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Brand SEO -->
+  <meta name="application-name" content="TechKnow Solutions">
+  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
+  <meta name="theme-color" content="#07111f">
+  <meta name="language" content="English">
+  <meta name="rating" content="general">
+  <meta name="distribution" content="global">
+  <meta name="geo.region" content="KE-30">
+  <meta name="geo.placename" content="Nairobi">
+
+  <!-- Open Graph / Facebook / WhatsApp / LinkedIn -->
+  <meta property="og:site_name" content="TechKnow Solutions">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ post.title }}">
+  <meta property="og:description" content="{{ seo_description }}">
+  <meta property="og:image" content="{{ seo_image }}">
+  <meta property="og:image:secure_url" content="{{ seo_image }}">
+  <meta property="og:image:alt" content="{{ post.title }}">
+  <meta property="article:author" content="Caleb Muga">
+  <meta property="article:publisher" content="TechKnow Solutions">
+  <meta property="article:section" content="Technology">
+  {% if post.timestamp %}<meta property="article:published_time" content="{{ post.timestamp }}">{% endif %}
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@techknowsols">
+  <meta name="twitter:title" content="{{ post.title }}">
+  <meta name="twitter:description" content="{{ seo_description }}">
+  <meta name="twitter:image" content="{{ seo_image }}">
+
+  <!-- Unified Brand Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="https://mga.techknowsols.gt.tc/static/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Privacy / Ads / Verification -->
+  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
+  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-ELRXZQRGNR");
+  </script>
+
+  <!-- Structured Data: Organization + Person + BlogPosting -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "TechKnow Solutions",
+        "alternateName": ["TechKnow", "TechKnowSols", "TechNowSolutions", "Muga.dev"],
+        "url": "https://mga.techknowsols.gt.tc",
+        "logo": "https://mga.techknowsols.gt.tc/static/apple-touch-icon.png",
+        "founder": {"@type": "Person", "name": "Caleb Muga"}
+      },
+      {
+        "@type": "Person",
+        "name": "Caleb Muga",
+        "url": "https://mga.techknowsols.gt.tc",
+        "jobTitle": "Cybersecurity, Networking and Systems Developer",
+        "worksFor": {"@type": "Organization", "name": "TechKnow Solutions"},
+        "knowsAbout": ["Cybersecurity", "Networking", "Cisco CCNA", "ICT Support", "Python Automation", "AI Systems", "Cloud Computing", "Web Development"]
+      },
+      {
+        "@type": "BlogPosting",
+        "headline": {{ post.title|tojson }},
+        "description": {{ seo_description|tojson }},
+        "image": {{ seo_image|tojson }},
+        "url": {{ canonical_url|tojson }},
+        "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical_url|tojson }}},
+        "author": {"@type": "Person", "name": "Caleb Muga"},
+        "publisher": {
+          "@type": "Organization",
+          "name": "TechKnow Solutions",
+          "logo": {"@type": "ImageObject", "url": "https://mga.techknowsols.gt.tc/static/apple-touch-icon.png"}
+        },
+        "datePublished": {{ post.timestamp|tojson }},
+        "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.timestamp)|tojson }}
+      }
+    ]
+  }
+  </script>
+
+  <!-- UI Libraries -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <!-- Utility Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     :root {
       --bg: #070b15;
@@ -35,14 +159,13 @@
       --card-hover-bg: rgba(30, 41, 59, 0.5);
       --border: rgba(255, 255, 255, 0.05);
       --border-hover: rgba(59, 130, 246, 0.35);
-      --text: #f1f5f9;
+      --text: #e2e8f0;
       --text-muted: #94a3b8;
-      --brand1: #3b82f6; /* Cyber Blue */
-      --brand2: #8b5cf6; /* Aura Purple */
-      --accent: #22d3ee; /* Neon Cyan */
+      --brand1: #3b82f6;
+      --brand2: #8b5cf6;
+      --accent: #22d3ee;
       --glow: rgba(59, 130, 246, 0.08);
       --glass-bg: rgba(7, 11, 21, 0.85);
-      --input-bg: rgba(15, 23, 42, 0.8);
       --font-display: 'Space Grotesk', system-ui, sans-serif;
       --font-body: 'Inter', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -61,7 +184,6 @@
       --accent: #0284c7;
       --glow: rgba(37, 99, 235, 0.04);
       --glass-bg: rgba(248, 250, 252, 0.9);
-      --input-bg: #f1f5f9;
     }
 
     * {
@@ -80,7 +202,7 @@
       flex-direction: column;
       position: relative;
       overflow-x: hidden;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     /* Ambient Blur Blobs */
@@ -107,13 +229,30 @@
       background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
     }
 
+    /* Top Hang Reading Progress Bar */
+    .reading-progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 1060;
+      background: transparent;
+    }
+    .reading-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--brand1), var(--accent), var(--brand2));
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+      transition: width 0.1s ease;
+    }
+
     /* Navbar Custom */
     .navbar-custom {
       backdrop-filter: blur(20px);
       background-color: var(--glass-bg);
       border-bottom: 1px solid var(--border);
       z-index: 1050;
-      transition: padding 0.3s, background-color 0.3s;
     }
     .brand-avatar {
       display: flex;
@@ -138,7 +277,7 @@
       color: var(--text) !important;
       background-color: rgba(255, 255, 255, 0.05);
     }
-    body.light .nav-custom-link:hover, body.light .nav-custom-link.active {
+    body.light .nav-custom-link:hover {
       background-color: rgba(0, 0, 0, 0.04);
     }
 
@@ -161,108 +300,20 @@
       background: var(--card-hover-bg);
     }
 
-    /* Header & Hero Section */
-    .blog-header {
-      padding: 140px 0 50px;
-      background: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.04) 0%, transparent 60%);
-      border-bottom: 1px solid var(--border);
-      position: relative;
-    }
-    .journal-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.15);
-      color: var(--brand1);
-      padding: 6px 16px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 18px;
-    }
-    .blog-header h1 {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: clamp(2.2rem, 6vw, 3.8rem);
-      letter-spacing: -1.5px;
-      margin-bottom: 16px;
-      line-height: 1.1;
-      background: linear-gradient(135deg, #ffffff 40%, #93c5fd, #c2410c);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    body .blog-header h1 {
-      background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 70%, #3b82f6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    body.light .blog-header h1 {
-      background: linear-gradient(135deg, #0f172a 45%, #1e40af 80%, #6d28d9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Mobile Adaptivity Overrides */
-    @media (max-width: 768px) {
-      .blog-header {
-        padding: 95px 0 35px !important;
-      }
-      .blog-header h1 {
-        font-size: 2.1rem !important;
-        letter-spacing: -0.8px !important;
-      }
-      .card-fire {
-        box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
-      }
-      .navbar-custom {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-      }
-    }
-
-    /* Light Theme Text Color Visibility Fixes */
-    body.light h5.text-white,
-    body.light span.text-white,
-    body.light .author-bio h5 {
-      color: #0f172a !important;
-    }
-    body.light .text-muted {
-      color: #475569 !important;
-    }
-
-    /* Form Inputs */
-    .form-control-fire {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      color: var(--text) !important;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 0.95rem;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .form-control-fire:focus {
-      border-color: var(--brand1);
-      background: var(--input-bg);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-      outline: none;
-    }
-
+    /* Buttons */
     .btn-fire-primary {
       background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
       border: none;
       color: #ffffff !important;
       font-weight: 600;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 12px;
       box-shadow: 0 6px 18px rgba(59, 130, 246, 0.2);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      text-decoration: none;
     }
     .btn-fire-primary:hover {
       transform: translateY(-2px);
@@ -286,171 +337,504 @@
     .btn-fire-secondary:hover {
       transform: translateY(-1px);
       background: rgba(255, 255, 255, 0.07);
-      border-color: var(--brand1);
+      border-color: var(--border-hover);
     }
     body.light .btn-fire-secondary {
-      background: #ffffff;
+      background: rgba(0, 0, 0, 0.02);
+      color: #0f172a !important;
+      border-color: #cbd5e1;
+    }
+    body.light .btn-fire-secondary:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: #94a3b8;
     }
 
-    /* Category Navigation Chips */
-    .chips-scroller {
+    /* Light Theme Author Styles Visibility Fixes */
+    body.light .header-author-section span.text-white {
+      color: #0f172a !important;
+    }
+    body.light .header-author-section .text-muted,
+    body.light .header-author-section .meta-row,
+    body.light .header-author-section .meta-row span,
+    body.light .header-author-section .meta-row i {
+      color: #475569 !important;
+    }
+
+    /* Mobile Adaptivity Overrides */
+    @media (max-width: 768px) {
+      .article-header {
+        padding: 95px 0 25px !important;
+      }
+      .article-title {
+        font-size: 1.95rem !important;
+        line-height: 1.25 !important;
+        letter-spacing: -0.8px !important;
+      }
+      .meta-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        border-start: 2px solid var(--brand1);
+        padding-left: 12px;
+        margin-top: 8px;
+      }
+      .navbar-custom {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+      }
+    }
+
+    /* Luxury Article Header */
+    .article-header {
+      padding: 140px 0 45px;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .article-title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      color: #ffffff;
+      margin-bottom: 24px;
+    }
+    body.light .article-title {
+      color: #0f172a;
+    }
+
+    /* Author Avatar Profile inline under the title */
+    .header-author-section {
       display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 8px 4px 18px;
-      margin-bottom: 25px;
-      scrollbar-width: none; /* Firefox */
-    }
-    .chips-scroller::-webkit-scrollbar {
-      display: none; /* Safari and Chrome */
-    }
-    .filter-chip {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 8px 18px;
-      border-radius: 100px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
+      gap: 15px;
+      padding-top: 5px;
     }
-    .filter-chip:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    .filter-chip.active {
-      background: linear-gradient(135deg, var(--brand1), rgba(59, 130, 246, 0.6));
-      color: #ffffff;
-      border-color: var(--brand1);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    }
-    body.light .filter-chip {
-      background: #ffffff;
-    }
-    body.light .filter-chip:hover {
-      background: #f1f5f9;
-    }
-    body.light .filter-chip.active {
-      background: var(--brand1);
-      color: #ffffff;
+    .header-author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border-hover);
+      object-fit: cover;
     }
 
-    /* Elite Featured Article Card */
-    .featured-container {
-      margin-bottom: 50px;
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
-    .featured-card {
+
+    /* Sticky Sidebars */
+    .sticky-sidebar {
+      position: sticky;
+      top: 100px;
+    }
+
+    /* Automatically Generatable Table of Contents Styles */
+    .toc-card {
       border: 1px solid var(--border);
-      border-radius: 24px;
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.25) 100%);
-      backdrop-filter: blur(12px);
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 22px;
     }
-    .featured-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 15px 35px var(--glow);
-    }
-    .featured-img-box {
-      min-height: 350px;
-      height: 100%;
-      overflow: hidden;
-      position: relative;
-    }
-    .featured-img-box img, .featured-img-box video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .featured-card:hover .featured-img-box img {
-      transform: scale(1.03);
-    }
-    .featured-tag-pill {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
+    .toc-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.82rem;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--brand1);
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      padding: 5px 12px;
-      border-radius: 6px;
-      display: inline-flex;
+      color: var(--text);
       margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .toc-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+    .toc-item {
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: block;
+    }
+    .toc-link:hover, .toc-link.active {
+      color: var(--brand1);
+      padding-left: 4px;
+    }
+    .toc-item-h3 {
+      padding-left: 15px;
+      font-size: 0.8rem;
     }
 
-    /* Regular Cards Grid */
+    /* Rich Reading Body / Elements Override */
+    .article-content {
+      line-height: 1.8;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+    .article-content h2, .article-content h3, .article-content h4 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 40px;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+      scroll-margin-top: 110px; /* offset for nav */
+    }
+    body.light .article-content h2, body.light .article-content h3, body.light .article-content h4 {
+      color: #0f172a;
+    }
+    .article-content h2 {
+      font-size: 1.65rem;
+      border-left: 3px solid var(--brand1);
+      padding-left: 14px;
+    }
+    .article-content h3 {
+      font-size: 1.35rem;
+    }
+    .article-content p {
+      margin-bottom: 24px;
+    }
+    .article-content ul, .article-content ol {
+      margin-bottom: 24px;
+      padding-left: 20px;
+    }
+    .article-content li {
+      margin-bottom: 8px;
+    }
+
+
+    /* =========================================================
+       STANDARD BLOG CONTENT SYSTEM
+       This forces all posts to render uniformly, even if old posts
+       contain different raw HTML, image sizes, videos, tables, etc.
+       ========================================================= */
+
+    .article-content {
+      font-family: var(--font-body);
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    .article-content > *:first-child {
+      margin-top: 0 !important;
+    }
+
+    .article-content > *:last-child {
+      margin-bottom: 0 !important;
+    }
+
+    .article-content a {
+      color: var(--brand1);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .article-content a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .article-content strong,
+    .article-content b {
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    body.light .article-content strong,
+    body.light .article-content b {
+      color: #0f172a;
+    }
+
+    .article-content em,
+    .article-content i {
+      color: var(--text);
+    }
+
+    .article-content blockquote {
+      margin: 30px 0;
+      padding: 18px 22px;
+      border-left: 4px solid var(--brand1);
+      border-radius: 14px;
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--text);
+      font-size: 1.03rem;
+    }
+
+    body.light .article-content blockquote {
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    .article-content hr {
+      border: 0;
+      height: 1px;
+      margin: 34px 0;
+      background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+      opacity: 1;
+    }
+
+    .article-content table {
+      width: 100%;
+      margin: 30px 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .article-content th,
+    .article-content td {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .article-content th {
+      font-family: var(--font-display);
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--text);
+    }
+
+    .article-content tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .article-content .table-responsive {
+      margin: 30px 0;
+      border-radius: 14px;
+    }
+
+    /* Universal image/video/iframe standard */
+    .article-content img,
+    .article-content video,
+    .article-content iframe,
+    .article-content embed,
+    .article-content object {
+      width: 100% !important;
+      max-width: 100% !important;
+      display: block;
+      border: 0;
+    }
+
+    .article-content img {
+      height: auto !important;
+      max-height: 540px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .article-content video {
+      height: auto !important;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #020617;
+    }
+
+    .article-content iframe {
+      aspect-ratio: 16 / 9;
+      height: auto !important;
+      min-height: 360px;
+      background: #020617;
+    }
+
+    .article-media-frame {
+      width: 100%;
+      margin: 32px auto;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        #020617;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+    }
+
+    body.light .article-media-frame {
+      background: #ffffff;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+    }
+
+    .article-media-frame img,
+    .article-media-frame video,
+    .article-media-frame iframe {
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    .article-media-frame.portrait-media img {
+      max-height: 620px;
+      object-fit: contain;
+      background: #020617;
+    }
+
+    .article-media-caption {
+      padding: 12px 16px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .embedded-video,
+    .blog-video,
+    .blog-media,
+    .article-media {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 20px;
+    }
+
+    /* Prevent old inserted width/height styles from breaking articles */
+    .article-content [style*="width"],
+    .article-content [style*="height"] {
+      max-width: 100% !important;
+    }
+
+    @media (max-width: 991.98px) {
+      .sticky-sidebar {
+        position: static;
+        top: auto;
+      }
+
+      .card-fire {
+        border-radius: 18px;
+      }
+
+      .article-content {
+        font-size: 1.02rem;
+        line-height: 1.78;
+      }
+
+      .article-content img {
+        max-height: 440px;
+      }
+
+      .article-content iframe {
+        min-height: 260px;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      main.container {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .article-content {
+        font-size: 1rem;
+        line-height: 1.75;
+      }
+
+      .article-content p {
+        margin-bottom: 18px;
+      }
+
+      .article-content h2 {
+        font-size: 1.35rem;
+      }
+
+      .article-content h3 {
+        font-size: 1.18rem;
+      }
+
+      .article-media-frame {
+        margin: 24px auto;
+        border-radius: 16px;
+      }
+
+      .article-content img {
+        max-height: 360px;
+      }
+
+      .article-content iframe {
+        min-height: 210px;
+      }
+
+      .article-content pre {
+        padding: 18px 16px !important;
+        font-size: 0.82rem !important;
+      }
+    }
+
+
+    /* Premium Code Highlight overrides */
+    .article-content pre {
+      background: #0d1117 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px !important;
+      padding: 20px 24px !important;
+      margin: 28px 0 !important;
+      overflow-x: auto;
+      position: relative;
+    }
+    .article-content code {
+      font-family: var(--font-mono) !important;
+      font-size: 0.88rem !important;
+      color: #38bdf8;
+    }
+    .article-content p code, .article-content li code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 6px;
+      border-radius: 6px;
+      color: #f472b6;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+    body.light .article-content pre {
+      background: #f8fafc !important;
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+    body.light .article-content p code, body.light .article-content li code {
+      background: rgba(0, 0, 0, 0.04);
+      color: #db2777;
+    }
+
+    /* Dynamic Copy Code Button */
+    .code-copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .code-copy-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border-color: var(--brand1);
+    }
+
+    /* Cards */
     .card-fire {
       border: 1px solid var(--border);
       border-radius: 20px;
       background: var(--card-bg);
       backdrop-filter: blur(12px);
       padding: 24px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .card-fire:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-6px);
-      box-shadow: 0 15px 30px var(--glow);
     }
 
-    /* Thumbnail block styling */
-    .blog-card-thumbnail {
-      width: 100%;
-      height: 190px;
-      overflow: hidden;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      border: 1px solid var(--border);
-      background-color: rgba(7, 11, 21, 0.6);
-      position: relative;
-    }
-    .blog-card-thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-    .card-fire:hover .blog-card-thumbnail img {
-      transform: scale(1.05);
-    }
-
-    .placeholder-thumbnail {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
-    }
-    .placeholder-thumbnail i {
-      transition: transform 0.4s ease, filter 0.4s ease;
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-    .card-fire:hover .placeholder-thumbnail i {
-      transform: scale(1.12) rotate(-3deg);
-    }
-
-    /* Category Gradients */
-    .gradient-cybersecurity { color: #f87171 !important; }
-    .gradient-networking { color: #60a5fa !important; }
-    .gradient-ai-automation { color: #a78bfa !important; }
-    .gradient-web-development { color: #22d3ee !important; }
-    .gradient-ict-support { color: #2dd4bf !important; }
-    .gradient-technology { color: #cbd5e1 !important; }
-
+    /* Tags */
     .blog-tag {
       padding: 4px 10px;
       border-radius: 6px;
@@ -463,148 +847,124 @@
       align-items: center;
     }
     .badge-cybersecurity {
-      background: rgba(239, 68, 68, 0.1) !important;
+      background: rgba(239, 68, 68, 0.12) !important;
       color: #f87171 !important;
-      border: 1px solid rgba(239, 68, 68, 0.15) !important;
+      border: 1px solid rgba(239, 68, 68, 0.2) !important;
     }
     .badge-networking {
-      background: rgba(59, 130, 246, 0.1) !important;
+      background: rgba(59, 130, 246, 0.12) !important;
       color: #60a5fa !important;
-      border: 1px solid rgba(59, 130, 246, 0.15) !important;
+      border: 1px solid rgba(59, 130, 246, 0.2) !important;
     }
     .badge-ai-automation {
-      background: rgba(139, 92, 246, 0.1) !important;
+      background: rgba(139, 92, 246, 0.12) !important;
       color: #a78bfa !important;
-      border: 1px solid rgba(139, 92, 246, 0.15) !important;
+      border: 1px solid rgba(139, 92, 246, 0.2) !important;
     }
     .badge-web-development {
-      background: rgba(6, 182, 212, 0.1) !important;
+      background: rgba(6, 182, 212, 0.12) !important;
       color: #22d3ee !important;
-      border: 1px solid rgba(6, 182, 212, 0.15) !important;
+      border: 1px solid rgba(6, 182, 212, 0.2) !important;
     }
     .badge-ict-support {
-      background: rgba(20, 184, 166, 0.1) !important;
+      background: rgba(20, 184, 166, 0.12) !important;
       color: #2dd4bf !important;
-      border: 1px solid rgba(20, 184, 166, 0.15) !important;
+      border: 1px solid rgba(20, 184, 166, 0.2) !important;
     }
     .badge-technology {
-      background: rgba(148, 163, 184, 0.1) !important;
+      background: rgba(148, 163, 184, 0.12) !important;
       color: #cbd5e1 !important;
-      border: 1px solid rgba(148, 163, 184, 0.15) !important;
+      border: 1px solid rgba(148, 163, 184, 0.2) !important;
     }
 
-    body.light .badge-cybersecurity { background: rgba(239, 68, 68, 0.08) !important; color: #dc2626 !important; border-color: rgba(239, 68, 68, 0.15) !important; }
-    body.light .badge-networking { background: rgba(59, 130, 246, 0.08) !important; color: #1d4ed8 !important; border-color: rgba(59, 130, 246, 0.15) !important; }
-    body.light .badge-ai-automation { background: rgba(139, 92, 246, 0.08) !important; color: #6d28d9 !important; border-color: rgba(139, 92, 246, 0.15) !important; }
-    body.light .badge-web-development { background: rgba(6, 182, 212, 0.08) !important; color: #0891b2 !important; border-color: rgba(6, 182, 212, 0.15) !important; }
-    body.light .badge-ict-support { background: rgba(20, 184, 166, 0.08) !important; color: #0d9488 !important; border-color: rgba(20, 184, 166, 0.15) !important; }
-    body.light .badge-technology { background: rgba(71, 85, 105, 0.08) !important; color: #475569 !important; border-color: rgba(71, 85, 105, 0.15) !important; }
+    body.light .badge-cybersecurity { background: rgba(239, 68, 68, 0.08) !important; color: #dc2626 !important; border: 1px solid rgba(239, 68, 68, 0.15) !important; }
+    body.light .badge-networking { background: rgba(59, 130, 246, 0.08) !important; color: #2563eb !important; border: 1px solid rgba(59, 130, 246, 0.15) !important; }
+    body.light .badge-ai-automation { background: rgba(139, 92, 246, 0.08) !important; color: #7c3aed !important; border: 1px solid rgba(139, 92, 246, 0.15) !important; }
+    body.light .badge-web-development { background: rgba(6, 182, 212, 0.08) !important; color: #0891b2 !important; border: 1px solid rgba(6, 182, 212, 0.15) !important; }
+    body.light .badge-ict-support { background: rgba(20, 184, 166, 0.08) !important; color: #0d9488 !important; border: 1px solid rgba(20, 184, 166, 0.15) !important; }
+    body.light .badge-technology { background: rgba(71, 85, 105, 0.08) !important; color: #475569 !important; border: 1px solid rgba(71, 85, 105, 0.15) !important; }
 
-    .blog-card-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .blog-card-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.25rem;
-      margin-bottom: 10px;
-      color: var(--text);
-      line-height: 1.35;
-      text-decoration: none;
-    }
-    .blog-card-title:hover {
-      color: var(--brand1);
-    }
-    .blog-card-excerpt {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      line-height: 1.5;
-      margin-bottom: 20px;
-      flex-grow: 1;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* Sticky Sidebar */
-    .sticky-sidebar {
-      position: sticky;
-      top: 100px;
-    }
-    .sidebar-widget {
-      margin-bottom: 28px;
-    }
-    .widget-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-    }
-    .widget-title::after {
-      content: '';
-      flex-grow: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Author Avatar Profile */
-    .author-avatar-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 2px solid var(--brand1);
-      box-shadow: 0 0 14px rgba(59, 130, 246, 0.2);
-      object-fit: cover;
-      background-color: var(--fg);
-    }
-    .social-compact-item {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+    /* Premium Redesigned Reactions Bar */
+    .reaction-btn {
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-      text-decoration: none;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.25s ease;
     }
-    .social-compact-item:hover {
+    .reaction-btn:hover {
       border-color: var(--brand1);
-      color: var(--brand1);
+      background: rgba(59, 130, 246, 0.05);
+      color: #ffffff;
       transform: translateY(-2px);
     }
-
-    /* Category Widgets Count list */
-    .topics-list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      margin-bottom: 4px;
+    .reaction-btn.active {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
     }
-    .topics-list-item:hover {
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text);
+
+    /* Highlight Explainer Styles */
+    .explainer-box {
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      background-color: rgba(16, 185, 129, 0.03);
+      border-radius: 14px;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    /* Related posts cards layout */
+    .related-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .related-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+    .related-thumb {
+      height: 140px;
+      background-color: rgba(7, 11, 21, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .related-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .related-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .related-title a {
+      color: #ffffff;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .related-title a:hover {
+      color: var(--brand1);
+    }
+    body.light .related-title a {
+      color: #0f172a;
     }
 
     /* Footer */
@@ -622,6 +982,15 @@
       text-decoration: none;
       color: var(--text);
     }
+    .hover-white {
+      transition: color 0.2s;
+    }
+    .hover-white:hover {
+      color: #ffffff !important;
+    }
+    body.light .hover-white:hover {
+      color: #000000 !important;
+    }
   </style>
 </head>
 
@@ -631,9 +1000,14 @@
       document.body.classList.add("light");
     }
   </script>
-  <!-- Ambient glow fields -->
+  <!-- Ambient glows -->
   <div class="ambient-glow glow-1" aria-hidden="true"></div>
   <div class="ambient-glow glow-2" aria-hidden="true"></div>
+
+  <!-- Reading Progress indicator -->
+  <div class="reading-progress-container">
+    <div id="readingProgressBar" class="reading-progress-bar"></div>
+  </div>
 
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2" role="navigation" aria-label="Main navigation">
@@ -677,325 +1051,228 @@
     </div>
   </nav>
 
-  <!-- Premium Cover Header with Brand Alignment -->
-  <header class="blog-header">
-    <div class="container text-center">
-      <div class="journal-badge" data-aos="fade-down">
-        <i class="bi bi-hexagon-fill"></i> Cybersecurity, AI & Digital Engineering Insights
-      </div>
-      <h1 data-aos="fade-up">Muga Digital Journal</h1>
-      <p class="text-muted col-lg-7 mx-auto" data-aos="fade-up" data-aos-delay="80">
-        Pragmatic network blueprints, security auditing guidelines, Cisco topologies, and web automation systems logged dry by certified systems engineer Caleb Muga.
-      </p>
+  <!-- Article variables computation -->
+  {% set combined = (post.title ~ " " ~ post.content)|lower %}
+  {% if "cyber" in combined or "exploit" in combined or "mitigate" in combined or "security" in combined or "defense" in combined or "hack" in combined or "penetration" in combined or "firewall" in combined %}
+    {% set cat = "Cybersecurity" %}
+  {% elif "rout" in combined or "net" in combined or "ip" in combined or "cisco" in combined or "ccna" in combined or "switch" in combined or "router" in combined or "dhcp" in combined or "dns" in combined or "lan" in combined or "wan" in combined %}
+    {% set cat = "Networking" %}
+  {% elif "ai" in combined or "machine" in combined or "learning" in combined or "model" in combined or "neural" in combined or "predict" in combined or "automation" in combined or "workflow" in combined or "cron" in combined or "script" in combined %}
+    {% set cat = "AI & Automation" %}
+  {% elif "web" in combined or "html" in combined or "css" in combined or "flask" in combined or "react" in combined or "js" in combined or "ts" in combined or "javascript" in combined or "typescript" in combined or "frontend" in combined or "backend" in combined %}
+    {% set cat = "Web Development" %}
+  {% elif "ict" in combined or "support" in combined or "helpdesk" in combined or "comput" in combined or "hardware" in combined or "troubleshoot" in combined or "printer" in combined %}
+    {% set cat = "ICT Support" %}
+  {% else %}
+    {% set cat = "Technology" %}
+  {% endif %}
+  
+  {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
 
-      <!-- Clean Search Field -->
-      <div class="row justify-content-center mt-4" data-aos="fade-up" data-aos-delay="120">
-        <div class="col-md-8 col-lg-6">
-          <div class="input-group" style="border: 1px solid var(--border); padding: 4px; border-radius: 14px; background: var(--input-bg);">
-            <span class="input-group-text bg-transparent border-0 text-muted ps-3"><i class="bi bi-search fs-5"></i></span>
-            <input type="text" id="liveSearchInput" class="form-control bg-transparent border-0 text-white py-2.5 shadow-none" placeholder="Search systems parameters or logs..." aria-label="Search articles block">
-            <button class="btn btn-fire-primary px-4 py-2" type="button" onclick="triggerSearchAction()">Search</button>
+  {% set words_count = post.content.split()|length %}
+  {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
+  {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
+
+  <!-- Header -->
+  <header class="article-header">
+    <div class="container" data-aos="fade-up">
+      <div class="mb-3">
+        <span class="blog-tag badge-{{ cat_slug }}">{{ cat }}</span>
+      </div>
+      <h1 class="article-title">{{ post.title }}</h1>
+      
+      <!-- Premium Author & Meta Section -->
+      <div class="header-author-section">
+        <img src="/static/assets/calebmuga.jpg" onerror="this.src='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/person-circle.svg'" class="header-author-avatar animate-pulse" alt="Caleb Muga">
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-white fw-bold text-sm">Caleb Muga</span>
+            <span class="badge bg-primary/10 text-primary border border-primary/20 text-xxs font-mono rounded">SPECIALIST</span>
+          </div>
+          <div class="meta-row mt-1">
+            <span><i class="bi bi-calendar-event"></i> Listed {{ post.timestamp }}</span>
+            <span><i class="bi bi-eye"></i> {{ post.views or 0 }} Views</span>
+            <span><i class="bi bi-clock"></i> {{ reading_time }} Min Read</span>
           </div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Core Layout Component -->
+  <!-- Complete publication structural spacing (Double Sidebars grid layout on desktop) -->
   <main class="container py-5">
-
-    <!-- Categories Navigator Row -->
-    <div class="row" data-aos="fade-up">
-      <div class="col-12">
-        <div class="chips-scroller">
-          <button class="filter-chip active" onclick="filterCategory('all', this)">
-            <i class="bi bi-grid-fill"></i> ALL TOPICS
-          </button>
-          <button class="filter-chip" onclick="filterCategory('cybersecurity', this)">
-            <i class="bi bi-shield-lock"></i> CYBERSECURITY
-          </button>
-          <button class="filter-chip" onclick="filterCategory('networking', this)">
-            <i class="bi bi-hdd-network"></i> NETWORKING
-          </button>
-          <button class="filter-chip" onclick="filterCategory('ai-automation', this)">
-            <i class="bi bi-cpu"></i> AI & AUTOMATION
-          </button>
-          <button class="filter-chip" onclick="filterCategory('web-development', this)">
-            <i class="bi bi-code-slash"></i> WEB DEV
-          </button>
-          <button class="filter-chip" onclick="filterCategory('ict-support', this)">
-            <i class="bi bi-headset"></i> ICT SUPPORT
-          </button>
-          <button class="filter-chip" onclick="filterCategory('technology', this)">
-            <i class="bi bi-journal-text"></i> GENERAL TECH
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row g-5">
-      <!-- Main Feed Module (Left Column - 8 columns wide) -->
-      <div class="col-lg-8">
-        
-        <!-- Showcase Featured Post (First item in list) -->
-        {% if blogs and blogs|length > 0 %}
-          {% set fp = blogs[0] %}
-          {% set fp_comb = (fp.title ~ " " ~ fp.content)|lower %}
-          {% if "cyber" in fp_comb or "exploit" in fp_comb or "mitigate" in fp_comb or "security" in fp_comb or "defense" in fp_comb or "hack" in fp_comb or "penetration" in fp_comb or "firewall" in fp_comb %}
-            {% set fp_cat = "Cybersecurity" %}
-          {% elif "rout" in fp_comb or "net" in fp_comb or "ip" in fp_comb or "cisco" in fp_comb or "ccna" in fp_comb or "switch" in fp_comb or "router" in fp_comb or "dhcp" in fp_comb or "dns" in fp_comb or "lan" in fp_comb or "wan" in fp_comb %}
-            {% set fp_cat = "Networking" %}
-          {% elif "ai" in fp_comb or "machine" in fp_comb or "learning" in fp_comb or "model" in fp_comb or "neural" in fp_comb or "predict" in fp_comb or "automation" in fp_comb or "workflow" in fp_comb or "cron" in fp_comb or "script" in fp_comb %}
-            {% set fp_cat = "AI & Automation" %}
-          {% elif "web" in fp_comb or "html" in fp_comb or "css" in fp_comb or "flask" in fp_comb or "react" in fp_comb or "js" in fp_comb or "ts" in fp_comb or "javascript" in fp_comb or "typescript" in fp_comb or "frontend" in fp_comb or "backend" in fp_comb %}
-            {% set fp_cat = "Web Development" %}
-          {% elif "ict" in fp_comb or "support" in fp_comb or "helpdesk" in fp_comb or "comput" in fp_comb or "hardware" in fp_comb or "troubleshoot" in fp_comb or "printer" in fp_comb %}
-            {% set fp_cat = "ICT Support" %}
-          {% else %}
-            {% set fp_cat = "Technology" %}
-          {% endif %}
-          
-          {% set fp_slug = fp_cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-          {% set fp_words = fp.content.split()|length %}
-          {% set fp_read = (fp_words / 200)|round(0, 'ceil')|int %}
-          {% if fp_read < 1 %}{% set fp_read = 1 %}{% endif %}
-          {% set fp_thumb = fp.content|get_first_image %}
-
-          <div class="featured-container" data-aos="fade-up" id="featuredSection" data-category="{{ fp_slug }}" data-title="{{ fp.title.lower() }}" data-excerpt="{{ fp.content.lower() }}">
-            <div class="featured-card">
-              <div class="row g-0">
-                <div class="col-md-5">
-                  <div class="featured-img-box">
-                    {% if fp_thumb %}
-                      {% set fp_is_video = false %}
-                      {% if fp_thumb.endswith('.mp4') or fp_thumb.endswith('.webm') or fp_is_video %}
-                        <video src="{{ fp_thumb }}" class="w-100 h-100" style="object-fit: cover;" preload="metadata" muted playsinline loop onmouseover="this.play()" onmouseout="this.pause()"></video>
-                      {% else %}
-                        <img src="{{ fp_thumb }}" alt="{{ fp.title }}" loading="lazy" referrerPolicy="no-referrer">
-                      {% endif %}
-                    {% else %}
-                      <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-slate-900 overflow-hidden" style="min-height: 350px;">
-                        <i class="bi bi-award text-success display-2"></i>
-                      </div>
-                    {% endif %}
-                  </div>
-                </div>
-                <div class="col-md-7 d-flex flex-column justify-content-center p-4 p-lg-5">
-                  <div>
-                    <span class="featured-tag-pill badge-{{ fp_slug }}"><i class="bi bi-star-fill text-warning me-1.5"></i> FEATURED POST • {{ fp_cat }}</span>
-                    <h2 class="h1 fw-bold text-white mb-3" style="font-family: var(--font-display); line-height:1.2;">
-                      <a href="{{ url_for('view_blog', slug=fp.slug) }}" class="text-white text-decoration-none hover:text-blue-400">{{ fp.title }}</a>
-                    </h2>
-                    <p class="text-muted text-sm mb-4">{{ fp.content|clean_excerpt(165) }}</p>
-                  </div>
-                  <div class="mt-auto pt-3 border-top border-white/5 d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="rounded-circle bg-success/20 text-success d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">CM</div>
-                      <span class="text-xs text-muted">By <strong>Caleb Muga</strong></span>
-                    </div>
-                    <span class="text-xs text-muted"><i class="bi bi-clock"></i> {{ fp_read }} min read • {{ fp.timestamp }}</span>
-                  </div>
-                  <a href="{{ url_for('view_blog', slug=fp.slug) }}" class="btn btn-fire-primary w-100 mt-4 justify-content-center text-sm font-semibold">
-                    Read Featured Article <i class="bi bi-arrow-right-short fs-5"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-
-        <!-- Interactive Dynamic Feed Grid -->
-        <div class="row g-4" data-aos="fade-up" id="cardsGridContainer">
-          {% if blogs %}
-            {% for b in blogs %}
-              {% set combined = (b.title ~ " " ~ b.content)|lower %}
-              {% if "cyber" in combined or "exploit" in combined or "mitigate" in combined or "security" in combined or "defense" in combined or "hack" in combined or "penetration" in combined or "firewall" in combined %}
-                {% set cat = "Cybersecurity" %}
-              {% elif "rout" in combined or "net" in combined or "ip" in combined or "cisco" in combined or "ccna" in combined or "switch" in combined or "router" in combined or "dhcp" in combined or "dns" in combined or "lan" in combined or "wan" in combined %}
-                {% set cat = "Networking" %}
-              {% elif "ai" in combined or "machine" in combined or "learning" in combined or "model" in combined or "neural" in combined or "predict" in combined or "automation" in combined or "workflow" in combined or "cron" in combined or "script" in combined %}
-                {% set cat = "AI & Automation" %}
-              {% elif "web" in combined or "html" in combined or "css" in combined or "flask" in combined or "react" in combined or "js" in combined or "ts" in combined or "javascript" in combined or "typescript" in combined or "frontend" in combined or "backend" in combined %}
-                {% set cat = "Web Development" %}
-              {% elif "ict" in combined or "support" in combined or "helpdesk" in combined or "comput" in combined or "hardware" in combined or "troubleshoot" in combined or "printer" in combined %}
-                {% set cat = "ICT Support" %}
-              {% else %}
-                {% set cat = "Technology" %}
-              {% endif %}
-              
-              {% set words_count = b.content.split()|length %}
-              {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
-              {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
-              
-              {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-              {% if cat_slug == "cybersecurity" %}
-                {% set cat_icon = "bi-shield-lock" %}
-              {% elif cat_slug == "networking" %}
-                {% set cat_icon = "bi-hdd-network" %}
-              {% elif cat_slug == "ai-automation" %}
-                {% set cat_icon = "bi-cpu" %}
-              {% elif cat_slug == "web-development" %}
-                {% set cat_icon = "bi-code-slash" %}
-              {% elif cat_slug == "ict-support" %}
-                {% set cat_icon = "bi-headset" %}
-              {% else %}
-                {% set cat_icon = "bi-journal-text" %}
-              {% endif %}
-
-              <div class="col-md-6 blog-col-card" data-category="{{ cat_slug }}" data-title="{{ b.title.lower() }}" data-excerpt="{{ b.content.lower() }}">
-                <article class="card-fire">
-                  {% set thumb = b.content|get_first_image %}
-                  {% if thumb %}
-                    {% set is_video = false %}
-                    {% if thumb.endswith('.mp4') or thumb.endswith('.webm') or thumb.endswith('.ogg') or thumb.endswith('.mov') or thumb.endswith('.m4v') or 'video' in thumb|lower %}
-                      {% set is_video = true %}
-                    {% endif %}
-                    <div class="blog-card-thumbnail">
-                      {% if is_video %}
-                        <div class="position-relative w-100 h-100 overflow-hidden d-flex align-items-center justify-content-center bg-black">
-                          <video src="{{ thumb }}#t=0.5" class="w-100 h-100" style="object-fit: cover;" preload="metadata" muted playsinline loop onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0.5;"></video>
-                          <div class="position-absolute d-flex align-items-center justify-content-center rounded-circle" style="background: rgba(0,0,0,0.55); width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.25); z-index: 5; pointer-events: none;">
-                            <i class="bi bi-play-fill text-white fs-6" style="margin-left: 2px;"></i>
-                          </div>
-                        </div>
-                      {% else %}
-                        <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
-                      {% endif %}
-                    </div>
-                  {% else %}
-                    <div class="blog-card-thumbnail placeholder-thumbnail">
-                      <i class="bi {{ cat_icon }} display-4 gradient-{{ cat_slug }}"></i>
-                    </div>
-                  {% endif %}
-
-                  <div class="blog-card-meta">
-                    <span class="blog-tag badge-{{ cat_slug }}">{{ cat }}</span>
-                    <span><i class="bi bi-calendar"></i> {{ b.timestamp }}</span>
-                  </div>
-
-                  <a class="blog-card-title" href="{{ url_for('view_blog', slug=b.slug) }}">
-                    {{ b.title }}
-                  </a>
-                  <p class="blog-card-excerpt">{{ b.content|clean_excerpt(135) }}</p>
-
-                  <div class="mt-auto pt-3 border-top border-white/5 d-flex align-items-center justify-content-between">
-                    <span class="text-xs text-muted font-mono"><i class="bi bi-clock"></i> {{ reading_time }} MIN READ</span>
-                    <a class="btn-fire-secondary btn-sm text-xs py-1.5 px-3" href="{{ url_for('view_blog', slug=b.slug) }}">
-                      Read Article <i class="bi bi-arrow-right"></i>
-                    </a>
-                  </div>
-                </article>
-              </div>
-            {% endfor %}
-          {% else %}
-            <div class="col-12 py-5 text-center card-fire">
-              <i class="bi bi-search display-4 text-muted mb-3 d-block"></i>
-              <p class="text-muted mb-0">No articles found in the network library.</p>
-              <a class="btn btn-sm btn-fire-secondary mt-3" href="{{ url_for('blog_list') }}">Reset Filters</a>
-            </div>
-          {% endif %}
-        </div>
-
-        <!-- No search results placeholder -->
-        <div id="noResultsAlert" class="col-12 py-5 text-center card-fire d-none">
-          <i class="bi bi-exclamation-circle-fill display-4 text-warning mb-3 d-block animate-pulse"></i>
-          <h4>No Articles Match Your Criteria</h4>
-          <p class="text-muted mb-3">Modify your dynamic category filters or search parameters and check again.</p>
-          <button class="btn btn-sm btn-fire-secondary" onclick="resetAllFilters()">Clear All Criteria</button>
-        </div>
-
-      </div>
-
-      <!-- Professional Sidebar Module (Right Column - 4 columns wide) -->
-      <aside class="col-lg-4">
+    <div class="row g-4 g-xl-5">
+      
+      <!-- LEFT COLUMN : Interactive Table of Contents (Desktop - 3 columns) -->
+      <aside class="col-xl-3 col-lg-3 d-none d-lg-block">
         <div class="sticky-sidebar">
+          <div class="toc-card shadow-sm">
+            <div class="toc-title"><i class="bi bi-list-nested me-1.5 text-primary"></i> TABLE OF CONTENTS</div>
+            <ul class="toc-list" id="tableModelOfContents">
+              <!-- Dynamically populated from JS rendering headings -->
+              <li class="toc-item text-muted text-xs italic">Parsing post structure...</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
 
-          <!-- Author Bio Widget -->
-          <div class="card-fire sidebar-widget">
-            <div class="widget-title">
-              <i class="bi bi-person-fill text-primary"></i> Leading Specialist
-            </div>
-            <div class="text-center pt-2">
-              <img src="/static/assets/calebmuga.jpg" onerror="this.src='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/person-circle.svg'" class="author-avatar-img mb-3" alt="Caleb Muga">
-              <h5 class="text-white fw-bold mb-1" style="font-family: var(--font-display);">Caleb Muga</h5>
-              <p class="text-xxs text-primary font-mono tracking-wider uppercase mb-3">ICT Officer & Network Specialist</p>
-              <p class="text-muted text-xs leading-relaxed px-1 mb-4">
-                Managing redundant network infrastructures, certified Cisco CCNA Routing and Switching configurations, and advanced systems automation scripting.
-              </p>
-              
-              <!-- Quick Social Channels -->
-              <div class="d-flex justify-content-center gap-2">
-                <a href="https://linkedin.com/" target="_blank" rel="noopener" class="social-compact-item" title="LinkedIn Interface">
-                  <i class="bi bi-linkedin"></i>
-                </a>
-                <a href="https://github.com/" target="_blank" rel="noopener" class="social-compact-item" title="Developer GitHub Engine">
-                  <i class="bi bi-github"></i>
-                </a>
-                <a href="https://wa.me/254791204587" target="_blank" rel="noopener" class="social-compact-item" title="WhatsApp Terminal">
-                  <i class="bi bi-whatsapp"></i>
-                </a>
+      <!-- CENTER COLUMN : Core publication content (7 columns) -->
+      <article class="col-xl-6 col-lg-6 col-md-12" data-aos="fade-right">
+        <div class="card-fire p-4 p-md-5 mb-5 shadow-sm" style="background-color: var(--card-bg);">
+          <div class="article-content text-justify" id="blogContentPane">
+            {{ post.content|render_markdown|safe }}
+          </div>
+        </div>
+
+        <!-- Redesigned reactions logging toolbar -->
+        <div class="card-fire p-4 mb-5 border-dashed" style="background-color: rgba(255, 255, 255, 0.01);">
+          <h6 class="text-white text-xs font-mono mb-3 tracking-wider"><i class="bi bi-trophy text-warning me-1.5 animate-pulse"></i> DIGITAL ENGAGEMENT REGISTRY</h6>
+          <p class="text-muted text-xs mb-4">Did Caleb's blueprint provide practical assistance to your setup? Click below to log your telemetry response.</p>
+          <div class="d-flex flex-wrap gap-2.5">
+            <button onclick="submitReaction('helpful')" id="btn-react-helpful" class="reaction-btn">
+              👍 Helpful <span id="cnt-helpful" class="badge bg-secondary/20 ms-1">{{ post.helpful_count or 0 }}</span>
+            </button>
+            <button onclick="submitReaction('useful')" id="btn-react-useful" class="reaction-btn">
+              💡 Useful <span id="cnt-useful" class="badge bg-secondary/20 ms-1">{{ post.useful_count or 0 }}</span>
+            </button>
+            <button onclick="submitReaction('learned')" id="btn-react-learned" class="reaction-btn">
+              🎓 Learned <span id="cnt-learned" class="badge bg-secondary/20 ms-1">{{ post.learned_count or 0 }}</span>
+            </button>
+            <button onclick="submitReaction('loved')" id="btn-react-loved" class="reaction-btn">
+              ❤️ Loved <span id="cnt-loved" class="badge bg-secondary/20 ms-1">{{ post.loved_count or 0 }}</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- RIGHT COLUMN : Copilot Summarizer & Explainer tools (3 columns) -->
+      <aside class="col-xl-3 col-lg-3 col-md-12" data-aos="fade-left">
+        <div class="sticky-sidebar d-flex flex-column gap-4">
+          
+          <!-- AI Copilot digest block -->
+          <div class="card-fire shadow-sm">
+            <h5 class="text-white font-semibold d-flex align-items-center gap-2 mb-3" style="font-family: var(--font-display); font-size:1rem;">
+              <i class="bi bi-robot text-primary"></i> Copilot Summary
+            </h5>
+            <p class="text-xs text-muted leading-relaxed mb-4">Assemble structured outlines, complexity ratings, and key technical takeaways from Caleb's article body instantly.</p>
+            
+            <button onclick="generateAISummary()" id="ai-sum-btn" class="btn btn-sm btn-fire-secondary w-100 mb-3 justify-content-center text-xs">
+              Generate Page Digest <i class="bi bi-lightning-fill text-warning ms-1"></i>
+            </button>
+
+            <!-- Results structure -->
+            <div id="ai-summary-pane" class="d-none">
+              <div class="p-3 bg-black/40 rounded-3 border border-secondary/15">
+                <span class="text-success text-xxs font-mono fw-bold d-block mb-1 uppercase">DIFFICULTY RANKING</span>
+                <span id="ai-sum-level" class="badge bg-success/15 text-success border border-success/25 font-mono text-xs rounded mb-3 py-1">Intermediate</span>
+
+                <span class="text-success text-xxs font-mono fw-bold d-block mb-1.5 uppercase">SYSTEM ANALYSIS</span>
+                <p id="ai-sum-text" class="text-xs text-muted mb-3 m-0 leading-relaxed"></p>
+
+                <span class="text-success text-xxs font-mono fw-bold d-block mb-1.5 uppercase">KEY TAKEAWAYS</span>
+                <ul id="ai-sum-takeaways" class="text-xs text-muted ps-3 mb-0 leading-relaxed"></ul>
               </div>
             </div>
           </div>
 
-          <!-- Quick Navigation Tags Counting Widget -->
-          <div class="card-fire sidebar-widget">
-            <div class="widget-title">
-              <i class="bi bi-tags-fill text-primary"></i> Journal Categories
+          <!-- Highlight Explainer Panel -->
+          <div class="card-fire shadow-sm">
+            <h5 class="text-white font-semibold d-flex align-items-center gap-2 mb-3" style="font-family: var(--font-display); font-size: 1rem;">
+              <i class="bi bi-cursor-fill text-primary"></i> Explainer Tool
+            </h5>
+            <p class="text-xs text-muted leading-relaxed m-0 mb-3">Doubtful about complex CCNA routing syntax keywords or commands? Highlight any word segment of the post to extract immediate clarification.</p>
+            
+            <div id="explainer-placeholder" class="explainer-box text-muted text-center py-4">
+              <i class="bi bi-bounding-box-circles text-primary mb-2 d-block fs-4"></i>
+              <span>Select text in the left pane to initialize explainer queries...</span>
             </div>
-            <div class="d-flex flex-column">
-              <a href="javascript:void(0)" onclick="filterCategory('all', null)" class="topics-list-item">
-                <span>All Documents Feed</span>
-                <span class="badge bg-secondary/10 px-2.5 py-1 text-light border border-white/5" id="cnt-all">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('cybersecurity', null)" class="topics-list-item">
-                <span>🛡️ Cybersecurity Audits</span>
-                <span class="badge bg-danger/10 text-danger px-2.5 py-1 border border-danger/15" id="cnt-cybersecurity">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('networking', null)" class="topics-list-item">
-                <span>🌐 Cisco Routing & CCNA</span>
-                <span class="badge bg-primary/10 text-primary px-2.5 py-1 border border-primary/15" id="cnt-networking">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('ai-automation', null)" class="topics-list-item">
-                <span>🤖 AI & Task Automation</span>
-                <span class="badge bg-purple/10 text-purple px-2.5 py-1 border border-purple/15" id="cnt-ai-automation">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('web-development', null)" class="topics-list-item">
-                <span>💻 Modern Stack Development</span>
-                <span class="badge bg-info/10 text-info px-2.5 py-1 border border-info/15" id="cnt-web-development">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('ict-support', null)" class="topics-list-item">
-                <span>🛠️ Enterprise ICT Diagnoses</span>
-                <span class="badge bg-success/10 text-success px-2.5 py-1 border border-success/15" id="cnt-ict-support">0</span>
-              </a>
+
+            <div id="explainer-active" class="d-none">
+              <div class="explainer-box">
+                <span class="text-success text-xxs font-mono fw-bold mb-1.5 d-block">CHOSEN BLOCKS</span>
+                <p id="explain-quote" class="text-muted text-xs italic border-start border-success/30 ps-2 mb-3 leading-normal"></p>
+
+                <button onclick="queryHighlightExplanation()" id="explain-cmd-btn" class="btn btn-fire-primary w-100 font-mono mb-3 py-1.5 text-xs text-white border-0">Ask AI Twin</button>
+
+                <!-- Explanation Reply Box -->
+                <div id="explain-reply-box" class="d-none pt-2.5 border-top border-success/15 text-xs text-white/90 leading-relaxed">
+                  <span class="text-success text-xxs font-mono d-block mb-1">CALEB'S AI TWIN RESOLUTION:</span>
+                  <div id="explain-reply-text"></div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Premium Embedded Newsletter Gateway -->
-          <div class="card-fire sidebar-widget">
-            <div class="widget-title">
-              <i class="bi bi-envelope-check text-primary"></i> Secure Distribution
-            </div>
-            <p class="text-xs text-muted mb-3 leading-relaxed">
-              Register your workspace SMTP tunnel. Receive periodic Cisco routing optimization parameters, security advisories, and automation snippets directly.
-            </p>
-            <form action="/subscribe" method="POST">
-              <div class="mb-2">
-                <input type="email" name="email" class="form-control form-control-fire form-control-sm text-xs py-2 px-3 bg-black/40 border-white/10" required placeholder="name@enterprise.com">
-              </div>
-              <button type="submit" class="btn btn-fire-primary w-100 py-2 fs-7 font-mono d-flex align-items-center justify-content-center gap-1">
-                <i class="bi bi-mailbox"></i> Subscribe SMTP Gateway
-              </button>
-            </form>
-          </div>
+          <!-- Quick Return Button -->
+          <a href="{{ url_for('blog_list') }}" class="btn btn-sm btn-fire-secondary w-100 justify-content-center">
+            <i class="bi bi-arrow-left"></i> Return to Library Feed
+          </a>
 
         </div>
       </aside>
+
     </div>
+
+    <!-- Related Articles ("You May Also Like") Section -->
+    <section class="mt-5 pt-5 border-top border-white/5" data-aos="fade-up">
+      <h3 class="h4 fw-bold mb-4" style="font-family: var(--font-display);"><i class="bi bi-grid-3x3-gap-fill text-primary"></i> Recommended Publications</h3>
+      <div class="row g-4">
+        {% if related_posts %}
+          {% for r in related_posts %}
+            {% set r_comb = (r.title ~ " " ~ r.content)|lower %}
+            {% if "cyber" in r_comb or "exploit" in r_comb or "mitigate" in r_comb or "security" in r_comb or "defense" in r_comb or "hack" in r_comb or "penetration" in r_comb or "firewall" in r_comb %}
+              {% set r_cat = "Cybersecurity" %}
+            {% elif "rout" in r_comb or "net" in r_comb or "ip" in r_comb or "cisco" in r_comb or "ccna" in r_comb or "switch" in r_comb or "router" in r_comb or "dhcp" in r_comb or "dns" in r_comb or "lan" in r_comb or "wan" in r_comb %}
+              {% set r_cat = "Networking" %}
+            {% elif "ai" in r_comb or "machine" in r_comb or "learning" in r_comb or "model" in r_comb or "neural" in r_comb or "predict" in r_comb or "automation" in r_comb or "workflow" in r_comb or "cron" in r_comb or "script" in r_comb %}
+              {% set r_cat = "AI & Automation" %}
+            {% elif "web" in r_comb or "html" in r_comb or "css" in r_comb or "flask" in r_comb or "react" in r_comb or "js" in r_comb or "ts" in r_comb or "javascript" in r_comb or "typescript" in r_comb or "frontend" in r_comb or "backend" in r_comb %}
+              {% set r_cat = "Web Development" %}
+            {% elif "ict" in r_comb or "support" in r_comb or "helpdesk" in r_comb or "comput" in r_comb or "hardware" in r_comb or "troubleshoot" in r_comb or "printer" in r_comb %}
+              {% set r_cat = "ICT Support" %}
+            {% else %}
+              {% set r_cat = "Technology" %}
+            {% endif %}
+            
+            {% set r_slug = r_cat|lower|replace(' & ', '-')|replace(' ', '-') %}
+            {% set r_words = r.content.split()|length %}
+            {% set r_time = (r_words / 200)|round(0, 'ceil')|int %}
+            {% if r_time < 1 %}{% set r_time = 1 %}{% endif %}
+            {% set r_thumb = r.content|get_first_image %}
+
+            <div class="col-md-4">
+              <div class="related-card shadow-sm">
+                <div class="related-thumb">
+                  {% if r_thumb %}
+                    <img src="{{ r_thumb }}" alt="{{ r.title }}" loading="lazy" referrerPolicy="no-referrer">
+                  {% else %}
+                    <i class="bi bi-journal-code display-4 text-muted"></i>
+                  {% endif %}
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1">
+                  <span class="blog-tag badge-{{ r_slug }} mb-2.5">{{ r_cat }}</span>
+                  <h5 class="related-title text-truncate-2">
+                    <a href="{{ url_for('view_blog', slug=r.slug) }}">{{ r.title }}</a>
+                  </h5>
+                  <div class="mt-auto pt-3 border-top border-white/5 d-flex align-items-center justify-content-between text-xs text-muted font-mono">
+                    <span>{{ r.timestamp }}</span>
+                    <span>{{ r_time }} MIN READ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col-12 py-4 text-center text-muted">
+            <span class="small font-mono bg-black/20 py-2 px-4 rounded border border-white/5">Further Cisco configurations or automation manuals are being documented.</span>
+          </div>
+        {% endif %}
+      </div>
+    </section>
 
   </main>
 
-  <!-- Complete Premium Styled Corporate Quality Footer -->
+  <!-- High-Quality Corporate Styled Footer -->
   <footer>
     <div class="container">
       <div class="row gy-4 mb-4">
@@ -1038,16 +1315,25 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // Selected global state variables
-    let currentCategoryFilter = "all";
-    let currentSearchFilter = "";
+    const SLUG = "{{ post.slug }}";
 
     window.addEventListener('load', () => {
       AOS.init({ once: true, duration: 800, easing: 'ease-out' });
-      computeCategoryCounts();
+      
+      // Dispatch view metrics heartbeat
+      navigator.sendBeacon("/api/blog/heartbeat", JSON.stringify({ slug: SLUG, new_view: true }));
+
+      // Live build Table of Contents
+      generateTableOfContents();
+
+      // Normalize old and new blog media so every article looks uniform
+      normalizeArticleMedia();
+
+      // Configure copy button helpers on pre blocks
+      setupPreCodeCopyButtons();
     });
 
-    // Theme logic integration
+    // Theme states
     const themeBtn = document.getElementById("themeBtn");
     const docBody = document.body;
 
@@ -1069,130 +1355,302 @@
       }
     });
 
-    // Interactive Dynamic Filtering of Items on Grid
-    function filterCategory(categorySlug, element) {
-      currentCategoryFilter = categorySlug;
-
-      // Toggle active status chips
-      if (element) {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        element.classList.add('active');
-      } else {
-        // Sync widgets
-        document.querySelectorAll('.filter-chip').forEach(c => {
-          const matchingSlug = c.getAttribute('onclick').match(/'([^']+)'/)[1];
-          if (matchingSlug === categorySlug) {
-            c.classList.add('active');
-          } else {
-            c.classList.remove('active');
-          }
-        });
-      }
-
-      applyInteractiveFilters();
-    }
-
-    // Live search event trigger
-    const searchInput = document.getElementById("liveSearchInput");
-    searchInput.addEventListener("input", (e) => {
-      currentSearchFilter = e.target.value.toLowerCase().trim();
-      applyInteractiveFilters();
+    // Reading progress calculator bar scroll listener
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("readingProgressBar").style.width = scrolled + "%";
     });
 
-    function triggerSearchAction() {
-      currentSearchFilter = searchInput.value.toLowerCase().trim();
-      applyInteractiveFilters();
+    // Periodic telemetry heartbeat
+    setInterval(() => {
+      fetch("/api/blog/heartbeat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: SLUG, new_view: false })
+      }).catch(err => console.log("Heartbeat node reporting silent logs", err));
+    }, 12000);
+
+    // Live Automated Table of Contents compiling from headings
+    function generateTableOfContents() {
+      const bodyPane = document.getElementById("blogContentPane");
+      const tocList = document.getElementById("tableModelOfContents");
+      if (!bodyPane || !tocList) return;
+
+      const headings = bodyPane.querySelectorAll("h2, h3");
+      if (headings.length === 0) {
+        tocList.innerHTML = `<li class="toc-item text-xs text-muted italic">No structure elements listed.</li>`;
+        return;
+      }
+
+      tocList.innerHTML = "";
+      headings.forEach((h, index) => {
+        // Create an ID if not exists
+        const headingId = h.id || `toc-heading-${index}`;
+        h.id = headingId;
+
+        const li = document.createElement("li");
+        li.className = `toc-item ${h.tagName.toLowerCase() === 'h3' ? 'toc-item-h3' : ''}`;
+
+        const a = document.createElement("a");
+        a.href = `#${headingId}`;
+        a.className = "toc-link text-truncate d-block";
+        a.textContent = h.textContent;
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          h.scrollIntoView({ behavior: "smooth" });
+          document.querySelectorAll(".toc-link").forEach(l => l.classList.remove("active"));
+          a.classList.add("active");
+        });
+
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
     }
 
-    function applyInteractiveFilters() {
-      const cards = document.querySelectorAll('.blog-col-card');
-      const featured = document.getElementById('featuredSection');
-      let visibleCount = 0;
 
-      // Filter Featured card banner
-      if (featured) {
-        const featCat = featured.getAttribute('data-category');
-        const featTitle = featured.getAttribute('data-title') || '';
-        const featExcerpt = featured.getAttribute('data-excerpt') || '';
+    // Standardize images, videos, iframes, and tables inserted from Markdown/TinyMCE/gallery
+    function normalizeArticleMedia() {
+      const contentPane = document.getElementById("blogContentPane");
+      if (!contentPane) return;
 
-        const catMatches = (currentCategoryFilter === 'all' || featCat === currentCategoryFilter);
-        const searchMatches = (!currentSearchFilter || featTitle.includes(currentSearchFilter) || featExcerpt.includes(currentSearchFilter));
+      // Make tables responsive
+      contentPane.querySelectorAll("table").forEach((table) => {
+        if (table.closest(".table-responsive")) return;
+        const wrapper = document.createElement("div");
+        wrapper.className = "table-responsive";
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
 
-        if (catMatches && searchMatches) {
-          featured.classList.remove('d-none');
-          visibleCount++;
-        } else {
-          featured.classList.add('d-none');
+      // Normalize images
+      contentPane.querySelectorAll("img").forEach((img) => {
+        if (img.closest(".related-card") || img.classList.contains("header-author-avatar")) return;
+
+        img.removeAttribute("width");
+        img.removeAttribute("height");
+        img.loading = img.loading || "lazy";
+        img.decoding = "async";
+        img.classList.add("article-media", "article-image");
+
+        if (!img.alt || img.alt.trim() === "") {
+          img.alt = "{{ post.title|e }}";
+        }
+
+        wrapMediaElement(img, "image");
+      });
+
+      // Normalize videos
+      contentPane.querySelectorAll("video").forEach((video) => {
+        video.removeAttribute("width");
+        video.removeAttribute("height");
+        video.setAttribute("controls", "controls");
+        video.setAttribute("playsinline", "playsinline");
+        video.setAttribute("preload", "metadata");
+        video.classList.add("article-media", "article-video", "embedded-video");
+
+        wrapMediaElement(video, "video");
+      });
+
+      // Normalize iframes/embeds
+      contentPane.querySelectorAll("iframe, embed, object").forEach((frame) => {
+        frame.removeAttribute("width");
+        frame.removeAttribute("height");
+        frame.classList.add("article-media", "article-embed");
+        wrapMediaElement(frame, "embed");
+      });
+    }
+
+    function wrapMediaElement(element, type) {
+      if (!element || element.closest(".article-media-frame")) return;
+
+      const wrapper = document.createElement("figure");
+      wrapper.className = `article-media-frame article-${type}-frame`;
+
+      const parent = element.parentNode;
+      parent.insertBefore(wrapper, element);
+      wrapper.appendChild(element);
+
+      if (type === "image") {
+        element.addEventListener("load", () => {
+          if (element.naturalHeight > element.naturalWidth * 1.15) {
+            wrapper.classList.add("portrait-media");
+          }
+        });
+
+        if (element.complete && element.naturalHeight > element.naturalWidth * 1.15) {
+          wrapper.classList.add("portrait-media");
         }
       }
 
-      // Filter Regular card list items
-      cards.forEach(card => {
-        const cardCat = card.getAttribute('data-category');
-        const cardTitle = card.getAttribute('data-title') || '';
-        const cardExcerpt = card.getAttribute('data-excerpt') || '';
+      const existingCaption = element.getAttribute("data-caption") || element.getAttribute("title");
+      if (existingCaption) {
+        const caption = document.createElement("figcaption");
+        caption.className = "article-media-caption";
+        caption.textContent = existingCaption;
+        wrapper.appendChild(caption);
+      }
+    }
 
-        const categoryMatches = (currentCategoryFilter === 'all' || cardCat === currentCategoryFilter);
-        const searchMatches = (!currentSearchFilter || cardTitle.includes(currentSearchFilter) || cardExcerpt.includes(currentSearchFilter));
 
-        if (categoryMatches && searchMatches) {
-          card.classList.remove('d-none');
-          // Add subtle dynamic fade-in
-          card.style.opacity = "0";
-          setTimeout(() => { card.style.opacity = "1"; card.style.transition = "opacity 0.35s ease"; }, 20);
-          visibleCount++;
+    // Dynamic setups for copy buttons in code hilite pre containers
+    function setupPreCodeCopyButtons() {
+      // Handles standard markdown pre tags and Pygments divs
+      const preBlocks = document.querySelectorAll("pre");
+      preBlocks.forEach((pre, index) => {
+        pre.style.position = "relative";
+        
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "code-copy-btn";
+        copyBtn.innerHTML = `<i class="bi bi-clipboard2"></i> Copy`;
+        copyBtn.type = "button";
+
+        copyBtn.addEventListener("click", () => {
+          const codeEl = pre.querySelector("code") || pre;
+          const textToCopy = codeEl.innerText || codeEl.textContent;
+
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            copyBtn.innerHTML = `<i class="bi bi-check2 text-success"></i> Copied!`;
+            copyBtn.style.color = "#10b981";
+            setTimeout(() => {
+              copyBtn.innerHTML = `<i class="bi bi-clipboard2"></i> Copy`;
+              copyBtn.style.color = "";
+            }, 2000);
+          }).catch(err => {
+            console.error("Copy operation failed due to frame limitations.", err);
+          });
+        });
+
+        pre.appendChild(copyBtn);
+      });
+    }
+
+    // AI summary handler
+    function generateAISummary() {
+      const btn = document.getElementById("ai-sum-btn");
+      const pane = document.getElementById("ai-summary-pane");
+      const levelEl = document.getElementById("ai-sum-level");
+      const textEl = document.getElementById("ai-sum-text");
+      const listEl = document.getElementById("ai-sum-takeaways");
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Analyzing metrics...`;
+
+      fetch("/api/blog/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: SLUG })
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = `Regenerate Page Digest <i class="bi bi-arrow-clockwise"></i>`;
+        
+        if (data.status === "success") {
+          levelEl.textContent = data.skill_level || "Intermediate";
+          textEl.textContent = data.summary || "Summary generated successfully.";
+          listEl.innerHTML = "";
+          
+          if (data.takeaways && data.takeaways.length) {
+            data.takeaways.forEach(item => {
+              const li = document.createElement("li");
+              li.className = "mb-1";
+              li.textContent = item;
+              listEl.appendChild(li);
+            });
+          }
+          pane.classList.remove("d-none");
         } else {
-          card.classList.add('d-none');
+          alert("AI Summarization node reporting offline.");
         }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = `Generate Page Digest <i class="bi bi-lightning-fill text-warning ms-1"></i>`;
+        console.error(err);
       });
-
-      // Show/Hide missing records panel
-      const alertPanel = document.getElementById("noResultsAlert");
-      if (visibleCount === 0) {
-        alertPanel.classList.remove("d-none");
-      } else {
-        alertPanel.classList.add("d-none");
-      }
     }
 
-    function resetAllFilters() {
-      searchInput.value = "";
-      currentSearchFilter = "";
-      filterCategory('all', document.querySelector('.filter-chip'));
+    // Reaction submission handler 
+    function submitReaction(type) {
+      const btn = document.getElementById(`btn-react-${type}`);
+      btn.disabled = true;
+      btn.classList.add("active");
+
+      fetch("/api/blog/reaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: SLUG, reaction: type })
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.disabled = false;
+        if (data.status === "success") {
+          document.getElementById("cnt-helpful").textContent = data.counts.helpful;
+          document.getElementById("cnt-useful").textContent = data.counts.useful;
+          document.getElementById("cnt-learned").textContent = data.counts.learned;
+          document.getElementById("cnt-loved").textContent = data.counts.loved;
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        console.error(err);
+      });
     }
 
-    // Dynamic Category enumeration listing and counts allocation
-    function computeCategoryCounts() {
-      const cards = document.querySelectorAll('.blog-col-card');
-      const featured = document.getElementById('featuredSection');
-      
-      let counts = {
-        all: 0,
-        cybersecurity: 0,
-        networking: 0,
-        'ai-automation': 0,
-        'web-development': 0,
-        'ict-support': 0,
-        technology: 0
-      };
+    // Selection Explainer Logic
+    let selectedTextBuffer = "";
 
-      if (featured) {
-        const featCat = featured.getAttribute('data-category');
-        if (featCat in counts) counts[featCat]++;
-        counts.all++;
+    document.addEventListener("selectionchange", () => {
+      const text = window.getSelection().toString().trim();
+      const placeholder = document.getElementById("explainer-placeholder");
+      const actionBox = document.getElementById("explainer-active");
+      const quoteEl = document.getElementById("explain-quote");
+
+      if (text && text.length > 5 && text.length < 500) {
+        selectedTextBuffer = text;
+        quoteEl.textContent = `"${text}"`;
+        placeholder.classList.add("d-none");
+        actionBox.classList.remove("d-none");
       }
+    });
 
-      cards.forEach(card => {
-        const featCat = card.getAttribute('data-category');
-        if (featCat in counts) counts[featCat]++;
-        counts.all++;
+    function queryHighlightExplanation() {
+      const btn = document.getElementById("explain-cmd-btn");
+      const replyBox = document.getElementById("explain-reply-box");
+      const replyText = document.getElementById("explain-reply-text");
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Analyzing metrics...`;
+      replyBox.classList.add("d-none");
+
+      fetch("/api/blog/ask_about_text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          selected_text: selectedTextBuffer,
+          title: "{{ post.title }}"
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = `Ask AI Twin`;
+        
+        if (data.status === "success") {
+          replyText.innerHTML = data.reply.replace(/\n/g, "<br>");
+          replyBox.classList.remove("d-none");
+        } else {
+          replyText.textContent = "Telemetry feedback offline.";
+          replyBox.classList.remove("d-none");
+        }
+      })
+      .catch(err => {
+        btn.disabled = false;
+        btn.innerHTML = `Ask AI Twin`;
+        console.error(err);
       });
-
-      // Set counts labels inside sidebar
-      for (const [slug, count] of Object.entries(counts)) {
-        const label = document.getElementById(`cnt-${slug}`);
-        if (label) label.textContent = count;
-      }
     }
 
     // Real Human Presence & Telemetry Session Verifier
