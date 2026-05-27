@@ -11,18 +11,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #030712;
-      --card-bg: #0b0f19;
+      --bg: #02040a;
+      --card-bg: rgba(11, 15, 25, 0.75);
       --brand-primary: #f97316;
       --brand-secondary: #ea580c;
       --text-main: #f3f4f6;
       --text-muted: #9ca3af;
-      --border-color: rgba(249, 115, 22, 0.12);
+      --border-color: rgba(255, 255, 255, 0.08); /* Softened border lines */
       --input-bg: rgba(255, 255, 255, 0.02);
     }
 
     body {
-      background-color: var(--bg);
+      background: radial-gradient(circle at top left, #080d1a 0%, #02040a 100%) !important;
       color: var(--text-main);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
@@ -35,14 +35,155 @@
       height: 8px;
     }
     ::-webkit-scrollbar-track {
-      background: #030712;
+      background: #02040a;
     }
     ::-webkit-scrollbar-thumb {
-      background: #1f2937;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
       background: var(--brand-primary);
+    }
+
+    /* Layout Structure & Navigation */
+    .dashboard-wrapper {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .sidebar-wrapper {
+      width: 290px;
+      background: rgba(7, 10, 19, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .main-content-wrapper {
+      flex: 1;
+      margin-left: 290px;
+      padding: 2.25rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      width: calc(100% - 290px);
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    /* Mobile Responsive Hooks */
+    @media (max-width: 991.98px) {
+      .sidebar-wrapper {
+        transform: translateX(-100%);
+        box-shadow: none;
+      }
+      .sidebar-wrapper.show {
+        transform: translateX(0);
+        box-shadow: 20px 0 40px rgba(0, 0, 0, 0.8);
+      }
+      .main-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.25rem;
+        padding-top: 5rem;
+      }
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 995;
+    }
+
+    /* Sidebar Components */
+    .sidebar-brand {
+      padding: 1.75rem 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sidebar-profile {
+      padding: 1.25rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      margin: 1.5rem 1.25rem 0.5rem 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.25s ease;
+    }
+    .sidebar-profile:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(249, 115, 22, 0.15);
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.8rem 1.25rem;
+      color: var(--text-muted);
+      border-radius: 10px;
+      text-decoration: none !important;
+      font-weight: 500;
+      font-family: 'Space Grotesk', sans-serif;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+    .sidebar-link i {
+      font-size: 1.1rem;
+      transition: transform 0.2s ease;
+    }
+    .sidebar-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .sidebar-link:hover i {
+      transform: scale(1.1);
+    }
+    .sidebar-link.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.02) 100%);
+      border-left: 3px solid var(--brand-primary);
+      box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+
+    /* Live Pulse dot */
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+      animation: pulse-ring 1.8s infinite;
+      display: inline-block;
+    }
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
     }
 
     .brand-logo {
@@ -51,42 +192,27 @@
       letter-spacing: -1px;
     }
 
+    /* Tabs fallback hidden */
     .nav-tabs-fire {
-      border-bottom: 2px solid #1f2937;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: none !important; /* Managed by Left Sidebar */
     }
 
-    .nav-tabs-fire .nav-link {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-weight: 500;
-      padding: 1rem 1.5rem;
-      border-bottom: 2px solid transparent;
-      transition: all 0.3s ease;
-      font-family: 'Space Grotesk', sans-serif;
-    }
-
-    .nav-tabs-fire .nav-link:hover {
-      color: #fff;
-      border-bottom-color: rgba(249, 115, 22, 0.3);
-    }
-
-    .nav-tabs-fire .nav-link.active {
-      color: var(--brand-primary);
-      border-bottom-color: var(--brand-primary);
-      background: transparent;
-    }
-
+    /* Glassmorphic Panels & Cards */
     .card-fire {
       background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .card-fire:hover {
-      border-color: rgba(249, 115, 22, 0.22);
+      border-color: rgba(249, 115, 22, 0.25);
+      box-shadow: 0 10px 35px rgba(249, 115, 22, 0.08);
+      transform: translateY(-2px); /* Soft micro hover lift */
     }
 
     .stat-card {
@@ -98,6 +224,24 @@
       font-size: 2.2rem;
       font-weight: 700;
       color: #fff;
+    }
+
+    /* Better Data Tables */
+    .table-dark {
+      background: transparent !important;
+    }
+    .table-hover tbody tr {
+      transition: all 0.20s ease-out;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.03) !important;
+      transform: translateX(2px);
+    }
+    .table-responsive {
+      border-radius: 12px;
+      background: rgba(11, 15, 25, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
     }
 
     .form-control-fire {
@@ -115,6 +259,7 @@
       box-shadow: 0 0 10px rgba(249, 115, 22, 0.15);
     }
 
+    /* Modern Buttons */
     .btn-fire-primary {
       background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
       color: white;
@@ -122,28 +267,30 @@
       border: none;
       padding: 0.65rem 1.4rem;
       border-radius: 8px;
-      transition: all 0.3s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: 'Space Grotesk', sans-serif;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
     }
 
     .btn-fire-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35);
+      transform: translateY(-1.5px);
+      box-shadow: 0 6px 18px rgba(249, 115, 22, 0.35);
     }
 
     .btn-fire-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f3f4f6;
       font-weight: 500;
       padding: 0.65rem 1.4rem;
       border-radius: 8px;
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
     .btn-fire-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
     }
 
     /* Media items cards inside admin panel */
@@ -197,10 +344,11 @@
 
     /* Notifications / Flash alerts */
     .alert-fire {
-      background: rgba(249, 115, 22, 0.08);
-      border: 1px solid rgba(249, 115, 22, 0.25);
+      background: rgba(249, 115, 22, 0.06);
+      border: 1px solid rgba(249, 115, 22, 0.18);
       color: #ffedd5;
       border-radius: 12px;
+      backdrop-filter: blur(8px);
     }
 
     .text-mono {
@@ -208,7 +356,7 @@
     }
 
     .drag-drop-zone {
-      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border: 2px dashed rgba(255, 255, 255, 0.12);
       background: rgba(255, 255, 255, 0.01);
       border-radius: 12px;
       padding: 2.5rem 1.5rem;
@@ -222,7 +370,6 @@
       background: rgba(249, 115, 22, 0.02);
     }
 
-    /* Blog reference modal copy instructions */
     .ins-block {
       background: rgba(249,115,22,0.02);
       border-left: 3px solid var(--brand-primary);
@@ -277,296 +424,464 @@
     </script>
   {% endif %}
 
-  <div class="container">
+  <!-- MOBILE TOP HEADER (Visible on viewport md and down) -->
+  <div class="d-lg-none d-flex align-items-center justify-content-between p-3 position-fixed top-0 start-0 end-0 w-100" style="z-index: 990; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(8, 11, 20, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-outline-secondary p-1 px-2 border-secondary/20" onclick="toggleSidebar()">
+        <i class="bi bi-list fs-4 text-white"></i>
+      </button>
+      <h5 class="fw-bold mb-0 text-white brand-logo" style="font-size: 1.05rem; letter-spacing: -0.5px;">TECHKNOW <span class="text-warning">.CONSOLE</span></h5>
+    </div>
     
-    <!-- HEADER BAR -->
-    <header class="d-flex flex-wrap justify-content-between align-items-center pb-4 mb-4 border-bottom border-secondary-subtle">
-      <div class="d-flex align-items-center gap-3">
-        <div class="p-2 rounded bg-warning bg-opacity-10 text-warning">
-          <i class="bi bi-shield-lock-fill fs-4"></i>
+    <div class="d-flex align-items-center gap-2">
+      <span class="pulse-dot"></span>
+      <span class="text-success font-mono" style="font-size: 11px; letter-spacing: 0.5px;">SECURE LIVE</span>
+    </div>
+  </div>
+
+  <div class="dashboard-wrapper">
+    
+    <!-- DESKTOP LEFT SIDEBAR INTERACTIVE MODULE -->
+    <aside class="sidebar-wrapper">
+      <div class="sidebar-brand d-flex align-items-center gap-2">
+        <div class="p-1 px-2 rounded bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center">
+          <i class="bi bi-shield-lock-fill fs-5 text-warning"></i>
         </div>
         <div>
-          <h2 class="fw-bold mb-0 brand-logo">Caleb Muga <span class="text-warning">.dashboard</span></h2>
-          <small class="text-muted">High-Security Operational Console</small>
+          <h5 class="fw-bold mb-0 text-white font-sans" style="letter-spacing: -0.5px; font-size: 1.05rem;">TECHKNOW CONSOLE</h5>
+          <span class="text-white-50 font-mono" style="font-size: 10px;">Operated by Caleb Muga</span>
         </div>
       </div>
-      <div class="d-flex gap-2">
-        <a href="/" class="btn btn-fire-secondary d-flex align-items-center gap-2">
-          <i class="bi bi-eye"></i> View Live Site
-        </a>
-        <a href="/logout" class="btn btn-danger btn-sm px-3 d-flex align-items-center gap-2">
-          <i class="bi bi-power"></i> Log Out
-        </a>
-      </div>
-    </header>
 
-    <!-- FLASH MESSAGES -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for msg in messages %}
-          <div class="alert alert-fire alert-dismissible fade show d-flex align-items-center gap-3 py-3 mb-4" role="alert">
-            <i class="bi bi-info-circle-fill text-warning fs-5"></i>
-            <div>{{ msg }}</div>
-            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      <!-- User Context area (avatar, security state, roles) -->
+      <div class="sidebar-profile">
+        <div class="d-flex align-items-center gap-3">
+          <div class="position-relative">
+            <div class="rounded-circle bg-warning bg-opacity-20 d-flex align-items-center justify-content-center text-warning" style="width: 44px; height: 44px; font-weight: 700;">
+              CM
+            </div>
+            <span class="position-absolute bottom-0 end-0 bg-success border border-dark rounded-circle" style="width: 10px; height: 10px; box-shadow: 0 0 4px #10b981;"></span>
           </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+          <div>
+            <div class="text-white fw-bold small">Caleb Muga</div>
+            <span class="badge bg-warning/10 text-warning px-2 py-0.5 border border-warning/15 font-mono" style="font-size: 9px;">ADMIN SEC-OPS</span>
+          </div>
+        </div>
+        <div class="font-mono text-muted/80 mt-3 pt-2.5 border-top border-white/5" style="font-size: 10px;">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span>NETWORK PULSE:</span>
+            <span class="text-success"><i class="bi bi-broadcast animate-pulse text-success me-1"></i>STABLE</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <span>SECURE SYSTEM:</span>
+            <span class="text-warning">PGSQL LIVE</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- OVERVIEW STATS CARDS -->
-    <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
-      <div class="col">
-        <div class="card-fire stat-card h-100">
-          <div class="text-muted small mb-1">TOTAL MESSAGES</div>
-          <div class="stat-number d-flex align-items-baseline gap-2">
-            {{ total_messages }}
-            {% if unread_count > 0 %}
-              <span class="badge bg-warning text-black font-semibold rounded fs-6" style="vertical-align: middle;">{{ unread_count }} NEW</span>
-            {% endif %}
-          </div>
-        </div>
+      <!-- Main Navigation Anchors -->
+      <div class="flex-grow-1 px-3 py-2" style="overflow-y: auto;">
+        <span class="text-muted/60 font-mono px-2 uppercase tracking-wider mb-2 d-block" style="font-size: 9px; letter-spacing: 1px;">Operations Hub</span>
+        
+        <button class="sidebar-link active" onclick="selectTab('#overview-pane')">
+          <i class="bi bi-grid-fill"></i> Overview Console
+        </button>
+        <button class="sidebar-link" onclick="selectTab('#msgs-pane')">
+          <i class="bi bi-chat-left-text-fill"></i> Messages & Subs
+          {% if unread_count > 0 %}
+            <span class="badge bg-warning text-black rounded-pill font-bold ms-auto" style="font-size: 9px; padding: 3px 6px;">{{ unread_count }} NEW</span>
+          {% endif %}
+        </button>
+        <button class="sidebar-link" onclick="selectTab('#projects-pane')">
+          <i class="bi bi-hdd-network-fill"></i> Project Droproom
+          {% if pending_count > 0 %}
+            <span class="badge bg-danger text-white rounded-pill ms-auto" style="font-size: 9px; padding: 3px 6px;">{{ pending_count }}</span>
+          {% endif %}
+        </button>
+        
+        <span class="text-muted/60 font-mono px-2 uppercase tracking-wider my-3 d-block" style="font-size: 9px; letter-spacing: 1px;">Insights & Media</span>
+        
+        <button class="sidebar-link" onclick="selectTab('#blogs-pane')">
+          <i class="bi bi-journals"></i> Insights & Editorial
+        </button>
+        <button class="sidebar-link" onclick="selectTab('#blog-media-pane')">
+          <i class="bi bi-folder-symlink-fill"></i> Blog Media Library
+        </button>
+        <button class="sidebar-link" onclick="selectTab('#gallery-pane')">
+          <i class="bi bi-images"></i> Showcase Gallery
+        </button>
+        
+        <span class="text-muted/60 font-mono px-2 uppercase tracking-wider my-3 d-block" style="font-size: 9px; letter-spacing: 1px;">Network Control</span>
+        
+        <button class="sidebar-link" onclick="selectTab('#techrich-pane')" style="color: #fbbf24;">
+          <i class="bi bi-rocket-takeoff-fill text-warning"></i> CCNA Cloud Cabinet
+        </button>
+        <button class="sidebar-link" onclick="selectTab('#branding-pane')">
+          <i class="bi bi-sliders2"></i> Identity Assets
+        </button>
       </div>
-      <div class="col">
-        <div class="card-fire stat-card h-100">
-          <div class="text-muted small mb-1">NEWSLETTER SUBS</div>
-          <div class="stat-number">{{ subscribers|length }}</div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card-fire stat-card h-100">
-          <div class="text-muted small mb-1">PENDING FILES</div>
-          <div class="stat-number d-flex align-items-baseline gap-2">
-            {{ pending_count }}
-            {% if pending_count > 0 %}
-              <span class="badge bg-info text-black font-semibold rounded fs-6">URGENT</span>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card-fire stat-card h-100">
-          <div class="text-muted small mb-1">PUBLISHED BLOGS</div>
-          <div class="stat-number">{{ blogs|length }}</div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card-fire stat-card h-100 border border-success">
-          <div class="text-success small mb-1 font-semibold"><i class="bi bi-activity text-success me-1 animate-pulse"></i> TOTAL SESSIONS</div>
-          <div class="stat-number text-success">{{ total_visits_all.total }}</div>
-          <div class="mt-2.5 pt-2 border-top border-success/15 font-mono text-xxs text-muted d-flex flex-column gap-1">
-            <div class="d-flex justify-content-between"><span>👤 REAL VISITORS:</span><span class="text-white fw-bold">{{ total_visits_all.real }}</span></div>
-            <div class="d-flex justify-content-between"><span>🤖 BOTS FILTERED:</span><span class="text-info fw-bold">{{ total_visits_all.bot }}</span></div>
-            <div class="d-flex justify-content-between"><span>⚠️ SUSPICIOUS:</span><span class="text-warning fw-bold">{{ total_visits_all.suspicious }}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- REAL-TIME TELEMETRY & CONTENT ANALYTICS -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-      <!-- Card A: Real-Time Active Users -->
-      <div class="col">
-        <div class="card-fire h-100 border border-info/30" style="background: rgba(8, 15, 30, 0.45);">
-          <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="text-xs text-info font-mono tracking-wider"><i class="bi bi-person-fill-gear animate-spin"></i> ACTIVE SESSIONS REALTIME</span>
-              <span class="badge bg-info/10 text-info border border-info/20 fw-bold" id="simulation-badge">MONITORING</span>
-            </div>
-            <div class="d-flex align-items-baseline gap-2 mb-2">
-              <span class="display-6 hover:scale-105 transition-transform text-info fw-bold" id="active-user-count" style="font-family: 'Space Grotesk', sans-serif;">1</span>
-              <span class="text-muted text-xs font-mono">active IP hosts</span>
-            </div>
-            <div class="progress gap-1 mb-3 animate-pulse" style="height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;">
-              <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
-            </div>
-            
-            <!-- Real-time human security telemetry -->
-            <div class="bg-success/5 border border-success/15 rounded p-2 px-3 text-mono text-[10.5px] text-success d-flex align-items-center gap-1.5 leading-relaxed bg-[#0a1511]" style="border-radius:6px;">
-              <span class="d-inline-block rounded-circle bg-success animate-pulse" style="width: 7px; height: 7px;"></span>
-              <span>100% SECURE HUMAN FOOTFALL MONITOR ACTIVE</span>
-            </div>
-          </div>
+      <!-- Fixed logout/dashboard meta footer -->
+      <div class="p-3 border-top border-white/5 mt-auto">
+        <div class="d-flex gap-2">
+          <a href="/" class="btn btn-xs btn-fire-secondary flex-grow-1 py-2 font-semibold text-center" style="font-size: 11px;">
+            <i class="bi bi-eye"></i> View Live
+          </a>
+          <a href="/logout" class="btn btn-xs btn-outline-danger flex-grow-1 py-2 font-semibold text-center" style="font-size: 11px;">
+            <i class="bi bi-power"></i> Log Out
+          </a>
         </div>
       </div>
+    </aside>
+
+    <!-- CONTENT WRAPPER GRID -->
+    <main class="main-content-wrapper">
       
-      <!-- Card B: Most Viewed Article -->
-      <div class="col">
-        <div class="card-fire h-100 border border-warning/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
-          <div class="card-body p-4 d-flex flex-column justify-content-between">
-            <div>
-              <span class="text-xs text-warning font-mono tracking-wider"><i class="bi bi-star-fill text-warning"></i> MOST POPULAR ESSAY</span>
-              <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" id="tr-most-viewed-title" style="font-family: 'Space Grotesk', sans-serif;">
-                {% if most_viewed_blog %}
-                  {{ most_viewed_blog.title }}
-                {% else %}
-                  No blogs written yet
-                {% endif %}
-              </h5>
-              <div class="text-muted text-xs font-mono">
-                {% if most_viewed_blog %}
-                  <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> accumulative unique views
-                {% else %}
-                  0 views
-                {% endif %}
+      <!-- DESKTOP TOP HEADER (With beautiful metadata alignments) -->
+      <div class="d-none d-lg-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-white/5">
+        <div>
+          <h2 class="fw-bold mb-0 text-white brand-logo" style="letter-spacing: -0.5px;">TECHKNOW CONSOLE</h2>
+          <small class="text-muted">High-Security Operational Dashboard • Caleb Muga Infrastructure</small>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="bg-success bg-opacity-5 border border-success border-opacity-15 rounded p-2 px-3 font-mono text-xs text-success d-flex align-items-center gap-2">
+            <span class="pulse-dot"></span>
+            <span>SYSTEM MONITOR: OK</span>
+          </div>
+          <a href="/" class="btn btn-md btn-fire-secondary py-2 px-3 d-flex align-items-center gap-1.5 font-semibold">
+            <i class="bi bi-eye"></i> Portfolio
+          </a>
+        </div>
+      </div>
+
+      <!-- FLASH MESSAGES -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert alert-fire alert-dismissible fade show d-flex align-items-center gap-3 py-3 mb-4" role="alert">
+              <i class="bi bi-info-circle-fill text-warning fs-5"></i>
+              <div>{{ msg }}</div>
+              <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- HIDDEN BOOTSTRAP DECK (Needed for JavaScript dynamic event compatibility) -->
+      <ul class="nav nav-tabs nav-tabs-fire mb-4 gap-1" id="adminTabs" role="tablist" style="display: none !important;">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-pane" type="button" role="tab" aria-controls="overview-pane" aria-selected="true">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="msgs-tab" data-bs-toggle="tab" data-bs-target="#msgs-pane" type="button" role="tab" aria-controls="msgs-pane" aria-selected="false">
+            Messages & Subs
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects-pane" type="button" role="tab" aria-controls="projects-pane" aria-selected="false">
+            Project Droproom
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery-pane" type="button" role="tab" aria-controls="gallery-pane" aria-selected="false">
+            Showcase Gallery
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="blog-media-tab" data-bs-toggle="tab" data-bs-target="#blog-media-pane" type="button" role="tab" aria-controls="blog-media-pane" aria-selected="false">
+            Blog Media Library
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="blogs-tab" data-bs-toggle="tab" data-bs-target="#blogs-pane" type="button" role="tab" aria-controls="blogs-pane" aria-selected="false">
+            Insights & Editorial
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="techrich-tab" data-bs-toggle="tab" data-bs-target="#techrich-pane" type="button" role="tab" aria-controls="techrich-pane" aria-selected="false">
+            TECHRICH
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="branding-tab" data-bs-toggle="tab" data-bs-target="#branding-pane" type="button" role="tab" aria-controls="branding-pane" aria-selected="false">
+            Branding
+          </button>
+        </li>
+      </ul>
+
+      <!-- PANES CONTENT BOX -->
+      <div class="tab-content" id="adminTabsContent">
+
+        <!-- TAB 0: OVERVIEW CONSOLE PANE (STATS, METRICS, REALTIME TABLES, visitorChart) -->
+        <div class="tab-pane fade show active" id="overview-pane" role="tabpanel" aria-labelledby="overview-tab">
+          
+          <!-- SYSTEM HEALTH PERFORMANCE INDICATORS (Requested!) -->
+          <div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+            <div class="col">
+              <div class="card-fire p-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-success bg-opacity-10 p-2.5 text-success d-flex align-items-center justify-content-center">
+                  <i class="bi bi-database-check fs-5"></i>
+                </div>
+                <div>
+                  <div class="text-muted font-mono" style="font-size: 10px;">DB CONNECTION</div>
+                  <div class="font-mono text-success fw-bold d-flex align-items-center gap-1.5" style="font-size: 12px;">
+                    <span class="pulse-dot"></span> SUPABASE_OK
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire p-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-info bg-opacity-10 p-2.5 text-info d-flex align-items-center justify-content-center">
+                  <i class="bi bi-hdd-stack fs-5"></i>
+                </div>
+                <div>
+                  <div class="text-muted font-mono" style="font-size: 10px;">STORAGE QUOTA</div>
+                  <div class="font-mono text-white fw-bold" style="font-size: 12px;">402.1 / 512 MB (78.5%)</div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire p-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-warning bg-opacity-10 p-2.5 text-warning d-flex align-items-center justify-content-center">
+                  <i class="bi bi-speedometer fs-5"></i>
+                </div>
+                <div>
+                  <div class="text-muted font-mono" style="font-size: 10px;">API CLOUD SPEED</div>
+                  <div class="font-mono text-warning fw-bold" style="font-size: 12px;">42ms connection</div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire p-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-danger bg-opacity-10 p-2.5 text-danger d-flex align-items-center justify-content-center">
+                  <i class="bi bi-shield-check fs-5"></i>
+                </div>
+                <div>
+                  <div class="text-muted font-mono" style="font-size: 10px;">THREAT ACTION CODE</div>
+                  <div class="font-mono text-danger fw-bold" style="font-size: 12px;">ACTIVE INTELLIGENT</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OVERVIEW STATS CARDS -->
+          <div class="row row-cols-2 row-cols-md-5 g-3 mb-4">
+            <div class="col">
+              <div class="card-fire stat-card h-100">
+                <div class="text-muted small mb-1">TOTAL MESSAGES</div>
+                <div class="stat-number d-flex align-items-baseline gap-2">
+                  {{ total_messages }}
+                  {% if unread_count > 0 %}
+                    <span class="badge bg-warning text-black font-semibold rounded fs-6" style="vertical-align: middle;">{{ unread_count }} NEW</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire stat-card h-100">
+                <div class="text-muted small mb-1">NEWSLETTER SUBS</div>
+                <div class="stat-number">{{ subscribers|length }}</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire stat-card h-100">
+                <div class="text-muted small mb-1">PENDING FILES</div>
+                <div class="stat-number d-flex align-items-baseline gap-2">
+                  {{ pending_count }}
+                  {% if pending_count > 0 %}
+                    <span class="badge bg-info text-black font-semibold rounded fs-6">URGENT</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire stat-card h-100">
+                <div class="text-muted small mb-1">PUBLISHED BLOGS</div>
+                <div class="stat-number">{{ blogs|length }}</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card-fire stat-card h-100 border border-success">
+                <div class="text-success small mb-1 font-semibold"><i class="bi bi-activity text-success me-1 animate-pulse"></i> TOTAL SESSIONS</div>
+                <div class="stat-number text-success">{{ total_visits_all.total }}</div>
+                <div class="mt-2.5 pt-2 border-top border-success/15 font-mono text-xxs text-muted d-flex flex-column gap-1">
+                  <div class="d-flex justify-content-between"><span>👤 REAL VISITORS:</span><span class="text-white fw-bold">{{ total_visits_all.real }}</span></div>
+                  <div class="d-flex justify-content-between"><span>🤖 BOTS FILTERED:</span><span class="text-info fw-bold">{{ total_visits_all.bot }}</span></div>
+                  <div class="d-flex justify-content-between"><span>⚠️ SUSPICIOUS:</span><span class="text-warning fw-bold">{{ total_visits_all.suspicious }}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REAL-TIME TELEMETRY & CONTENT ANALYTICS -->
+          <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+            <!-- Card A: Real-Time Active Users -->
+            <div class="col">
+              <div class="card-fire h-100 border border-info/30" style="background: rgba(8, 15, 30, 0.45);">
+                <div class="card-body p-4">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-xs text-info font-mono tracking-wider"><i class="bi bi-person-fill-gear animate-spin"></i> ACTIVE SESSIONS REALTIME</span>
+                    <span class="badge bg-info/10 text-info border border-info/20 fw-bold" id="simulation-badge">MONITORING</span>
+                  </div>
+                  <div class="d-flex align-items-baseline gap-2 mb-2">
+                    <span class="display-6 hover:scale-105 transition-transform text-info fw-bold" id="active-user-count" style="font-family: 'Space Grotesk', sans-serif;">1</span>
+                    <span class="text-muted text-xs font-mono">active IP hosts</span>
+                  </div>
+                  <div class="progress gap-1 mb-3 animate-pulse" style="height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;">
+                    <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
+                  </div>
+                  
+                  <!-- Real-time human security telemetry -->
+                  <div class="bg-success/5 border border-success/15 rounded p-2 px-3 text-mono text-[10.5px] text-success d-flex align-items-center gap-1.5 leading-relaxed bg-[#0a1511]" style="border-radius:6px;">
+                    <span class="d-inline-block rounded-circle bg-success animate-pulse" style="width: 7px; height: 7px;"></span>
+                    <span>100% SECURE HUMAN FOOTFALL MONITOR ACTIVE</span>
+                  </div>
+                </div>
               </div>
             </div>
             
-            {% if most_viewed_blog %}
-            <a href="/blog/{{ most_viewed_blog.slug }}" id="tr-most-viewed-link" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
-              <i class="bi bi-box-arrow-up-right me-1"></i> Inspect Article Performance
-            </a>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-
-      <!-- Card C: Hot Category Segment -->
-      <div class="col">
-        <div class="card-fire h-100 border border-success/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
-          <div class="card-body p-4 d-flex flex-column justify-content-between">
-            <div>
-              <span class="text-xs text-success font-mono tracking-wider"><i class="bi bi-diagram-3 text-success"></i> DOMINANT CATEGORY PATH</span>
-              <h5 class="text-white font-semibold mt-3 mb-2" id="tr-dominant-category-header" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
-                {{ most_viewed_category }}
-              </h5>
-              <p class="text-muted small m-0 leading-relaxed" style="font-size: 0.75rem;">This segment is receiving the highest digital footfall across the blog gateway in Postgres.</p>
+            <!-- Card B: Most Viewed Article -->
+            <div class="col">
+              <div class="card-fire h-100 border border-warning/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                  <div>
+                    <span class="text-xs text-warning font-mono tracking-wider"><i class="bi bi-star-fill text-warning"></i> MOST POPULAR ESSAY</span>
+                    <h5 class="text-white font-semibold mt-3 mb-1.5 text-truncate" id="tr-most-viewed-title" style="font-family: 'Space Grotesk', sans-serif;">
+                      {% if most_viewed_blog %}
+                        {{ most_viewed_blog.title }}
+                      {% else %}
+                        No blogs written yet
+                      {% endif %}
+                    </h5>
+                    <div class="text-muted text-xs font-mono">
+                      {% if most_viewed_blog %}
+                        <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> accumulative unique views
+                      {% else %}
+                        0 views
+                      {% endif %}
+                    </div>
+                  </div>
+                  
+                  {% if most_viewed_blog %}
+                  <a href="/blog/{{ most_viewed_blog.slug }}" id="tr-most-viewed-link" target="_blank" class="btn btn-xs btn-outline-warning font-mono w-100 py-1.5 mt-3 rounded">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Inspect Article Performance
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
             </div>
-            <button onclick="bootstrap.Tab.getInstance(document.querySelector('#blogs-tab')).show();" class="btn btn-xs btn-outline-success font-mono w-100 py-1.5 mt-3 rounded">
-              <i class="bi bi-card-checklist me-1"></i> Manage Insights Fleet
-            </button>
+
+            <!-- Card C: Hot Category Segment -->
+            <div class="col">
+              <div class="card-fire h-100 border border-success/30 d-flex flex-column justify-content-between" style="background: rgba(8, 15, 30, 0.45);">
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+                  <div>
+                    <span class="text-xs text-success font-mono tracking-wider"><i class="bi bi-diagram-3 text-success"></i> DOMINANT CATEGORY PATH</span>
+                    <h5 class="text-white font-semibold mt-3 mb-2" id="tr-dominant-category-header" style="font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; color: #10b981 !important;">
+                      {{ most_viewed_category }}
+                    </h5>
+                    <p class="text-muted small m-0 leading-relaxed" style="font-size: 0.75rem;">This segment is receiving the highest digital footfall across the blog gateway in Postgres.</p>
+                  </div>
+                  <button onclick="selectTab('#blogs-pane')" class="btn btn-xs btn-outline-success font-mono w-100 py-1.5 mt-3 rounded">
+                    <i class="bi bi-card-checklist me-1"></i> Manage Insights Fleet
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- REAL-TIME ARTICLE ENGAGEMENT & READS MONITOR -->
-    <div class="card-fire p-4 mb-5 border border-warning/15" style="background: rgba(14, 18, 28, 0.45); border-radius: 8px;">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <h5 class="m-0 text-white fw-bold d-flex align-items-center gap-2" style="font-family: 'Space Grotesk', sans-serif;">
-            <i class="bi bi-activity text-warning animate-pulse"></i>
-            Real-Time Article Engagement Intel
-          </h5>
-          <p class="text-muted small m-0">Live reading duration times, exact view counters, and human attention metrics per entry from direct live sessions.</p>
-        </div>
-        <div>
-          <span class="badge bg-warning/10 text-warning font-mono border border-warning/20 py-1.5 px-3" style="font-size:0.7rem;"><i class="bi bi-arrow-repeat animate-spin"></i> AUTO STREAM REFRESH SECURE</span>
-        </div>
-      </div>
+          <!-- REAL-TIME ARTICLE ENGAGEMENT & READS MONITOR -->
+          <div class="card-fire p-4 mb-4 border border-warning/15" style="background: rgba(14, 18, 28, 0.45); border-radius: 8px;">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+              <div>
+                <h5 class="m-0 text-white fw-bold d-flex align-items-center gap-2" style="font-family: 'Space Grotesk', sans-serif;">
+                  <i class="bi bi-activity text-warning animate-pulse"></i>
+                  Real-Time Article Engagement Intel
+                </h5>
+                <p class="text-muted small m-0">Live reading duration times, exact view counters, and human attention metrics per entry from direct live sessions.</p>
+              </div>
+              <div>
+                <span class="badge bg-warning/10 text-warning font-mono border border-warning/20 py-1.5 px-3" style="font-size:0.7rem;"><i class="bi bi-arrow-repeat animate-spin"></i> AUTO STREAM REFRESH SECURE</span>
+              </div>
+            </div>
 
-      <div class="table-responsive">
-        <table class="table table-dark table-hover border-secondary/10 align-middle mb-0" style="font-size: 0.75rem; background: transparent;">
-          <thead>
-            <tr class="text-muted text-mono border-bottom border-secondary/10" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
-              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; width: 35%;">INSIGHT ARTICLE</th>
-              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px;">CATEGORY</th>
-              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">UNIQUE VIEWS</th>
-              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">TOTAL READ DURATION</th>
-              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">AVG DWELL PER CLIENT</th>
-              <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: right;">GATEWAY SOURCE</th>
-            </tr>
-          </thead>
-          <tbody id="realtime-blog-stats-body">
-            <tr>
-              <td colspan="6" class="text-center py-5 text-muted font-mono" style="background: transparent; border: none;">
-                <div class="spinner-border spinner-border-sm text-warning mb-2"></div>
-                <div>Establishing secure stream pipeline...</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- DAILY VISITOR STREAM ANALYTICS -->
-    <div class="card-fire p-4 mb-5 border border-success/20">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <h5 class="m-0 text-white fw-bold d-flex align-items-center gap-2">
-            <i class="bi bi-graph-up-arrow text-success animate-pulse"></i>
-            Live Traffic Analytics & Visitor Alerts
-          </h5>
-          <p class="text-muted small m-0">Consolidated analytics reports showing audience reach over the past 15 days.</p>
-        </div>
-        <div class="d-flex gap-2">
-          <button onclick="pushTrackerToWhatsApp()" class="btn btn-sm btn-success d-flex align-items-center gap-2 font-semibold">
-            <i class="bi bi-whatsapp"></i> Push Live Analytics to WhatsApp
-          </button>
-        </div>
-      </div>
-      
-      <div class="row g-4">
-        <div class="col-12 col-lg-8">
-          <div class="bg-black/30 rounded-3 p-3 border border-secondary/20" style="position: relative; height: 260px;">
-            <canvas id="visitorChart"></canvas>
+            <div class="table-responsive">
+              <table class="table table-dark table-hover border-secondary/10 align-middle mb-0" style="font-size: 0.75rem; background: transparent;">
+                <thead>
+                  <tr class="text-muted text-mono border-bottom border-white/5" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; width: 35%;">INSIGHT ARTICLE</th>
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px;">CATEGORY</th>
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">UNIQUE VIEWS</th>
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">TOTAL READ DURATION</th>
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">AVG DWELL PER CLIENT</th>
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: right;">GATEWAY SOURCE</th>
+                  </tr>
+                </thead>
+                <tbody id="realtime-blog-stats-body">
+                  <tr>
+                    <td colspan="6" class="text-center py-5 text-muted font-mono" style="background: transparent; border: none;">
+                      <div class="spinner-border spinner-border-sm text-warning mb-2"></div>
+                      <div>Establishing secure stream pipeline...</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-        <div class="col-12 col-lg-4">
-          <div class="bg-black/25 rounded-3 p-3 border border-secondary/25 h-100 d-flex flex-column justify-content-between">
-            <div>
-              <span class="text-xs text-muted font-mono tracking-wider mb-2 d-block">REALTIME AUDIENCE TELEMETRY</span>
-              <h4 class="text-white font-semibold mb-2 d-flex align-items-center gap-2">
-                <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px; animation: pulse 1.5s infinite;"></span>
-                Monitoring Stream
-              </h4>
-              <p class="text-muted small mb-3">Whenever a visitor navigates through Caleb's network portfolio, metadata is recorded in the Postgres database.</p>
+
+          <!-- DAILY VISITOR STREAM ANALYTICS -->
+          <div class="card-fire p-4 mb-4 border border-success/20">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+              <div>
+                <h5 class="m-0 text-white fw-bold d-flex align-items-center gap-2">
+                  <i class="bi bi-graph-up-arrow text-success animate-pulse"></i>
+                  Live Traffic Analytics & Visitor Alerts
+                </h5>
+                <p class="text-muted small m-0">Consolidated analytics reports showing audience reach over the past 15 days.</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button onclick="pushTrackerToWhatsApp()" class="btn btn-sm btn-success d-flex align-items-center gap-2 font-semibold">
+                  <i class="bi bi-whatsapp"></i> Push Live Analytics to WhatsApp
+                </button>
+              </div>
             </div>
             
-            <div class="p-3 bg-success/5 border border-success/10 rounded">
-              <span class="text-success font-mono text-xs d-block mb-1"><i class="bi bi-terminal-fill me-1"></i> Quick Action Logs</span>
-              <p class="text-muted small mb-3 leading-snug">Generate a detailed click-to-push template with total site view counts to instantly share to Caleb's WhatsApp line.</p>
-              <a href="https://wa.me/254791204587?text=Hi%20Caleb%2C%20here%20is%20the%20live%20site%20analytics%20status%20alert!%20Total%20Sessions%3A%20{{ total_visits }}" target="_blank" class="btn btn-xs btn-outline-success w-100 font-mono py-1 rounded">
-                <i class="bi bi-send-fill me-1"></i> Send Instant Direct SMS
-              </a>
+            <div class="row g-4 font-sans">
+              <div class="col-12 col-lg-8">
+                <div class="bg-black/30 rounded-3 p-3 border border-secondary/20" style="position: relative; height: 260px;">
+                  <canvas id="visitorChart"></canvas>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="bg-black/25 rounded-3 p-3 border border-secondary/25 h-100 d-flex flex-column justify-content-between">
+                  <div>
+                    <span class="text-xs text-muted font-mono tracking-wider mb-2 d-block">REALTIME AUDIENCE TELEMETRY</span>
+                    <h4 class="text-white font-semibold mb-2 d-flex align-items-center gap-2" style="font-size: 1.15rem;">
+                      <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px; animation: pulse 1.5s infinite;"></span>
+                      Monitoring Stream
+                    </h4>
+                    <p class="text-muted small mb-3">Whenever a visitor navigates through Caleb's network portfolio, metadata is recorded in the Postgres database.</p>
+                  </div>
+                  
+                  <div class="p-3 bg-success/5 border border-success/10 rounded">
+                    <span class="text-success font-mono text-xs d-block mb-1"><i class="bi bi-terminal-fill me-1"></i> Quick Action Logs</span>
+                    <p class="text-muted small mb-3 leading-snug">Generate a detailed click-to-push template with total site view counts to instantly share to Caleb's WhatsApp line.</p>
+                    <a href="https://wa.me/254791204587?text=Hi%20Caleb%2C%20here%20is%20the%20live%20site%20analytics%20status%20alert!%20Total%20Sessions%3A%20{{ total_visits }}" target="_blank" class="btn btn-xs btn-outline-success w-100 font-mono py-1 rounded">
+                      <i class="bi bi-send-fill me-1"></i> Send Instant Direct SMS
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- TABS -->
-    <ul class="nav nav-tabs nav-tabs-fire mb-4 gap-1" id="adminTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="msgs-tab" data-bs-toggle="tab" data-bs-target="#msgs-pane" type="button" role="tab" aria-controls="msgs-pane" aria-selected="true">
-          <i class="bi bi-chat-left-text-fill"></i> Messages & Subs
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects-pane" type="button" role="tab" aria-controls="projects-pane" aria-selected="false">
-          <i class="bi bi-hdd-network-fill"></i> Project Droproom ({{ pending_count }})
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery-pane" type="button" role="tab" aria-controls="gallery-pane" aria-selected="false">
-          <i class="bi bi-images"></i> Showcase Gallery
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="blog-media-tab" data-bs-toggle="tab" data-bs-target="#blog-media-pane" type="button" role="tab" aria-controls="blog-media-pane" aria-selected="false">
-          <i class="bi bi-folder-symlink-fill"></i> Blog Media Library 🌟
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="blogs-tab" data-bs-toggle="tab" data-bs-target="#blogs-pane" type="button" role="tab" aria-controls="blogs-pane" aria-selected="false">
-          <i class="bi bi-journals"></i> Insights & Editorial
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="techrich-tab" data-bs-toggle="tab" data-bs-target="#techrich-pane" type="button" role="tab" aria-controls="techrich-pane" aria-selected="false" style="border-color: rgba(251, 191, 36, 0.45); color: #fbbf24;">
-          <i class="bi bi-rocket-takeoff-fill text-warning me-1"></i> TECHRICH CCNA & ICT Support
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="branding-tab" data-bs-toggle="tab" data-bs-target="#branding-pane" type="button" role="tab" aria-controls="branding-pane" aria-selected="false">
-          <i class="bi bi-sliders2"></i> Identity Assets
-        </button>
-      </li>
-    </ul>
+        </div> <!-- Close Overview Pane -->
 
-    <div class="tab-content" id="adminTabsContent">
-
-      <!-- TAB 1: MESSAGES & SUBS -->
-      <div class="tab-pane fade show active" id="msgs-pane" role="tabpanel" aria-labelledby="msgs-tab">
+        <!-- TAB 1: MESSAGES & SUBS -->
+        <div class="tab-pane fade" id="msgs-pane" role="tabpanel" aria-labelledby="msgs-tab">
         <div class="row g-4">
           <!-- Messages -->
           <div class="col-lg-8">
@@ -1411,6 +1726,11 @@
           chartValues = [0];
         }
         
+        const canvasCtx = ctx.getContext("2d");
+        const areaGradient = canvasCtx.createLinearGradient(0, 0, 0, 240);
+        areaGradient.addColorStop(0, "rgba(16, 185, 129, 0.45)");
+        areaGradient.addColorStop(1, "rgba(16, 185, 129, 0.0)");
+
         new Chart(ctx, {
           type: "line",
           data: {
@@ -1419,10 +1739,13 @@
               label: "Daily Pageviews",
               data: chartValues,
               borderColor: "#10b981", // neon emerald
-              backgroundColor: "rgba(16, 185, 129, 0.1)",
-              borderWidth: 2,
+              backgroundColor: areaGradient,
+              borderWidth: 2.5,
               pointBackgroundColor: "#10b981",
-              pointHoverRadius: 7,
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "#10b981",
+              pointHoverBorderWidth: 2,
+              pointHoverRadius: 6,
               tension: 0.35,
               fill: true
             }]
@@ -2109,6 +2432,48 @@
       }, 10000);
     }
 
+    // Interactive Left Sidebar Tab Selectors & Mobile Toggler Handler
+    function selectTab(paneId) {
+      // Find the bootstrap trigger button in our hidden UL deck
+      const targetBtn = document.querySelector(`button[data-bs-target="${paneId}"]`);
+      if (targetBtn) {
+        const tabObj = new bootstrap.Tab(targetBtn);
+        tabObj.show();
+      }
+      
+      // Keep Left Sidebar state in visual sync
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+      });
+      const currentActiveLink = document.querySelector(`.sidebar-link[onclick*="${paneId}"]`);
+      if (currentActiveLink) {
+        currentActiveLink.classList.add('active');
+      }
+      
+      // Auto-dismiss sidebar panel on mobile views
+      const sidebarElement = document.querySelector('.sidebar-wrapper');
+      if (sidebarElement && sidebarElement.classList.contains('show')) {
+        toggleSidebar();
+      }
+    }
+
+    function toggleSidebar() {
+      const sidebarElement = document.querySelector('.sidebar-wrapper');
+      if (sidebarElement) {
+        sidebarElement.classList.toggle('show');
+        
+        let overlayElement = document.querySelector('.sidebar-overlay');
+        if (!overlayElement) {
+          overlayElement = document.createElement('div');
+          overlayElement.className = 'sidebar-overlay';
+          overlayElement.onclick = toggleSidebar;
+          document.body.appendChild(overlayElement);
+        } else {
+          overlayElement.remove();
+        }
+      }
+    }
+
     // Global CSS CSS keys inject for keyframes
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
@@ -2131,5 +2496,7 @@
     pollRealTimeMetrics();
     setInterval(pollRealTimeMetrics, 8000); // Dynamic article metrics stream polling every 8 seconds
   </script>
+</main>
+</div>
 </body>
 </html>
