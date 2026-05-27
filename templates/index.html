@@ -1,7 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
+  <script>
+    // Immediately check and apply saved theme before body renders
+    (function() {
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      if (savedTheme === "light") {
+        document.documentElement.setAttribute("data-bs-theme", "light");
+      } else {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+      }
+    })();
+  </script>
 
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
@@ -1114,6 +1125,11 @@
 </head>
 
 <body>
+  <script>
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+    }
+  </script>
 
   <!-- Page Loader -->
   <div id="loader" role="status" aria-hidden="false">
@@ -1577,8 +1593,8 @@
                       <input type="text" id="scan-domain" class="form-control form-control-fire py-2 px-3 font-mono text-sm bg-neutral-950 border border-secondary/15" value="192.168.10.45" placeholder="e.g. mycompany.com or IP">
                     </div>
                     
-                    <button onclick="executeSimulatedPortScan()" id="scan-btn" class="btn btn-success w-100 font-mono d-flex align-items-center justify-content-center gap-2">
-                      <i class="bi bi-shield-radar text-black"></i> Run Safety Diagnostic Audit
+                    <button onclick="executeSimulatedPortScan()" id="scan-btn" class="btn btn-fire-primary w-100 border-0 font-mono d-flex align-items-center justify-content-center gap-2">
+                      <i class="bi bi-shield-radar text-white"></i> Run Safety Diagnostic Audit
                     </button>
                   </div>
                   
@@ -1672,7 +1688,7 @@
                       </div>
                     </div>
 
-                    <button onclick="calculateCidrSubnets()" class="btn btn-success w-100 font-mono"><i class="bi bi-calculator me-1"></i> Calculate Routing Ranges</button>
+                    <button onclick="calculateCidrSubnets()" class="btn btn-fire-primary w-100 border-0 font-mono"><i class="bi bi-calculator me-1"></i> Calculate Routing Ranges</button>
                   </div>
 
                   <div class="col-12 col-lg-7">
@@ -1810,7 +1826,7 @@
             <div class="input-group">
               <span class="input-group-text bg-black/40 border-0 text-success"><i class="bi bi-search"></i></span>
               <input type="text" id="aiSearchInput" class="form-control bg-black text-white border-0 text-xs font-mono py-2 font-bold" placeholder="Type what you want to resolve (e.g. 'trunk ports' or 'port scans')..." style="box-shadow: none; font-size: 0.85rem; color: #ffffff !important; background-color: #070e17 !important; border: 1px solid rgba(16,185,129,0.3) !important;">
-              <button onclick="triggerAISearch()" class="btn btn-success font-mono text-xs font-semibold py-2 px-3 shadow" style="border: none; font-size: 0.72rem; background-color: #10b981 !important; color: #ffffff !important;">SEARCH</button>
+              <button onclick="triggerAISearch()" class="btn btn-fire-primary border-0 font-mono text-xs font-semibold py-2 px-3 shadow" style="font-size: 0.72rem;">SEARCH</button>
             </div>
             
             <div id="ai-search-results-holder" class="d-none mt-2.5 p-3 bg-black/50 rounded-3 border border-white/5 font-mono">
@@ -2103,7 +2119,7 @@
           setTimeout(printNextLog, 450);
         } else {
           btn.disabled = false;
-          btn.innerHTML = `<i class="bi bi-shield-radar text-black"></i> Run Safety Diagnostic Audit`;
+          btn.innerHTML = `<i class="bi bi-shield-radar text-white"></i> Run Safety Diagnostic Audit`;
           feedback.classList.remove("d-none");
         }
       }
@@ -2222,6 +2238,27 @@
       const input = document.getElementById("lab-pass");
       input.type = (input.type === "password") ? "text" : "password";
     }
+
+    // Theme logic integration
+    const themeBtn = document.getElementById("themeBtn");
+    const docBody = document.body;
+
+    if (localStorage.getItem("theme") === "light") {
+      themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
+    }
+
+    themeBtn.addEventListener("click", () => {
+      docBody.classList.toggle("light");
+      if (docBody.classList.contains("light")) {
+        localStorage.setItem("theme", "light");
+        document.documentElement.setAttribute("data-bs-theme", "light");
+        themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
+      } else {
+        localStorage.setItem("theme", "dark");
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        themeBtn.innerHTML = '<i class="bi bi-moon-stars"></i>';
+      }
+    });
 
     window.addEventListener('load', () => {
       const loader = document.getElementById('loader');
