@@ -1141,8 +1141,8 @@
   <div class="ambient-glow glow-2" aria-hidden="true"></div>
 
   <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-3" role="navigation" aria-label="Main navigation">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2" role="navigation" aria-label="Main navigation">
+    <div class="container d-flex align-items-center justify-content-between">
       <a class="brand-avatar" href="#home" aria-label="Go to home">
         {% if profile_url %}
           <img src="{{ profile_url }}" alt="Caleb Muga profile photo">
@@ -1150,12 +1150,31 @@
         <span>MUGA <span style="color:var(--brand1)">.dev</span></span>
       </a>
 
-      <button class="navbar-toggler border-0 text-white rounded-3 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05);">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <!-- Noticeable actions & Portrait passport photo always accessible outside collapse -->
+      <div class="d-flex align-items-center gap-2 ms-auto order-lg-last">
+        <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+        
+        <a class="btn btn-sm btn-fire-secondary px-2.5 d-none d-sm-inline-flex" href="{{ url_for('blog_list') }}">
+          <i class="bi bi-book"></i> Updates
+        </a>
+        
+        <a class="btn btn-sm btn-fire-primary px-3 d-none d-md-inline-flex" href="{{ url_for('admin') }}">
+          <i class="bi bi-shield-lock"></i> TechKnow
+        </a>
+
+        <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="Caleb Muga - Founder">
+          <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
+        </div>
+
+        <button class="navbar-toggler border-0 text-white rounded-3 shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05); padding: 6px 10px;">
+          <i class="bi bi-list fs-4 text-white"></i>
+        </button>
+      </div>
 
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto align-items-center mt-3 mt-lg-0 gap-2">
+        <ul class="navbar-nav ms-lg-4 align-items-center gap-1.5 py-2 py-lg-0">
           <li class="nav-item">
             <a class="nav-custom-link active" href="#home" aria-current="page">Home</a>
           </li>
@@ -1168,19 +1187,17 @@
           <li class="nav-item">
             <a class="nav-custom-link" href="#portfolio">Portfolio</a>
           </li>
-          <li class="nav-item flex-shrink-0 d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
-            <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
-              <i class="bi bi-moon-stars"></i>
-            </button>
-            <a class="btn btn-sm btn-fire-secondary px-3" href="{{ url_for('blog_list') }}">
-              <i class="bi bi-book"></i> Updates
+          
+          <!-- Mobile Specific Extra Menu Actions -->
+          <li class="nav-item d-sm-none mt-2 w-100">
+            <a class="btn btn-sm btn-fire-secondary w-100 justify-content-center" href="{{ url_for('blog_list') }}">
+              <i class="bi bi-book"></i> Updates Library
             </a>
-            <a class="btn btn-sm btn-fire-primary px-3" href="{{ url_for('admin') }}">
-              <i class="bi bi-shield-lock"></i> TechKnow
+          </li>
+          <li class="nav-item d-md-none mt-2 w-100">
+            <a class="btn btn-sm btn-fire-primary w-100 justify-content-center" href="{{ url_for('admin') }}">
+              <i class="bi bi-shield-lock"></i> TechKnow Portal
             </a>
-            <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="Caleb Muga - Founder">
-              <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
-            </div>
           </li>
         </ul>
       </div>
