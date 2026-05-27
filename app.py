@@ -325,6 +325,90 @@ def index():
     )
 
 
+@app.route("/privacy-policy", methods=["GET"])
+def privacy_policy():
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/privacy-policy",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    return render_template("privacy.html")
+
+
+@app.route("/terms", methods=["GET"])
+def terms():
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/terms",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    return render_template("terms.html")
+
+
+@app.route("/disclaimer", methods=["GET"])
+def disclaimer():
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/disclaimer",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    return render_template("disclaimer.html")
+
+
+@app.route("/cookie-policy", methods=["GET"])
+def cookie_policy():
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/cookie-policy",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    return render_template("cookies.html")
+
+
+@app.route("/about", methods=["GET"])
+def about_page():
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/about",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    return render_template("about.html")
+
+
+@app.route("/contact-us", methods=["GET"])
+def contact_us_page():
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            "/contact-us",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    return render_template("contact.html")
+
+
 @app.route("/subscribe", methods=["POST"])
 def subscribe():
     email = (request.form.get("email") or "").strip().lower()
@@ -446,7 +530,29 @@ def view_blog(slug):
     if not post:
         abort(404)
 
-    return render_template("blog_view.html", post=post)
+    # Category related articles query
+    related = []
+    try:
+        all_blogs = data.load_blogs()
+        current_cat = get_blog_category(post.get("title", ""), post.get("content", ""))
+        for b in all_blogs:
+            if b.get("slug") == post.get("slug"):
+                continue
+            b_cat = get_blog_category(b.get("title", ""), b.get("content", ""))
+            if b_cat == current_cat:
+                related.append(b)
+        
+        # Fallback if less than 3
+        if len(related) < 3:
+            for b in all_blogs:
+                if b.get("slug") == post.get("slug") or b in related:
+                    continue
+                related.append(b)
+        related = related[:3]
+    except Exception as e:
+        print("Error getting related posts:", e)
+
+    return render_template("blog_view.html", post=post, related_posts=related)
 
 
 SYSTEM_INSTRUCTION = """
@@ -589,10 +695,19 @@ def track_visit():
     try:
         req_data = request.json or {}
         path = req_data.get("path", "/")
+        js_enabled = req_data.get("js_enabled", True)
+        screen_resolution = req_data.get("screen_resolution", "Unknown")
+        mouse_moved = req_data.get("mouse_moved", False)
         ip = request.remote_addr
         ua = request.headers.get("User-Agent", "Unknown")
 
-        data.record_visit(ip, ua, path, get_or_create_visitor_id())
+        data.record_visit(
+            ip, ua, path, 
+            get_or_create_visitor_id(),
+            js_enabled=js_enabled,
+            screen_resolution=screen_resolution,
+            mouse_moved=mouse_moved
+        )
 
         return jsonify({"status": "success"})
 
@@ -912,6 +1027,7 @@ def admin():
         blogs=blogs,
         subscribers=subscribers,
         daily_visits=data.get_daily_visits_summary(),
+        total_visits_all=data.get_visits_by_type(),
         total_visits=data.get_total_visits_count(),
         most_viewed_blog=most_viewed_blog,
         most_viewed_category=most_viewed_category
