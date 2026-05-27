@@ -13,7 +13,7 @@
       }
     })();
   </script>
-
+  <meta name="robots" content="index, follow">
   <!-- Charset & Responsive -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,6 +41,14 @@
   <meta name="revisit-after" content="2 days">
   <meta property="og:url" content="https://mga.techknowsols.gt.tc{{ request.path }}">
 
+  <meta property="og:title"
+      content="TechKnow Solutions • Cybersecurity, AI & Systems Development">
+
+  <meta property="og:description"
+        content="Enterprise networking, cybersecurity auditing, automation systems and cloud technologies by Caleb Muga.">
+  
+  <meta property="og:type" content="website">
+
   <!-- SEO -->
   <title>TechKnow Solutions • Cybersecurity, AI & Systems Development by Caleb Muga</title>
 
@@ -57,22 +65,27 @@
     gtag('config', 'G-ELRXZQRGNR');
   </script>
 
-  <!-- SEO / OpenGraph -->
-  <meta name="description" content="TechKnow Solutions by Caleb Muga: Advanced Enterprise Networking, Cyber Security Vulnerability Assessments, Cloud Integrations, and custom python system forks.">
-  <meta name="author" content="Caleb Muga">
-  <meta property="og:title" content="TechKnow Solutions — Cybersecurity, AI & Systems Development">
-  <meta property="og:description" content="Enterprise Networking (Cisco CCNA Specialist), System Audits, Python Automation and Cloud systems.">
-  <meta property="og:type" content="website">
-  {% if hero_url %}
-  <meta property="og:image" content="{{ hero_url }}">
-  {% endif %}
-
-  <!-- Fallback profile image -->
-  <meta property="og:image:alt" content="Profile photo of Caleb Muga | TechKnow Solutions">
-  <meta property="og:image" content="{% if profile_url %}{{ profile_url }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
+  <!-- OpenGraph / Social Sharing -->
+  <meta property="og:image" content="https://mga.techknowsols.gt.tc/static/ogimage.png">
+  <meta property="og:image:secure_url" content="https://mga.techknowsols.gt.tc/static/ogimage.png">
+  
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  
+  <meta property="og:image:alt"
+        content="TechKnow Solutions — Cybersecurity, AI & Systems Development by Caleb Muga">
+  
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="{% if profile_url %}{{ profile_url }}{% else %}https://mga.techknowsols.gt.tc/static/apple-touch-icon.png{% endif %}">
-
+  <meta name="twitter:image"
+      content="https://mga.techknowsols.gt.tc/static/ogimage.png">
+  <meta name="twitter:title"
+        content="TechKnow Solutions • Cybersecurity, AI & Systems Development">
+  
+  <meta name="twitter:description"
+        content="Enterprise networking, cybersecurity auditing, automation systems and cloud technologies by Caleb Muga.">
+  
   <!-- Most Important Structured Data Graph Upgrade (Requirement 4) -->
   <script type="application/ld+json">
   {
