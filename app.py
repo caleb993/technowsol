@@ -9,7 +9,7 @@ from datetime import datetime
 import markdown
 import psycopg2
 import psycopg2.extras
-
+from flask import Response
 from flask import (
     Flask, render_template, request, redirect, url_for,
     send_file, flash, abort, session, jsonify, Response
@@ -35,7 +35,65 @@ VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
 
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    base_url = "https://mga.techknowsols.gt.tc"
 
+    static_pages = [
+        {"loc": "/", "changefreq": "daily", "priority": "1.0"},
+        {"loc": "/blog", "changefreq": "daily", "priority": "0.9"},
+        {"loc": "/about", "changefreq": "monthly", "priority": "0.7"},
+        {"loc": "/contact-us", "changefreq": "monthly", "priority": "0.6"},
+        {"loc": "/privacy-policy", "changefreq": "yearly", "priority": "0.4"},
+        {"loc": "/terms", "changefreq": "yearly", "priority": "0.4"},
+        {"loc": "/disclaimer", "changefreq": "yearly", "priority": "0.4"},
+        {"loc": "/cookie-policy", "changefreq": "yearly", "priority": "0.4"},
+    ]
+
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+
+    urls = []
+
+    for page in static_pages:
+        urls.append(f"""
+  <url>
+    <loc>{base_url}{page["loc"]}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>{page["changefreq"]}</changefreq>
+    <priority>{page["priority"]}</priority>
+  </url>""")
+
+    try:
+        blogs = data.load_blogs()
+
+        for blog in blogs:
+            slug = blog.get("slug")
+            if not slug:
+                continue
+
+            lastmod = today
+            if blog.get("updated_at"):
+                lastmod = str(blog.get("updated_at"))[:10]
+            elif blog.get("timestamp"):
+                lastmod = str(blog.get("timestamp"))[:10]
+
+            urls.append(f"""
+  <url>
+    <loc>{base_url}/blog/{slug}</loc>
+    <lastmod>{lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>""")
+
+    except Exception as e:
+        print("Sitemap blog loading error:", e)
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{''.join(urls)}
+</urlset>"""
+
+    return Response(xml, mimetype="application/xml")
 @app.before_request
 def redirect_to_custom_domain():
     if "onrender.com" in request.host:
@@ -44,7 +102,12 @@ def redirect_to_custom_domain():
             code=301
         )
 
-
+@app.route("/robots.txt")
+def robots_txt():
+    return Response(
+        "User-agent: *\nAllow: /\n\nSitemap: https://mga.techknowsols.gt.tc/sitemap.xml\n",
+        mimetype="text/plain"
+    )
 @app.after_request
 def add_security_headers(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
