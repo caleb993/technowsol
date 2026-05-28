@@ -188,6 +188,14 @@ def ensure_real_analytics_tables():
                         PRIMARY KEY(session_id, slug)
                     )
                 """)
+                # Safe migrations for existing deployments.
+                cur.execute("ALTER TABLE verified_sessions ADD COLUMN IF NOT EXISTS returning_visitor BOOLEAN DEFAULT FALSE")
+                cur.execute("ALTER TABLE verified_sessions ADD COLUMN IF NOT EXISTS scroll_depth INTEGER DEFAULT 0")
+                cur.execute("ALTER TABLE verified_sessions ADD COLUMN IF NOT EXISTS total_active_seconds INTEGER DEFAULT 0")
+                cur.execute("ALTER TABLE verified_sessions ADD COLUMN IF NOT EXISTS heartbeat_count INTEGER DEFAULT 0")
+                cur.execute("ALTER TABLE verified_sessions ADD COLUMN IF NOT EXISTS page_views INTEGER DEFAULT 0")
+                cur.execute("ALTER TABLE blog_read_sessions ADD COLUMN IF NOT EXISTS total_seconds INTEGER DEFAULT 0")
+                cur.execute("ALTER TABLE blog_read_sessions ADD COLUMN IF NOT EXISTS max_scroll_depth INTEGER DEFAULT 0")
     except Exception as e:
         print("⚠️ Could not initialize real analytics tables:", e)
     finally:
@@ -308,7 +316,8 @@ def get_verified_analytics_snapshot():
     ensure_real_analytics_tables()
     fallback = {
         "total": 0, "real": 0, "engaged": 0, "bot": 0, "suspicious": 0,
-        "returning": 0, "avg_read_time": 0, "bounce_rate": 0, "scroll_completion": 0
+        "returning": 0, "avg_read_time": 0, "bounce_rate": 0, "scroll_completion": 0,
+        "today": 0, "seven_days": 0, "all_time": 0
     }
     conn = data.get_conn()
     try:
@@ -317,6 +326,8 @@ def get_verified_analytics_snapshot():
                 cur.execute("""
                     SELECT
                       COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE) AS human_sessions,
+                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND first_seen::date = CURRENT_DATE) AS today_sessions,
+                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND first_seen >= now() - INTERVAL '7 days') AS seven_day_sessions,
                       COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND engaged = TRUE) AS engaged_sessions,
                       COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND active = TRUE AND last_activity >= now() - INTERVAL '90 seconds') AS active_readers,
                       COUNT(*) FILTER (WHERE suspicious = TRUE) AS suspicious_sessions,
@@ -342,13 +353,15 @@ def get_verified_analytics_snapshot():
                     "avg_read_time": int(float(row.get("avg_read_time") or 0)),
                     "bounce_rate": int((bounces / human) * 100) if human else 0,
                     "scroll_completion": int(float(row.get("avg_scroll") or 0)),
+                    "today": int(row.get("today_sessions") or 0),
+                    "seven_days": int(row.get("seven_day_sessions") or 0),
+                    "all_time": human,
                 })
     except Exception as e:
         print("Verified analytics snapshot failed:", e)
     finally:
         conn.close()
     return fallback
-
 
 def get_verified_daily_summary(days=15):
     ensure_real_analytics_tables()
@@ -1130,24 +1143,106 @@ def track_visit():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+
+
+def get_tracking_health_snapshot():
+    """Return quick operational health for the JS analytics pipeline."""
+    ensure_real_analytics_tables()
+    health = {
+        "tracking_js_status": "waiting",
+        "last_verified_seen": None,
+        "last_bot_seen": None,
+        "track_endpoint": "/api/track_visit",
+        "heartbeat_window_seconds": 90,
+        "message": "No verified human beacons yet. Open a public page, stay 15 seconds, then scroll or click."
+    }
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT MAX(last_seen) AS last_seen
+                    FROM verified_sessions
+                    WHERE js_verified = TRUE AND suspicious = FALSE
+                """)
+                row = cur.fetchone() or {}
+                if row.get("last_seen"):
+                    health["last_verified_seen"] = row["last_seen"].isoformat()
+                    health["tracking_js_status"] = "active"
+                    health["message"] = "JS verification beacons are being received."
+
+                cur.execute("SELECT MAX(created_at) AS last_bot FROM bot_requests")
+                bot_row = cur.fetchone() or {}
+                if bot_row.get("last_bot"):
+                    health["last_bot_seen"] = bot_row["last_bot"].isoformat()
+    except Exception as e:
+        health["tracking_js_status"] = "error"
+        health["message"] = str(e)
+    finally:
+        conn.close()
+    return health
+
+
+def get_top_live_pages(limit=8):
+    """Return currently active pages using only verified human sessions."""
+    ensure_real_analytics_tables()
+    pages = []
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT path,
+                           COUNT(*) AS active_readers,
+                           MAX(last_activity) AS last_activity
+                    FROM verified_sessions
+                    WHERE js_verified = TRUE
+                      AND suspicious = FALSE
+                      AND active = TRUE
+                      AND last_activity >= now() - INTERVAL '90 seconds'
+                    GROUP BY path
+                    ORDER BY active_readers DESC, last_activity DESC
+                    LIMIT %s
+                """, (limit,))
+                pages = [
+                    {
+                        "path": r["path"] or "/",
+                        "active_readers": int(r["active_readers"] or 0),
+                        "last_activity": r["last_activity"].isoformat() if r.get("last_activity") else None
+                    }
+                    for r in cur.fetchall()
+                ]
+    except Exception as e:
+        print("Top live pages failed:", e)
+    finally:
+        conn.close()
+    return pages
+
 @app.route("/api/admin/verified_visitors")
 def admin_verified_visitors():
     if not session.get("is_admin"):
         return jsonify({"error": "unauthorized"}), 403
-    return jsonify({"status": "success", "metrics": get_verified_analytics_snapshot()})
+    return jsonify({
+        "status": "success",
+        "metrics": get_verified_analytics_snapshot(),
+        "top_live_pages": get_top_live_pages(),
+        "health": get_tracking_health_snapshot()
+    })
 
 
 @app.route("/api/blog/heartbeat", methods=["POST"])
-
 def blog_heartbeat():
     try:
         req_data = request.json or {}
         slug = req_data.get("slug")
-        is_new_view = req_data.get("new_view", False)
+        is_new_view = bool(req_data.get("new_view", False))
+        total_seconds = safe_int(req_data.get("total_seconds", req_data.get("time_on_page", 5)), 0, 0, 86400)
+        scroll_depth = safe_int(req_data.get("scroll_depth", 0), 0, 0, 100)
 
         if not slug:
             return jsonify({"status": "error", "message": "slug required"}), 400
 
+        session_id = get_or_create_visitor_id()
         conn = data.get_conn()
         try:
             with conn:
@@ -1164,6 +1259,15 @@ def blog_heartbeat():
                             SET total_read_time_seconds = COALESCE(total_read_time_seconds, 0) + 5
                             WHERE slug = %s
                         """, (slug,))
+
+                    cur.execute("""
+                        INSERT INTO blog_read_sessions (session_id, slug, first_seen, last_heartbeat, total_seconds, max_scroll_depth)
+                        VALUES (%s, %s, now(), now(), %s, %s)
+                        ON CONFLICT (session_id, slug) DO UPDATE SET
+                          last_heartbeat = now(),
+                          total_seconds = GREATEST(blog_read_sessions.total_seconds, EXCLUDED.total_seconds),
+                          max_scroll_depth = GREATEST(blog_read_sessions.max_scroll_depth, EXCLUDED.max_scroll_depth)
+                    """, (session_id, slug, total_seconds, scroll_depth))
         finally:
             conn.close()
 
@@ -1713,98 +1817,109 @@ def active_users_data():
 
 
 @app.route("/api/admin/article_stats")
-
 def admin_article_stats():
     if not session.get("is_admin"):
         return jsonify({"error": "unauthorized"}), 403
 
-    conn = data.get_conn()
+    ensure_real_analytics_tables()
+    metrics = get_verified_analytics_snapshot()
     articles = []
-    active_users = 1
-    recent_pages = []
-
+    recent_pages = get_top_live_pages(limit=6)
+    conn = data.get_conn()
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute("""
-                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address))
-                    FROM site_visits
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
-                """)
-                row = cur.fetchone()
-
-                if row:
-                    active_users = row[0] if row[0] > 0 else 1
-
-                cur.execute("""
-                    SELECT path, COUNT(*) as cnt
-                    FROM site_visits
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
-                    GROUP BY path
-                    ORDER BY cnt DESC
-                    LIMIT 6
-                """)
-
-                recent_pages = [
-                    {"path": r[0] if r[0] else "/", "count": r[1]}
-                    for r in cur.fetchall()
-                ]
-
-                cur.execute("""
                     SELECT id, title, slug,
-                           COALESCE(views, 0) as views,
-                           COALESCE(total_read_time_seconds, 0) as total_read_time,
-                           COALESCE(read_time_count, 0) as read_count
+                           COALESCE(views, 0) AS raw_views,
+                           COALESCE(total_read_time_seconds, 0) AS legacy_total_read_time,
+                           COALESCE(read_time_count, 0) AS legacy_read_count
                     FROM blogs
-                    ORDER BY views DESC
+                    ORDER BY COALESCE(views, 0) DESC
                 """)
+                blog_rows = cur.fetchall()
 
-                rows = cur.fetchall()
-
-                for r in rows:
-                    views = r["views"]
-                    rd_cnt = r["read_count"]
-                    ttl_time = r["total_read_time"]
-
-                    divisor = rd_cnt if rd_cnt > 0 else (views if views > 0 else 1)
-                    avg_seconds = int(ttl_time / divisor)
-
+                for r in blog_rows:
+                    slug = r["slug"]
+                    cur.execute("""
+                        SELECT
+                          COUNT(*) AS verified_views,
+                          COALESCE(SUM(total_seconds), 0) AS total_read_time,
+                          COALESCE(AVG(total_seconds), 0) AS avg_read_time,
+                          COALESCE(AVG(max_scroll_depth), 0) AS avg_scroll_depth,
+                          COUNT(*) FILTER (WHERE total_seconds < 15 OR max_scroll_depth < 10) AS bounces
+                        FROM blog_read_sessions
+                        WHERE slug = %s
+                    """, (slug,))
+                    vr = cur.fetchone() or {}
+                    verified_views = int(vr.get("verified_views") or 0)
+                    total_read_time = int(vr.get("total_read_time") or 0)
+                    avg_read_time = int(float(vr.get("avg_read_time") or 0))
+                    avg_scroll = int(float(vr.get("avg_scroll_depth") or 0))
+                    bounces = int(vr.get("bounces") or 0)
+                    bounce_rate = int((bounces / verified_views) * 100) if verified_views else 0
                     category = get_blog_category(r["title"], "")
 
                     articles.append({
                         "id": r["id"],
                         "title": r["title"],
-                        "slug": r["slug"],
-                        "views": views,
-                        "total_read_time": ttl_time,
-                        "avg_read_time_seconds": avg_seconds,
+                        "slug": slug,
+                        "views": verified_views or int(r.get("raw_views") or 0),
+                        "verified_views": verified_views,
+                        "raw_views": int(r.get("raw_views") or 0),
+                        "total_read_time": total_read_time or int(r.get("legacy_total_read_time") or 0),
+                        "avg_read_time_seconds": avg_read_time,
+                        "avg_scroll_depth": avg_scroll,
+                        "bounce_rate": bounce_rate,
                         "category": category
                     })
-
     except Exception as e:
-        print(f"Error querying article stats: {e}")
+        print(f"Error querying verified article stats: {e}")
     finally:
         conn.close()
 
+    articles.sort(key=lambda a: (a.get("verified_views", 0), a.get("raw_views", 0)), reverse=True)
     category_views = {}
-
     for a in articles:
-        cat = a["category"]
-        category_views[cat] = category_views.get(cat, 0) + a["views"]
-
+        category_views[a["category"]] = category_views.get(a["category"], 0) + int(a.get("views", 0))
     dominant_category = "Technology"
-
     if category_views:
         best_cat = max(category_views, key=category_views.get)
         dominant_category = f"{best_cat} ({category_views[best_cat]} views)"
 
     return jsonify({
         "status": "success",
-        "active_users": max(1, active_users),
+        "active_users": metrics.get("engaged", 0),
         "recent_pages": recent_pages,
+        "visitor_metrics": metrics,
+        "tracking_health": get_tracking_health_snapshot(),
         "articles": articles,
         "dominant_category": dominant_category
     })
+
+
+@app.route("/api/admin/reset_analytics", methods=["POST"])
+def admin_reset_analytics():
+    if not session.get("is_admin"):
+        return jsonify({"error": "unauthorized"}), 403
+    req_data = request.json or {}
+    confirm = str(req_data.get("confirm", "")).strip().upper()
+    if confirm != "RESET":
+        return jsonify({"status": "error", "message": "Type RESET to confirm."}), 400
+
+    ensure_real_analytics_tables()
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("DELETE FROM blog_read_sessions")
+                cur.execute("DELETE FROM verified_sessions")
+                cur.execute("DELETE FROM bot_requests")
+        return jsonify({"status": "success", "message": "Verified analytics reset."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        conn.close()
 
 
 @app.route("/admin/delete_message/<int:mid>", methods=["POST"])
