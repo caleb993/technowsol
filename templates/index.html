@@ -1136,7 +1136,59 @@
     }
   </style>
 </head>
+<script>
+(function () {
+  let sent = false;
+  let startTime = Date.now();
+  let maxScroll = 0;
+  let interacted = false;
 
+  function updateScrollDepth() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (docHeight > 0) {
+      maxScroll = Math.max(maxScroll, Math.round((scrollTop / docHeight) * 100));
+    }
+  }
+
+  window.addEventListener("scroll", function () {
+    interacted = true;
+    updateScrollDepth();
+  }, { passive: true });
+
+  window.addEventListener("click", function () {
+    interacted = true;
+  });
+
+  function sendTracking() {
+    const timeOnPage = Math.round((Date.now() - startTime) / 1000);
+
+    fetch("/api/track_visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify({
+        path: window.location.pathname,
+        js_enabled: true,
+        visible: document.visibilityState === "visible",
+        time_on_page: timeOnPage,
+        scroll_depth: maxScroll,
+        engaged: interacted,
+        interaction: interacted,
+        mouse_moved: interacted,
+        screen_resolution: `${screen.width}x${screen.height}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        referrer: document.referrer,
+        browser: navigator.userAgent,
+        device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "Mobile" : "Desktop"
+      })
+    }).catch(() => {});
+  }
+
+  setTimeout(sendTracking, 16000);
+  setInterval(sendTracking, 30000);
+})();
+</script>
 <body>
   <script>
     if (localStorage.getItem("theme") === "light") {
