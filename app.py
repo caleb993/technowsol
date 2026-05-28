@@ -1532,9 +1532,12 @@ def admin():
     subscribers = data.load_subscribers()
 
     # Full migration: dashboard popularity is based ONLY on verified article reads.
+    # IMPORTANT: We overwrite each blog object's "views" value before sending it
+    # to admin.html so old inflated blogs.views can never appear in the admin UI.
     most_viewed_blog = None
     most_viewed_category = "Technology"
     category_summary = {}
+    enriched_blogs = []
 
     try:
         verified_counts = {}
@@ -1551,23 +1554,32 @@ def admin():
         finally:
             conn.close()
 
+        for b in blogs:
+            bb = dict(b)
+            legacy_raw_views = int(bb.get("views") or 0)
+            verified_views = verified_counts.get(bb.get("slug"), 0)
+
+            bb["legacy_views"] = legacy_raw_views
+            bb["verified_views"] = verified_views
+            bb["views"] = verified_views  # admin templates use b.views, so force verified-only
+            bb["analytics_source"] = "verified_only"
+            enriched_blogs.append(bb)
+
+            cat = get_blog_category(bb.get("title", ""), bb.get("content", ""))
+            category_summary[cat] = category_summary.get(cat, 0) + verified_views
+
+        blogs = enriched_blogs
+
         if blogs:
-            enriched_blogs = []
-            for b in blogs:
-                bb = dict(b)
-                bb["views"] = verified_counts.get(bb.get("slug"), 0)
-                enriched_blogs.append(bb)
-
-                cat = get_blog_category(bb.get("title", ""), bb.get("content", ""))
-                category_summary[cat] = category_summary.get(cat, 0) + bb["views"]
-
-            most_viewed_blog = max(enriched_blogs, key=lambda b: b.get("views", 0))
+            most_viewed_blog = max(blogs, key=lambda b: b.get("verified_views", 0))
 
         if category_summary:
             best_cat = max(category_summary, key=category_summary.get)
             most_viewed_category = f"{best_cat} ({category_summary[best_cat]} verified views)"
     except Exception as e:
         print("Verified popularity calculation failed:", e)
+        # Fail closed: do not expose legacy views if verified calculation fails.
+        blogs = [dict(b, views=0, verified_views=0, legacy_views=int(b.get("views") or 0), analytics_source="verified_only_error") for b in blogs]
 
     return render_template(
         "admin.html",
