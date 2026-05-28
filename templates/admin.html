@@ -881,7 +881,7 @@
                     </h5>
                     <div class="text-muted text-xs font-mono">
                       {% if most_viewed_blog %}
-                        <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> accumulative unique views
+                        <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> verified human views
                       {% else %}
                         0 views
                       {% endif %}
@@ -974,7 +974,7 @@
                   <tr class="text-muted text-mono border-bottom border-white/5" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;">
                     <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; width: 35%;">INSIGHT ARTICLE</th>
                     <th scope="col" style="background: transparent; border: none; padding-bottom: 12px;">CATEGORY</th>
-                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">UNIQUE VIEWS</th>
+                    <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">VERIFIED READS</th>
                     <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">TOTAL READ DURATION</th>
                     <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">AVG DWELL PER CLIENT</th>
                     <th scope="col" style="background: transparent; border: none; padding-bottom: 12px; text-align: center;">AVG SCROLL</th>
@@ -1477,7 +1477,7 @@
                       <div class="d-flex justify-content-between align-items-center mt-1">
                         <div class="d-flex align-items-center gap-2">
                           <span class="text-muted text-mono" style="font-size:0.7rem;"><i class="bi bi-calendar text-muted"></i> {{ b.timestamp[:10] }}</span>
-                          <span class="badge bg-success/20 text-success border border-success/30 font-mono" style="font-size: 0.65rem; padding: 1px 4px;"><i class="bi bi-eye"></i> {{ b.views }} views</span>
+                          <span class="badge bg-success/20 text-success border border-success/30 font-mono" style="font-size: 0.65rem; padding: 1px 4px;"><i class="bi bi-eye"></i> {{ b.verified_views or 0 }} verified</span>
                         </div>
                         <div class="d-flex gap-2 align-items-center">
                           <button type="button" class="btn btn-xs btn-link text-warning text-mono p-0 hover:underline m-0" style="font-size: 0.72rem; text-decoration: none;" onclick="loadBlogForEditing({{ b.id }})"><i class="bi bi-pencil-square"></i> Edit</button>
@@ -2027,7 +2027,7 @@
           data: {
             labels: chartLabels,
             datasets: [{
-              label: "Daily Pageviews",
+              label: "Daily Verified Sessions",
               data: chartValues,
               borderColor: "#10b981", // neon emerald
               backgroundColor: areaGradient,
@@ -2774,7 +2774,7 @@
                         <span class="badge bg-secondary/20 text-white-50 font-mono" style="font-size:0.65rem; border: 1px solid rgba(255,255,255,0.05);">${art.category}</span>
                       </td>
                       <td class="text-center font-mono text-warning font-semibold" style="background: transparent; border: none;">
-                        <i class="bi bi-eye"></i> ${art.views}
+                        <i class="bi bi-eye"></i> ${art.verified_views || art.views || 0} verified
                       </td>
                       <td class="text-center font-mono text-muted" style="background: transparent; border: none;">
                         <i class="bi bi-clock"></i> ${formattedDuration}
