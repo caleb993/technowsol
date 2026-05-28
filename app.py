@@ -4,7 +4,7 @@ import math
 import secrets
 import urllib.parse
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import markdown
 import psycopg2
@@ -33,6 +33,346 @@ IMAGE_EXTS = {"png", "jpg", "jpeg", "webp", "gif"}
 VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
 
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
+
+
+# =========================================================
+# REAL VISITOR INTELLIGENCE LAYER
+# =========================================================
+# This layer intentionally does NOT trust raw HTTP requests. It only treats a
+# session as human after JavaScript reports real browser behavior.
+
+BOT_SIGNATURES = [
+    # Search engines
+    "googlebot", "adsbot-google", "mediapartners-google", "apis-google", "google-inspectiontool",
+    "bingbot", "msnbot", "slurp", "duckduckbot", "baiduspider", "yandexbot", "yandeximages",
+    "sogou", "exabot", "facebot", "facebookexternalhit", "ia_archiver",
+
+    # SEO crawlers
+    "ahrefsbot", "semrushbot", "mj12bot", "dotbot", "serpstatbot", "seznambot", "rogerbot",
+    "linkdexbot", "sitebulb", "screaming frog", "screamingfrogseospider", "deepcrawl", "lumar",
+    "oncrawl", "dataforseo", "blexbot", "megaindex", "petalbot",
+
+    # AI / LLM crawlers
+    "gptbot", "chatgpt-user", "openai", "ccbot", "anthropic-ai", "claudebot", "claude-web",
+    "perplexitybot", "cohere-ai", "amazonbot", "bytespider", "imagesiftbot", "omgilibot",
+    "youbot", "ai2bot", "diffbot",
+
+    # Social preview crawlers
+    "twitterbot", "linkedinbot", "whatsapp", "telegrambot", "discordbot", "slackbot",
+    "skypeuripreview", "pinterestbot", "redditbot", "quorabot", "vkshare", "embedly",
+    "flipboard", "tumblr",
+
+    # Monitoring / uptime
+    "uptimerobot", "pingdom", "statuscake", "newrelic", "datadog", "better uptime", "healthchecks",
+    "nagios", "zabbix",
+
+    # Security scanners
+    "nikto", "acunetix", "nessus", "openvas", "qualys", "sqlmap", "nmap", "masscan", "wpscan",
+    "dirbuster", "gobuster", "burpsuite", "zgrab", "jaeles", "httpx", "nuclei",
+
+    # Libraries / automation
+    "python-requests", "python urllib", "aiohttp", "curl", "wget", "httpclient", "okhttp",
+    "libwww-perl", "scrapy", "mechanize", "feedfetcher", "axios", "go-http-client",
+    "java/", "php/", "ruby", "perl",
+
+    # Headless / browser automation
+    "headlesschrome", "puppeteer", "playwright", "selenium", "phantomjs", "electron", "cypress",
+
+    # Generic bot words
+    "bot", "crawler", "spider", "scraper", "fetch", "scanner", "checker", "validator",
+    "monitor", "preview", "parser", "harvest", "extract", "spammer",
+]
+
+BLOCKED_PATHS = {
+    "/favicon.ico", "/robots.txt", "/sitemap.xml", "/ads.txt", "/manifest.json", "/site.webmanifest"
+}
+
+EXTENSIONS_TO_IGNORE = (
+    ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".webp",
+    ".woff", ".woff2", ".ttf", ".map", ".mp4", ".webm", ".ogg", ".mov", ".m4v"
+)
+
+TRACKABLE_PREFIXES = ("/", "/blog", "/about", "/contact-us", "/privacy-policy", "/terms", "/disclaimer", "/cookie-policy")
+
+
+def get_client_ip():
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.remote_addr or "0.0.0.0"
+
+
+def hash_ip(ip):
+    import hashlib
+    salt = app.secret_key or "techknow"
+    return hashlib.sha256(f"{salt}:{ip}".encode("utf-8")).hexdigest()[:32]
+
+
+def is_bot_user_agent(user_agent):
+    ua = (user_agent or "").lower()
+    if not ua or len(ua) < 12:
+        return True
+    return any(sig in ua for sig in BOT_SIGNATURES)
+
+
+def is_ignored_tracking_path(path):
+    path = (path or "/").split("?")[0]
+    lower = path.lower()
+    if lower in BLOCKED_PATHS:
+        return True
+    if lower.startswith(("/static/", "/media/", "/download/", "/admin", "/api/", "/login", "/logout")):
+        return True
+    if lower.endswith(EXTENSIONS_TO_IGNORE):
+        return True
+    return False
+
+
+def safe_int(value, default=0, minimum=0, maximum=100000):
+    try:
+        number = int(float(value))
+        return max(minimum, min(maximum, number))
+    except Exception:
+        return default
+
+
+def ensure_real_analytics_tables():
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS verified_sessions (
+                        session_id TEXT PRIMARY KEY,
+                        ip_hash TEXT,
+                        user_agent TEXT,
+                        path TEXT,
+                        browser TEXT,
+                        device_type TEXT,
+                        timezone TEXT,
+                        screen_resolution TEXT,
+                        referrer TEXT,
+                        first_seen TIMESTAMP DEFAULT now(),
+                        last_seen TIMESTAMP DEFAULT now(),
+                        last_activity TIMESTAMP DEFAULT now(),
+                        js_verified BOOLEAN DEFAULT FALSE,
+                        bot_detected BOOLEAN DEFAULT FALSE,
+                        suspicious BOOLEAN DEFAULT FALSE,
+                        engaged BOOLEAN DEFAULT FALSE,
+                        active BOOLEAN DEFAULT FALSE,
+                        visible BOOLEAN DEFAULT TRUE,
+                        returning BOOLEAN DEFAULT FALSE,
+                        scroll_depth INTEGER DEFAULT 0,
+                        total_active_seconds INTEGER DEFAULT 0,
+                        heartbeat_count INTEGER DEFAULT 0,
+                        page_views INTEGER DEFAULT 0
+                    )
+                """)
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS bot_requests (
+                        id SERIAL PRIMARY KEY,
+                        ip_hash TEXT,
+                        user_agent TEXT,
+                        path TEXT,
+                        reason TEXT,
+                        created_at TIMESTAMP DEFAULT now()
+                    )
+                """)
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS blog_read_sessions (
+                        session_id TEXT,
+                        slug TEXT,
+                        first_seen TIMESTAMP DEFAULT now(),
+                        last_heartbeat TIMESTAMP DEFAULT now(),
+                        total_seconds INTEGER DEFAULT 0,
+                        max_scroll_depth INTEGER DEFAULT 0,
+                        PRIMARY KEY(session_id, slug)
+                    )
+                """)
+    except Exception as e:
+        print("⚠️ Could not initialize real analytics tables:", e)
+    finally:
+        conn.close()
+
+
+def record_bot_request(path, user_agent, reason="bot_signature"):
+    try:
+        conn = data.get_conn()
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO bot_requests (ip_hash, user_agent, path, reason) VALUES (%s, %s, %s, %s)",
+                    (hash_ip(get_client_ip()), user_agent[:500], (path or "/")[:500], reason)
+                )
+    except Exception as e:
+        print("Bot request logging failed:", e)
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+
+def record_verified_session(payload):
+    path = (payload.get("path") or request.path or "/").split("?")[0]
+    user_agent = request.headers.get("User-Agent", "")
+
+    if is_ignored_tracking_path(path):
+        return {"status": "ignored", "reason": "ignored_path"}
+
+    if is_bot_user_agent(user_agent):
+        record_bot_request(path, user_agent, "bot_user_agent")
+        return {"status": "ignored", "reason": "bot"}
+
+    # Do not count admin sessions as public readers.
+    if session.get("is_admin") or path.startswith("/admin"):
+        return {"status": "ignored", "reason": "admin"}
+
+    session_id = get_or_create_visitor_id()
+    js_enabled = bool(payload.get("js_enabled", True))
+    visible = payload.get("visible", True)
+    if isinstance(visible, str):
+        visible = visible.lower() == "true"
+
+    scroll_depth = safe_int(payload.get("scroll_depth", 0), 0, 0, 100)
+    time_on_page = safe_int(payload.get("time_on_page", 0), 0, 0, 86400)
+    heartbeat_count = safe_int(payload.get("heartbeat_count", 1), 1, 0, 100000)
+    browser = (payload.get("browser") or "Unknown Browser")[:120]
+    device_type = (payload.get("device_type") or "Unknown Device")[:80]
+    timezone = (payload.get("timezone") or "UTC")[:80]
+    screen_resolution = (payload.get("screen_resolution") or "Unknown")[:60]
+    referrer = (payload.get("referrer") or request.referrer or "")[:500]
+    engaged_flag = bool(payload.get("engaged", False) or payload.get("mouse_moved", False) or payload.get("interaction", False))
+
+    suspicious = False
+    if screen_resolution.lower() == "unknown" or timezone.lower() in ("unknown", ""):
+        suspicious = True
+    if time_on_page > 43200:
+        suspicious = True
+
+    # Human verification requires JavaScript plus behavioral evidence.
+    verified = bool(js_enabled and not suspicious and (time_on_page >= 15 or engaged_flag or scroll_depth >= 25))
+    engaged = bool(verified and (engaged_flag or scroll_depth >= 25 or time_on_page >= 30))
+    active = bool(verified and visible and (time_on_page >= 15 or engaged_flag or scroll_depth >= 25))
+
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO verified_sessions (
+                        session_id, ip_hash, user_agent, path, browser, device_type, timezone,
+                        screen_resolution, referrer, js_verified, bot_detected, suspicious,
+                        engaged, active, visible, returning, scroll_depth, total_active_seconds,
+                        heartbeat_count, page_views, first_seen, last_seen, last_activity
+                    ) VALUES (
+                        %s, %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, FALSE, %s,
+                        %s, %s, %s, FALSE, %s, %s,
+                        %s, 1, now(), now(), now()
+                    )
+                    ON CONFLICT (session_id) DO UPDATE SET
+                        path = EXCLUDED.path,
+                        user_agent = EXCLUDED.user_agent,
+                        browser = EXCLUDED.browser,
+                        device_type = EXCLUDED.device_type,
+                        timezone = EXCLUDED.timezone,
+                        screen_resolution = EXCLUDED.screen_resolution,
+                        referrer = COALESCE(NULLIF(EXCLUDED.referrer, ''), verified_sessions.referrer),
+                        last_seen = now(),
+                        last_activity = CASE WHEN EXCLUDED.active THEN now() ELSE verified_sessions.last_activity END,
+                        js_verified = verified_sessions.js_verified OR EXCLUDED.js_verified,
+                        suspicious = verified_sessions.suspicious OR EXCLUDED.suspicious,
+                        engaged = verified_sessions.engaged OR EXCLUDED.engaged,
+                        active = EXCLUDED.active,
+                        visible = EXCLUDED.visible,
+                        returning = TRUE,
+                        scroll_depth = GREATEST(verified_sessions.scroll_depth, EXCLUDED.scroll_depth),
+                        total_active_seconds = GREATEST(verified_sessions.total_active_seconds, EXCLUDED.total_active_seconds),
+                        heartbeat_count = verified_sessions.heartbeat_count + 1,
+                        page_views = verified_sessions.page_views + 1
+                """, (
+                    session_id, hash_ip(get_client_ip()), user_agent[:500], path[:500], browser, device_type, timezone,
+                    screen_resolution, referrer, verified, suspicious,
+                    engaged, active, visible, scroll_depth, time_on_page,
+                    heartbeat_count
+                ))
+        return {"status": "success", "verified": verified, "engaged": engaged, "active": active}
+    except Exception as e:
+        print("Verified session tracking failed:", e)
+        return {"status": "error", "message": str(e)}
+    finally:
+        conn.close()
+
+
+def get_verified_analytics_snapshot():
+    ensure_real_analytics_tables()
+    fallback = {
+        "total": 0, "real": 0, "engaged": 0, "bot": 0, "suspicious": 0,
+        "returning": 0, "avg_read_time": 0, "bounce_rate": 0, "scroll_completion": 0
+    }
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT
+                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE) AS human_sessions,
+                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND engaged = TRUE) AS engaged_sessions,
+                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND active = TRUE AND last_activity >= now() - INTERVAL '90 seconds') AS active_readers,
+                      COUNT(*) FILTER (WHERE suspicious = TRUE) AS suspicious_sessions,
+                      COUNT(*) FILTER (WHERE returning = TRUE AND js_verified = TRUE AND suspicious = FALSE) AS returning_visitors,
+                      COALESCE(AVG(total_active_seconds) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE), 0) AS avg_read_time,
+                      COALESCE(AVG(scroll_depth) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE), 0) AS avg_scroll,
+                      COUNT(*) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE AND (total_active_seconds < 15 OR scroll_depth < 10)) AS bounces
+                    FROM verified_sessions
+                """)
+                row = cur.fetchone() or {}
+                cur.execute("SELECT COUNT(*) AS bots FROM bot_requests")
+                bot_row = cur.fetchone() or {}
+
+                human = int(row.get("human_sessions") or 0)
+                bounces = int(row.get("bounces") or 0)
+                fallback.update({
+                    "total": human,
+                    "real": human,
+                    "engaged": int(row.get("active_readers") or 0),
+                    "bot": int(bot_row.get("bots") or 0),
+                    "suspicious": int(row.get("suspicious_sessions") or 0),
+                    "returning": int(row.get("returning_visitors") or 0),
+                    "avg_read_time": int(float(row.get("avg_read_time") or 0)),
+                    "bounce_rate": int((bounces / human) * 100) if human else 0,
+                    "scroll_completion": int(float(row.get("avg_scroll") or 0)),
+                })
+    except Exception as e:
+        print("Verified analytics snapshot failed:", e)
+    finally:
+        conn.close()
+    return fallback
+
+
+def get_verified_daily_summary(days=15):
+    ensure_real_analytics_tables()
+    conn = data.get_conn()
+    try:
+        with conn:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                cur.execute("""
+                    SELECT DATE(first_seen) AS date, COUNT(*) AS count
+                    FROM verified_sessions
+                    WHERE js_verified = TRUE AND suspicious = FALSE
+                      AND first_seen >= now() - (%s * INTERVAL '1 day')
+                    GROUP BY DATE(first_seen)
+                    ORDER BY DATE(first_seen)
+                """, (days,))
+                return [{"date": str(r["date"]), "count": int(r["count"])} for r in cur.fetchall()]
+    except Exception as e:
+        print("Verified daily summary failed:", e)
+        return []
+    finally:
+        conn.close()
+
+
+ensure_real_analytics_tables()
 
 @app.route("/sitemap.xml")
 def sitemap_xml():
@@ -776,41 +1116,29 @@ def ai_chat():
 
 @app.route("/api/track_visit", methods=["POST"])
 def track_visit():
+    """JS-only visitor verification endpoint.
+
+    A session is only counted as human after the browser proves activity through
+    JavaScript, visibility state, time-on-page, interaction, or scroll depth.
+    """
     try:
         req_data = request.json or {}
-        path = req_data.get("path", "/")
-        js_enabled = req_data.get("js_enabled", True)
-        screen_resolution = req_data.get("screen_resolution", "Unknown")
-        mouse_moved = req_data.get("mouse_moved", False)
-        timezone = req_data.get("timezone", "UTC")
-        browser = req_data.get("browser", "Unknown Browser")
-        device_type = req_data.get("device_type", "Desktop")
-        engaged = req_data.get("engaged", False)
-        
-        ip = request.remote_addr
-        ua = request.headers.get("User-Agent", "Unknown")
-        is_admin = session.get("admin_logged_in", False)
-
-        data.record_visit(
-            ip, ua, path, 
-            get_or_create_visitor_id(),
-            js_enabled=js_enabled,
-            screen_resolution=screen_resolution,
-            mouse_moved=mouse_moved,
-            is_admin=is_admin,
-            timezone=timezone,
-            browser=browser,
-            device_type=device_type,
-            engaged=engaged
-        )
-
-        return jsonify({"status": "success"})
-
+        result = record_verified_session(req_data)
+        status = 200 if result.get("status") != "error" else 500
+        return jsonify(result), status
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@app.route("/api/admin/verified_visitors")
+def admin_verified_visitors():
+    if not session.get("is_admin"):
+        return jsonify({"error": "unauthorized"}), 403
+    return jsonify({"status": "success", "metrics": get_verified_analytics_snapshot()})
+
+
 @app.route("/api/blog/heartbeat", methods=["POST"])
+
 def blog_heartbeat():
     try:
         req_data = request.json or {}
@@ -1121,9 +1449,9 @@ def admin():
         blog_media=blog_media_list,
         blogs=blogs,
         subscribers=subscribers,
-        daily_visits=data.get_daily_visits_summary(),
-        total_visits_all=data.get_visits_by_type(),
-        total_visits=data.get_total_visits_count(),
+        daily_visits=get_verified_daily_summary(),
+        total_visits_all=get_verified_analytics_snapshot(),
+        total_visits=get_verified_analytics_snapshot().get("total", 0),
         most_viewed_blog=most_viewed_blog,
         most_viewed_category=most_viewed_category
     )
@@ -1352,53 +1680,40 @@ def admin_analytics_data():
 
 @app.route("/api/admin/active_users")
 def active_users_data():
-    conn = data.get_conn()
-    count = 1
-    recent_pages = []
+    if not session.get("is_admin"):
+        return jsonify({"error": "unauthorized"}), 403
 
+    metrics = get_verified_analytics_snapshot()
+    recent_pages = []
+    conn = data.get_conn()
     try:
         with conn:
-            with conn.cursor() as cur:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute("""
-                    SELECT COUNT(DISTINCT COALESCE(session_id, ip_address))
-                    FROM site_visits
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
-                """)
-                row = cur.fetchone()
-
-                if row:
-                    count = row[0]
-
-                cur.execute("""
-                    SELECT path, COUNT(*) as cnt
-                    FROM site_visits
-                    WHERE timestamp >= now() - INTERVAL '15 minutes'
+                    SELECT path, COUNT(*) AS cnt
+                    FROM verified_sessions
+                    WHERE js_verified = TRUE AND suspicious = FALSE
+                      AND last_activity >= now() - INTERVAL '90 seconds'
                     GROUP BY path
                     ORDER BY cnt DESC
                     LIMIT 6
                 """)
-
-                recent_pages = [
-                    {"path": r[0] if r[0] else "/", "count": r[1]}
-                    for r in cur.fetchall()
-                ]
-
+                recent_pages = [{"path": r["path"] or "/", "count": int(r["cnt"])} for r in cur.fetchall()]
     except Exception as e:
-        print(f"Error getting active users: {e}")
+        print("Error getting verified active users:", e)
     finally:
         conn.close()
 
-    if count < 1:
-        count = 1
-
     return jsonify({
         "status": "success",
-        "active_users": count,
-        "recent_pages": recent_pages
+        "active_users": metrics.get("engaged", 0),
+        "recent_pages": recent_pages,
+        "metrics": metrics
     })
 
 
 @app.route("/api/admin/article_stats")
+
 def admin_article_stats():
     if not session.get("is_admin"):
         return jsonify({"error": "unauthorized"}), 403
