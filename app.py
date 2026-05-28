@@ -456,14 +456,22 @@ def sitemap_xml():
 
 @app.before_request
 def redirect_to_custom_domain():
-    """Force the public custom domain to avoid duplicate indexing on Render."""
-    if "onrender.com" in request.host:
+    """Force one canonical production domain."""
+    
+    host = request.host.lower()
+
+    if (
+        "onrender.com" in host
+        or host == "www.techknowsolution.co.ke"
+    ):
         query = request.query_string.decode("utf-8")
+
         target = "https://techknowsolution.co.ke" + request.path
+
         if query:
             target += "?" + query
-        return redirect(target, code=301)
 
+        return redirect(target, code=301)
 @app.route("/robots.txt")
 def robots_txt():
     """Expose robots.txt dynamically for search engines."""
