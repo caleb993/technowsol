@@ -958,7 +958,8 @@ def view_blog(slug):
             f"/blog/{slug}",
             get_or_create_visitor_id()
         )
-        data.increment_blog_views(slug)
+        # Full migration: do NOT increment legacy blogs.views here.
+        # Article views are counted only from verified JS/human read sessions.
     except Exception as e:
         print(f"Tracking error: {e}")
 
@@ -1232,10 +1233,16 @@ def admin_verified_visitors():
 
 @app.route("/api/blog/heartbeat", methods=["POST"])
 def blog_heartbeat():
+    """Verified article-reading heartbeat.
+
+    Full migration rule:
+    - Do NOT update legacy blogs.views, read_time_count, or total_read_time_seconds.
+    - Only sessions that already passed JS human verification are counted.
+    - If verified analytics is reset, article views reset to zero too.
+    """
     try:
         req_data = request.json or {}
-        slug = req_data.get("slug")
-        is_new_view = bool(req_data.get("new_view", False))
+        slug = (req_data.get("slug") or "").strip()
         total_seconds = safe_int(req_data.get("total_seconds", req_data.get("time_on_page", 5)), 0, 0, 86400)
         scroll_depth = safe_int(req_data.get("scroll_depth", 0), 0, 0, 100)
 
@@ -1246,22 +1253,29 @@ def blog_heartbeat():
         conn = data.get_conn()
         try:
             with conn:
-                with conn.cursor() as cur:
-                    if is_new_view:
-                        cur.execute("""
-                            UPDATE blogs
-                            SET read_time_count = COALESCE(read_time_count, 0) + 1
-                            WHERE slug = %s
-                        """, (slug,))
-                    else:
-                        cur.execute("""
-                            UPDATE blogs
-                            SET total_read_time_seconds = COALESCE(total_read_time_seconds, 0) + 5
-                            WHERE slug = %s
-                        """, (slug,))
-
+                with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                    # Confirm this session is a real JS-verified human session.
                     cur.execute("""
-                        INSERT INTO blog_read_sessions (session_id, slug, first_seen, last_heartbeat, total_seconds, max_scroll_depth)
+                        SELECT js_verified, suspicious, bot_detected
+                        FROM verified_sessions
+                        WHERE session_id = %s
+                        LIMIT 1
+                    """, (session_id,))
+                    verified_row = cur.fetchone()
+
+                    if not verified_row or not verified_row["js_verified"] or verified_row["suspicious"] or verified_row["bot_detected"]:
+                        return jsonify({
+                            "status": "ignored",
+                            "reason": "session_not_verified",
+                            "message": "Article heartbeat ignored until the browser session is JS-verified."
+                        }), 200
+
+                    # Count one verified article view per verified session per article.
+                    cur.execute("""
+                        INSERT INTO blog_read_sessions (
+                            session_id, slug, first_seen, last_heartbeat,
+                            total_seconds, max_scroll_depth
+                        )
                         VALUES (%s, %s, now(), now(), %s, %s)
                         ON CONFLICT (session_id, slug) DO UPDATE SET
                           last_heartbeat = now(),
@@ -1271,13 +1285,14 @@ def blog_heartbeat():
         finally:
             conn.close()
 
-        return jsonify({"status": "success"})
+        return jsonify({"status": "success", "verified_article_read": True})
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route("/api/blog/reaction", methods=["POST"])
+
 def blog_reaction():
     try:
         req_data = request.json or {}
@@ -1516,20 +1531,43 @@ def admin():
     blogs = data.load_blogs()
     subscribers = data.load_subscribers()
 
+    # Full migration: dashboard popularity is based ONLY on verified article reads.
     most_viewed_blog = None
     most_viewed_category = "Technology"
     category_summary = {}
 
-    if blogs:
-        most_viewed_blog = max(blogs, key=lambda b: b.get("views", 0))
+    try:
+        verified_counts = {}
+        conn = data.get_conn()
+        try:
+            with conn:
+                with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                    cur.execute("""
+                        SELECT slug, COUNT(*) AS verified_views
+                        FROM blog_read_sessions
+                        GROUP BY slug
+                    """)
+                    verified_counts = {r["slug"]: int(r["verified_views"] or 0) for r in cur.fetchall()}
+        finally:
+            conn.close()
 
-        for b in blogs:
-            cat = get_blog_category(b.get("title", ""), b.get("content", ""))
-            category_summary[cat] = category_summary.get(cat, 0) + b.get("views", 0)
+        if blogs:
+            enriched_blogs = []
+            for b in blogs:
+                bb = dict(b)
+                bb["views"] = verified_counts.get(bb.get("slug"), 0)
+                enriched_blogs.append(bb)
+
+                cat = get_blog_category(bb.get("title", ""), bb.get("content", ""))
+                category_summary[cat] = category_summary.get(cat, 0) + bb["views"]
+
+            most_viewed_blog = max(enriched_blogs, key=lambda b: b.get("views", 0))
 
         if category_summary:
             best_cat = max(category_summary, key=category_summary.get)
-            most_viewed_category = f"{best_cat} ({category_summary[best_cat]} views)"
+            most_viewed_category = f"{best_cat} ({category_summary[best_cat]} verified views)"
+    except Exception as e:
+        print("Verified popularity calculation failed:", e)
 
     return render_template(
         "admin.html",
@@ -1818,6 +1856,12 @@ def active_users_data():
 
 @app.route("/api/admin/article_stats")
 def admin_article_stats():
+    """Article stats after full migration.
+
+    Only verified article read sessions are used. Legacy blogs.views and legacy
+    read-time columns are intentionally ignored so reset cannot fall back to
+    old inflated numbers.
+    """
     if not session.get("is_admin"):
         return jsonify({"error": "unauthorized"}), 403
 
@@ -1826,66 +1870,65 @@ def admin_article_stats():
     articles = []
     recent_pages = get_top_live_pages(limit=6)
     conn = data.get_conn()
+
     try:
         with conn:
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute("""
-                    SELECT id, title, slug,
-                           COALESCE(views, 0) AS raw_views,
-                           COALESCE(total_read_time_seconds, 0) AS legacy_total_read_time,
-                           COALESCE(read_time_count, 0) AS legacy_read_count
-                    FROM blogs
-                    ORDER BY COALESCE(views, 0) DESC
+                    SELECT
+                        b.id,
+                        b.title,
+                        b.slug,
+                        COALESCE(COUNT(brs.session_id), 0) AS verified_views,
+                        COALESCE(SUM(brs.total_seconds), 0) AS total_read_time,
+                        COALESCE(AVG(brs.total_seconds), 0) AS avg_read_time,
+                        COALESCE(AVG(brs.max_scroll_depth), 0) AS avg_scroll_depth,
+                        COALESCE(COUNT(brs.session_id) FILTER (
+                            WHERE brs.total_seconds < 15 OR brs.max_scroll_depth < 10
+                        ), 0) AS bounces
+                    FROM blogs b
+                    LEFT JOIN blog_read_sessions brs ON brs.slug = b.slug
+                    GROUP BY b.id, b.title, b.slug
+                    ORDER BY verified_views DESC, total_read_time DESC, b.title ASC
                 """)
-                blog_rows = cur.fetchall()
+                rows = cur.fetchall()
 
-                for r in blog_rows:
-                    slug = r["slug"]
-                    cur.execute("""
-                        SELECT
-                          COUNT(*) AS verified_views,
-                          COALESCE(SUM(total_seconds), 0) AS total_read_time,
-                          COALESCE(AVG(total_seconds), 0) AS avg_read_time,
-                          COALESCE(AVG(max_scroll_depth), 0) AS avg_scroll_depth,
-                          COUNT(*) FILTER (WHERE total_seconds < 15 OR max_scroll_depth < 10) AS bounces
-                        FROM blog_read_sessions
-                        WHERE slug = %s
-                    """, (slug,))
-                    vr = cur.fetchone() or {}
-                    verified_views = int(vr.get("verified_views") or 0)
-                    total_read_time = int(vr.get("total_read_time") or 0)
-                    avg_read_time = int(float(vr.get("avg_read_time") or 0))
-                    avg_scroll = int(float(vr.get("avg_scroll_depth") or 0))
-                    bounces = int(vr.get("bounces") or 0)
+                for r in rows:
+                    verified_views = int(r["verified_views"] or 0)
+                    total_read_time = int(r["total_read_time"] or 0)
+                    avg_read_time = int(float(r["avg_read_time"] or 0))
+                    avg_scroll = int(float(r["avg_scroll_depth"] or 0))
+                    bounces = int(r["bounces"] or 0)
                     bounce_rate = int((bounces / verified_views) * 100) if verified_views else 0
                     category = get_blog_category(r["title"], "")
 
                     articles.append({
                         "id": r["id"],
                         "title": r["title"],
-                        "slug": slug,
-                        "views": verified_views or int(r.get("raw_views") or 0),
+                        "slug": r["slug"],
+                        "views": verified_views,
                         "verified_views": verified_views,
-                        "raw_views": int(r.get("raw_views") or 0),
-                        "total_read_time": total_read_time or int(r.get("legacy_total_read_time") or 0),
+                        "total_read_time": total_read_time,
                         "avg_read_time_seconds": avg_read_time,
                         "avg_scroll_depth": avg_scroll,
                         "bounce_rate": bounce_rate,
-                        "category": category
+                        "category": category,
+                        "source": "verified_only"
                     })
+
     except Exception as e:
-        print(f"Error querying verified article stats: {e}")
+        print(f"Error querying verified-only article stats: {e}")
     finally:
         conn.close()
 
-    articles.sort(key=lambda a: (a.get("verified_views", 0), a.get("raw_views", 0)), reverse=True)
     category_views = {}
     for a in articles:
         category_views[a["category"]] = category_views.get(a["category"], 0) + int(a.get("views", 0))
+
     dominant_category = "Technology"
     if category_views:
         best_cat = max(category_views, key=category_views.get)
-        dominant_category = f"{best_cat} ({category_views[best_cat]} views)"
+        dominant_category = f"{best_cat} ({category_views[best_cat]} verified views)"
 
     return jsonify({
         "status": "success",
@@ -1894,11 +1937,13 @@ def admin_article_stats():
         "visitor_metrics": metrics,
         "tracking_health": get_tracking_health_snapshot(),
         "articles": articles,
-        "dominant_category": dominant_category
+        "dominant_category": dominant_category,
+        "migration_mode": "verified_only_no_legacy_fallback"
     })
 
 
 @app.route("/api/admin/reset_analytics", methods=["POST"])
+
 def admin_reset_analytics():
     if not session.get("is_admin"):
         return jsonify({"error": "unauthorized"}), 403
