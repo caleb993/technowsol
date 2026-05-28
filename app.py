@@ -1226,7 +1226,9 @@ def get_top_live_pages(limit=8):
     finally:
         conn.close()
     return pages
-
+@app.route('/ads.txt')
+def ads_txt():
+    return send_from_directory('.', 'ads.txt')
 @app.route("/api/admin/verified_visitors")
 def admin_verified_visitors():
     if not session.get("is_admin"):
