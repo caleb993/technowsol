@@ -160,7 +160,7 @@ def ensure_real_analytics_tables():
                         engaged BOOLEAN DEFAULT FALSE,
                         active BOOLEAN DEFAULT FALSE,
                         visible BOOLEAN DEFAULT TRUE,
-                        returning BOOLEAN DEFAULT FALSE,
+                        returning_visitor BOOLEAN DEFAULT FALSE,
                         scroll_depth INTEGER DEFAULT 0,
                         total_active_seconds INTEGER DEFAULT 0,
                         heartbeat_count INTEGER DEFAULT 0,
@@ -262,7 +262,7 @@ def record_verified_session(payload):
                     INSERT INTO verified_sessions (
                         session_id, ip_hash, user_agent, path, browser, device_type, timezone,
                         screen_resolution, referrer, js_verified, bot_detected, suspicious,
-                        engaged, active, visible, returning, scroll_depth, total_active_seconds,
+                        engaged, active, visible, returning_visitor, scroll_depth, total_active_seconds,
                         heartbeat_count, page_views, first_seen, last_seen, last_activity
                     ) VALUES (
                         %s, %s, %s, %s, %s, %s, %s,
@@ -285,7 +285,7 @@ def record_verified_session(payload):
                         engaged = verified_sessions.engaged OR EXCLUDED.engaged,
                         active = EXCLUDED.active,
                         visible = EXCLUDED.visible,
-                        returning = TRUE,
+                        returning_visitor = TRUE,
                         scroll_depth = GREATEST(verified_sessions.scroll_depth, EXCLUDED.scroll_depth),
                         total_active_seconds = GREATEST(verified_sessions.total_active_seconds, EXCLUDED.total_active_seconds),
                         heartbeat_count = verified_sessions.heartbeat_count + 1,
@@ -320,7 +320,7 @@ def get_verified_analytics_snapshot():
                       COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND engaged = TRUE) AS engaged_sessions,
                       COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND active = TRUE AND last_activity >= now() - INTERVAL '90 seconds') AS active_readers,
                       COUNT(*) FILTER (WHERE suspicious = TRUE) AS suspicious_sessions,
-                      COUNT(*) FILTER (WHERE returning = TRUE AND js_verified = TRUE AND suspicious = FALSE) AS returning_visitors,
+                      COUNT(*) FILTER (WHERE returning_visitor = TRUE AND js_verified = TRUE AND suspicious = FALSE) AS returning_visitors,
                       COALESCE(AVG(total_active_seconds) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE), 0) AS avg_read_time,
                       COALESCE(AVG(scroll_depth) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE), 0) AS avg_scroll,
                       COUNT(*) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE AND (total_active_seconds < 15 OR scroll_depth < 10)) AS bounces
