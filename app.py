@@ -390,7 +390,7 @@ ensure_real_analytics_tables()
 @app.route("/sitemap.xml")
 def sitemap_xml():
     """Dynamically generate sitemap for SEO and Google Search Console."""
-    base_url = "https://mga.techknowsols.gt.tc"
+    base_url = "https://techknowsolution.co.ke"
 
     static_pages = [
         {"loc": "/", "changefreq": "daily", "priority": "1.0"},
@@ -459,7 +459,7 @@ def redirect_to_custom_domain():
     """Force the public custom domain to avoid duplicate indexing on Render."""
     if "onrender.com" in request.host:
         query = request.query_string.decode("utf-8")
-        target = "https://mga.techknowsols.gt.tc" + request.path
+        target = "https://techknowsolution.co.ke" + request.path
         if query:
             target += "?" + query
         return redirect(target, code=301)
@@ -474,7 +474,7 @@ Disallow: /admin
 Disallow: /dashboard
 Disallow: /console
 
-Sitemap: https://mga.techknowsols.gt.tc/sitemap.xml
+Sitemap: https://techknowsolution.co.ke/sitemap.xml
 """
 
     response = Response(robots, mimetype="text/plain")
