@@ -1,3 +1,4 @@
+#my app.py
 import os
 import io
 import math
@@ -643,147 +644,8 @@ def list_pending():
     return data.list_projects(approved=False)
 
 
-def ensure_gallery_metadata_columns():
-    """Add optional title/caption fields for public Operations Gallery media."""
-    conn = data.get_conn()
-    try:
-        with conn:
-            with conn.cursor() as cur:
-                cur.execute("ALTER TABLE files ADD COLUMN IF NOT EXISTS media_title TEXT")
-                cur.execute("ALTER TABLE files ADD COLUMN IF NOT EXISTS media_caption TEXT")
-    except Exception as e:
-        print("⚠️ Could not prepare gallery metadata columns:", e)
-    finally:
-        try:
-            conn.close()
-        except Exception:
-            pass
-
-
-def pretty_media_title(filename):
-    base = os.path.splitext(filename or "Operations media")[0]
-    cleaned = base.replace("_", " ").replace("-", " ").strip()
-    return cleaned.title() if cleaned else "Operations Media"
-
-
-def list_gallery_media(limit=None):
-    """Return gallery media with clean display titles and short narrations."""
-    ensure_gallery_metadata_columns()
-    conn = data.get_conn()
-    try:
-        with conn:
-            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                sql = """
-                    SELECT name, mimetype, uploaded_at, url, storage_provider,
-                           COALESCE(media_title, '') AS media_title,
-                           COALESCE(media_caption, '') AS media_caption
-                    FROM files
-                    WHERE category='gallery' AND approved = TRUE
-                    ORDER BY uploaded_at DESC
-                """
-                if limit:
-                    sql += " LIMIT %s"
-                    cur.execute(sql, (limit,))
-                else:
-                    cur.execute(sql)
-
-                rows = cur.fetchall()
-                out = []
-                for r in rows:
-                    mimetype = r["mimetype"] or ""
-                    typ = "image" if mimetype.startswith("image") else "video" if mimetype.startswith("video") else "other"
-                    name = r["name"]
-                    title = (r["media_title"] or "").strip() or pretty_media_title(name)
-                    caption = (r["media_caption"] or "").strip()
-                    if not caption:
-                        caption = "A field moment from SurgeTechKnow operations, ICT support, networking, or systems work."
-                    out.append({
-                        "name": name,
-                        "type": typ,
-                        "url": r["url"] or f"/media/gallery/{name}",
-                        "title": title,
-                        "caption": caption,
-                        "uploaded_at": r["uploaded_at"].isoformat() if r.get("uploaded_at") else "",
-                        "storage_provider": r["storage_provider"] or "database"
-                    })
-                return out
-    except Exception as e:
-        print("Error listing gallery media:", e)
-        try:
-            return data.list_gallery_media()
-        except Exception:
-            return []
-    finally:
-        try:
-            conn.close()
-        except Exception:
-            pass
-
-
-def update_gallery_metadata(filename, media_title='', media_caption=''):
-    ensure_gallery_metadata_columns()
-    if not filename:
-        return
-    conn = data.get_conn()
-    try:
-        with conn:
-            with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    UPDATE files
-                    SET media_title = %s,
-                        media_caption = %s
-                    WHERE category='gallery' AND name=%s
-                    """,
-                    ((media_title or '').strip()[:140], (media_caption or '').strip()[:500], filename)
-                )
-    except Exception as e:
-        print("Gallery metadata update failed:", e)
-    finally:
-        try:
-            conn.close()
-        except Exception:
-            pass
-
-
-def categorize_home_blogs(blogs):
-    buckets = {
-        "Cybersecurity": [],
-        "Networking": [],
-        "AI & Automation": [],
-        "ICT Support": [],
-        "Web Development": [],
-        "Technology": []
-    }
-    for b in blogs or []:
-        title = b.get("title", "") if isinstance(b, dict) else getattr(b, "title", "")
-        content = b.get("content", "") if isinstance(b, dict) else getattr(b, "content", "")
-        cat = (b.get("category", "") if isinstance(b, dict) else getattr(b, "category", "")) or get_blog_category(title, content)
-        if cat not in buckets:
-            cat = get_blog_category(title, content)
-        buckets.setdefault(cat, []).append(b)
-    return buckets
-
-
-def list_blogs_by_category(category, limit=3):
-    blogs = data.load_blogs()
-    buckets = categorize_home_blogs(blogs)
-    selected = buckets.get(category, [])
-    if len(selected) < limit:
-        for b in blogs:
-            if b not in selected:
-                selected.append(b)
-            if len(selected) >= limit:
-                break
-    return selected[:limit]
-
-
-def list_related_blogs(limit=6):
-    return (data.load_blogs() or [])[:limit]
-
-
-def list_gallery_media_limited(limit=6):
-    return list_gallery_media(limit=limit)
+def list_gallery_media():
+    return data.list_gallery_media()
 
 
 def list_blog_media():
@@ -895,9 +757,8 @@ def index():
 
     prof_name, _ = latest_file("profile", only_images=True)
     hero_name, _ = latest_file("hero", only_images=True)
-    gallery = list_gallery_media_limited(6)
+    gallery = list_gallery_media()
     blogs = data.load_blogs()
-    home_blog_sections = categorize_home_blogs(blogs)
 
     return render_template(
         "index.html",
@@ -907,28 +768,7 @@ def index():
         profile_url=media_url("profile", prof_name) if prof_name else None,
         hero_url=media_url("hero", hero_name) if hero_name else None,
         gallery_images=gallery,
-        blog_posts=blogs,
-        home_blog_sections=home_blog_sections
-    )
-
-
-@app.route("/operations-gallery")
-def operations_gallery():
-    try:
-        data.record_visit(
-            request.remote_addr,
-            request.headers.get("User-Agent", "Unknown"),
-            "/operations-gallery",
-            get_or_create_visitor_id()
-        )
-    except Exception as e:
-        print(f"Tracking error: {e}")
-
-    return render_template(
-        "operations_gallery.html",
-        gallery_images=list_gallery_media(),
-        related_posts=list_related_blogs(6),
-        year=datetime.now().year
+        blog_posts=blogs
     )
 
 
@@ -1164,7 +1004,7 @@ def view_blog(slug):
 
 
 SYSTEM_INSTRUCTION = """
-You are "SurgeTechKnow's AI Digital Twin", a professional, highly skilled, and conversational AI avatar representing SurgeTechKnow on his portfolio website.
+You are "Caleb Muga's AI Digital Twin", a professional, highly skilled, and conversational AI avatar representing Caleb Muga on his portfolio website.
 Caleb's Background & Profile:
 - Title: Lead Cisco-Certified Network Specialist, Cybersecurity Auditor, and Automation Architect.
 - Role: Meticulously driven and customer-oriented ICT Officer.
@@ -1283,7 +1123,7 @@ def ai_chat():
             elif any(k in msg_lower for k in ["project", "code", "portfolio"]):
                 ai_response = "I have built interactive labs on this portfolio, including subnet tools, port diagnostics, and admin telemetry features."
             else:
-                ai_response = "Hello there! I am SurgeTechKnow's AI Digital Twin. Ask me about CCNA configurations, cybersecurity, ICT support, or collaboration."
+                ai_response = "Hello there! I am Caleb Muga's AI Digital Twin. Ask me about CCNA configurations, cybersecurity, ICT support, or collaboration."
 
             ai_response += "\n\n*(Note: Set up a `GEMINI_API_KEY` in settings to activate full real-time Gemini LLM reasoning.)*"
 
@@ -1576,7 +1416,7 @@ def blog_ask_about_text():
 
         ai_reply = call_gemini_api(
             prompt,
-            system_instruction="You are SurgeTechKnow, an expert Systems Specialist."
+            system_instruction="You are Caleb Muga, an expert Systems Specialist."
         )
 
         if not ai_reply:
@@ -2356,8 +2196,6 @@ def upload_gallery():
         return redirect(url_for("login"))
 
     files = request.files.getlist("images")
-    media_title = (request.form.get("media_title") or "").strip()
-    media_caption = (request.form.get("media_caption") or "").strip()
 
     if not files:
         flash("Select at least one file.")
@@ -2375,11 +2213,10 @@ def upload_gallery():
             fname, err = data.save_file_from_storage("gallery", up, approve=True)
             log_upload_result("gallery", fname)
             if fname:
-                update_gallery_metadata(fname, media_title or pretty_media_title(fname), media_caption)
                 uploaded += 1
 
     if uploaded:
-        flash(f"Uploaded {uploaded} item(s) to Operations Gallery. ✅")
+        flash(f"Uploaded {uploaded} item(s) to gallery. ✅")
     else:
         flash("No valid images or videos were uploaded.")
 
