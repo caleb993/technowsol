@@ -521,7 +521,41 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
     .admin-media-item textarea.form-control-fire,.admin-media-item input.form-control-fire{font-size:.78rem;padding:.45rem .55rem}
     .admin-media-item{box-shadow:0 10px 24px rgba(0,0,0,.18)}
     .admin-media-info{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.01))}
-    </style>
+    
+
+    /* SurgeTechKnow admin newsroom polish */
+    .thumbnail-control-panel {
+      background: rgba(255,255,255,0.018);
+      border: 1px solid rgba(249,115,22,.12);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .thumb-preview-row {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .thumb-preview-box {
+      width: 88px; height: 58px;
+      border-radius: 10px; overflow: hidden;
+      background: rgba(255,255,255,.04);
+      border: 1px dashed rgba(255,255,255,.18);
+      display: grid; place-items: center;
+    }
+    .thumb-preview-box img { width:100%; height:100%; object-fit:cover; display:block; }
+    #blogs-pane .card-fire { border-radius: 16px; }
+    #blogs-pane .form-label { letter-spacing: .055em; font-weight: 800; }
+    #blogs-pane .input-group .form-control-fire { min-height: 38px; }
+    #blogs-pane .seo-check-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    @media (max-width: 768px){
+      .thumb-preview-row{grid-template-columns: 1fr;}
+      .thumb-preview-box{width:100%;height:150px;}
+      #blogs-pane .d-flex.gap-2{flex-wrap:wrap;}
+      #blogs-pane .btn{width:100%;}
+    }
+
+  </style>
 </head>
 <body class="py-4">
   <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>
@@ -1460,9 +1494,19 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
                   <textarea name="excerpt" id="blogExcerpt" class="form-control form-control-fire" rows="2" maxlength="220" placeholder="Short summary shown on homepage and listing cards"></textarea>
                 </div>
 
-                <div class="mb-3">
-                  <label class="form-label text-muted small">FEATURED IMAGE URL / MEDIA URL OPTIONAL</label>
-                  <input type="text" name="featured_image" id="blogFeaturedImage" class="form-control form-control-fire" placeholder="/media/blog_media/image.png or Cloudinary URL">
+                <div class="mb-3 thumbnail-control-panel">
+                  <label class="form-label text-muted small d-flex justify-content-between align-items-center">
+                    <span>ARTICLE THUMBNAIL / FEATURED IMAGE</span>
+                    <small class="text-warning text-mono">Optional but recommended</small>
+                  </label>
+                  <input type="text" name="featured_image" id="blogFeaturedImage" class="form-control form-control-fire" placeholder="Choose from Draft Assets Helper Deck or paste /media/blog_media/image.png">
+                  <div class="thumb-preview-row mt-2">
+                    <div class="thumb-preview-box" id="featuredThumbPreview"><i class="bi bi-image text-muted"></i></div>
+                    <div class="small text-muted">
+                      <strong class="text-white">Thumbnail logic:</strong><br>
+                      If you choose an asset, it becomes the article thumbnail. If you do not choose one, the system uses the first image inside the article. If the article has no image, a clean category thumbnail is generated automatically.
+                    </div>
+                  </div>
                 </div>
                 
                 <div class="mb-3">
@@ -1535,6 +1579,11 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
                         </div>
                       </div>
                       <div class="d-flex gap-1 flex-shrink-0">
+                        {% if item.type == 'image' %}
+                        <button type="button" class="btn btn-xs btn-outline-info py-1 px-1 text-xs" style="font-size: 0.7rem; padding: 2px 6px;" onclick="useAsFeaturedImage('{{ item.url }}', this)">
+                          <i class="bi bi-card-image"></i> Thumbnail
+                        </button>
+                        {% endif %}
                         <button type="button" class="btn btn-xs btn-fire-primary py-1 px-1 text-xs" style="font-size: 0.7rem; padding: 2px 6px;" onclick="insertMediaTag('{{ item.url }}', '{{ item.type }}')">
                           <i class="bi bi-plus-lg"></i> Insert
                         </button>
@@ -1868,6 +1917,10 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
           document.getElementById('edit-blog-id').value = blog.id;
           document.getElementById('title').value = blog.title;
           document.getElementById('blogContent').value = blog.content;
+          if (document.getElementById('blogCategory')) document.getElementById('blogCategory').value = blog.category || 'Auto';
+          if (document.getElementById('blogTrending')) document.getElementById('blogTrending').value = blog.is_trending ? '1' : '0';
+          if (document.getElementById('blogExcerpt')) document.getElementById('blogExcerpt').value = blog.excerpt || '';
+          if (document.getElementById('blogFeaturedImage')) { document.getElementById('blogFeaturedImage').value = blog.featured_image || ''; refreshFeaturedPreview(); }
           if (window.tinymce && tinymce.get('blogContent')) { tinymce.get('blogContent').setContent(blog.content || ''); }
           
           // Update form action and UI labels
@@ -1903,6 +1956,32 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
         alert('Clipboard permissions blocks browser automatic writeback.');
       });
     }
+
+
+
+    function refreshFeaturedPreview(){
+      const input = document.getElementById('blogFeaturedImage');
+      const box = document.getElementById('featuredThumbPreview');
+      if(!input || !box) return;
+      const url = (input.value || '').trim();
+      if(!url){ box.innerHTML = '<i class="bi bi-image text-muted"></i>'; return; }
+      box.innerHTML = `<img src="${url}" alt="Selected article thumbnail" onerror="this.parentElement.innerHTML='<i class=\'bi bi-image-alt text-warning\'></i>'">`;
+    }
+
+    function useAsFeaturedImage(url, buttonElement){
+      const input = document.getElementById('blogFeaturedImage');
+      if(!input) return;
+      input.value = url || '';
+      refreshFeaturedPreview();
+      if(buttonElement){
+        const original = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="bi bi-check2-circle"></i> Selected';
+        buttonElement.classList.remove('btn-outline-info');
+        buttonElement.classList.add('btn-success','text-black');
+        setTimeout(()=>{buttonElement.innerHTML=original;buttonElement.classList.add('btn-outline-info');buttonElement.classList.remove('btn-success','text-black');},1500);
+      }
+    }
+    document.addEventListener('input', function(e){ if(e.target && e.target.id === 'blogFeaturedImage') refreshFeaturedPreview(); });
 
     // Insert media directly into TinyMCE rich editor or textarea fallback.
     function insertMediaTag(url, type) {
