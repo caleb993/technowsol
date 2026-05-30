@@ -515,10 +515,13 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
 @media(max-width:768px){.main-content-wrapper{padding:1rem!important;padding-top:4.6rem!important}.card-fire{border-radius:14px!important}.stat-card{padding:1rem!important}}
 
 
-
-/* SurgeTechKnow Admin v6 newsroom control-center polish */
-.admin-control-banner{display:grid;grid-template-columns:1.4fr repeat(3,minmax(130px,.35fr));gap:14px;margin-bottom:18px}.control-hero{background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(2,6,23,.65));border:1px solid rgba(249,115,22,.28);border-radius:18px;padding:20px}.control-metric{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}.control-metric strong{font-family:'Space Grotesk';font-size:2rem;color:#fff}.admin-media-item{border-radius:16px!important;box-shadow:0 14px 35px rgba(0,0,0,.2)}.admin-edit-box{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;margin-top:10px}.admin-edit-box textarea,.admin-edit-box input{font-size:.78rem}.btn-mini{font-size:.76rem;padding:.45rem .6rem;border-radius:8px}.tab-content .card-fire{box-shadow:0 12px 34px rgba(0,0,0,.24)}@media(max-width:900px){.admin-control-banner{grid-template-columns:1fr}.main-content-wrapper{padding:1rem!important;padding-top:5rem!important}.stat-number{font-size:1.75rem!important}.admin-media-thumb{height:92px!important}.admin-media-info{padding:.65rem!important}.card-fire{border-radius:12px!important}.btn-fire-primary,.btn-fire-secondary{padding:.55rem .85rem!important;font-size:.84rem!important}}
-</style>
+    /* v9 admin media edit polish */
+    .admin-media-item details summary::-webkit-details-marker{display:none}
+    .admin-media-item details summary{font-size:.78rem}
+    .admin-media-item textarea.form-control-fire,.admin-media-item input.form-control-fire{font-size:.78rem;padding:.45rem .55rem}
+    .admin-media-item{box-shadow:0 10px 24px rgba(0,0,0,.18)}
+    .admin-media-info{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.01))}
+    </style>
 </head>
 <body class="py-4">
   <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>
@@ -681,13 +684,6 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
 
     <!-- CONTENT WRAPPER GRID -->
     <main class="main-content-wrapper">
-      <div class="admin-control-banner">
-        <div class="control-hero"><div class="text-warning text-mono small mb-1">SURGETECHKNOW CONTROL CENTER</div><h2 class="text-white fw-bold mb-1" style="font-family:'Space Grotesk'">Editorial & Operations Command</h2><p class="text-muted mb-0">Manage articles, trending desk, field media, submissions, analytics and SEO signals from one private console.</p></div>
-        <div class="control-metric"><span class="text-muted small text-mono">MESSAGES</span><strong>{{ messages|length }}</strong></div>
-        <div class="control-metric"><span class="text-muted small text-mono">BLOGS</span><strong>{{ blogs|length }}</strong></div>
-        <div class="control-metric"><span class="text-muted small text-mono">MEDIA</span><strong>{{ gal|length }}</strong></div>
-      </div>
-    
       
       <!-- DESKTOP TOP HEADER (With beautiful metadata alignments) -->
       <div class="d-none d-lg-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-white/5">
@@ -1255,7 +1251,7 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
           <!-- Upload -->
           <div class="col-lg-4">
             <div class="card-fire p-4">
-              <h4 class="mb-3 text-white fw-bold"><i class="bi bi-cloud-upload-fill text-warning me-2"></i>Add Field Media</h4>
+              <h4 class="mb-3 text-white fw-bold"><i class="bi bi-cloud-upload-fill text-warning me-2"></i>Add Gallery Showcase</h4>
               <p class="text-muted small">Upload infrastructure, cybersecurity, physical network setups, or system diagrams here. Supported extensions: images or videos (.jpg, .png, .gif, .webp, .mp4, .webm etc.)</p>
               
               <form action="/admin/upload_gallery" method="POST" enctype="multipart/form-data">
@@ -1279,7 +1275,7 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
                     <input type="file" id="galleryInput" name="images" multiple required hidden onchange="document.getElementById('galIndicator').innerText = this.files.length + ' file(s) loaded'">
                   </div>
                 </div>
-                <button type="submit" class="btn btn-fire-primary w-100">Upload Field Media <i class="bi bi-upload"></i></button>
+                <button type="submit" class="btn btn-fire-primary w-100">Upload Showcase <i class="bi bi-upload"></i></button>
               </form>
             </div>
           </div>
@@ -1287,7 +1283,7 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
           <!-- Existing -->
           <div class="col-lg-8">
             <div class="card-fire p-4">
-              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-images text-warning me-2"></i>Field Media Desk ({{ gal|length }})</h4>
+              <h4 class="mb-4 text-white fw-bold"><i class="bi bi-images text-warning me-2"></i>Featured Gallery ({{ gal|length }})</h4>
               
               {% if gal %}
                 <div class="row g-3">
@@ -1307,17 +1303,17 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
                         <div class="admin-media-info">
                           <small class="text-mono d-block text-truncate mb-1" title="{{ item.title or item.name }}">{{ item.title or item.name }}</small>
                           <small class="text-muted d-block mb-2" style="font-size:.72rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">{{ item.caption or item.name }}</small>
+                          <details class="mt-2 mb-2">
+                            <summary class="btn btn-sm btn-fire-secondary w-100" style="cursor:pointer"><i class="bi bi-pencil-square"></i> Edit Details</summary>
+                            <form action="/admin/gallery/update/{{ item.name }}" method="POST" class="mt-2 d-grid gap-2">
+                              <input type="text" name="media_title" value="{{ item.title or '' }}" class="form-control form-control-fire form-control-sm" placeholder="Media title">
+                              <textarea name="media_caption" class="form-control form-control-fire form-control-sm" rows="2" maxlength="500" placeholder="Short summary">{{ item.caption or '' }}</textarea>
+                              <textarea name="media_narration" class="form-control form-control-fire form-control-sm" rows="3" maxlength="3000" placeholder="Full narration">{{ item.narration or item.caption or '' }}</textarea>
+                              <button type="submit" class="btn btn-sm btn-fire-primary w-100"><i class="bi bi-check2-circle"></i> Save Media</button>
+                            </form>
+                          </details>
                           <form action="/admin/delete_gallery/{{ item.name }}" method="POST" onsubmit="return confirm('Delete this gallery file securely?');" class="m-0">
                             <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-trash"></i> Wipe Asset</button>
-                          </form>
-                          <form action="/admin/gallery/edit/{{ item.name }}" method="POST" class="admin-edit-box">
-                            <label class="text-muted small text-mono">Edit public title</label>
-                            <input class="form-control form-control-fire mb-2" name="media_title" value="{{ item.title or item.name }}" placeholder="Media title">
-                            <label class="text-muted small text-mono">Short summary</label>
-                            <textarea class="form-control form-control-fire mb-2" name="media_caption" rows="2" placeholder="Short media summary">{{ item.caption or '' }}</textarea>
-                            <label class="text-muted small text-mono">Full narration</label>
-                            <textarea class="form-control form-control-fire mb-2" name="media_narration" rows="3" placeholder="Full narration">{{ item.narration or item.caption or '' }}</textarea>
-                            <button type="submit" class="btn btn-mini btn-outline-success w-100"><i class="bi bi-save"></i> Save Media Details</button>
                           </form>
                         </div>
                       </div>
