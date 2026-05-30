@@ -484,9 +484,15 @@
       border-radius: 10px !important;
     }
 
+  
+    /* SurgeTechKnow Control Center polish */
+    .main-content-wrapper, .container-fluid { max-width: 1480px; }
+    .control-center-banner {background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(16,185,129,.08),rgba(59,130,246,.08));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px 20px;margin-bottom:18px;box-shadow:0 18px 45px rgba(0,0,0,.20)}
+    .control-center-banner h2{font-family:'Space Grotesk',sans-serif;font-weight:800;letter-spacing:-.03em;margin:0;color:#fff}.control-center-banner p{margin:4px 0 0;color:var(--text-muted);font-size:.9rem}.control-pill{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#86efac;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18);border-radius:999px;padding:5px 10px;display:inline-flex;align-items:center;gap:6px}
   </style>
 </head>
 <body class="py-4">
+  <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>
 
   {% if session.get("promote_blog_slug") %}
     <!-- Auto promote modal -->
@@ -524,7 +530,7 @@
       }
       function triggerWhatsAppPromoShare(title, slug) {
         const host = window.location.origin;
-        const text = `📢 *NEW CYBERSECURITY PIECE PUBLISHED BY CALEB SurgeTechKnow!*\n\n"${title}"\n\nAvoid network exploits and secure your operations now. Check out the full audit analysis with interactive test labs:\n👉 ${host}/blog/${slug}`;
+        const text = `📢 *NEW TECHNOLOGY INSIGHT FROM SurgeTechKnow!*\n\n"${title}"\n\nAvoid network exploits and secure your operations now. Check out the full audit analysis with interactive test labs:\n👉 ${host}/blog/${slug}`;
         window.open(`https://wa.me/254791204587?text=${encodeURIComponent(text)}`, "_blank");
         dismissPromoModal();
       }
