@@ -5,28 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SurgeTechKnow - Secure Networks &amp; Smarter Systems</title>
   
-  <meta name="description" content="SurgeTechKnow Solutions - Professional network topology audits, Cisco configurations, vulnerability assessments, and custom-scripted automation pipelines built by certified specialists.">
+  <meta name="description" content="SurgeTechKnow Solutions - Professional network topology audits, Cisco configurations, vulnerability assessments, Windows News, and custom-scripted automation pipelines built by certified specialists.">
   <meta name="keywords" content="SurgeTechKnow, Cyber Security Nairobi, CCNA network design, Python automation scripts, Cisco rack assembly, secure systems audit">
   <meta name="author" content="SurgeTechKnow">
   <link rel="canonical" href="https://techknowsolution.co.ke">
   <meta property="og:type" content="website">
   <meta property="og:title" content="SurgeTechKnow - Secure Networks &amp; Smarter Systems">
-  <meta property="og:description" content="Certified Cisco CCNA network topology planning, automated server scripting, and rigorous cybersecurity compliance audits.">
+  <meta property="og:description" content="Certified Cisco CCNA network topology planning, automated server scripting, Windows diagnostics, and rigorous cybersecurity compliance audits.">
   <meta property="og:image" content="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80">
   
+  <!-- Global AdSense Integration -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340479899629152" crossorigin="anonymous"></script>
+
+  <!-- Global Google Analytics Integration -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K4S6X6EZP5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-K4S6X6EZP5');
+  </script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link href="https://fonts.googleapis.com/css2 family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
   
   <style>
     :root {
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
+      --text-muted: #475569;
+      --border-color: #cbd5e1;
       --brand-primary: #f97316;
       --brand-secondary: #ea580c;
     }
@@ -59,106 +69,102 @@
     }
 
     .hero-wrapper {
-      background: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.05) 0%, rgba(255, 255, 255, 0) 100%), #ffffff;
+      background: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.04) 0%, rgba(255, 255, 255, 0) 100%), #ffffff;
       border-bottom: 1px solid var(--border-color);
     }
 
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
-      border-color: rgba(249, 115, 22, 0.25);
-    }
-
-    .category-chip {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 999px;
-      padding: 0.5rem 1.25rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
+    .news-category-header {
+      border-left: 4px solid var(--brand-primary);
+      padding-left: 0.75rem;
       font-family: 'Space Grotesk', sans-serif;
-    }
-
-    .category-chip:hover, .category-chip.active {
-      background: var(--brand-primary);
-      color: #ffffff;
-      border-color: var(--brand-primary);
-      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
-    }
-
-    .horizontal-scroll-container {
+      font-weight: 700;
+      margin-bottom: 1.25rem;
       display: flex;
-      overflow-x: auto;
-      gap: 1.5rem;
-      padding: 0.5rem 0.25rem 1.5rem 0.25rem;
-      scroll-behavior: smooth;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 1.2;
     }
 
-    .horizontal-scroll-container::-webkit-scrollbar {
-      height: 6px;
-    }
-
-    .horizontal-scroll-container::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 999px;
-    }
-
-    .horizontal-scroll-container::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 999px;
-    }
-
-    .horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
-      background: var(--brand-primary);
-    }
-
-    .blog-scroller-item {
-      min-width: 320px;
-      max-width: 320px;
-      flex: 0 0 auto;
-    }
-
-    .blog-card-compact {
+    .news-card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
       overflow: hidden;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
-    .blog-card-compact:hover {
+    .news-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(249, 115, 22, 0.25);
-      box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.08);
+      border-color: rgba(249, 115, 22, 0.3);
     }
 
-    .gallery-img-wrapper {
-      height: 180px;
+    .news-img-wrapper {
+      height: 160px;
       background: #cbd5e1;
       overflow: hidden;
+      position: relative;
     }
 
-    .gallery-img-wrapper img, .gallery-img-wrapper video {
+    .news-img-wrapper img, .news-img-wrapper video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform 0.3s ease;
     }
 
-    .gallery-card:hover .gallery-img-wrapper img,
-    .gallery-card:hover .gallery-img-wrapper video {
-      transform: scale(1.05);
+    .news-card:hover .news-img-wrapper img {
+      transform: scale(1.03);
+    }
+
+    .news-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      color: #ffffff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Slick Horizontal Scroller */
+    .tuko-scroller {
+      --scrollbar-height: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .tuko-scroller {
+        display: flex;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        gap: 1rem;
+        padding-bottom: 0.75rem;
+        -webkit-overflow-scrolling: touch;
+      }
+      .tuko-scroller .scroller-item {
+        flex: 0 0 290px;
+        max-width: 290px;
+        scroll-snap-align: start;
+      }
+      .tuko-scroller::-webkit-scrollbar {
+        height: var(--scrollbar-height);
+      }
+      .tuko-scroller::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 999px;
+      }
+      .tuko-scroller::-webkit-scrollbar-thumb {
+        background: var(--brand-primary);
+        border-radius: 999px;
+      }
     }
 
     .chat-widget-wrapper {
@@ -166,58 +172,50 @@
       bottom: 24px;
       right: 24px;
       z-index: 1050;
-      font-family: 'Inter', sans-serif;
     }
 
     .chat-trigger-btn {
-      width: 56px;
-      height: 56px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
       color: #ffffff;
       border: none;
-      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.25);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
     }
 
     .chat-trigger-btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
     }
 
     .chat-window {
-      width: 360px;
-      height: 500px;
+      width: 320px;
+      height: 440px;
       background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
-      display: flex;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      display: none;
       flex-direction: column;
       overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: translateY(20px) scale(0.95);
-      opacity: 0;
-      pointer-events: none;
       position: absolute;
-      bottom: 72px;
+      bottom: 60px;
       right: 0;
     }
 
     .chat-window.open {
-      transform: translateY(0) scale(1);
-      opacity: 1;
-      pointer-events: auto;
+      display: flex;
     }
 
     .chat-header {
       background: #ffffff;
       border-bottom: 1px solid var(--border-color);
-      padding: 1rem 1.25rem;
+      padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -226,26 +224,26 @@
     .chat-body {
       flex: 1;
       overflow-y: auto;
-      padding: 1rem;
+      padding: 0.75rem;
       background: #f8fafc;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
     .chat-message {
-      max-width: 80%;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      line-height: 1.5;
+      max-width: 85%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      line-height: 1.4;
     }
 
     .chat-message.bot {
       background: #ffffff;
       color: var(--text-main);
       align-self: flex-start;
-      border: 1px solid var(--border-color);
+      border: 1px solid #e2e8f0;
     }
 
     .chat-message.user {
@@ -255,7 +253,7 @@
     }
 
     .chat-footer {
-      padding: 0.75rem 1rem;
+      padding: 0.5rem 0.75rem;
       border-top: 1px solid var(--border-color);
       background: #ffffff;
       display: flex;
@@ -264,77 +262,120 @@
 
     .chat-input {
       border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
       flex: 1;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
-    .chat-input:focus {
-      outline: none;
+    .trending-banner-strip {
+      background: #fff8f5;
+      border-bottom: 1px solid rgba(249, 115, 22, 0.1);
+      padding: 0.6rem 0;
+    }
+
+    /* Sandbox Interactive Styling */
+    .sandbox-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+    .sandbox-nav-btn {
+      border: 1px solid var(--border-color);
+      background: #f8fafc;
+      transition: all 0.2s ease;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+    }
+    .sandbox-nav-btn.active {
+      background: var(--brand-primary);
+      color: #ffffff;
       border-color: var(--brand-primary);
+    }
+    .terminal-window {
+      background: #0f172a;
+      color: #38bdf8;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      padding: 1rem;
+      min-height: 220px;
+      max-height: 220px;
+      overflow-y: auto;
     }
   </style>
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom py-3">
+  <!-- EXTRAS BAR INFO -->
+  <div class="trending-banner-strip">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2 text-dark font-mono" style="font-size: 0.8rem;">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-danger">LIVE</span>
+        <span class="text-secondary text-truncate" style="max-width: 320px;">Protecting local subnets from STP injection exploits</span>
+      </div>
+      <div class="text-secondary small d-none d-md-block">
+        <i class="bi bi-clock-history me-1"></i> Continuous monitoring active in Nairobi
+      </div>
+    </div>
+  </div>
+
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom py-2" style="top: 36px; padding-top: 0.6rem; padding-bottom: 0.6rem; z-index: 1030;">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="/">
-        <span class="p-1.5 px-2.5 rounded bg-warning bg-opacity-10 text-orange-650 d-flex align-items-center justify-content-center" style="background: rgba(249,115,22,0.07); color: #ea580c;">
-          <i class="bi bi-shield-lock-fill"></i>
+        <span class="p-1 px-2.5 rounded bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center" style="background: rgba(249, 115, 22, 0.08); color: #ea580c;">
+          <i class="bi bi-shield-lock-fill text-warning"></i>
         </span>
         <span class="brand-title text-dark">SurgeTechKnow</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navCollapse">
-        <ul class="navbar-nav ms-auto gap-2">
+        <ul class="navbar-nav ms-auto gap-1">
           <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="/hub">Enterprise Hub</a></li>
-          <li class="nav-item"><a class="nav-link" href="/blog">Insights</a></li>
-          <li class="nav-item"><a class="nav-link" href="/media">Showcase</a></li>
-          <li class="nav-item"><a class="nav-link text-warning font-semibold ms-lg-2" href="/admin" id="opsLink">Console Operations</a></li>
+          <li class="nav-item"><a class="nav-link" href="/blog">Insights Journal</a></li>
+          <li class="nav-item"><a class="nav-link" href="/media">Operations Gallery</a></li>
+          <li class="nav-item"><a class="nav-link text-warning font-semibold ms-lg-2" href="/admin" id="opsLink">Console Core</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <main class="mt-5 pt-4">
-    <!-- REARRANGED HERO CONTENT -->
+  <main style="margin-top: 86px;">
+    <!-- HERO SECTION: Compact & Spatially Honest -->
     <section class="hero-wrapper py-5 px-3">
-      <div class="container py-4">
-        <div class="row align-items-center g-5">
+      <div class="container">
+        <div class="row align-items-center g-4">
           <div class="col-lg-7">
-            <span class="badge bg-warning bg-opacity-10 text-orange-650 mb-3 font-mono" style="background: rgba(249,115,22,0.08); color: #ea580c; font-size: 0.8rem;">
+            <span class="badge bg-warning bg-opacity-10 text-orange-655 mb-3 font-mono" style="background: rgba(249,115,22,0.08); color: #ea580c; font-size: 0.8rem;">
               SURGE TECHKNOW SOLUTIONS
             </span>
-            <h1 class="brand-title display-4 mb-3 leading-tight text-dark">
+            <h1 class="brand-title display-5 mb-3 leading-tight text-dark">
               Secure Networks.<br>
               Smarter Systems.
             </h1>
-            <p class="text-zinc-600 fs-5 mb-4 leading-relaxed text-dark-50" style="font-size: 1.12rem;">
-              Practical Digital Solutions. Enterprise network topology architecture, rigorous cybersecurity audits, custom scripting automated processes, and systems engineered for high-concurrency compliance by certified lead auditor SurgeTechKnow.
+            <p class="text-secondary mb-4 leading-relaxed" style="font-size: 1.05rem;">
+              Practical cybersecurity, networking, automation, and ICT support solutions built for modern digital operations. Topologies engineered for high-concurrency systems audits &amp; absolute compliance.
             </p>
-            <div class="d-flex flex-wrap gap-3">
-              <a href="/about" class="btn btn-warning px-4 py-2.5 rounded-3 font-semibold text-white border-0 hover:shadow-md transition-transform hover:-translate-y-0.5" style="background: var(--brand-primary); font-size: 0.95rem;">
-                Inspect Professional Profile <i class="bi bi-arrow-right-short fs-5 ms-1"></i>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="/hub" class="btn btn-warning px-4 py-2 rounded-3 font-semibold text-white border-0 hover:shadow-sm" style="background: var(--brand-primary); font-size: 0.9rem;">
+                View Profile <i class="bi bi-arrow-right-short fs-5 ms-1"></i>
               </a>
-              <a href="/contact" class="btn btn-outline-secondary px-4 py-2.5 rounded-3 font-semibold transition-transform hover:-translate-y-0.5" style="border-radius: 10px; font-size: 0.95rem;">
-                Consultation Request
+              <a href="/contact" class="btn btn-outline-secondary px-4 py-2 rounded-3 font-semibold" style="border-radius: 8px; font-size: 0.9rem;">
+                Request Consultation
               </a>
             </div>
           </div>
           <div class="col-lg-5 text-center">
             <div class="position-relative d-inline-block">
-              <!-- Visual anchor matching the requested design -->
-              <img src="/static/header_bg.png" alt="SurgeTechKnow Systems" class="img-fluid rounded-4 shadow-lg border" style="max-height: 380px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80'">
-              <div class="position-absolute bottom-3 start-3 bg-white border rounded-3 p-2.5 px-3 shadow-sm text-start flex align-items-center gap-2" style="background: white;">
-                <div class="rounded-circle bg-success shadow-inner" style="width: 8px; height: 8px; animation: pulse-ring 1.8s infinite;"></div>
-                <div class="font-mono text-muted text-xxs d-flex flex-column leading-none" style="font-size: 10px;">
+              <img src="/static/header_bg.png" alt="SurgeTechKnow Systems" class="img-fluid rounded-3 shadow border" style="max-height: 280px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80'">
+              <div class="position-absolute bottom-3 start-3 bg-white border rounded p-2 shadow-sm text-start d-flex align-items-center gap-2" style="background: white;">
+                <div class="rounded-circle bg-success" style="width: 8px; height: 8px; animation: pulse-ring 1.8s infinite;"></div>
+                <div class="font-mono text-muted d-flex flex-column leading-none" style="font-size: 9px;">
                   <span class="text-dark fw-bold">NODE SECURITY</span>
-                  <span class="text-success">NATIVE ONLINE</span>
+                  <span class="text-success text-uppercase">ONLINE ENCRYPTED</span>
                 </div>
               </div>
             </div>
@@ -343,173 +384,593 @@
       </div>
     </section>
 
-    <!-- NEW SECTION: CATEGORY WINDOWS -->
-    <section class="container py-5 mt-3">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <h2 class="brand-title fs-2 mb-1">Editorial Category Windows</h2>
-          <p class="text-muted small m-0">Filter professional logs, compliance briefings, and process solutions by active category channels.</p>
+    <!-- NOW TRENDING ON TECH STRIP -->
+    <section class="container py-4 mt-3">
+      <div class="news-category-header">
+        <div>NOW TRENDING ON TECH</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL JOURNAL <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% for blog in trending_blogs[:6] %}
+          {% set fallback_img = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80" %}
+          {% if blog.category == "Cybersecurity" %}
+            {% set fallback_img = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80" %}
+          {% elif blog.category == "Networking" %}
+            {% set fallback_img = "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" %}
+          {% elif blog.category == "AI & Automation" %}
+            {% set fallback_img = "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80" %}
+          {% elif blog.category == "Windows News" %}
+            {% set fallback_img = "https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=600&q=80" %}
+          {% elif blog.category == "ICT Support" %}
+            {% set fallback_img = "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80" %}
+          {% endif %}
+          
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="{{ fallback_img }}" alt="{{ blog.title }}" loading="lazy">
+                <span class="news-tag">TRENDING</span>
+              </div>
+              <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                  <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category or 'Technology' }}</span>
+                  <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                    <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                  </h3>
+                  <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
+                </div>
+                <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                  <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                  <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
+                </div>
+              </div>
+            </article>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- NEW SECTION: INTERACTIVE CYBER LAB & ICT SANDBOX -->
+    <section class="container py-5 border-top border-secondary-subtle border-opacity-25">
+      <div class="news-category-header">
+        <div>INTERACTIVE CYBER LAB &amp; ICT SANDBOX</div>
+        <span class="badge bg-warning bg-opacity-10 text-orange-655 font-mono" style="background: rgba(249,115,22,0.08); color: #ea580c; font-size: 0.75rem;"><i class="bi bi-cpu animate-pulse"></i> SIMULATION LAB ACTIVE</span>
+      </div>
+      
+      <p class="text-secondary small mb-4">Select an educational simulator below to audit router settings, design private IP subnet blocks, or execute compliance audits directly inside the SurgeTechKnow laboratory frame.</p>
+
+      <div class="sandbox-card p-3 shadow-sm">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-sm sandbox-nav-btn rounded-pill active" id="btn-term" onclick="switchSandboxTab('term')">
+            <i class="bi bi-terminal me-1"></i> Router CISCO Shell
+          </button>
+          <button class="btn btn-sm sandbox-nav-btn rounded-pill" id="btn-sub" onclick="switchSandboxTab('sub')">
+            <i class="bi bi-calculator me-1"></i> Subnet Planner
+          </button>
+          <button class="btn btn-sm sandbox-nav-btn rounded-pill" id="btn-vuln" onclick="switchSandboxTab('vuln')">
+            <i class="bi bi-shield-check me-1"></i> Threat STP Scan
+          </button>
         </div>
-        <div class="d-flex gap-1 overflow-auto py-1 scrollbar-none" id="categories-tabs">
-          <button class="category-chip active" onclick="filterScrollerPosts('All')">All Pulse</button>
-          <button class="category-chip" onclick="filterScrollerPosts('Cybersecurity')">Cybersecurity</button>
-          <button class="category-chip" onclick="filterScrollerPosts('Networking')">Networking</button>
-          <button class="category-chip" onclick="filterScrollerPosts('AI & Automation')">AI &amp; Automation</button>
-          <button class="category-chip" onclick="filterScrollerPosts('Technology')">Technology</button>
-          <button class="category-chip" onclick="filterScrollerPosts('ICT Support')">ICT Support</button>
+
+        <!-- Router Terminal -->
+        <div class="sandbox-tab-content" id="tab-term">
+          <div class="terminal-window d-flex flex-column justify-content-between" id="term-box">
+            <div id="term-history">
+              <div>SurgeTechKnow Router Console (iOS v15.4 CCNA Lab)</div>
+              <div>Type 'help' to review simulated commands list.</div>
+              <br>
+              <div>SurgeRouter#</div>
+            </div>
+            <div class="d-flex align-items-center gap-1 border-top border-secondary border-opacity-20 pt-2 mt-2">
+              <span class="text-success select-none">SurgeRouter#</span>
+              <input type="text" id="term-input" class="bg-transparent border-0 text-info font-mono flex-grow-1 outline-none w-100" style="outline: none; box-shadow: none;" onkeypress="handleTermKey(event)" placeholder="Type command here..." autofocus>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subnet Planner -->
+        <div class="sandbox-tab-content d-none" id="tab-sub">
+          <div class="bg-light p-3 rounded-2 border">
+            <div class="row g-3">
+              <div class="col-md-5">
+                <label class="form-label text-secondary small fw-bold font-mono">BASE CONGESTION IP</label>
+                <input type="text" id="sub-ip" class="form-control text-mono font-mono" value="192.168.1.0">
+              </div>
+              <div class="col-md-4">
+                <label class="form-label text-secondary small fw-bold font-mono">CIDR PROTOCOL</label>
+                <select id="sub-cidr" class="form-select text-mono font-mono">
+                  <option value="24">/24 (254 hosts)</option>
+                  <option value="25">/25 (126 hosts)</option>
+                  <option value="26">/26 (62 hosts)</option>
+                  <option value="27">/27 (30 hosts)</option>
+                  <option value="28">/28 (14 hosts)</option>
+                  <option value="29">/29 (6 hosts)</option>
+                  <option value="30">/30 (2 hosts)</option>
+                </select>
+              </div>
+              <div class="col-md-3 d-flex align-items-end">
+                <button type="button" class="btn btn-warning w-100 text-white font-semibold border-0" onclick="calculateSubnets()" style="background:var(--brand-primary);">Calculate Node</button>
+              </div>
+            </div>
+
+            <div class="mt-3 p-3 bg-white border rounded font-mono" id="sub-results" style="font-size: 0.85rem; display:none;">
+              <!-- calculated here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Vulnerability Scan -->
+        <div class="sandbox-tab-content d-none" id="tab-vuln">
+          <div class="bg-light p-3 rounded-2 border">
+            <div class="d-flex gap-2">
+              <input type="text" id="vuln-ip" class="form-control font-mono font-semibold" value="192.168.1.1">
+              <button class="btn btn-warning text-white border-0 text-nowrap font-semibold" id="vuln-start-btn" onclick="startSTPScan()" style="background:var(--brand-primary);">Execute Audit Scan</button>
+            </div>
+            
+            <div class="terminal-window mt-3 text-emerald-400" id="vuln-output" style="min-height: 160px; max-height: 160px;">
+              Ready to execute vulnerability scan and STP loop topology diagnostics...
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="horizontal-scroll-container" id="horizontal-blogs-scroller">
-        {% if blogs %}
-          {% for blog in blogs %}
-            <div class="blog-scroller-item" data-category="{{ blog.category }}">
-              <article class="blog-card-compact h-100 d-flex flex-column justify-content-between">
-                <div>
-                  <div class="gallery-img-wrapper">
-                    {% if blog_images.get(blog.id) %}
-                      <img src="{{ blog_images.get(blog.id) }}" alt="{{ blog.title }}" loading="lazy">
-                    {% else %}
-                      <img src="/static/header_bg.png" alt="{{ blog.title }}" loading="lazy">
-                    {% endif %}
-                  </div>
-                  <div class="p-4">
-                    <span class="badge bg-warning bg-opacity-10 text-orange-655 font-mono mb-2" style="background: rgba(249,115,22,0.07); color:#ea580c; font-size:0.7rem;">{{ blog.category }}</span>
-                    <h3 class="fw-bold fs-6 mb-2 leading-snug"><a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none">{{ blog.title }}</a></h3>
-                    <p class="text-muted small line-clamp-2 leading-relaxed mb-0">{{ blog.content|striptags|truncate(80) }}</p>
-                  </div>
+    <!-- CATEGORY SECTION: Cybersecurity -->
+    <section class="container py-4">
+      <div class="news-category-header">
+        <div>CYBERSECURITY WINDOW</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL <i class="bi bi-chevron-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if cyber_blogs %}
+          {% for blog in cyber_blogs[:3] %}
+            <div class="col scroller-item">
+              <article class="news-card">
+                <div class="news-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80" alt="{{ blog.title }}" loading="lazy">
+                  <span class="news-tag">CYBER-OPS</span>
                 </div>
-                <div class="px-4 pb-4">
-                  <a href="/blog/{{ blog.slug }}" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="font-size:0.8rem;">Read Log</a>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                      <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                    </h3>
+                    <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
+                  </div>
+                  <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                    <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
+                  </div>
                 </div>
               </article>
             </div>
           {% endfor %}
         {% else %}
-          <div class="py-5 text-center w-100 text-muted col-span-12 font-mono">
-            <i class="bi bi-journal-x fs-2 d-block mb-2"></i>
-            Installing dynamic cybersecurity briefings...
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80" alt="Cybersec Audit Brief" loading="lazy">
+                <span class="news-tag">CYBER-OPS</span>
+              </div>
+              <div class="p-3">
+                <span class="text-warning text-mono" style="font-size:0.75rem;">Cybersecurity</span>
+                <h3 class="fw-bold fs-6 mt-1 mb-2">Zero Trust Architecture &amp; Server Hardening</h3>
+                <p class="text-secondary small leading-relaxed line-clamp-3">Meticulous system assessments protecting server ingress loops and VLAN setups designed by SurgeTechKnow.</p>
+                <hr class="my-2">
+                <a href="/blog" class="text-orange-500 font-semibold small text-decoration-none">Review Journal Indices <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </article>
           </div>
         {% endif %}
       </div>
     </section>
 
-    <!-- SECTION: OPERATIONS SHOWCASE GRID -->
-    <section class="container py-5 border-top border-secondary-subtle border-opacity-25">
-      <div class="mb-4">
-        <h2 class="brand-title fs-2 mb-1">Operations Showcase Gallery</h2>
-        <p class="text-muted small">Explore hardware cabinet setups, fiber trunk deployments, diagnostics terminals, and certified configs.</p>
+    <!-- CATEGORY SECTION: Networking -->
+    <section class="container py-4">
+      <div class="news-category-header">
+        <div>NETWORKING CHANNELS</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL <i class="bi bi-chevron-right"></i></a>
       </div>
-
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% if gal_items %}
-          {% for item in gal_items[:3] %}
-            <div class="col">
-              <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
-                <div>
-                  <div class="gallery-img-wrapper">
-                    {% if item.type == 'image' %}
-                      <img src="{{ item.url }}" alt="{{ item.title }}" loading="lazy">
-                    {% else %}
-                      <video src="{{ item.url }}" muted playsinline preload="metadata" onmouseover="this.play()" onmouseout="this.pause()"></video>
-                    {% endif %}
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if net_blogs %}
+          {% for blog in net_blogs[:3] %}
+            <div class="col scroller-item">
+              <article class="news-card">
+                <div class="news-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" alt="{{ blog.title }}" loading="lazy">
+                  <span class="news-tag">CISCO CCNA</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                      <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                    </h3>
+                    <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
                   </div>
-                  <div class="p-4">
-                    <h3 class="fw-bold fs-6 mb-2">{{ item.title or item.name }}</h3>
-                    <p class="text-muted small leading-relaxed mb-0 line-clamp-2">{{ item.caption or 'Certified setup operations.' }}</p>
+                  <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                    <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
                   </div>
                 </div>
-                <div class="p-4 pt-0">
-                  <a href="/media/view/{{ item.name }}" class="btn btn-sm btn-outline-secondary w-100 py-1.5" style="border-radius:8px; font-size:0.8rem;">Inspect Blueprint</a>
+              </article>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" alt="WAN Topologies" loading="lazy">
+                <span class="news-tag">CISCO CCNA</span>
+              </div>
+              <div class="p-3">
+                <span class="text-warning text-mono" style="font-size:0.75rem;">Networking</span>
+                <h3 class="fw-bold fs-6 mt-1 mb-2">High-Availability Cisco Cabinet Architecture</h3>
+                <p class="text-secondary small leading-relaxed line-clamp-3">Subnet segmentation guidelines, multi-gigabit WAN trunks, and spanning-tree configurations verified by SurgeTechKnow.</p>
+                <hr class="my-2">
+                <a href="/blog" class="text-orange-500 font-semibold small text-decoration-none">Review Journal Indices <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- CATEGORY SECTION: AI & Automation -->
+    <section class="container py-4">
+      <div class="news-category-header">
+        <div>AI &amp; AUTOMATION SYSTEM</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL <i class="bi bi-chevron-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if ai_blogs %}
+          {% for blog in ai_blogs[:3] %}
+            <div class="col scroller-item">
+              <article class="news-card">
+                <div class="news-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80" alt="{{ blog.title }}" loading="lazy">
+                  <span class="news-tag">AUTOMATE</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                      <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                    </h3>
+                    <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
+                  </div>
+                  <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                    <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=600&q=80" alt="Server Scripts" loading="lazy">
+                <span class="news-tag">AUTOMATE</span>
+              </div>
+              <div class="p-3">
+                <span class="text-warning text-mono" style="font-size:0.75rem;">AI &amp; Automation</span>
+                <h3 class="fw-bold fs-6 mt-1 mb-2">Deploying Autonomous Diagnostics and Cron Audits</h3>
+                <p class="text-secondary small leading-relaxed line-clamp-3">Using clean Python, systemctl dæmons, and secure server scripts to inspect server switches under load.</p>
+                <hr class="my-2">
+                <a href="/blog" class="text-orange-500 font-semibold small text-decoration-none">Review Journal Indices <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- CATEGORY SECTION: Windows News -->
+    <section class="container py-4">
+      <div class="news-category-header">
+        <div>WINDOWS NEWS WINDOW</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL <i class="bi bi-chevron-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if win_blogs %}
+          {% for blog in win_blogs[:3] %}
+            <div class="col scroller-item">
+              <article class="news-card">
+                <div class="news-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=600&q=80" alt="{{ blog.title }}" loading="lazy">
+                  <span class="news-tag">WINDOWS INFRA</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                      <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                    </h3>
+                    <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
+                  </div>
+                  <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                    <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1624561172888-ac93c696e10c?auto=format&fit=crop&w=600&q=80" alt="Windows Active Directory" loading="lazy">
+                <span class="news-tag">WINDOWS INFRA</span>
+              </div>
+              <div class="p-3">
+                <span class="text-warning text-mono" style="font-size:0.75rem;">Windows News</span>
+                <h3 class="fw-bold fs-6 mt-1 mb-2">Windows Active Directory Hardening Protocols</h3>
+                <p class="text-secondary small leading-relaxed line-clamp-3">Enterprise server domain forests configuration and GPO security parameters built by SurgeTechKnow.</p>
+                <hr class="my-2">
+                <a href="/blog" class="text-orange-500 font-semibold small text-decoration-none">Review Journal Indices <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- CATEGORY SECTION: Technology -->
+    <section class="container py-4">
+      <div class="news-category-header">
+        <div>GENERAL TECHNOLOGY SECTOR</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL <i class="bi bi-chevron-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if tech_blogs %}
+          {% for blog in tech_blogs[:3] %}
+            <div class="col scroller-item">
+              <article class="news-card">
+                <div class="news-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80" alt="{{ blog.title }}" loading="lazy">
+                  <span class="news-tag">TECH LABS</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                      <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                    </h3>
+                    <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
+                  </div>
+                  <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                    <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80" alt="Technology Innovations" loading="lazy">
+                <span class="news-tag">TECH LABS</span>
+              </div>
+              <div class="p-3">
+                <span class="text-warning text-mono" style="font-size:0.75rem;">Technology</span>
+                <h3 class="fw-bold fs-6 mt-1 mb-2">Navigating Enterprise Virtualization Frameworks</h3>
+                <p class="text-secondary small leading-relaxed line-clamp-3">Practical guidelines comparing Hyper-V clusters, KVM installations, and secure virtualization sandboxes by SurgeTechKnow.</p>
+                <hr class="my-2">
+                <a href="/blog" class="text-orange-500 font-semibold small text-decoration-none">Review Journal Indices <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- CATEGORY SECTION: ICT Support -->
+    <section class="container py-4">
+      <div class="news-category-header">
+        <div>ICT SUPPORT GUIDELINES</div>
+        <a href="/blog" class="text-decoration-none small text-warning font-semibold">VIEW ALL <i class="bi bi-chevron-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if ict_blogs %}
+          {% for blog in ict_blogs[:3] %}
+            <div class="col scroller-item">
+              <article class="news-card">
+                <div class="news-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80" alt="{{ blog.title }}" loading="lazy">
+                  <span class="news-tag">ICT DESK</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <span class="text-warning text-mono uppercase" style="font-size: 0.75rem; font-weight: 600;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mt-1 mb-2 leading-snug">
+                      <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">{{ blog.title }}</a>
+                    </h3>
+                    <p class="text-secondary small line-clamp-2 leading-relaxed mb-3">{{ blog.content|striptags|truncate(80) }}</p>
+                  </div>
+                  <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+                    <span class="text-muted small font-mono">{{ blog.timestamp[:10] }}</span>
+                    <a href="/blog/{{ blog.slug }}" class="text-warning text-decoration-none small font-semibold">Read <i class="bi bi-chevron-right" style="font-size:0.75rem;"></i></a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="col scroller-item">
+            <article class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80" alt="ICT Infrastructure" loading="lazy">
+                <span class="news-tag">ICT DESK</span>
+              </div>
+              <div class="p-3">
+                <span class="text-warning text-mono" style="font-size:0.75rem;">ICT Support</span>
+                <h3 class="fw-bold fs-6 mt-1 mb-2">Desktop Support Diagnostics &amp; STP Isolation</h3>
+                <p class="text-secondary small leading-relaxed line-clamp-3">Subnet loops physical isolation audits and active workstation routing diagnostics configured by SurgeTechKnow specialists.</p>
+                <hr class="my-2">
+                <a href="/blog" class="text-orange-500 font-semibold small text-decoration-none">Review Journal Indices <i class="bi bi-arrow-right"></i></a>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- SECTION: OPERATIONS GALLERY (RENAMED & POLISHED WITH 5-6 ITEMS AND HORIZONTAL SCROLL ON MOBILE) -->
+    <section class="container py-5 border-top border-secondary-subtle border-opacity-25">
+      <div class="news-category-header">
+        <div>OPERATIONS GALLERY</div>
+        <a href="/media" class="text-decoration-none small text-warning font-semibold">VIEW MORE SHOWCASE <i class="bi bi-chevron-right"></i></a>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-3 tuko-scroller">
+        {% if gallery_images %}
+          {% for item in gallery_images[:6] %}
+            <div class="col scroller-item">
+              <div class="news-card">
+                <div class="news-img-wrapper">
+                  {% if item.type == 'image' %}
+                    <img src="{{ item.url }}" alt="{{ item.title or item.name }}" loading="lazy">
+                  {% else %}
+                    <video src="{{ item.url }}" muted playsinline preload="metadata" onmouseover="this.play()" onmouseout="this.pause()"></video>
+                  {% endif %}
+                  <span class="news-tag uppercase">DEPLOYED SETUP</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                  <div>
+                    <h3 class="fw-bold fs-6 mb-2">{{ item.title or item.name }}</h3>
+                    <p class="text-secondary small leading-relaxed mb-3 line-clamp-2">{{ item.caption or 'Certified setup operations.' }}</p>
+                  </div>
+                  <div class="pt-2 border-top">
+                    <a href="/media/view/{{ item.name }}" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="border-radius:6px; font-size:0.8rem;">Inspect Blueprint</a>
+                  </div>
                 </div>
               </div>
             </div>
           {% endfor %}
         {% else %}
           <!-- Static Fallbacks -->
-          <div class="col">
-            <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
-              <div>
-                <div class="gallery-img-wrapper">
-                  <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80" alt="Cabinet Assembly" loading="lazy">
-                </div>
-                <div class="p-4">
-                  <h3 class="fw-bold fs-6 mb-2">SurgeTechKnow Cabinet Assembly</h3>
-                  <p class="text-muted small leading-relaxed mb-0 line-clamp-2">Cisco WAN topology cabinet assemblies and Category 6 termination protocols.</p>
-                </div>
+          <div class="col scroller-item">
+            <div class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80" alt="Cabinet Assembly" loading="lazy">
+                <span class="news-tag">HARDWARE</span>
               </div>
-              <div class="p-4 pt-0">
-                <span class="btn btn-sm btn-outline-secondary w-100 py-1.5 disabled" style="border-radius:8px; font-size:0.8rem;">Setup verified</span>
+              <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                  <h3 class="fw-bold fs-6 mb-2">Cabinet Assembly Setup</h3>
+                  <p class="text-secondary small leading-relaxed line-clamp-2">Cisco WAN topology cabinet assemblies and Category 6 termination protocols.</p>
+                </div>
+                <div class="pt-2 border-top">
+                  <a href="/media/view/cisco" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="border-radius:6px; font-size:0.8rem;">Inspect Blueprint</a>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col">
-            <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
-              <div>
-                <div class="gallery-img-wrapper">
-                  <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" alt="Fiber Trunk" loading="lazy">
-                </div>
-                <div class="p-4">
+          <div class="col scroller-item">
+            <div class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" alt="Fiber Trunk" loading="lazy">
+                <span class="news-tag">FIBER CORES</span>
+              </div>
+              <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
                   <h3 class="fw-bold fs-6 mb-2">Fiber Terminal Trunk Setup</h3>
-                  <p class="text-muted small leading-relaxed mb-0 line-clamp-2">Optical multimode fiber setups feeding switch aggregation layers.</p>
+                  <p class="text-secondary small leading-relaxed line-clamp-2">Optical multimode fiber setups feeding switch aggregation layers.</p>
                 </div>
-              </div>
-              <div class="p-4 pt-0">
-                <span class="btn btn-sm btn-outline-secondary w-100 py-1.5 disabled" style="border-radius:8px; font-size:0.8rem;">Setup verified</span>
+                <div class="pt-2 border-top">
+                  <a href="/media/view/fiber" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="border-radius:6px; font-size:0.8rem;">Inspect Blueprint</a>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col">
-            <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
-              <div>
-                <div class="gallery-img-wrapper">
-                  <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80" alt="Telemetry Sweep" loading="lazy">
-                </div>
-                <div class="p-4">
+          <div class="col scroller-item">
+            <div class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80" alt="Telemetry Sweep" loading="lazy">
+                <span class="news-tag">TELEMETRY</span>
+              </div>
+              <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
                   <h3 class="fw-bold fs-6 mb-2">Subnet Telemetry Sweeps</h3>
-                  <p class="text-muted small leading-relaxed mb-0 line-clamp-2">Continuous packet diagnostics locating STP leaks and rogue scanning vectors.</p>
+                  <p class="text-secondary small leading-relaxed line-clamp-2">Continuous packet diagnostics locating STP leaks and rogue scanning vectors.</p>
+                </div>
+                <div class="pt-2 border-top">
+                  <a href="/media/view/subnet" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="border-radius:6px; font-size:0.8rem;">Inspect Blueprint</a>
                 </div>
               </div>
-              <div class="p-4 pt-0">
-                <span class="btn btn-sm btn-outline-secondary w-100 py-1.5 disabled" style="border-radius:8px; font-size:0.8rem;">Setup verified</span>
+            </div>
+          </div>
+          <div class="col scroller-item">
+            <div class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80" alt="Hyper-V Virtual Switch Sandbox" loading="lazy">
+                <span class="news-tag">VIRTUAL SWITCH</span>
+              </div>
+              <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                  <h3 class="fw-bold fs-6 mb-2">Hyper-V Virtual Switching Configuration</h3>
+                  <p class="text-secondary small leading-relaxed line-clamp-2">Nested hypervisor switches and secure private network interfaces configuration.</p>
+                </div>
+                <div class="pt-2 border-top">
+                  <a href="/media" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="border-radius:6px; font-size:0.8rem;">Evaluate Core Labs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col scroller-item">
+            <div class="news-card">
+              <div class="news-img-wrapper">
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80" alt="Dual Fiber STP Trunk link" loading="lazy">
+                <span class="news-tag">STP TRUNK</span>
+              </div>
+              <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                <div>
+                  <h3 class="fw-bold fs-6 mb-2">Dual Fiber Trunk STP Redundancy</h3>
+                  <p class="text-secondary small leading-relaxed line-clamp-2">Configuring redundant ports using rapid STP spanning tree matrices.</p>
+                </div>
+                <div class="pt-2 border-top">
+                  <a href="/media" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="border-radius:6px; font-size:0.8rem;">Evaluate Core Labs</a>
+                </div>
               </div>
             </div>
           </div>
         {% endif %}
       </div>
-      <div class="text-center mt-4">
-        <a href="/media" class="btn btn-outline-warning py-2 px-4 rounded-3 text-warning font-semibold">View Operations Showcase <i class="bi bi-chevron-right ms-1"></i></a>
-      </div>
     </section>
   </main>
 
-  <!-- CHAT MODEL WIDGET (GEMINI BACKED) -->
+  <!-- CHAT WIDGET -->
   <div class="chat-widget-wrapper">
     <button class="chat-trigger-btn" onclick="toggleChatWindow()">
-      <i class="bi bi-robot fs-3" id="chat-icon"></i>
+      <i class="bi bi-robot fs-4" id="chat-icon"></i>
     </button>
     
-    <div class="chat-window d-flex flex-column" id="chatWindow">
+    <div class="chat-window" id="chatWindow">
       <div class="chat-header">
         <div class="d-flex align-items-center gap-2">
-          <span class="p-1 px-1.5 rounded bg-warning bg-opacity-10 text-orange-650" style="background:#fff3cd;"><i class="bi bi-shield-fill-check"></i></span>
+          <span class="p-1 px-2 rounded bg-warning bg-opacity-10 text-orange-655" style="background:#fff3cd; color:#ea580c;"><i class="bi bi-shield-fill-check"></i></span>
           <div class="text-start leading-none">
-            <span class="text-dark fw-bold d-block" style="font-size:0.9rem;">Surge Assistant</span>
-            <span class="text-success font-mono" style="font-size:10px;">SECURE AI ONLINE</span>
+            <span class="text-dark fw-bold d-block" style="font-size:0.85rem; line-height: 1.1;">Surge Assistant</span>
+            <span class="text-success font-mono" style="font-size:9px;">SECURE AI ONLINE</span>
           </div>
         </div>
-        <button onclick="toggleChatWindow()" class="btn-close" style="font-size:0.8rem;"></button>
+        <button onclick="toggleChatWindow()" class="btn-close" style="font-size:0.7rem;"></button>
       </div>
       
       <div class="chat-body" id="chatBody">
         <div class="chat-message bot">
-          Hello! I am Surge Assistant, powered securely by Gemini on the server. Ask me anything about subnets, CCNA audits, network cabinetry, or custom server processes!
+          Hello! I am Surge Assistant, powered securely by Gemini on the server. Ask me anything about subnets, CCNA audits, network cabling, or automated server scripts!
         </div>
       </div>
       
       <div class="chat-footer">
-        <input type="text" id="chatText" class="chat-input" placeholder="Query network configs..." onkeypress="handleChatKey(event)">
-        <button onclick="sendChatMessage()" class="btn btn-warning p-2 px-3 border-0 rounded" style="background:var(--brand-primary); color:white;"><i class="bi bi-send"></i></button>
+        <input type="text" id="chatText" class="chat-input" placeholder="Ask about network configs..." onkeypress="handleChatKey(event)">
+        <button onclick="sendChatMessage()" class="btn btn-warning p-1 px-2 border-0 rounded" style="background:var(--brand-primary); color:white;"><i class="bi bi-send fs-6"></i></button>
       </div>
     </div>
   </div>
@@ -519,14 +980,16 @@
       <div class="row pt-2 g-4 text-center text-md-start">
         <div class="col-md-6">
           <h5 class="fw-bold m-0 text-dark">SurgeTechKnow Solutions</h5>
-          <p class="text-muted small mt-1.5 mb-0">Certified Cisco WAN topologies, network audits, and custom node configurations.</p>
-          <span class="font-mono text-zinc-650 text-xxs d-block mt-3" style="font-size:10px;">Nairobi Ops Block. Connection audited and active in Postgres.</span>
+          <p class="text-secondary small mt-1.5 mb-0">Certified Cisco WAN topologies, network audits, and custom node configurations.</p>
+          <span class="font-mono text-secondary text-xxs d-block mt-3" style="font-size:10px;">Nairobi Ops Block. Connection audited and active in Postgres.</span>
         </div>
         <div class="col-md-6 text-md-end font-mono" style="font-size: 11px;">
-          <a href="/disclaimer" class="text-muted text-decoration-none me-3 hover:text-warning">Disclaimer</a>
-          <a href="/privacy" class="text-muted text-decoration-none me-3 hover:text-warning">Privacy</a>
-          <a href="/terms" class="text-muted text-decoration-none me-3 hover:text-warning">Terms</a>
-          <a href="/cookies" class="text-muted text-decoration-none hover:text-warning">Cookies</a>
+          <a href="/about" class="text-secondary text-decoration-none me-3 hover:text-warning d-inline-block py-1">About Us</a>
+          <a href="/contact" class="text-secondary text-decoration-none me-3 hover:text-warning d-inline-block py-1">Contact Us</a>
+          <a href="/disclaimer" class="text-secondary text-decoration-none me-3 hover:text-warning d-inline-block py-1">Disclaimer</a>
+          <a href="/privacy-policy" class="text-secondary text-decoration-none me-3 hover:text-warning d-inline-block py-1">Privacy</a>
+          <a href="/terms" class="text-secondary text-decoration-none me-3 hover:text-warning d-inline-block py-1">Terms</a>
+          <a href="/cookie-policy" class="text-secondary text-decoration-none hover:text-warning d-inline-block py-1">Cookies Policy</a>
         </div>
       </div>
     </div>
@@ -534,36 +997,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- VISITOR TRACKING & INTERACTIVE BEACON -->
   <script>
-    // Beacon visit audit parameter injection
+    // Beacon visit audit parameters
     fetch("/api/track_visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     });
 
-    // Filtering routine for dynamic items scroller
-    function filterScrollerPosts(category) {
-      const chips = document.querySelectorAll(".category-chip");
-      chips.forEach(c => {
-        if (c.innerText === category || (category === 'All' && c.innerText.startsWith('All'))) {
-          c.classList.add("active");
-        } else {
-          c.classList.remove("active");
-        }
-      });
-
-      const cards = document.querySelectorAll(".blog-scroller-item");
-      cards.forEach(c => {
-        if (category === 'All' || c.getAttribute("data-category") === category) {
-          c.style.display = "block";
-        } else {
-          c.style.display = "none";
-        }
-      });
-    }
-
-    // Secret Ctrl+Shift+A login dispatcher
+    // Secret Ctrl+Shift+A admin router
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         e.preventDefault();
@@ -571,7 +1012,7 @@
       }
     });
 
-    // Chat drawer toggles
+    // Chat widget mechanics
     function toggleChatWindow() {
       const win = document.getElementById("chatWindow");
       win.classList.toggle("open");
@@ -592,21 +1033,19 @@
       
       const body = document.getElementById("chatBody");
       
-      // User bubble
       const uMsg = document.createElement("div");
       uMsg.className = "chat-message user";
       uMsg.innerText = text;
       body.appendChild(uMsg);
       body.scrollTop = body.scrollHeight;
 
-      // Processing bubble
       const pMsg = document.createElement("div");
       pMsg.className = "chat-message bot font-mono text-muted text-xs";
-      pMsg.innerText = "Consulting Gemini core configuration parameters...";
+      pMsg.innerText = "Consulting Gemini configuration parameters...";
       body.appendChild(pMsg);
       body.scrollTop = body.scrollHeight;
 
-      fetch("/api/chat", {
+      fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text })
@@ -619,7 +1058,134 @@
         bMsg.innerText = data.reply;
         body.appendChild(bMsg);
         body.scrollTop = body.scrollHeight;
+      })
+      .catch(err => {
+        pMsg.remove();
+        console.error(err);
       });
+    }
+
+    // INTERACTIVE CYBER LAB & SANDBOX SCRIPTS
+    function switchSandboxTab(tabName) {
+      document.querySelectorAll('.sandbox-tab-content').forEach(el => el.classList.add('d-none'));
+      document.querySelectorAll('.sandbox-nav-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabName).classList.remove('d-none');
+      document.getElementById('btn-' + tabName).classList.add('active');
+    }
+
+    // Terminal Shell
+    const termHistory = document.getElementById('term-history');
+    const termInput = document.getElementById('term-input');
+    
+    function handleTermKey(e) {
+      if (e.key === "Enter") {
+        const cmd = termInput.value.trim();
+        termInput.value = "";
+        
+        if (!cmd) return;
+        
+        let reply = "";
+        const lower = cmd.toLowerCase();
+        
+        if (lower === 'help') {
+          reply = `Available configurations:\n  help                          - Display this menu\n  show run                      - Review active routing configs\n  show ip interface brief       - Inspect active interface IPs\n  ping <ip>                     - Send ICMP echo requests\n  config t                      - Enter configuration mode\n  clear                         - Clear terminal console`;
+        } else if (lower === 'clear') {
+          termHistory.innerHTML = "SurgeTechKnow Router Console (iOS v15.4 CCNA Lab)\nSurgeRouter#";
+          return;
+        } else if (lower.startsWith('ping ')) {
+          const ip = cmd.substring(5).trim();
+          reply = `Sending 5, 100-byte ICMP Echos to ${ip}, timeout is 2 seconds:\n!!!!!\nSuccess rate is 100 percent (5/5), round-trip min/avg/max = 1/3/8 ms`;
+        } else if (lower === 'show run') {
+          reply = `building configuration...\n\nCurrent configuration : 1584 bytes\n!\ninterface GigabitEthernet0/0\n description WAN Core Link\n ip address 10.0.0.1 255.255.255.252\n ip access-group ZERO_TRUST_IN in\n speed auto\n duplex auto\n!\ninterface GigabitEthernet0/1\n description Corporate LAN\n ip address 192.168.1.1 255.255.255.0\n ip helper-address 192.168.1.10\n!\nrouter ospf 10\n passive-interface GigabitEthernet0/1\n network 10.0.0.0 0.0.0.3 area 0\n network 192.168.1.0 0.0.0.255 area 0\n!`;
+        } else if (lower === 'show ip interface brief' || lower === 'show ip int brief') {
+          reply = `Interface                  IP-Address      OK? Method Status                Protocol\nGigabitEthernet0/0         10.0.0.1        YES manual up                    up\nGigabitEthernet0/1         192.168.1.1      YES manual up                    up\nLoopback0                  127.0.0.1       YES manual up                    up`;
+        } else if (lower === 'config t' || lower === 'configure terminal') {
+          reply = `Enter configuration commands, one per line. End with CNTL/Z.\nSurgeRouter(config)#\n% Warning: Secure terminal session locks configuration changes for raw guest trials.`;
+        } else {
+          reply = `% Invalid command detected at '^' marker. Type 'help' for listed subcommands.`;
+        }
+        
+        const line = document.createElement("div");
+        line.innerHTML = `<span class="text-secondary">SurgeRouter#</span> <span class="text-info">${cmd}</span>\n<div class="text-white mt-1" style="white-space: pre-wrap;">${reply}</div><br>`;
+        termHistory.appendChild(line);
+        document.getElementById('term-box').scrollTop = document.getElementById('term-box').scrollHeight;
+      }
+    }
+
+    // Subnet Planner
+    function calculateSubnets() {
+      const ip = document.getElementById('sub-ip').value.trim();
+      const cidr = parseInt(document.getElementById('sub-cidr').value);
+      
+      const resultsDiv = document.getElementById('sub-results');
+      resultsDiv.style.display = 'block';
+      
+      // Calculate basic parameters
+      const totalHosts = Math.pow(2, 32 - cidr) - 2;
+      let mask = "";
+      if (cidr === 24) mask = "255.255.255.0";
+      else if (cidr === 25) mask = "255.255.255.128";
+      else if (cidr === 26) mask = "255.255.255.192";
+      else if (cidr === 27) mask = "255.255.255.224";
+      else if (cidr === 28) mask = "255.255.255.240";
+      else if (cidr === 29) mask = "255.255.255.248";
+      else if (cidr === 30) mask = "255.255.255.252";
+      
+      const lastOctet = ip.split('.').pop();
+      const segment = ip.substring(0, ip.lastIndexOf('.'));
+      
+      const networkIP = `${segment}.0`;
+      const broadcastIP = `${segment}.${Math.pow(2, 32 - cidr) - 1}`;
+      const firstHost = `${segment}.1`;
+      const lastHost = `${segment}.${Math.pow(2, 32 - cidr) - 2}`;
+      
+      resultsDiv.innerHTML = `
+        <h5 class="text-dark fw-bold mb-2"><i class="bi bi-shield-check text-success"></i> Subnet Calculations Certified:</h5>
+        <div class="row g-2">
+          <div class="col-sm-6"><strong>Network CIDR:</strong> ${ip}/${cidr}</div>
+          <div class="col-sm-6"><strong>Subnet Mask:</strong> ${mask}</div>
+          <div class="col-sm-6"><strong>Network Boundary:</strong> ${networkIP}</div>
+          <div class="col-sm-6"><strong>Broadcast Target:</strong> ${broadcastIP}</div>
+          <div class="col-sm-6"><strong>Valid IP Scale:</strong> ${firstHost} - ${lastHost}</div>
+          <div class="col-sm-6"><strong>Total Host Slots:</strong> ${totalHosts} usable nodes</div>
+        </div>
+      `;
+    }
+
+    // Threat STP Scanner
+    let vulnInterval = null;
+    function startSTPScan() {
+      const ip = document.getElementById('vuln-ip').value.trim();
+      const output = document.getElementById('vuln-output');
+      const startBtn = document.getElementById('vuln-start-btn');
+      
+      startBtn.disabled = true;
+      output.innerText = `Starting vulnerability sweep & STP topology isolation on node ${ip}...\n`;
+      
+      let step = 0;
+      const logs = [
+        `[INFO] Querying active VLAN loops on ${ip}..`,
+        `[WARNING] STP BPDU priorities unencrypted on secondary switch interface!`,
+        `[INFO] Evaluating Bridge Priorities (STP Root Bridge check)...`,
+        `[ALERT] Rogue STP election frames detected on Port G0/2!`,
+        `[INFO] Running automatic port isolation daemon...`,
+        `[SUCCESS] Port G0/2 shutdown immediately under Guard guidelines.`,
+        `[SUCCESS] Target node ${ip} is now SECURED and isolated against topology exploits.`
+      ];
+      
+      if (vulnInterval) clearInterval(vulnInterval);
+      
+      vulnInterval = setInterval(() => {
+        if (step < logs.length) {
+          output.innerText += logs[step] + "\n";
+          output.scrollTop = output.scrollHeight;
+          step++;
+        } else {
+          clearInterval(vulnInterval);
+          startBtn.disabled = false;
+        }
+      }, 900);
     }
   </script>
 </body>
