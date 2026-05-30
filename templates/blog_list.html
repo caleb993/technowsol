@@ -1,1451 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <script>
-    (function() {
-      const savedTheme = localStorage.getItem("theme") || "dark";
-      document.documentElement.setAttribute("data-bs-theme", savedTheme === "light" ? "light" : "dark");
-    })();
-  </script>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  {% set canonical_url = 'https://techknowsolution.co.ke' ~ request.path %}
-  {% set seo_title = 'SurgeTechKnow Journal • Cybersecurity, Networking, AI & Web Systems' %}
-  {% set seo_description = 'Explore practical cybersecurity, Cisco networking, ICT support, AI automation, cloud integration, Python systems and modern web development articles by SurgeTechKnow at TechKnow Solutions.' %}
-  {% set seo_image = 'https://techknowsolution.co.ke/static/ogimage.png' %}
-
-  <title>{{ seo_title }}</title>
-  <meta name="description" content="{{ seo_description }}">
-  <link rel="canonical" href="{{ canonical_url }}">
-
-  <meta name="author" content="SurgeTechKnow">
-  <meta name="creator" content="SurgeTechKnow">
-  <meta name="publisher" content="TechKnow Solutions">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-
-  <meta name="application-name" content="TechKnow Solutions">
-  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
-  <meta name="theme-color" content="#07111f">
-  <meta name="language" content="English">
-  <meta name="rating" content="general">
-  <meta name="distribution" content="global">
-  <meta name="geo.region" content="KE-30">
-  <meta name="geo.placename" content="Nairobi">
-
-  <meta property="og:site_name" content="TechKnow Solutions">
-  <meta property="og:url" content="{{ canonical_url }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insights & Cybersecurity Editorial Gateway - SurgeTechKnow</title>
+  <!-- High SEO compliance meta tags -->
+  <meta name="description" content="Read expert insights in networking, cybersecurity, high-concurrency systems, and smart automation on the SurgeTechKnow editorial dashboard. Discover tech audits and compliance strategies.">
+  <meta name="keywords" content="SurgeTechKnow, Cybersecurity, Networking, Automation, ICT Support, CCNA Labs, Tech Logs">
+  <meta property="og:title" content="Insights & Cybersecurity Editorial Gateway - SurgeTechKnow">
+  <meta property="og:description" content="Expert insights in networking, cybersecurity, automation, and systems compliance by SurgeTechKnow.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ seo_title }}">
-  <meta property="og:description" content="{{ seo_description }}">
-  <meta property="og:image" content="{{ seo_image }}">
-  <meta property="og:image:secure_url" content="{{ seo_image }}">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="TechKnow Solutions Blog — Cybersecurity, AI, Networking and Systems Development by SurgeTechKnow">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@techknowsols">
-  <meta name="twitter:title" content="{{ seo_title }}">
-  <meta name="twitter:description" content="{{ seo_description }}">
-  <meta name="twitter:image" content="{{ seo_image }}">
-
-  <link rel="icon" type="image/png" sizes="32x32" href="https://techknowsolution.co.ke/static/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://techknowsolution.co.ke/static/favicon-16.png">
-  <link rel="apple-touch-icon" href="https://techknowsolution.co.ke/static/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-
-  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
-  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
-
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag("js", new Date());
-    gtag("config", "G-ELRXZQRGNR");
-  </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "name": "TechKnow Solutions",
-        "alternateName": ["TechKnow", "TechKnowSols", "TechNowSolutions", "SurgeTechKnow.dev"],
-        "url": "https://techknowsolution.co.ke",
-        "logo": "https://techknowsolution.co.ke/static/ogimage.png",
-        "founder": {
-          "@type": "Person",
-          "name": "SurgeTechKnow"
-        }
-      },
-      {
-        "@type": "Person",
-        "name": "SurgeTechKnow",
-        "url": "https://techknowsolution.co.ke",
-        "jobTitle": "Cybersecurity Specialist, Network Engineer and Automation Architect",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "TechKnow Solutions"
-        },
-        "knowsAbout": [
-          "Cybersecurity",
-          "Networking",
-          "Cisco CCNA",
-          "ICT Support",
-          "Python Automation",
-          "AI Systems",
-          "Cloud Computing",
-          "Web Development"
-        ]
-      },
-      {
-        "@type": "Blog",
-        "name": "SurgeTechKnow Journal",
-        "url": "https://techknowsolution.co.ke/blog",
-        "description": {{ seo_description|tojson }},
-        "publisher": {
-          "@type": "Organization",
-          "name": "TechKnow Solutions"
-        }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://techknowsolution.co.ke/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Blog",
-            "item": "https://techknowsolution.co.ke/blog"
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:image" content="{{ request.url_root }}static/metabanner.png">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://unpkg.com">
-
-  <link rel="preload"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-        as="style">
-
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
-
-  <link rel="preload" href="https://techknowsolution.co.ke/static/ogimage.png" as="image">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-  <style>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg: #070b15;
-      --card-bg: rgba(15, 23, 42, 0.45);
-      --card-hover-bg: rgba(30, 41, 59, 0.5);
-      --border: rgba(255, 255, 255, 0.05);
-      --border-hover: rgba(59, 130, 246, 0.35);
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --brand1: #3b82f6; /* Cyber Blue */
-      --brand2: #8b5cf6; /* Aura Purple */
-      --accent: #22d3ee; /* Neon Cyan */
-      --glow: rgba(59, 130, 246, 0.08);
-      --glass-bg: rgba(7, 11, 21, 0.85);
-      --input-bg: rgba(15, 23, 42, 0.8);
-      --font-display: 'Space Grotesk', system-ui, sans-serif;
-      --font-body: 'Inter', system-ui, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    body.light {
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --card-hover-bg: #f1f5f9;
-      --border: rgba(0, 0, 0, 0.06);
-      --border-hover: rgba(59, 130, 246, 0.4);
-      --text: #0f172a;
+      --text-main: #0f172a;
       --text-muted: #64748b;
-      --brand1: #2563eb;
-      --brand2: #7c3aed;
-      --accent: #0284c7;
-      --glow: rgba(37, 99, 235, 0.04);
-      --glass-bg: rgba(248, 250, 252, 0.9);
-      --input-bg: #f1f5f9;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
+      --border-color: #e2e8f0;
+      --brand-primary: #f97316;
+      --brand-secondary: #ea580c;
     }
 
     body {
       background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-x: hidden;
-      line-height: 1.6;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
     }
 
-    /* Ambient Blur Blobs */
-    .ambient-glow {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(140px);
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.35;
-    }
-    .glow-1 {
-      top: -150px;
-      right: -50px;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-    }
-    .glow-2 {
-      bottom: 20%;
-      left: -150px;
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
-    }
-
-    /* Navbar Custom */
-    .navbar-custom {
-      backdrop-filter: blur(20px);
-      background-color: var(--glass-bg);
-      border-bottom: 1px solid var(--border);
-      z-index: 1050;
-      transition: padding 0.3s, background-color 0.3s;
-    }
-    .brand-avatar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      font-family: var(--font-display);
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      color: var(--text);
-      font-size: 1.25rem;
-    }
-    .nav-custom-link {
-      font-size: 0.9rem;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 8px;
-      color: var(--text-muted) !important;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-    .nav-custom-link:hover, .nav-custom-link.active {
-      color: var(--text) !important;
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    body.light .nav-custom-link:hover, body.light .nav-custom-link.active {
-      background-color: rgba(0, 0, 0, 0.04);
+      letter-spacing: -1px;
     }
 
-    .theme-toggle-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      border-radius: 10px;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      color: var(--text);
-    }
-    .theme-toggle-btn:hover {
-      border-color: var(--brand1);
-      transform: scale(1.05);
-      background: var(--card-hover-bg);
-    }
-
-    /* Header & Hero Section */
-    .blog-header {
-      padding: 140px 0 50px;
-      background: radial-gradient(ellipse at top, rgba(59, 130, 246, 0.04) 0%, transparent 60%);
-      border-bottom: 1px solid var(--border);
-      position: relative;
-    }
-    .journal-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.15);
-      color: var(--brand1);
-      padding: 6px 16px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 18px;
-    }
-    .blog-header h1 {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: clamp(2.2rem, 6vw, 3.8rem);
-      letter-spacing: -1.5px;
-      margin-bottom: 16px;
-      line-height: 1.1;
-      background: linear-gradient(135deg, #ffffff 40%, #93c5fd, #c2410c);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    body .blog-header h1 {
-      background: linear-gradient(135deg, #ffffff 30%, #a5f3fc 70%, #3b82f6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    body.light .blog-header h1 {
-      background: linear-gradient(135deg, #0f172a 45%, #1e40af 80%, #6d28d9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Mobile Adaptivity Overrides */
-    @media (max-width: 768px) {
-      .blog-header {
-        padding: 95px 0 35px !important;
-      }
-      .blog-header h1 {
-        font-size: 2.1rem !important;
-        letter-spacing: -0.8px !important;
-      }
-      .card-fire {
-        box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
-      }
-      .navbar-custom {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-      }
-    }
-
-    /* Light Theme Text Color Visibility Fixes */
-    body.light h5.text-white,
-    body.light span.text-white,
-    body.light .author-bio h5 {
-      color: #0f172a !important;
-    }
-    body.light .text-muted {
-      color: #475569 !important;
-    }
-
-    /* Form Inputs */
-    .form-control-fire {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      color: var(--text) !important;
+    .search-input {
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 0.95rem;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 0.8rem 1.25rem;
+      background: white;
     }
-    .form-control-fire:focus {
-      border-color: var(--brand1);
-      background: var(--input-bg);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+
+    .search-input:focus {
       outline: none;
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
     }
 
-    .btn-fire-primary {
-      background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
-      border: none;
-      color: #ffffff !important;
+    .category-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
       font-weight: 600;
-      padding: 12px 24px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.2);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-fire-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(59, 130, 246, 0.3);
-      opacity: 0.95;
-    }
-
-    .btn-fire-secondary {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text) !important;
-      font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .btn-fire-secondary:hover {
-      transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.07);
-      border-color: var(--brand1);
-    }
-    body.light .btn-fire-secondary {
-      background: #ffffff;
-    }
-
-    /* Category Navigation Chips */
-    .chips-scroller {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 8px 4px 18px;
-      margin-bottom: 25px;
-      scrollbar-width: none; /* Firefox */
-    }
-    .chips-scroller::-webkit-scrollbar {
-      display: none; /* Safari and Chrome */
-    }
-    .filter-chip {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 8px 18px;
-      border-radius: 100px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-    .filter-chip:hover {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    .filter-chip.active {
-      background: linear-gradient(135deg, var(--brand1), rgba(59, 130, 246, 0.6));
-      color: #ffffff;
-      border-color: var(--brand1);
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    }
-    body.light .filter-chip {
-      background: #ffffff;
-    }
-    body.light .filter-chip:hover {
-      background: #f1f5f9;
-    }
-    body.light .filter-chip.active {
-      background: var(--brand1);
-      color: #ffffff;
-    }
-
-    /* Elite Featured Article Card */
-    .featured-container {
-      margin-bottom: 50px;
-    }
-    .featured-card {
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.25) 100%);
-      backdrop-filter: blur(12px);
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .featured-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 15px 35px var(--glow);
-    }
-    .featured-img-box {
-      min-height: 350px;
-      height: 100%;
-      overflow: hidden;
-      position: relative;
-    }
-    .featured-img-box img, .featured-img-box video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .featured-card:hover .featured-img-box img {
-      transform: scale(1.03);
-    }
-    .featured-tag-pill {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--brand1);
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      padding: 5px 12px;
-      border-radius: 6px;
-      display: inline-flex;
-      margin-bottom: 15px;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: all 0.2s ease;
     }
 
-    /* Regular Cards Grid */
-    .card-fire {
-      border: 1px solid var(--border);
-      border-radius: 20px;
+    .category-badge.cybersecurity { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+    .category-badge.networking { background: rgba(16, 185, 129, 0.1); color: #059669; }
+    .category-badge.automation { background: rgba(139, 92, 246, 0.1); color: #7c3aed; }
+    .category-badge.technology { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+    .category-badge.support { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+
+    .blog-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      padding: 24px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .card-fire:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-6px);
-      box-shadow: 0 15px 30px var(--glow);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Thumbnail block styling */
-    .blog-card-thumbnail {
-      width: 100%;
-      height: 190px;
-      overflow: hidden;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      border: 1px solid var(--border);
-      background-color: rgba(7, 11, 21, 0.6);
-      position: relative;
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+      border-color: rgba(249, 115, 22, 0.3);
     }
-    .blog-card-thumbnail img {
+
+    .blog-thumbnail-wrapper {
+      height: 200px;
+      background: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blog-thumbnail {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.4s ease;
+      transition: transform 0.3s ease;
     }
-    .card-fire:hover .blog-card-thumbnail img {
+
+    .blog-card:hover .blog-thumbnail {
       transform: scale(1.05);
     }
 
-    .placeholder-thumbnail {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
-    }
-    .placeholder-thumbnail i {
-      transition: transform 0.4s ease, filter 0.4s ease;
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-    .card-fire:hover .placeholder-thumbnail i {
-      transform: scale(1.12) rotate(-3deg);
-    }
-
-    /* Category Gradients */
-    .gradient-cybersecurity { color: #f87171 !important; }
-    .gradient-networking { color: #60a5fa !important; }
-    .gradient-ai-automation { color: #a78bfa !important; }
-    .gradient-web-development { color: #22d3ee !important; }
-    .gradient-ict-support { color: #2dd4bf !important; }
-    .gradient-technology { color: #cbd5e1 !important; }
-
-    .blog-tag {
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-    }
-    .badge-cybersecurity {
-      background: rgba(239, 68, 68, 0.1) !important;
-      color: #f87171 !important;
-      border: 1px solid rgba(239, 68, 68, 0.15) !important;
-    }
-    .badge-networking {
-      background: rgba(59, 130, 246, 0.1) !important;
-      color: #60a5fa !important;
-      border: 1px solid rgba(59, 130, 246, 0.15) !important;
-    }
-    .badge-ai-automation {
-      background: rgba(139, 92, 246, 0.1) !important;
-      color: #a78bfa !important;
-      border: 1px solid rgba(139, 92, 246, 0.15) !important;
-    }
-    .badge-web-development {
-      background: rgba(6, 182, 212, 0.1) !important;
-      color: #22d3ee !important;
-      border: 1px solid rgba(6, 182, 212, 0.15) !important;
-    }
-    .badge-ict-support {
-      background: rgba(20, 184, 166, 0.1) !important;
-      color: #2dd4bf !important;
-      border: 1px solid rgba(20, 184, 166, 0.15) !important;
-    }
-    .badge-technology {
-      background: rgba(148, 163, 184, 0.1) !important;
-      color: #cbd5e1 !important;
-      border: 1px solid rgba(148, 163, 184, 0.15) !important;
-    }
-
-    body.light .badge-cybersecurity { background: rgba(239, 68, 68, 0.08) !important; color: #dc2626 !important; border-color: rgba(239, 68, 68, 0.15) !important; }
-    body.light .badge-networking { background: rgba(59, 130, 246, 0.08) !important; color: #1d4ed8 !important; border-color: rgba(59, 130, 246, 0.15) !important; }
-    body.light .badge-ai-automation { background: rgba(139, 92, 246, 0.08) !important; color: #6d28d9 !important; border-color: rgba(139, 92, 246, 0.15) !important; }
-    body.light .badge-web-development { background: rgba(6, 182, 212, 0.08) !important; color: #0891b2 !important; border-color: rgba(6, 182, 212, 0.15) !important; }
-    body.light .badge-ict-support { background: rgba(20, 184, 166, 0.08) !important; color: #0d9488 !important; border-color: rgba(20, 184, 166, 0.15) !important; }
-    body.light .badge-technology { background: rgba(71, 85, 105, 0.08) !important; color: #475569 !important; border-color: rgba(71, 85, 105, 0.15) !important; }
-
-    .blog-card-meta {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .blog-card-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.25rem;
-      margin-bottom: 10px;
-      color: var(--text);
-      line-height: 1.35;
-      text-decoration: none;
-    }
-    .blog-card-title:hover {
-      color: var(--brand1);
-    }
-    .blog-card-excerpt {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      line-height: 1.5;
-      margin-bottom: 20px;
-      flex-grow: 1;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* Sticky Sidebar */
-    .sticky-sidebar {
-      position: sticky;
-      top: 100px;
-    }
-    .sidebar-widget {
-      margin-bottom: 28px;
-    }
-    .widget-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-    }
-    .widget-title::after {
-      content: '';
-      flex-grow: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Author Avatar Profile */
-    .author-avatar-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      border: 2px solid var(--brand1);
-      box-shadow: 0 0 14px rgba(59, 130, 246, 0.2);
-      object-fit: cover;
-      background-color: var(--fg);
-    }
-    .social-compact-item {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-    .social-compact-item:hover {
-      border-color: var(--brand1);
-      color: var(--brand1);
-      transform: translateY(-2px);
-    }
-
-    /* Category Widgets Count list */
-    .topics-list-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      border-radius: 8px;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      margin-bottom: 4px;
-    }
-    .topics-list-item:hover {
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 50px 0;
-      margin-top: auto;
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-    }
-    .footer-logo {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.25rem;
-      text-decoration: none;
-      color: var(--text);
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
     }
   </style>
 </head>
-<script>
-(function () {
-  let sent = false;
-  let startTime = Date.now();
-  let maxScroll = 0;
-  let interacted = false;
+<body class="py-5">
 
-  function updateScrollDepth() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (docHeight > 0) {
-      maxScroll = Math.max(maxScroll, Math.round((scrollTop / docHeight) * 100));
-    }
-  }
-
-  window.addEventListener("scroll", function () {
-    interacted = true;
-    updateScrollDepth();
-  }, { passive: true });
-
-  window.addEventListener("click", function () {
-    interacted = true;
-  });
-
-  function sendTracking() {
-    const timeOnPage = Math.round((Date.now() - startTime) / 1000);
-
-    fetch("/api/track_visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        path: window.location.pathname,
-        js_enabled: true,
-        visible: document.visibilityState === "visible",
-        time_on_page: timeOnPage,
-        scroll_depth: maxScroll,
-        engaged: interacted,
-        interaction: interacted,
-        mouse_moved: interacted,
-        screen_resolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        referrer: document.referrer,
-        browser: navigator.userAgent,
-        device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "Mobile" : "Desktop"
-      })
-    }).catch(() => {});
-  }
-
-  setTimeout(sendTracking, 16000);
-  setInterval(sendTracking, 30000);
-})();
-</script>
-<body>
-  <script>
-    if (localStorage.getItem("theme") === "light") {
-      document.body.classList.add("light");
-    }
-  </script>
-  <!-- Ambient glow fields -->
-  <div class="ambient-glow glow-1" aria-hidden="true"></div>
-  <div class="ambient-glow glow-2" aria-hidden="true"></div>
-
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2" role="navigation" aria-label="Main navigation">
-    <div class="container d-flex align-items-center justify-content-between">
-      <a class="brand-avatar" href="/" aria-label="Go to home">
-        <span>SURGE <span style="color:var(--brand1)">.dev</span></span>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <span class="p-1.5 px-2.5 rounded bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center">
+          <i class="bi bi-shield-lock-fill text-warning"></i>
+        </span>
+        <span class="brand-title text-dark">SurgeTechKnow</span>
       </a>
-
-      <!-- Always visible controls outside collapse -->
-      <div class="d-flex align-items-center gap-2 ms-auto order-lg-last">
-        <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
-          <i class="bi bi-moon-stars"></i>
-        </button>
-        <a class="btn btn-sm btn-fire-primary px-3 d-none d-sm-inline-flex" href="{{ url_for('admin') }}">
-          <i class="bi bi-shield-lock"></i> TechKnow
-        </a>
-        <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="SurgeTechKnow - Founder">
-          <img src="/static/passport.png" alt="SurgeTechKnow" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
-        </div>
-        <button class="navbar-toggler border-0 text-white rounded-3 shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05); padding: 6px 10px;">
-          <i class="bi bi-list fs-4 text-white"></i>
-        </button>
-      </div>
-
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-lg-4 align-items-center gap-1.5 py-2 py-lg-0">
-          <li class="nav-item">
-            <a class="nav-custom-link" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-custom-link active" href="{{ url_for('blog_list') }}">Journal Library</a>
-          </li>
-          <!-- Mobile Specific Extra Menu Actions -->
-          <li class="nav-item d-sm-none mt-2 w-100">
-            <a class="btn btn-sm btn-fire-primary w-100 justify-content-center" href="{{ url_for('admin') }}">
-              <i class="bi bi-shield-lock"></i> TechKnow Portal
-            </a>
-          </li>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navCollapse">
+        <ul class="navbar-nav ms-auto gap-2">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/hub">Enterprise Hub</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/blog">Insights</a></li>
+          <li class="nav-item"><a class="nav-link" href="/media">Showcase</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Premium Cover Header with Brand Alignment -->
-  <header class="blog-header">
-    <div class="container text-center">
-      <div class="journal-badge" data-aos="fade-down">
-        <i class="bi bi-hexagon-fill"></i> Cybersecurity, AI & Digital Engineering Insights
-      </div>
-      <h1 data-aos="fade-up">SurgeTechKnow Journal</h1>
-      <p class="text-muted col-lg-7 mx-auto" data-aos="fade-up" data-aos-delay="80">
-        Pragmatic network blueprints, security auditing guidelines, Cisco topologies, and web automation systems logged dry by certified systems engineer SurgeTechKnow.
-      </p>
-
-      <!-- Clean Search Field -->
-      <div class="row justify-content-center mt-4" data-aos="fade-up" data-aos-delay="120">
-        <div class="col-md-8 col-lg-6">
-          <div class="input-group" style="border: 1px solid var(--border); padding: 4px; border-radius: 14px; background: var(--input-bg);">
-            <span class="input-group-text bg-transparent border-0 text-muted ps-3"><i class="bi bi-search fs-5"></i></span>
-            <input type="text" id="liveSearchInput" class="form-control bg-transparent border-0 text-white py-2.5 shadow-none" placeholder="Search systems parameters or logs..." aria-label="Search articles block">
-            <button class="btn btn-fire-primary px-4 py-2" type="button" onclick="triggerSearchAction()">Search</button>
-          </div>
-        </div>
-      </div>
+  <div class="container mt-5 pt-4">
+    <div class="text-center max-w-2xl mx-auto mb-5">
+      <h1 class="brand-title display-4 mb-3">Insights & Cyber-Ops Editorial Gateway</h1>
+      <p class="text-muted leading-relaxed">Stay secure with custom-scripted automations, CCNA-compliant networks, physical server logs, and deep vulnerability briefings from security engineers.</p>
     </div>
-  </header>
 
-  <!-- Core Layout Component -->
-  <main class="container py-5">
-
-    <!-- Categories Navigator Row -->
-    <div class="row" data-aos="fade-up">
-      <div class="col-12">
-        <div class="chips-scroller">
-          <button class="filter-chip active" onclick="filterCategory('all', this)">
-            <i class="bi bi-grid-fill"></i> ALL TOPICS
-          </button>
-          <button class="filter-chip" onclick="filterCategory('cybersecurity', this)">
-            <i class="bi bi-shield-lock"></i> CYBERSECURITY
-          </button>
-          <button class="filter-chip" onclick="filterCategory('networking', this)">
-            <i class="bi bi-hdd-network"></i> NETWORKING
-          </button>
-          <button class="filter-chip" onclick="filterCategory('ai-automation', this)">
-            <i class="bi bi-cpu"></i> AI & AUTOMATION
-          </button>
-          <button class="filter-chip" onclick="filterCategory('web-development', this)">
-            <i class="bi bi-code-slash"></i> WEB DEV
-          </button>
-          <button class="filter-chip" onclick="filterCategory('ict-support', this)">
-            <i class="bi bi-headset"></i> ICT SUPPORT
-          </button>
-          <button class="filter-chip" onclick="filterCategory('technology', this)">
-            <i class="bi bi-journal-text"></i> GENERAL TECH
-          </button>
-        </div>
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-6">
+        <form action="/blog" method="GET" class="d-flex gap-2">
+          <input type="search" name="q" class="form-control search-input flex-grow-1" placeholder="Search insights, labs, subnets..." value="{{ query }}">
+          <button type="submit" class="btn btn-warning px-4 py-2.5 rounded-3 border-0 font-semibold" style="background: var(--brand-primary); color: white;">Search</button>
+        </form>
       </div>
     </div>
 
-    <div class="row g-5">
-      <!-- Main Feed Module (Left Column - 8 columns wide) -->
-      <div class="col-lg-8">
-        
-        <!-- Showcase Featured Post (First item in list) -->
-        {% if blogs and blogs|length > 0 %}
-          {% set fp = blogs[0] %}
-          {% set fp_comb = (fp.title ~ " " ~ fp.content)|lower %}
-          {% if "cyber" in fp_comb or "exploit" in fp_comb or "mitigate" in fp_comb or "security" in fp_comb or "defense" in fp_comb or "hack" in fp_comb or "penetration" in fp_comb or "firewall" in fp_comb %}
-            {% set fp_cat = "Cybersecurity" %}
-          {% elif "rout" in fp_comb or "net" in fp_comb or "ip" in fp_comb or "cisco" in fp_comb or "ccna" in fp_comb or "switch" in fp_comb or "router" in fp_comb or "dhcp" in fp_comb or "dns" in fp_comb or "lan" in fp_comb or "wan" in fp_comb %}
-            {% set fp_cat = "Networking" %}
-          {% elif "ai" in fp_comb or "machine" in fp_comb or "learning" in fp_comb or "model" in fp_comb or "neural" in fp_comb or "predict" in fp_comb or "automation" in fp_comb or "workflow" in fp_comb or "cron" in fp_comb or "script" in fp_comb %}
-            {% set fp_cat = "AI & Automation" %}
-          {% elif "web" in fp_comb or "html" in fp_comb or "css" in fp_comb or "flask" in fp_comb or "react" in fp_comb or "js" in fp_comb or "ts" in fp_comb or "javascript" in fp_comb or "typescript" in fp_comb or "frontend" in fp_comb or "backend" in fp_comb %}
-            {% set fp_cat = "Web Development" %}
-          {% elif "ict" in fp_comb or "support" in fp_comb or "helpdesk" in fp_comb or "comput" in fp_comb or "hardware" in fp_comb or "troubleshoot" in fp_comb or "printer" in fp_comb %}
-            {% set fp_cat = "ICT Support" %}
-          {% else %}
-            {% set fp_cat = "Technology" %}
-          {% endif %}
-          
-          {% set fp_slug = fp_cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-          {% set fp_words = fp.content.split()|length %}
-          {% set fp_read = (fp_words / 200)|round(0, 'ceil')|int %}
-          {% if fp_read < 1 %}{% set fp_read = 1 %}{% endif %}
-          {% set fp_thumb = fp.content|get_first_image %}
-
-          <div class="featured-container" data-aos="fade-up" id="featuredSection" data-category="{{ fp_slug }}" data-title="{{ fp.title.lower() }}" data-excerpt="{{ fp.content.lower() }}">
-            <div class="featured-card">
-              <div class="row g-0">
-                <div class="col-md-5">
-                  <div class="featured-img-box">
-                    {% if fp_thumb %}
-                      {% set fp_is_video = false %}
-                      {% if fp_thumb.endswith('.mp4') or fp_thumb.endswith('.webm') or fp_is_video %}
-                        <video src="{{ fp_thumb }}" class="w-100 h-100" style="object-fit: cover;" preload="metadata" muted playsinline loop onmouseover="this.play()" onmouseout="this.pause()"></video>
-                      {% else %}
-                        <img src="{{ fp_thumb }}" alt="{{ fp.title }}" loading="lazy" referrerPolicy="no-referrer">
-                      {% endif %}
-                    {% else %}
-                      <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-slate-900 overflow-hidden" style="min-height: 350px;">
-                        <i class="bi bi-award text-success display-2"></i>
-                      </div>
-                    {% endif %}
-                  </div>
-                </div>
-                <div class="col-md-7 d-flex flex-column justify-content-center p-4 p-lg-5">
-                  <div>
-                    <span class="featured-tag-pill badge-{{ fp_slug }}"><i class="bi bi-star-fill text-warning me-1.5"></i> FEATURED POST • {{ fp_cat }}</span>
-                    <h2 class="h1 fw-bold text-white mb-3" style="font-family: var(--font-display); line-height:1.2;">
-                      <a href="{{ url_for('view_blog', slug=fp.slug) }}" class="text-white text-decoration-none hover:text-blue-400">{{ fp.title }}</a>
-                    </h2>
-                    <p class="text-muted text-sm mb-4">{{ fp.content|clean_excerpt(165) }}</p>
-                  </div>
-                  <div class="mt-auto pt-3 border-top border-white/5 d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="rounded-circle bg-success/20 text-success d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size:12px;">CM</div>
-                      <span class="text-xs text-muted">By <strong>SurgeTechKnow</strong></span>
-                    </div>
-                    <span class="text-xs text-muted"><i class="bi bi-clock"></i> {{ fp_read }} min read • {{ fp.timestamp }}</span>
-                  </div>
-                  <a href="{{ url_for('view_blog', slug=fp.slug) }}" class="btn btn-fire-primary w-100 mt-4 justify-content-center text-sm font-semibold">
-                    Read Featured Article <i class="bi bi-arrow-right-short fs-5"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-
-        <!-- Interactive Dynamic Feed Grid -->
-        <div class="row g-4" data-aos="fade-up" id="cardsGridContainer">
-          {% if blogs %}
-            {% for b in blogs %}
-              {% set combined = (b.title ~ " " ~ b.content)|lower %}
-              {% if "cyber" in combined or "exploit" in combined or "mitigate" in combined or "security" in combined or "defense" in combined or "hack" in combined or "penetration" in combined or "firewall" in combined %}
-                {% set cat = "Cybersecurity" %}
-              {% elif "rout" in combined or "net" in combined or "ip" in combined or "cisco" in combined or "ccna" in combined or "switch" in combined or "router" in combined or "dhcp" in combined or "dns" in combined or "lan" in combined or "wan" in combined %}
-                {% set cat = "Networking" %}
-              {% elif "ai" in combined or "machine" in combined or "learning" in combined or "model" in combined or "neural" in combined or "predict" in combined or "automation" in combined or "workflow" in combined or "cron" in combined or "script" in combined %}
-                {% set cat = "AI & Automation" %}
-              {% elif "web" in combined or "html" in combined or "css" in combined or "flask" in combined or "react" in combined or "js" in combined or "ts" in combined or "javascript" in combined or "typescript" in combined or "frontend" in combined or "backend" in combined %}
-                {% set cat = "Web Development" %}
-              {% elif "ict" in combined or "support" in combined or "helpdesk" in combined or "comput" in combined or "hardware" in combined or "troubleshoot" in combined or "printer" in combined %}
-                {% set cat = "ICT Support" %}
-              {% else %}
-                {% set cat = "Technology" %}
-              {% endif %}
-              
-              {% set words_count = b.content.split()|length %}
-              {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
-              {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
-              
-              {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-              {% if cat_slug == "cybersecurity" %}
-                {% set cat_icon = "bi-shield-lock" %}
-              {% elif cat_slug == "networking" %}
-                {% set cat_icon = "bi-hdd-network" %}
-              {% elif cat_slug == "ai-automation" %}
-                {% set cat_icon = "bi-cpu" %}
-              {% elif cat_slug == "web-development" %}
-                {% set cat_icon = "bi-code-slash" %}
-              {% elif cat_slug == "ict-support" %}
-                {% set cat_icon = "bi-headset" %}
-              {% else %}
-                {% set cat_icon = "bi-journal-text" %}
-              {% endif %}
-
-              <div class="col-md-6 blog-col-card" data-category="{{ cat_slug }}" data-title="{{ b.title.lower() }}" data-excerpt="{{ b.content.lower() }}">
-                <article class="card-fire">
-                  {% set thumb = b.content|get_first_image %}
-                  {% if thumb %}
-                    {% set is_video = false %}
-                    {% if thumb.endswith('.mp4') or thumb.endswith('.webm') or thumb.endswith('.ogg') or thumb.endswith('.mov') or thumb.endswith('.m4v') or 'video' in thumb|lower %}
-                      {% set is_video = true %}
-                    {% endif %}
-                    <div class="blog-card-thumbnail">
-                      {% if is_video %}
-                        <div class="position-relative w-100 h-100 overflow-hidden d-flex align-items-center justify-content-center bg-black">
-                          <video src="{{ thumb }}#t=0.5" class="w-100 h-100" style="object-fit: cover;" preload="metadata" muted playsinline loop onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0.5;"></video>
-                          <div class="position-absolute d-flex align-items-center justify-content-center rounded-circle" style="background: rgba(0,0,0,0.55); width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.25); z-index: 5; pointer-events: none;">
-                            <i class="bi bi-play-fill text-white fs-6" style="margin-left: 2px;"></i>
-                          </div>
-                        </div>
-                      {% else %}
-                        <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
-                      {% endif %}
-                    </div>
+    {% if blogs %}
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for blog in blogs %}
+          <div class="col">
+            <article class="blog-card h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="blog-thumbnail-wrapper">
+                  {% if blog_images.get(blog.id) %}
+                    <img src="{{ blog_images.get(blog.id) }}" alt="{{ blog.title }}" class="blog-thumbnail" loading="lazy">
                   {% else %}
-                    <div class="blog-card-thumbnail placeholder-thumbnail">
-                      <i class="bi {{ cat_icon }} display-4 gradient-{{ cat_slug }}"></i>
-                    </div>
+                    <img src="/static/header_bg.png" alt="{{ blog.title }}" class="blog-thumbnail" loading="lazy">
                   {% endif %}
-
-                  <div class="blog-card-meta">
-                    <span class="blog-tag badge-{{ cat_slug }}">{{ cat }}</span>
-                    <span><i class="bi bi-calendar"></i> {{ b.timestamp }}</span>
+                </div>
+                <div class="p-4">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="category-badge {{ blog.category|lower }}">{{ blog.category }}</span>
+                    <span class="font-mono text-muted" style="font-size: 0.75rem;">{{ blog.timestamp[:10] }}</span>
                   </div>
-
-                  <a class="blog-card-title" href="{{ url_for('view_blog', slug=b.slug) }}">
-                    {{ b.title }}
-                  </a>
-                  <p class="blog-card-excerpt">{{ b.content|clean_excerpt(135) }}</p>
-
-                  <div class="mt-auto pt-3 border-top border-white/5 d-flex align-items-center justify-content-between">
-                    <span class="text-xs text-muted font-mono"><i class="bi bi-clock"></i> {{ reading_time }} MIN READ</span>
-                    <a class="btn-fire-secondary btn-sm text-xs py-1.5 px-3" href="{{ url_for('view_blog', slug=b.slug) }}">
-                      Read Article <i class="bi bi-arrow-right"></i>
+                  <h3 class="fw-bold fs-5 mb-2 leading-snug">
+                    <a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none hover-text-warning transition-colors">
+                      {{ blog.title }}
                     </a>
-                  </div>
-                </article>
+                  </h3>
+                  <p class="text-muted small leading-relaxed line-clamp-3">
+                    {{ blog.content|striptags|truncate(120) }}
+                  </p>
+                </div>
               </div>
-            {% endfor %}
-          {% else %}
-            <div class="col-12 py-5 text-center card-fire">
-              <i class="bi bi-search display-4 text-muted mb-3 d-block"></i>
-              <p class="text-muted mb-0">No articles found in the network library.</p>
-              <a class="btn btn-sm btn-fire-secondary mt-3" href="{{ url_for('blog_list') }}">Reset Filters</a>
-            </div>
-          {% endif %}
-        </div>
-
-        <!-- No search results placeholder -->
-        <div id="noResultsAlert" class="col-12 py-5 text-center card-fire d-none">
-          <i class="bi bi-exclamation-circle-fill display-4 text-warning mb-3 d-block animate-pulse"></i>
-          <h4>No Articles Match Your Criteria</h4>
-          <p class="text-muted mb-3">Modify your dynamic category filters or search parameters and check again.</p>
-          <button class="btn btn-sm btn-fire-secondary" onclick="resetAllFilters()">Clear All Criteria</button>
-        </div>
-
-      </div>
-
-      <!-- Professional Sidebar Module (Right Column - 4 columns wide) -->
-      <aside class="col-lg-4">
-        <div class="sticky-sidebar">
-
-          <!-- Author Bio Widget -->
-          <div class="card-fire sidebar-widget">
-            <div class="widget-title">
-              <i class="bi bi-person-fill text-primary"></i> Leading Specialist
-            </div>
-            <div class="text-center pt-2">
-              <img src="/static/assets/passport.png" onerror="this.src='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/person-circle.svg'" class="author-avatar-img mb-3" alt="SurgeTechKnow">
-              <h5 class="text-white fw-bold mb-1" style="font-family: var(--font-display);">SurgeTechKnow</h5>
-              <p class="text-xxs text-primary font-mono tracking-wider uppercase mb-3">ICT Officer & Network Specialist</p>
-              <p class="text-muted text-xs leading-relaxed px-1 mb-4">
-                Managing redundant network infrastructures, certified Cisco CCNA Routing and Switching configurations, and advanced systems automation scripting.
-              </p>
-              
-              <!-- Quick Social Channels -->
-              <div class="d-flex justify-content-center gap-2">
-                <a href="https://linkedin.com/" target="_blank" rel="noopener" class="social-compact-item" title="LinkedIn Interface">
-                  <i class="bi bi-linkedin"></i>
-                </a>
-                <a href="https://github.com/" target="_blank" rel="noopener" class="social-compact-item" title="Developer GitHub Engine">
-                  <i class="bi bi-github"></i>
-                </a>
-                <a href="https://wa.me/254791204587" target="_blank" rel="noopener" class="social-compact-item" title="WhatsApp Terminal">
-                  <i class="bi bi-whatsapp"></i>
+              <div class="px-4 pb-4 pt-0">
+                <a href="/blog/{{ blog.slug }}" class="btn btn-sm btn-outline-warning w-100 py-2 font-semibold">
+                  Inspect Insight Analysis <i class="bi bi-arrow-right fs-6 ms-1"></i>
                 </a>
               </div>
-            </div>
+            </article>
           </div>
-
-          <!-- Quick Navigation Tags Counting Widget -->
-          <div class="card-fire sidebar-widget">
-            <div class="widget-title">
-              <i class="bi bi-tags-fill text-primary"></i> Journal Categories
-            </div>
-            <div class="d-flex flex-column">
-              <a href="javascript:void(0)" onclick="filterCategory('all', null)" class="topics-list-item">
-                <span>All Documents Feed</span>
-                <span class="badge bg-secondary/10 px-2.5 py-1 text-light border border-white/5" id="cnt-all">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('cybersecurity', null)" class="topics-list-item">
-                <span>🛡️ Cybersecurity Audits</span>
-                <span class="badge bg-danger/10 text-danger px-2.5 py-1 border border-danger/15" id="cnt-cybersecurity">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('networking', null)" class="topics-list-item">
-                <span>🌐 Cisco Routing & CCNA</span>
-                <span class="badge bg-primary/10 text-primary px-2.5 py-1 border border-primary/15" id="cnt-networking">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('ai-automation', null)" class="topics-list-item">
-                <span>🤖 AI & Task Automation</span>
-                <span class="badge bg-purple/10 text-purple px-2.5 py-1 border border-purple/15" id="cnt-ai-automation">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('web-development', null)" class="topics-list-item">
-                <span>💻 Modern Stack Development</span>
-                <span class="badge bg-info/10 text-info px-2.5 py-1 border border-info/15" id="cnt-web-development">0</span>
-              </a>
-              <a href="javascript:void(0)" onclick="filterCategory('ict-support', null)" class="topics-list-item">
-                <span>🛠️ Enterprise ICT Diagnoses</span>
-                <span class="badge bg-success/10 text-success px-2.5 py-1 border border-success/15" id="cnt-ict-support">0</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Premium Embedded Newsletter Gateway -->
-          <div class="card-fire sidebar-widget">
-            <div class="widget-title">
-              <i class="bi bi-envelope-check text-primary"></i> Secure Distribution
-            </div>
-            <p class="text-xs text-muted mb-3 leading-relaxed">
-              Register your workspace SMTP tunnel. Receive periodic Cisco routing optimization parameters, security advisories, and automation snippets directly.
-            </p>
-            <form action="/subscribe" method="POST">
-              <div class="mb-2">
-                <input type="email" name="email" class="form-control form-control-fire form-control-sm text-xs py-2 px-3 bg-black/40 border-white/10" required placeholder="name@enterprise.com">
-              </div>
-              <button type="submit" class="btn btn-fire-primary w-100 py-2 fs-7 font-mono d-flex align-items-center justify-content-center gap-1">
-                <i class="bi bi-mailbox"></i> Subscribe SMTP Gateway
-              </button>
-            </form>
-          </div>
-
-        </div>
-      </aside>
-    </div>
-
-  </main>
-
-  <!-- Complete Premium Styled Corporate Quality Footer -->
-  <footer>
-    <div class="container">
-      <div class="row gy-4 mb-4">
-        <div class="col-md-5">
-          <a class="footer-logo d-block mb-3" href="/">
-            SURGE <span style="color:var(--brand1)">.dev</span>
-          </a>
-          <p class="text-muted text-xs leading-relaxed max-w-sm m-0">
-            TechKnow Solutions digital publication is curated by SurgeTechKnow, delivering secure routing schemas and digital twin technology. Guided by principles of strict architecture transparency.
-          </p>
-        </div>
-        <div class="col-md-3 col-sm-6">
-          <h6 class="text-white text-xs fw-bold font-mono tracking-wider uppercase mb-3 text-primary">RESOURCES</h6>
-          <ul class="list-unstyled d-flex flex-column gap-2 text-xs">
-            <li><a href="/about" class="text-muted text-decoration-none hover-white">About SurgeTechKnow</a></li>
-            <li><a href="/contact-us" class="text-muted text-decoration-none hover-white">Support & Contact</a></li>
-            <li><a href="/disclaimer" class="text-muted text-decoration-none hover-white">Academic Disclaimer</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 col-sm-6">
-          <h6 class="text-white text-xs fw-bold font-mono tracking-wider uppercase mb-3 text-primary">SECURITY & REGULATORY</h6>
-          <ul class="list-unstyled d-flex flex-column gap-2 text-xs">
-            <li><a href="/privacy-policy" class="text-muted text-decoration-none hover-white">Privacy Statement</a></li>
-            <li><a href="/terms" class="text-muted text-decoration-none hover-white">Terms of Deployment</a></li>
-            <li><a href="/cookie-policy" class="text-muted text-decoration-none hover-white">Cookie Policy Registers</a></li>
-          </ul>
-        </div>
+        {% endfor %}
       </div>
-      <div class="pt-4 border-top border-white/5 d-flex flex-wrap justify-content-between align-items-center gap-3">
-        <div class="text-muted text-xs">© 2026 <strong class="text-white">SurgeTechKnow</strong> • TechKnow Solutions. Cryptographically Guarded. All Rights Reserved.</div>
-        <div class="d-flex align-items-center gap-3">
-          <a class="text-muted hover:text-white text-xs text-decoration-none" href="#home" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Escalate to Deck <i class="bi bi-chevron-up"></i></a>
-        </div>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-journal-x display-3 text-muted mb-3 d-block"></i>
+        <p class="text-muted">No security logs or research papers found matching the description.</p>
+        <a href="/blog" class="btn btn-warning px-4 py-2 mt-2" style="background: var(--brand-primary); color: white;">Refresh Gate</a>
       </div>
+    {% endif %}
+  </div>
+
+  <footer class="bg-white border-top py-5 mt-5">
+    <div class="container text-center">
+      <p class="text-muted small mb-0">&copy; 2026 SurgeTechKnow. All operations certified and active. All human traffic securely tracked in Postgres.</p>
     </div>
   </footer>
 
-  <!-- AOS & Bootstrap JS -->
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    // Selected global state variables
-    let currentCategoryFilter = "all";
-    let currentSearchFilter = "";
-
-    window.addEventListener('load', () => {
-      AOS.init({ once: true, duration: 800, easing: 'ease-out' });
-      computeCategoryCounts();
-    });
-
-    // Theme logic integration
-    const themeBtn = document.getElementById("themeBtn");
-    const docBody = document.body;
-
-    if (localStorage.getItem("theme") === "light") {
-      docBody.classList.add("light");
-      themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
-    }
-
-    themeBtn.addEventListener("click", () => {
-      docBody.classList.toggle("light");
-      if (docBody.classList.contains("light")) {
-        localStorage.setItem("theme", "light");
-        document.documentElement.setAttribute("data-bs-theme", "light");
-        themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
-      } else {
-        localStorage.setItem("theme", "dark");
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-        themeBtn.innerHTML = '<i class="bi bi-moon-stars"></i>';
-      }
-    });
-
-    // Interactive Dynamic Filtering of Items on Grid
-    function filterCategory(categorySlug, element) {
-      currentCategoryFilter = categorySlug;
-
-      // Toggle active status chips
-      if (element) {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        element.classList.add('active');
-      } else {
-        // Sync widgets
-        document.querySelectorAll('.filter-chip').forEach(c => {
-          const matchingSlug = c.getAttribute('onclick').match(/'([^']+)'/)[1];
-          if (matchingSlug === categorySlug) {
-            c.classList.add('active');
-          } else {
-            c.classList.remove('active');
-          }
-        });
-      }
-
-      applyInteractiveFilters();
-    }
-
-    // Live search event trigger
-    const searchInput = document.getElementById("liveSearchInput");
-    searchInput.addEventListener("input", (e) => {
-      currentSearchFilter = e.target.value.toLowerCase().trim();
-      applyInteractiveFilters();
-    });
-
-    function triggerSearchAction() {
-      currentSearchFilter = searchInput.value.toLowerCase().trim();
-      applyInteractiveFilters();
-    }
-
-    function applyInteractiveFilters() {
-      const cards = document.querySelectorAll('.blog-col-card');
-      const featured = document.getElementById('featuredSection');
-      let visibleCount = 0;
-
-      // Filter Featured card banner
-      if (featured) {
-        const featCat = featured.getAttribute('data-category');
-        const featTitle = featured.getAttribute('data-title') || '';
-        const featExcerpt = featured.getAttribute('data-excerpt') || '';
-
-        const catMatches = (currentCategoryFilter === 'all' || featCat === currentCategoryFilter);
-        const searchMatches = (!currentSearchFilter || featTitle.includes(currentSearchFilter) || featExcerpt.includes(currentSearchFilter));
-
-        if (catMatches && searchMatches) {
-          featured.classList.remove('d-none');
-          visibleCount++;
-        } else {
-          featured.classList.add('d-none');
-        }
-      }
-
-      // Filter Regular card list items
-      cards.forEach(card => {
-        const cardCat = card.getAttribute('data-category');
-        const cardTitle = card.getAttribute('data-title') || '';
-        const cardExcerpt = card.getAttribute('data-excerpt') || '';
-
-        const categoryMatches = (currentCategoryFilter === 'all' || cardCat === currentCategoryFilter);
-        const searchMatches = (!currentSearchFilter || cardTitle.includes(currentSearchFilter) || cardExcerpt.includes(currentSearchFilter));
-
-        if (categoryMatches && searchMatches) {
-          card.classList.remove('d-none');
-          // Add subtle dynamic fade-in
-          card.style.opacity = "0";
-          setTimeout(() => { card.style.opacity = "1"; card.style.transition = "opacity 0.35s ease"; }, 20);
-          visibleCount++;
-        } else {
-          card.classList.add('d-none');
-        }
-      });
-
-      // Show/Hide missing records panel
-      const alertPanel = document.getElementById("noResultsAlert");
-      if (visibleCount === 0) {
-        alertPanel.classList.remove("d-none");
-      } else {
-        alertPanel.classList.add("d-none");
-      }
-    }
-
-    function resetAllFilters() {
-      searchInput.value = "";
-      currentSearchFilter = "";
-      filterCategory('all', document.querySelector('.filter-chip'));
-    }
-
-    // Dynamic Category enumeration listing and counts allocation
-    function computeCategoryCounts() {
-      const cards = document.querySelectorAll('.blog-col-card');
-      const featured = document.getElementById('featuredSection');
-      
-      let counts = {
-        all: 0,
-        cybersecurity: 0,
-        networking: 0,
-        'ai-automation': 0,
-        'web-development': 0,
-        'ict-support': 0,
-        technology: 0
-      };
-
-      if (featured) {
-        const featCat = featured.getAttribute('data-category');
-        if (featCat in counts) counts[featCat]++;
-        counts.all++;
-      }
-
-      cards.forEach(card => {
-        const featCat = card.getAttribute('data-category');
-        if (featCat in counts) counts[featCat]++;
-        counts.all++;
-      });
-
-      // Set counts labels inside sidebar
-      for (const [slug, count] of Object.entries(counts)) {
-        const label = document.getElementById(`cnt-${slug}`);
-        if (label) label.textContent = count;
-      }
-    }
-
-    // Real Human Presence & Telemetry Session Verifier
-    (function() {
-      let tracked = false;
-      let timer = null;
-
-      function sendTrackRequest(byInteraction = false) {
-        if (tracked) return;
-        tracked = true;
-        if (timer) clearTimeout(timer);
-
-        const hostname = window.location.hostname;
-        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || window.location.pathname.startsWith('/admin')) {
-          console.log("Analytics: Bypassed tracking.");
-          return;
-        }
-
-        const getBrowserAndDevice = () => {
-          const ua = navigator.userAgent;
-          let browser = "Unknown Browser";
-          let deviceType = "Desktop";
-          if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
-          else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
-          else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
-          else if (ua.indexOf("Trident") > -1) browser = "Microsoft Internet Explorer";
-          else if (ua.indexOf("Edge") > -1 || ua.indexOf("Edg") > -1) browser = "Microsoft Edge";
-          else if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
-          else if (ua.indexOf("Safari") > -1) browser = "Apple Safari";
-          
-          if (/Mobi|Android|iPhone|iPad|Tablet/i.test(ua)) {
-            deviceType = "Mobile/Tablet";
-          }
-          return { browser, deviceType };
-        };
-
-        const bAndD = getBrowserAndDevice();
-
-        fetch('/api/track_visit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            path: window.location.pathname,
-            js_enabled: true,
-            screen_resolution: `${window.screen.width}x${window.screen.height}`,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-            browser: bAndD.browser,
-            device_type: bAndD.deviceType,
-            engaged: byInteraction || false,
-            mouse_moved: byInteraction
-          })
-        }).catch(err => console.error("Telemetry report offline:", err));
-      }
-
-      window.addEventListener('load', () => {
-        timer = setTimeout(() => {
-          sendTrackRequest(false);
-        }, 5000);
-
-        const onScroll = () => {
-          sendTrackRequest(true);
-          window.removeEventListener('scroll', onScroll);
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-
-        const onClick = () => {
-          sendTrackRequest(true);
-          window.removeEventListener('click', onClick);
-        };
-        window.addEventListener('click', onClick);
-      });
-    })();
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
