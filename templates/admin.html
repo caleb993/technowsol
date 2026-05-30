@@ -555,7 +555,75 @@ body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !imp
       #blogs-pane .btn{width:100%;}
     }
 
-  </style>
+  
+/* =========================================================
+   UNIVERSAL THUMBNAIL STANDARDIZATION PATCH
+   Keeps every thumbnail/card image aligned, fast, and professional.
+   Priority logic is handled by the existing blog_image filter:
+   admin thumbnail -> first article image -> category fallback.
+   ========================================================= */
+img{max-width:100%;}
+.story-img,.thumb,.blog-thumb,.article-thumb,.media-thumb,.featured-thumb{
+  position:relative;
+  overflow:hidden;
+  background:#0b1220;
+}
+.story-img img,.story-img video,
+.thumb img,.thumb video,
+.blog-thumb img,.article-thumb img,.media-thumb img,.featured-thumb img,
+.blog-thumb video,.article-thumb video,.media-thumb video,.featured-thumb video{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+}
+.card .story-img,.compact-card .story-img,.mini-story .story-img{
+  aspect-ratio:16/9;
+  height:auto!important;
+}
+.lead-story .story-img,.feature-green .story-img{
+  aspect-ratio:21/11;
+  height:auto!important;
+}
+.media-card .story-img,.media-card .thumb,.media-thumb{
+  aspect-ratio:4/3;
+  height:auto!important;
+}
+.overlay-card .story-img{
+  height:100%!important;
+  aspect-ratio:auto;
+}
+.rank-row img,.rel-row img,.rel img{
+  width:96px!important;
+  height:68px!important;
+  object-fit:cover!important;
+  border-radius:6px;
+  background:#0b1220;
+  flex:0 0 auto;
+}
+.hero-img,.blog-hero-image{
+  width:100%!important;
+  max-height:440px!important;
+  aspect-ratio:16/7;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:10px;
+  background:#0b1220;
+}
+.content img,.article-content img{
+  max-height:520px;
+  object-fit:cover;
+}
+@media(max-width:640px){
+  .lead-story .story-img,.feature-green .story-img{aspect-ratio:16/9;}
+  .compact-card .story-img,.mini-story .story-img,.card .story-img{aspect-ratio:16/9;height:auto!important;}
+  .media-card .story-img,.media-card .thumb,.media-thumb{aspect-ratio:4/3;height:auto!important;}
+  .rank-row img,.rel-row img,.rel img{width:74px!important;height:52px!important;}
+  .hero-img,.blog-hero-image{max-height:240px!important;aspect-ratio:16/9;}
+}
+
+</style>
 </head>
 <body class="py-4">
   <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>

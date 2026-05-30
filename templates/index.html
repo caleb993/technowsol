@@ -37,7 +37,75 @@
     .mobile-bottom-nav{display:none}
     @media(max-width:640px){body{padding-bottom:62px}.editor-grid{grid-template-columns:repeat(2,1fr);gap:8px}.editor-row{grid-template-columns:1fr;padding:0}.editor-row img{width:100%;height:88px}.editor-row div{padding:8px}.editor-row h3{font-size:12px}.popular-strip{grid-template-columns:repeat(2,1fr);gap:8px}.pop-row{padding:9px}.pop-row h3{font-size:12px}.latest-grid{grid-template-columns:1fr;gap:8px}.latest-row{grid-template-columns:82px 1fr}.latest-row img{width:82px;height:58px}.latest-row h3{font-size:12.5px}.mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:56px;background:#fff;border-top:1px solid var(--line);z-index:90;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -8px 24px rgba(15,23,42,.08)}.mobile-bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-weight:900;color:#334155}.mobile-bottom-nav i{font-size:18px;color:var(--red)}[data-bs-theme="dark"] .mobile-bottom-nav{background:var(--card)}}
 
-  </style>
+  
+/* =========================================================
+   UNIVERSAL THUMBNAIL STANDARDIZATION PATCH
+   Keeps every thumbnail/card image aligned, fast, and professional.
+   Priority logic is handled by the existing blog_image filter:
+   admin thumbnail -> first article image -> category fallback.
+   ========================================================= */
+img{max-width:100%;}
+.story-img,.thumb,.blog-thumb,.article-thumb,.media-thumb,.featured-thumb{
+  position:relative;
+  overflow:hidden;
+  background:#0b1220;
+}
+.story-img img,.story-img video,
+.thumb img,.thumb video,
+.blog-thumb img,.article-thumb img,.media-thumb img,.featured-thumb img,
+.blog-thumb video,.article-thumb video,.media-thumb video,.featured-thumb video{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  display:block!important;
+}
+.card .story-img,.compact-card .story-img,.mini-story .story-img{
+  aspect-ratio:16/9;
+  height:auto!important;
+}
+.lead-story .story-img,.feature-green .story-img{
+  aspect-ratio:21/11;
+  height:auto!important;
+}
+.media-card .story-img,.media-card .thumb,.media-thumb{
+  aspect-ratio:4/3;
+  height:auto!important;
+}
+.overlay-card .story-img{
+  height:100%!important;
+  aspect-ratio:auto;
+}
+.rank-row img,.rel-row img,.rel img{
+  width:96px!important;
+  height:68px!important;
+  object-fit:cover!important;
+  border-radius:6px;
+  background:#0b1220;
+  flex:0 0 auto;
+}
+.hero-img,.blog-hero-image{
+  width:100%!important;
+  max-height:440px!important;
+  aspect-ratio:16/7;
+  object-fit:cover!important;
+  object-position:center!important;
+  border-radius:10px;
+  background:#0b1220;
+}
+.content img,.article-content img{
+  max-height:520px;
+  object-fit:cover;
+}
+@media(max-width:640px){
+  .lead-story .story-img,.feature-green .story-img{aspect-ratio:16/9;}
+  .compact-card .story-img,.mini-story .story-img,.card .story-img{aspect-ratio:16/9;height:auto!important;}
+  .media-card .story-img,.media-card .thumb,.media-thumb{aspect-ratio:4/3;height:auto!important;}
+  .rank-row img,.rel-row img,.rel img{width:74px!important;height:52px!important;}
+  .hero-img,.blog-hero-image{max-height:240px!important;aspect-ratio:16/9;}
+}
+
+</style>
 </head>
 <body>
 {% set trending = home_blog_sections.get('Trending', []) if home_blog_sections else [] %}{% if not trending %}{% set trending = blog_posts[:5] %}{% endif %}
