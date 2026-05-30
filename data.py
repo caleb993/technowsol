@@ -209,10 +209,10 @@ def create_tables():
                         cur.execute(
                             """
                             INSERT INTO techrich_docs (title, doc_type, file_name, content, created_at, updated_at) VALUES 
-                            ('Resolving VLAN Leakage and Trunk Port Encapsulation Standards', 'note', '', '# Comprehensive VLAN Encapsulation Standards\n\nThis article outlines enterprise diagnostic criteria for mitigating Inter-VLAN performance loss across Layer 2 and Layer 3 routing equipment.\n\n### Core Engineering Diagnostics\n- Check trunk status: `show interface trunk`\n- Configure dot1q routing encapsulation: `encapsulation dot1Q 10`\n- Native VLAN must match on switch port and subinterface.', now(), now()),
-                            ('Analyzing Stuck OSPF Neighbor States (DR/BDR Election Loop)', 'note', '', '# Demystifying Stuck OSPF Neighbor States\n\nAdjacencies fail to transition into the **FULL** state.\n\n### Immediate Actions\n- Double-check MTU matching: `show ip ospf interface`\n- Run `ip ospf mtu-ignore` to debug descriptors exchange loops.', now(), now()),
-                            ('Managing Sudden DHCP Autoconfiguration Loops (169.254.x.x)', 'note', '', '# Resolving Workstation APIPA (169.254.x.x) Issues\n\nAPIPA assignment points directly to a DHCP client network negotiation failure.\n\n### Diagnosis Protocol\n- Release current gateway configuration.\n- Verify active Layer 3 IP helper parameters pointing to active pools: `ip helper-address 192.168.1.10`', now(), now()),
-                            ('Mitigating Broadcast packet storms inside Spanning Tree Networks', 'note', '', '# Mitigating Access Layer Network Loops with STP BPDU Guard\n\nLoop protection is strictly configured on all trunk and access terminals:\n```\nswitchport mode access\nspanning-tree portfast\nspanning-tree bpduguard enable\n```', now(), now())
+                            ('Resolving VLAN Leakage and Trunk Port Encapsulation Standards', 'note', '', '# Comprehensive VLAN Encapsulation Standards\\n\\nThis article outlines enterprise diagnostic criteria for mitigating Inter-VLAN performance loss across Layer 2 and Layer 3 routing equipment.\\n\\n### Core Engineering Diagnostics\\n- Check trunk status: `show interface trunk`\\n- Configure dot1q routing encapsulation: `encapsulation dot1Q 10`\\n- Native VLAN must match on switch port and subinterface.', now(), now()),
+                            ('Analyzing Stuck OSPF Neighbor States (DR/BDR Election Loop)', 'note', '', '# Demystifying Stuck OSPF Neighbor States\\n\\nAdjacencies fail to transition into the **FULL** state.\\n\\n### Immediate Actions\\n- Double-check MTU matching: `show ip ospf interface`\\n- Run `ip ospf mtu-ignore` to debug descriptors exchange loops.', now(), now()),
+                            ('Managing Sudden DHCP Autoconfiguration Loops (169.254.x.x)', 'note', '', '# Resolving Workstation APIPA (169.254.x.x) Issues\\n\\nAPIPA assignment points directly to a DHCP client network negotiation failure.\\n\\n### Diagnosis Protocol\\n- Release current gateway configuration.\\n- Verify active Layer 3 IP helper parameters pointing to active pools: `ip helper-address 192.168.1.10`', now(), now()),
+                            ('Mitigating Broadcast packet storms inside Spanning Tree Networks', 'note', '', '# Mitigating Access Layer Network Loops with STP BPDU Guard\\n\\nLoop protection is strictly configured on all trunk and access terminals:\\n```\\nswitchport mode access\\nspanning-tree portfast\\nspanning-tree bpduguard enable\\n```', now(), now())
                             """
                         )
                         print("✅ Seeded initial TechRich Knowledge Nodes successfully.")
@@ -1572,10 +1572,3 @@ def delete_techrich_doc_by_id(doc_id):
 
     finally:
         conn.close()
-
-
-# ---------------- Auto-create Tables ----------------
-try:
-    create_tables()
-except Exception as e:
-    print("⚠️ Could not auto-create tables:", e)
