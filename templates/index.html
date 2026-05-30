@@ -1,2025 +1,341 @@
-<!doctype html>
-<html lang="en" data-bs-theme="dark">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <script>
-    // Immediately check and apply saved theme before body renders
-    (function() {
-      const savedTheme = localStorage.getItem("theme") || "dark";
-      if (savedTheme === "light") {
-        document.documentElement.setAttribute("data-bs-theme", "light");
-      } else {
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-      }
-    })();
-  </script>
-  <meta name="robots" content="index, follow">
-  <!-- Charset & Responsive -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- canonical url -->
-  <link rel="canonical" href="https://techknowsolution.co.ke{{ request.path }}">
-
-  <!-- Preloads for Performance -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" as="style">
-  <link rel="preload" href="/static/favicon.png" as="image">
-
-  <!-- Advanced Brand SEO Meta (Requirement 3) -->
-  <meta name="application-name" content="TechKnow Solutions">
-  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
-  <meta property="og:site_name" content="TechKnow Solutions">
-  <meta name="twitter:site" content="@techknowsols">
-  <meta name="creator" content="Caleb Muga">
-  <meta name="publisher" content="TechKnow Solutions">
-  <meta name="theme-color" content="#07111f">
-  <meta name="geo.region" content="KE-30">
-  <meta name="geo.placename" content="Nairobi">
-  <meta name="language" content="English">
-  <meta name="rating" content="general">
-  <meta name="distribution" content="global">
-  <meta name="revisit-after" content="2 days">
-  <meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}">
-
-  <meta property="og:title"
-      content="TechKnow Solutions • Cybersecurity, AI & Systems Development">
-
-  <meta property="og:description"
-        content="Enterprise networking, cybersecurity auditing, automation systems and cloud technologies by Caleb Muga.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SurgeTechKnow - Secure Networks &amp; Smarter Systems</title>
   
+  <meta name="description" content="SurgeTechKnow Solutions - Professional network topology audits, Cisco configurations, vulnerability assessments, and custom-scripted automation pipelines built by certified specialists.">
+  <meta name="keywords" content="SurgeTechKnow, Cyber Security Nairobi, CCNA network design, Python automation scripts, Cisco rack assembly, secure systems audit">
+  <meta name="author" content="SurgeTechKnow">
+  <link rel="canonical" href="https://techknowsolution.co.ke">
   <meta property="og:type" content="website">
-
-  <!-- SEO -->
-  <title>TechKnow Solutions • Cybersecurity, AI & Systems Development by Caleb Muga</title>
-
-  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
-  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE" />
+  <meta property="og:title" content="SurgeTechKnow - Secure Networks &amp; Smarter Systems">
+  <meta property="og:description" content="Certified Cisco CCNA network topology planning, automated server scripting, and rigorous cybersecurity compliance audits.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80">
   
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR');
-  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4340479899629152" crossorigin="anonymous"></script>
 
-  <!-- OpenGraph / Social Sharing -->
-  <meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png">
-  <meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2 family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
   
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  
-  <meta property="og:image:alt"
-        content="TechKnow Solutions — Cybersecurity, AI & Systems Development by Caleb Muga">
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image"
-      content="https://techknowsolution.co.ke/static/ogimage.png">
-  <meta name="twitter:title"
-        content="TechKnow Solutions • Cybersecurity, AI & Systems Development">
-  
-  <meta name="twitter:description"
-        content="Enterprise networking, cybersecurity auditing, automation systems and cloud technologies by Caleb Muga.">
-  
-  <!-- Most Important Structured Data Graph Upgrade (Requirement 4) -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@graph":[
-      {
-        "@type":"Organization",
-        "name":"TechKnow Solutions",
-        "alternateName":[
-          "TechKnow",
-          "TechKnowSols",
-          "TechNowSolutions",
-          "Muga.dev"
-        ],
-        "url":"https://techknowsolution.co.ke",
-        "logo":"https://techknowsolution.co.ke/static/favicon.png",
-        "founder":{
-          "@type":"Person",
-          "name":"Caleb Muga"
-        },
-        "sameAs":[
-          "https://linkedin.com/",
-          "https://x.com/"
-        ]
-      },
-      {
-        "@type":"Person",
-        "name":"Caleb Muga",
-        "url":"https://techknowsolution.co.ke",
-        "jobTitle":"Software Engineer",
-        "worksFor":{
-          "@type":"Organization",
-          "name":"TechKnow Solutions"
-        }
-      },
-      {
-        "@type":"Blog",
-        "name":"Muga Digital Journal",
-        "url":"https://techknowsolution.co.ke/blog",
-        "description":"Cybersecurity, networking, AI, software engineering and technology insights by Caleb Muga.",
-        "publisher":{
-          "@type":"Organization",
-          "name":"TechKnow Solutions"
-        }
-      }
-    ]
-  }
-  </script>
-
-  <!-- Favicon Sets (Requirement 5) -->
-  <link rel="icon" sizes="32x32" href="/static/favicon-32.png">
-  <link rel="icon" sizes="16x16" href="/static/favicon-16.png">
-  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Bootstrap + AOS + Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  
-  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
-  <!-- Markdown parser for AI Digital Twin bot -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
   <style>
-    /* Styling Theme and Variables */
     :root {
-      --bg: #030712;
-      --card-bg: rgba(17, 24, 39, 0.45);
-      --card-hover-bg: rgba(31, 41, 55, 0.6);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(59, 130, 246, 0.4);
-      --text: #f3f4f6;
-      --text-muted: #9ca3af;
-      --brand1: #3b82f6; /* cobalt blue */
-      --brand2: #8b5cf6; /* violet */
-      --accent: #22d3ee; /* neon cyan */
-      --accent-rgb: 34, 211, 238;
-      --glow: rgba(59, 130, 246, 0.15);
-      --glass-bg: rgba(3, 7, 18, 0.7);
-      --input-bg: rgba(17, 24, 39, 0.6);
-    }
-
-    body.light {
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --card-hover-bg: #ffffff;
-      --border: rgba(0, 0, 0, 0.06);
-      --border-hover: rgba(59, 130, 246, 0.4);
-      --text: #0f172a;
-      --text-muted: #475569;
-      --brand1: #2563eb;
-      --brand2: #7c3aed;
-      --accent: #0284c7;
-      --accent-rgb: 2, 132, 199;
-      --glow: rgba(37, 99, 235, 0.05);
-      --glass-bg: rgba(248, 250, 252, 0.85);
-      --input-bg: #f1f5f9;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      scrollbar-width: thin;
-      scrollbar-color: var(--brand1) var(--bg);
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--brand1);
-    }
-
-    ::selection {
-      background: rgba(var(--accent-rgb), 0.3);
-      color: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --brand-primary: #f97316;
+      --brand-secondary: #ea580c;
     }
 
     body {
       background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Custom Ambient Lights */
-    .ambient-glow {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-    .glow-1 {
-      top: -100px;
-      right: -50px;
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
-    }
-    .glow-2 {
-      bottom: 15%;
-      left: -100px;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-    }
-
-    /* Navbar */
-    .navbar-custom {
-      backdrop-filter: blur(20px);
-      background-color: var(--glass-bg);
-      border-bottom: 1px solid var(--border);
-      transition: transform 0.35s ease, background-color 0.35s ease;
-      z-index: 1050;
-    }
-
-    .brand-avatar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
+    .brand-title {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      color: var(--text);
+      letter-spacing: -1px;
     }
 
-    .brand-avatar img {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .brand-avatar span {
-      font-size: 1.15rem;
-      letter-spacing: -0.5px;
-    }
-
-    .nav-custom-link {
-      font-size: 0.95rem;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 8px;
-      color: var(--text-muted) !important;
-      transition: all 0.3s ease;
-    }
-
-    .nav-custom-link:hover {
-      color: var(--text) !important;
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    body.light .nav-custom-link:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-
-    /* Controls */
-    .theme-toggle-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      border-radius: 12px;
-      width: 38px;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      color: var(--text);
-    }
-
-    .theme-toggle-btn:hover {
-      border-color: var(--brand1);
-      transform: scale(1.05);
-      background: var(--card-hover-bg);
-    }
-
-    /* Hero / Header */
-    .hero {
-      position: relative;
-      padding: 180px 24px 120px;
-      text-align: center;
-      overflow: hidden;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .hero .overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0.12;
-      filter: saturate(120%) contrast(105%);
-      transition: transform 0.1s ease-out;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      color: var(--brand1);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-weight: 600;
-      margin-bottom: 30px;
-      position: relative;
-      z-index: 2;
-    }
-    body.light .hero-badge {
-      background: rgba(37, 99, 235, 0.06);
-    }
-
-    .hero h1 {
-      position: relative;
-      z-index: 2;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      margin-bottom: 24px;
-      background: linear-gradient(135deg, #ffffff 30%, #93c5fd, #c084fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    body.light .hero h1 {
-      background: linear-gradient(135deg, #0f172a 30%, #2563eb, #6d28d9);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      position: relative;
-      z-index: 2;
-      max-width: 800px;
-      margin: 0 auto 35px;
-      font-size: 1.2rem;
-      line-height: 1.8;
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-
-    /* Floatings shapes */
-    .floaters span {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(25px);
-      opacity: 0.12;
-      animation: drift 15s ease-in-out infinite;
-      pointer-events: none;
-    }
-    .floaters .f1 { width: 140px; height: 140px; left: 8%; top: 25%; background: var(--brand1); }
-    .floaters .f2 { width: 180px; height: 180px; right: 8%; top: 15%; background: var(--brand2); }
-    .floaters .f3 { width: 120px; height: 120px; left: 15%; bottom: 15%; background: #06b6d4; }
-    .floaters .f4 { width: 100px; height: 100px; right: 18%; bottom: 20%; background: var(--brand1); }
-    @keyframes drift {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-30px) scale(1.1); }
-    }
-
-    /* Chips */
-    .chips {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 45px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .chip {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 8px 18px;
-      border-radius: 12px;
-      font-size: 0.9rem;
+    .nav-link {
       font-weight: 500;
       color: var(--text-muted);
-      border: 1px solid var(--border);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      transition: color 0.25s ease;
     }
 
-    .chip:hover {
-      border-color: var(--brand1);
-      color: var(--text);
-      transform: translateY(-2px);
-      background: rgba(59, 130, 246, 0.05);
+    .nav-link:hover, .nav-link.active {
+      color: var(--brand-primary) !important;
     }
 
-    body.light .chip {
-      background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    .hero-wrapper {
+      background: radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.05) 0%, rgba(255, 255, 255, 0) 100%), #ffffff;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    /* Moving tech icons row */
-    .tech-row-wrapper {
-      position: relative;
-      z-index: 2;
-      margin-top: 50px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 20px;
-    }
-    
-    .tech-row {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .tech-icon {
-      width: 50px;
-      height: 50px;
-      font-size: 1.4rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .tech-icon:hover {
-      border-color: var(--brand1);
-      transform: translateY(-5px);
-      color: white;
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
-    }
-
-    body.light .tech-icon {
-      background: #ffffff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-    }
-
-    /* Buttons */
-    .btn-fire-primary {
-      background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
-      border: none;
-      color: #ffffff;
-      font-weight: 600;
-      padding: 14px 28px;
-      border-radius: 14px;
-      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-fire-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.45);
-      color: #ffffff;
-      opacity: 0.95;
-    }
-
-    .btn-fire-secondary {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-weight: 600;
-      padding: 14px 28px;
-      border-radius: 14px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-fire-secondary:hover {
-      transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--brand1);
-      color: var(--text);
-    }
-
-    body.light .btn-fire-secondary {
-      background: #ffffff;
-    }
-
-    /* Sections */
-    section {
-      padding: 100px 0;
-      position: relative;
-    }
-
-    .section-header {
-      margin-bottom: 60px;
-      text-align: center;
-    }
-
-    .section-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 800;
-      font-size: 2.5rem;
-      letter-spacing: -1px;
-      margin-bottom: 15px;
-    }
-
-    .section-subtitle {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* Cards */
-    .card-fire {
-      border: 1px solid var(--border);
-      border-radius: 20px;
+    .feature-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      padding: 35px;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-fire::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.05), transparent);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-      pointer-events: none;
-    }
-
-    .card-fire:hover::before {
-      opacity: 1;
-    }
-
-    .card-fire:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px var(--glow);
-    }
-
-    /* Lists in cards */
-    .card-list {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .card-list li {
-      position: relative;
-      padding-left: 28px;
-      margin-bottom: 12px;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
-
-    .card-list li::before {
-      content: '✦';
-      position: absolute;
-      left: 0;
-      color: var(--accent);
-      font-weight: bold;
-    }
-
-    /* Statistics / Counters */
-    .counters {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 25px;
-      margin-top: 40px;
-    }
-
-    .counter-card {
-      text-align: center;
-      padding: 30px;
-      position: relative;
-    }
-
-    .counter-card h3 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 2.8rem;
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, var(--brand1), var(--brand2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .counter-card .label {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .counter-card .sub-label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Gallery Grid */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
-    }
-
-    .gallery-item {
-      position: relative;
+      border: 1px solid var(--border-color);
       border-radius: 16px;
-      overflow: hidden;
-      background: #020617;
-      cursor: pointer;
-      height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--border);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .gallery-item img, .gallery-item video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s ease;
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+      border-color: rgba(249, 115, 22, 0.25);
     }
 
-    .gallery-item:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: var(--border-hover);
-      box-shadow: 0 15px 35px var(--glow);
-    }
-
-    .gallery-item:hover img, .gallery-item:hover video {
-      transform: scale(1.08);
-    }
-
-    .video-play-icon {
-      position: absolute;
-      z-index: 5;
-      width: 50px;
-      height: 50px;
+    .category-chip {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(4px);
-    }
-
-    .video-play-icon::after {
-      content: '';
-      border-style: solid;
-      border-width: 9px 0 9px 14px;
-      border-color: transparent transparent transparent #ffffff;
-      margin-left: 4px;
-    }
-
-    .gallery-item:hover .video-play-icon {
-      background: var(--brand1);
-      transform: scale(1.1);
-      border-color: transparent;
-    }
-
-    /* Floating File Upload Style */
-    .file-upload-box {
-      border: 2px dashed var(--border);
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.01);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .file-upload-box:hover {
-      border-color: var(--brand1);
-      background: rgba(59, 130, 246, 0.02);
-    }
-
-    .file-upload-box input[type="file"] {
-      display: none;
-    }
-
-    /* Form Controls */
-    .form-control-fire {
-      background: var(--input-bg);
-      border: 1px solid var(--border);
-      color: var(--text) !important;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 0.95rem;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .form-control-fire:focus {
-      border-color: var(--brand1);
-      background: var(--input-bg);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-      outline: none;
-    }
-
-    /* Services Grid */
-    .service-card {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .service-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 50px;
-      height: 50px;
-      border-radius: 12px;
-      background: rgba(59, 130, 246, 0.1);
-      color: var(--brand1);
-      font-size: 1.5rem;
-      margin-bottom: 25px;
-    }
-
-    body.light .service-icon {
-      background: rgba(37, 99, 235, 0.06);
-    }
-
-    /* Blog Grid & Cards */
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-    }
-
-    .blog-card-custom {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .blog-card-meta {
+      padding: 0.5rem 1.25rem;
       font-size: 0.85rem;
+      font-weight: 600;
       color: var(--text-muted);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .blog-card-title {
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
       font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 1.35rem;
-      margin-bottom: 12px;
-      color: var(--text);
-      line-height: 1.4;
     }
 
-    .blog-card-excerpt {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
-      flex-grow: 1;
+    .category-chip:hover, .category-chip.active {
+      background: var(--brand-primary);
+      color: #ffffff;
+      border-color: var(--brand-primary);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
     }
 
-    .blog-card-thumbnail {
-      width: 100%;
-      height: 190px;
-      overflow: hidden;
+    .horizontal-scroll-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 1.5rem;
+      padding: 0.5rem 0.25rem 1.5rem 0.25rem;
+      scroll-behavior: smooth;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 999px;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-primary);
+    }
+
+    .blog-scroller-item {
+      min-width: 320px;
+      max-width: 320px;
+      flex: 0 0 auto;
+    }
+
+    .blog-card-compact {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 14px;
-      margin-bottom: 18px;
-      border: 1px solid var(--border);
-      background-color: var(--card-bg);
-      position: relative;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .blog-card-thumbnail img {
+    .blog-card-compact:hover {
+      transform: translateY(-2px);
+      border-color: rgba(249, 115, 22, 0.25);
+      box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.08);
+    }
+
+    .gallery-img-wrapper {
+      height: 180px;
+      background: #cbd5e1;
+      overflow: hidden;
+    }
+
+    .gallery-img-wrapper img, .gallery-img-wrapper video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.4s ease;
+      transition: transform 0.3s ease;
     }
 
-    .blog-card-custom:hover .blog-card-thumbnail img {
+    .gallery-card:hover .gallery-img-wrapper img,
+    .gallery-card:hover .gallery-img-wrapper video {
       transform: scale(1.05);
     }
 
-    /* Fallback and Category Visual Styles */
-    .placeholder-thumbnail {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .placeholder-thumbnail i {
-      transition: transform 0.4s ease, filter 0.4s ease;
-      filter: drop-shadow(0 0 12px currentColor);
-    }
-    .blog-card-custom:hover .placeholder-thumbnail i,
-    .blog-card:hover .placeholder-thumbnail i {
-      transform: scale(1.18) rotate(-4deg);
-    }
-
-    .bg-gradient-cybersecurity {
-      background: linear-gradient(135deg, #1e1b4b 0%, #450a0a 100%) !important;
-      color: #ef4444 !important;
-    }
-    .bg-gradient-networking {
-      background: linear-gradient(135deg, #172554 0%, #0c4a6e 100%) !important;
-      color: #3b82f6 !important;
-    }
-    .bg-gradient-ai-automation {
-      background: linear-gradient(135deg, #2e1065 0%, #3b0764 100%) !important;
-      color: #a855f7 !important;
-    }
-    .bg-gradient-web-development {
-      background: linear-gradient(135deg, #042f2e 0%, #115e59 100%) !important;
-      color: #06b6d4 !important;
-    }
-    .bg-gradient-ict-support {
-      background: linear-gradient(135deg, #064e3b 0%, #0f766e 100%) !important;
-      color: #14b8a6 !important;
-    }
-    .bg-gradient-technology {
-      background: linear-gradient(135deg, #111827 0%, #374151 100%) !important;
-      color: #9ca3af !important;
-    }
-
-    /* Dyn badges style */
-    .blog-tag {
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-    }
-    .badge-cybersecurity {
-      background: rgba(239, 68, 68, 0.12) !important;
-      color: #f87171 !important;
-      border: 1px solid rgba(239, 68, 68, 0.2) !important;
-    }
-    .badge-networking {
-      background: rgba(59, 130, 246, 0.12) !important;
-      color: #60a5fa !important;
-      border: 1px solid rgba(59, 130, 246, 0.2) !important;
-    }
-    .badge-ai-automation {
-      background: rgba(139, 92, 246, 0.12) !important;
-      color: #a78bfa !important;
-      border: 1px solid rgba(139, 92, 246, 0.2) !important;
-    }
-    .badge-web-development {
-      background: rgba(6, 182, 212, 0.12) !important;
-      color: #22d3ee !important;
-      border: 1px solid rgba(6, 182, 212, 0.2) !important;
-    }
-    .badge-ict-support {
-      background: rgba(20, 184, 166, 0.12) !important;
-      color: #2dd4bf !important;
-      border: 1px solid rgba(20, 184, 166, 0.2) !important;
-    }
-    .badge-technology {
-      background: rgba(148, 163, 184, 0.12) !important;
-      color: #cbd5e1 !important;
-      border: 1px solid rgba(148, 163, 184, 0.2) !important;
-    }
-
-    body.light .badge-cybersecurity {
-      background: rgba(239, 68, 68, 0.08) !important;
-      color: #dc2626 !important;
-      border: 1px solid rgba(239, 68, 68, 0.15) !important;
-    }
-    body.light .badge-networking {
-      background: rgba(59, 130, 246, 0.08) !important;
-      color: #2563eb !important;
-      border: 1px solid rgba(59, 130, 246, 0.15) !important;
-    }
-    body.light .badge-ai-automation {
-      background: rgba(139, 92, 246, 0.08) !important;
-      color: #7c3aed !important;
-      border: 1px solid rgba(139, 92, 246, 0.15) !important;
-    }
-    body.light .badge-web-development {
-      background: rgba(6, 182, 212, 0.08) !important;
-      color: #0891b2 !important;
-      border: 1px solid rgba(6, 182, 212, 0.15) !important;
-    }
-    body.light .badge-ict-support {
-      background: rgba(20, 184, 166, 0.08) !important;
-      color: #0d9488 !important;
-      border: 1px solid rgba(20, 184, 166, 0.15) !important;
-    }
-    body.light .badge-technology {
-      background: rgba(71, 85, 105, 0.08) !important;
-      color: #475569 !important;
-      border: 1px solid rgba(71, 85, 105, 0.15) !important;
-    }
-
-    /* Glass Panels */
-    .glass-panel {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-    }
-
-    /* Full Contact Support */
-    .contact-info-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .contact-info-item {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .contact-info-item i {
-      font-size: 1.3rem;
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: rgba(59, 130, 246, 0.08);
-      color: var(--brand1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    body.light .contact-info-item i {
-      background: rgba(37, 99, 235, 0.06);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 40px 0;
-      margin-top: auto;
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-    }
-
-    /* Floating WhatsApp Button */
-    .float-whatsapp {
+    .chat-widget-wrapper {
       position: fixed;
-      right: 25px;
-      bottom: 25px;
-      z-index: 1100;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1050;
+      font-family: 'Inter', sans-serif;
     }
 
-    .float-whatsapp a {
+    .chat-trigger-btn {
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
       color: #ffffff;
-      font-size: 1.6rem;
-      background: linear-gradient(135deg, #25D366, #128C7E);
-      box-shadow: 0 8px 24px rgba(18, 140, 126, 0.35);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .float-whatsapp a:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 12px 30px rgba(18, 140, 126, 0.5);
-    }
-
-    /* Loader styling */
-    #loader {
-      position: fixed;
-      inset: 0;
+      border: none;
+      box-shadow: 0 6px 16px rgba(249, 115, 22, 0.25);
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--bg);
-      z-index: 9999;
-      transition: opacity 0.5s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .spinner-fire {
-      width: 60px;
-      height: 60px;
-      position: relative;
+    .chat-trigger-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
     }
 
-    .spinner-fire::before, .spinner-fire::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 4px solid transparent;
-      mix-blend-mode: screen;
-    }
-
-    .spinner-fire::before {
-      border-top-color: var(--brand1);
-      animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    }
-
-    .spinner-fire::after {
-      border-bottom-color: var(--brand2);
-      animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* File validation list decoration */
-    .allowed-exts-text {
-      font-family: monospace;
-      color: var(--accent);
-      background-color: rgba(var(--accent-rgb), 0.06);
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-    }
-
-    /* Responsiveness adjustments */
-    @media (max-width: 991px) {
-      .hero {
-        padding-top: 140px;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      .section-title {
-        font-size: 2rem;
-      }
-      .gallery-item {
-        height: 160px;
-      }
-      .card-fire {
-        padding: 25px;
-      }
-    }
-
-    /* Cursor Glow Effect */
-    .cursor-glow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0) 70%);
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      z-index: 1080;
-      mix-blend-mode: screen;
-      transition: opacity 0.3s;
-      opacity: 0;
-    }
-    body.light .cursor-glow {
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 0%, rgba(16, 185, 129, 0) 70%);
-    }
-
-
-    /* =========================================================
-       PREMIUM CLEANUP PATCH — reduces crowding, glow overload,
-       spacing pressure, color competition, and mobile density.
-       Added by ChatGPT after UI review.
-       ========================================================= */
-
-    :root {
-      --section-gap: clamp(72px, 9vw, 120px);
-      --card-radius: 22px;
-      --soft-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
-      --blue-soft: rgba(59, 130, 246, 0.10);
-      --cyan-soft: rgba(34, 211, 238, 0.08);
-    }
-
-    body {
-      line-height: 1.65;
-    }
-
-    .ambient-glow {
-      opacity: 0.28;
-      filter: blur(150px);
-    }
-
-    .glow-1,
-    .glow-2 {
-      width: 380px;
-      height: 380px;
-    }
-
-    .navbar-custom {
-      background-color: rgba(3, 7, 18, 0.84);
-    }
-
-    body.light .navbar-custom {
-      background-color: rgba(248, 250, 252, 0.92);
-    }
-
-    .nav-custom-link {
-      padding: 8px 12px;
-    }
-
-    .hero {
-      padding: clamp(128px, 15vw, 170px) 24px clamp(78px, 10vw, 108px);
-      min-height: auto;
-    }
-
-    .hero .overlay {
-      opacity: 0.08;
-      filter: saturate(95%) contrast(100%);
-    }
-
-    .floaters span {
-      opacity: 0.06;
-      filter: blur(35px);
-    }
-
-    .hero-badge {
-      margin-bottom: 22px;
-      padding: 7px 14px;
-      font-size: 0.78rem;
-      letter-spacing: 0.75px;
-    }
-
-    .hero h1 {
-      max-width: 980px;
-      margin-left: auto;
-      margin-right: auto;
-      font-size: clamp(2.35rem, 5.2vw, 4.15rem);
-      line-height: 1.08;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      max-width: 720px;
-      font-size: clamp(1rem, 1.45vw, 1.12rem);
-      line-height: 1.75;
-      margin-bottom: 28px;
-    }
-
-    .chips {
-      gap: 8px;
-      margin-bottom: 34px;
-    }
-
-    .chip {
-      padding: 7px 14px;
-      font-size: 0.82rem;
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    .tech-row-wrapper {
-      margin-top: 38px;
-      max-width: 520px;
-    }
-
-    .tech-row {
-      gap: 14px;
-    }
-
-    .tech-icon {
-      width: 44px;
-      height: 44px;
-      font-size: 1.18rem;
-      border-radius: 13px;
-      box-shadow: none;
-    }
-
-    .tech-icon:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 22px rgba(59, 130, 246, 0.16);
-    }
-
-    .btn-fire-primary,
-    .btn-fire-secondary {
-      padding: 12px 22px;
-      border-radius: 13px;
-    }
-
-    section {
-      padding: var(--section-gap) 0;
-    }
-
-    main.container.py-5 {
-      padding-top: 3rem !important;
-      padding-bottom: 4rem !important;
-    }
-
-    .section-header {
-      margin-bottom: clamp(36px, 5vw, 54px);
-    }
-
-    .section-title {
-      font-size: clamp(1.85rem, 3.6vw, 2.35rem);
-      line-height: 1.15;
-    }
-
-    .section-subtitle {
-      max-width: 640px;
-      font-size: 1rem;
-      line-height: 1.75;
-    }
-
-    .card-fire {
-      border-radius: var(--card-radius);
-      padding: clamp(24px, 3vw, 32px);
-      background: rgba(17, 24, 39, 0.52);
-      box-shadow: none;
-    }
-
-    .card-fire::before {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.035), transparent 62%);
-    }
-
-    .card-fire:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--soft-shadow);
-      border-color: rgba(59, 130, 246, 0.28);
-    }
-
-    body.light .card-fire {
+    .chat-window {
+      width: 360px;
+      height: 500px;
       background: #ffffff;
-      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.06);
-    }
-
-    .card-list li {
-      margin-bottom: 9px;
-      font-size: 0.93rem;
-    }
-
-    .counters {
-      gap: 18px;
-      margin-top: 28px;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    }
-
-    .counter-card {
-      padding: 24px 18px;
-    }
-
-    .counter-card h3 {
-      font-size: clamp(2.1rem, 4vw, 2.55rem);
-      margin-bottom: 4px;
-    }
-
-    .counter-card .label {
-      font-size: 0.94rem;
-      margin-bottom: 5px;
-    }
-
-    .counter-card .sub-label {
-      font-size: 0.8rem;
-    }
-
-    .service-icon {
-      margin-bottom: 18px;
-    }
-
-    .service-card h4,
-    .card-fire h4,
-    .card-fire h5,
-    .card-fire h6 {
-      line-height: 1.3;
-    }
-
-    .blog-grid {
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 22px;
-    }
-
-    .blog-card-thumbnail {
-      height: 176px;
-      margin-bottom: 16px;
-    }
-
-    .blog-card-meta {
-      gap: 10px;
-      flex-wrap: wrap;
-      font-size: 0.78rem;
-      margin-bottom: 10px;
-    }
-
-    .blog-card-title {
-      font-size: 1.18rem;
-      line-height: 1.35;
-      margin-bottom: 10px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      bottom: 72px;
+      right: 0;
     }
 
-    .blog-card-excerpt {
+    .chat-window.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .chat-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .chat-message {
+      max-width: 80%;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
       font-size: 0.9rem;
-      line-height: 1.65;
-      margin-bottom: 20px;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: 1.5;
     }
 
-    .blog-tag {
-      padding: 5px 11px;
-      font-size: 10px;
-      letter-spacing: 0.35px;
+    .chat-message.bot {
+      background: #ffffff;
+      color: var(--text-main);
+      align-self: flex-start;
+      border: 1px solid var(--border-color);
     }
 
-    .gallery-grid {
-      gap: 18px;
+    .chat-message.user {
+      background: var(--brand-primary);
+      color: #ffffff;
+      align-self: flex-end;
     }
 
-    .gallery-item {
-      height: 190px;
+    .chat-footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border-color);
+      background: #ffffff;
+      display: flex;
+      gap: 0.5rem;
     }
 
-    .gallery-item:hover {
-      transform: translateY(-4px) scale(1.01);
+    .chat-input {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      flex: 1;
+      font-size: 0.9rem;
     }
 
-    .contact-info-list {
-      gap: 16px;
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--brand-primary);
     }
-
-    .contact-info-item i {
-      flex: 0 0 42px;
-    }
-
-    /* Reduce excessive inline neon/terminal visual pressure in inner panels */
-    .bg-black\/35,
-    .bg-black\/50 {
-      background-color: rgba(2, 6, 23, 0.32) !important;
-    }
-
-    .border-white\/5 {
-      border-color: rgba(255, 255, 255, 0.06) !important;
-    }
-
-    .text-xs,
-    .small {
-      line-height: 1.55;
-    }
-
-    .progress {
-      background-color: rgba(148, 163, 184, 0.16) !important;
-    }
-
-    .progress-bar.bg-success {
-      background: linear-gradient(90deg, #22c55e, #38bdf8) !important;
-    }
-
-    .badge {
-      letter-spacing: 0.15px;
-    }
-
-    /* Mobile polish: fewer competing details, better spacing, cleaner first impression */
-    @media (max-width: 768px) {
-      .navbar-custom .container {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      .brand-avatar span {
-        font-size: 1rem;
-      }
-
-      .hero {
-        padding: 118px 16px 74px;
-      }
-
-      .hero h1 {
-        font-size: clamp(2.05rem, 10vw, 2.85rem);
-        letter-spacing: -1px;
-      }
-
-      .hero p {
-        font-size: 0.98rem;
-        line-height: 1.7;
-      }
-
-      .chips {
-        max-width: 360px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .chip {
-        font-size: 0.78rem;
-        padding: 7px 11px;
-      }
-
-      .tech-row-wrapper {
-        display: none;
-      }
-
-      section {
-        padding: 68px 0;
-      }
-
-      .card-fire {
-        padding: 22px;
-        border-radius: 18px;
-      }
-
-      .section-header {
-        margin-bottom: 34px;
-      }
-
-      .section-title {
-        font-size: 1.85rem;
-      }
-
-      .counters {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .counter-card {
-        padding: 20px 12px;
-      }
-
-      .counter-card h3 {
-        font-size: 2rem;
-      }
-
-      .counter-card .label {
-        font-size: 0.84rem;
-      }
-
-      .counter-card .sub-label {
-        font-size: 0.74rem;
-      }
-
-      .blog-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .blog-card-thumbnail {
-        height: 170px;
-      }
-
-      .gallery-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .gallery-item {
-        height: 145px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .hero-badge {
-        font-size: 0.68rem;
-        padding: 6px 11px;
-      }
-
-      .hero h1 br {
-        display: none;
-      }
-
-      .d-flex.flex-wrap.justify-content-center.gap-3 .btn-fire-primary,
-      .d-flex.flex-wrap.justify-content-center.gap-3 .btn-fire-secondary {
-        width: 100%;
-        max-width: 310px;
-        justify-content: center;
-      }
-
-      .counters {
-        grid-template-columns: 1fr;
-      }
-
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
   </style>
 </head>
-<script>
-(function () {
-  let sent = false;
-  let startTime = Date.now();
-  let maxScroll = 0;
-  let interacted = false;
-
-  function updateScrollDepth() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (docHeight > 0) {
-      maxScroll = Math.max(maxScroll, Math.round((scrollTop / docHeight) * 100));
-    }
-  }
-
-  window.addEventListener("scroll", function () {
-    interacted = true;
-    updateScrollDepth();
-  }, { passive: true });
-
-  window.addEventListener("click", function () {
-    interacted = true;
-  });
-
-  function sendTracking() {
-    const timeOnPage = Math.round((Date.now() - startTime) / 1000);
-
-    fetch("/api/track_visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        path: window.location.pathname,
-        js_enabled: true,
-        visible: document.visibilityState === "visible",
-        time_on_page: timeOnPage,
-        scroll_depth: maxScroll,
-        engaged: interacted,
-        interaction: interacted,
-        mouse_moved: interacted,
-        screen_resolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        referrer: document.referrer,
-        browser: navigator.userAgent,
-        device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "Mobile" : "Desktop"
-      })
-    }).catch(() => {});
-  }
-
-  setTimeout(sendTracking, 16000);
-  setInterval(sendTracking, 30000);
-})();
-</script>
 <body>
-  <script>
-    if (localStorage.getItem("theme") === "light") {
-      document.body.classList.add("light");
-    }
-  </script>
 
-  <!-- Page Loader -->
-  <div id="loader" role="status" aria-hidden="false">
-    <div class="spinner-fire" aria-hidden="true"></div>
-  </div>
-
-  <!-- Background Ambient Glow Blobs -->
-  <div class="ambient-glow glow-1" aria-hidden="true"></div>
-  <div class="ambient-glow glow-2" aria-hidden="true"></div>
-
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2" role="navigation" aria-label="Main navigation">
-    <div class="container d-flex align-items-center justify-content-between">
-      <a class="brand-avatar" href="#home" aria-label="Go to home">
-        {% if profile_url %}
-          <img src="{{ profile_url }}" alt="Caleb Muga profile photo">
-        {% endif %}
-        <span>MUGA <span style="color:var(--brand1)">.dev</span></span>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <span class="p-1.5 px-2.5 rounded bg-warning bg-opacity-10 text-orange-650 d-flex align-items-center justify-content-center" style="background: rgba(249,115,22,0.07); color: #ea580c;">
+          <i class="bi bi-shield-lock-fill"></i>
+        </span>
+        <span class="brand-title text-dark">SurgeTechKnow</span>
       </a>
-
-      <!-- Noticeable actions & Portrait passport photo always accessible outside collapse -->
-      <div class="d-flex align-items-center gap-2 ms-auto order-lg-last">
-        <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
-          <i class="bi bi-moon-stars"></i>
-        </button>
-        
-        <a class="btn btn-sm btn-fire-secondary px-2.5 d-none d-sm-inline-flex" href="{{ url_for('blog_list') }}">
-          <i class="bi bi-book"></i> Updates
-        </a>
-        
-        <a class="btn btn-sm btn-fire-primary px-3 d-none d-md-inline-flex" href="{{ url_for('admin') }}">
-          <i class="bi bi-shield-lock"></i> TechKnow
-        </a>
-
-        <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="Caleb Muga - Founder">
-          <img src="/static/passport.png" alt="Caleb Muga" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
-        </div>
-
-        <button class="navbar-toggler border-0 text-white rounded-3 shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05); padding: 6px 10px;">
-          <i class="bi bi-list fs-4 text-white"></i>
-        </button>
-      </div>
-
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-lg-4 align-items-center gap-1.5 py-2 py-lg-0">
-          <li class="nav-item">
-            <a class="nav-custom-link active" href="#home" aria-current="page">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-custom-link" href="#about">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-custom-link" href="#services">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-custom-link" href="#portfolio">Portfolio</a>
-          </li>
-          
-          <!-- Mobile Specific Extra Menu Actions -->
-          <li class="nav-item d-sm-none mt-2 w-100">
-            <a class="btn btn-sm btn-fire-secondary w-100 justify-content-center" href="{{ url_for('blog_list') }}">
-              <i class="bi bi-book"></i> Updates Library
-            </a>
-          </li>
-          <li class="nav-item d-md-none mt-2 w-100">
-            <a class="btn btn-sm btn-fire-primary w-100 justify-content-center" href="{{ url_for('admin') }}">
-              <i class="bi bi-shield-lock"></i> TechKnow Portal
-            </a>
-          </li>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navCollapse">
+        <ul class="navbar-nav ms-auto gap-2">
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/hub">Enterprise Hub</a></li>
+          <li class="nav-item"><a class="nav-link" href="/blog">Insights</a></li>
+          <li class="nav-item"><a class="nav-link" href="/media">Showcase</a></li>
+          <li class="nav-item"><a class="nav-link text-warning font-semibold ms-lg-2" href="/admin" id="opsLink">Console Operations</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Interactive Hero Section -->
-  <header id="home" class="hero" role="banner">
-    {% if hero_url %}
-      <div class="overlay" style="background-image: url('{{ hero_url }}');" aria-hidden="true"></div>
-    {% else %}
-      <div class="overlay" style="background: linear-gradient(135deg, #020617 0%, #0f172a 100%);" aria-hidden="true"></div>
-    {% endif %}
-
-    <div class="floaters" aria-hidden="true">
-      <span class="f1"></span>
-      <span class="f2"></span>
-      <span class="f3"></span>
-      <span class="f4"></span>
-    </div>
-
-    <div class="container position-relative" style="z-index: 2">
-      <div class="hero-badge animate__animated animate__fadeInDown">
-        <i class="bi bi-rocket-takeoff-fill"></i> TechKnow Solutions
-      </div>
-
-      <h1 data-aos="fade-up" data-aos-duration="600">
-        Secure Networks. Smarter Systems. <br><span style="background: linear-gradient(to right, #60a5fa, #c084fc, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Practical Digital Solutions</span>
-      </h1>
-
-      <p data-aos="fade-up" data-aos-delay="100" data-aos-duration="600">
-        Cybersecurity, networking, automation, and ICT support solutions built for reliability, speed, and practical business impact.
-      </p>
-
-      <div class="chips" data-aos="fade-up" data-aos-delay="200" data-aos-duration="600">
-        <span class="chip"><i class="bi bi-shield-lock-fill"></i> Cybersecurity</span>
-        <span class="chip"><i class="bi bi-diagram-3-fill"></i> CCNA Networking</span>
-        <span class="chip"><i class="bi bi-cpu-fill"></i> Systems Support</span>
-        <span class="chip"><i class="bi bi-lightning-charge-fill"></i> Automation</span>
-      </div>
-
-      <div class="d-flex flex-wrap justify-content-center gap-3" data-aos="fade-up" data-aos-delay="300" data-aos-duration="600">
-        <a href="#portfolio" class="btn-fire-primary">View Portfolio <i class="bi bi-arrow-right"></i></a>
-        <a href="#contact" class="btn-fire-secondary">Get in Touch <i class="bi bi-chat-text"></i></a>
-      </div>
-
-      <!-- Tech Marquee Icons -->
-      <div class="tech-row-wrapper" data-aos="zoom-in" data-aos-delay="400" data-aos-duration="700">
-        <div class="tech-row" aria-hidden="true">
-          <div class="tech-icon" title="Cyber Security"><i class="bi bi-shield-check" style="color:#22d3ee"></i></div>
-          <div class="tech-icon" title="Wireless Network"><i class="bi bi-wifi" style="color:#60a5fa"></i></div>
-          <div class="tech-icon" title="Cloud Database"><i class="bi bi-cloud-check" style="color:#a78bfa"></i></div>
-          <div class="tech-icon" title="Smart Diagnostics"><i class="bi bi-activity" style="color:#fb7185"></i></div>
-          <div class="tech-icon" title="Server Systems"><i class="bi bi-hdd-network" style="color:#34d399"></i></div>
-          <div class="tech-icon" title="Automation"><i class="bi bi-terminal" style="color:#fbbf24"></i></div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Grid Framework Content -->
-  <main class="container py-5" role="main">
-    
-    <!-- Flash Messages -->
-    {% with msgs=get_flashed_messages() %}
-      {% if msgs %}
-        <div class="mb-5 animate__animated animate__fadeIn" aria-live="polite">
-          {% for m in msgs %}
-            <div class="alert alert-info border border-info-subtle bg-info-subtle text-info-emphasis rounded-4 p-3 d-flex align-items-center gap-3" style="background-color: var(--card-bg) !important; backdrop-filter: blur(10px)">
-              <i class="bi bi-info-circle-fill fs-5"></i>
-              <div>{{ m }}</div>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    <!-- About Me Section -->
-    <section id="about" aria-labelledby="about-title">
-      <div class="section-header">
-        <h2 class="section-title" id="about-title" data-aos="fade-up">Professional Profile</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">Who is Caleb Muga inside the command line and server rooms?</p>
-      </div>
-
-      <div class="card-fire" data-aos="fade-up" data-aos-delay="100">
-        <div class="row g-4 align-items-center">
-          <div class="col-lg-4 text-center">
-            <div class="position-relative d-inline-block">
-              {% if profile_url %}
-                <img src="{{ profile_url }}" alt="Caleb Muga" class="img-fluid rounded-4 shadow" style="width:180px; height:180px; object-fit:cover; border: 2px solid var(--border);">
-              {% else %}
-                <div class="rounded-4 d-flex align-items-center justify-content-center text-white font-weight-bold shadow" style="width:180px; height:180px; background:linear-gradient(45deg, var(--brand1), var(--brand2)); font-size:40px;">CM</div>
-              {% endif %}
-              <div class="position-absolute bottom-0 end-0 bg-success border border-white border-2 rounded-circle" style="width:16px; height:16px; margin: 5px;" title="Online"></div>
-            </div>
-          </div>
-          <div class="col-lg-8">
-            <h3 class="mb-3 font-semibold text-white d-flex align-items-center flex-wrap gap-2">
-              Caleb Muga 
-              <span class="badge py-1 px-2 font-medium text-xs rounded-pill" style="background: rgba(59,130,246,0.15); color: var(--accent); border: 1px solid rgba(59,130,246,0.3)">ICT Specialist</span>
-              <span class="badge py-1 px-2 font-medium text-xs rounded-pill" style="background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3)">
-                <span class="d-inline-block bg-success rounded-circle me-1 animate-pulse" style="width: 8px; height: 8px;"></span> Active Status: Available for Projects
-              </span>
-            </h3>
-
-            <p class="mb-4">
-              A meticulously driven and customer-oriented ICT Officer. Leveraging deep expertise in routing/switching topologies, cybersecurity audits, client support automation, and custom scripting frameworks to enable secure, scalable, and low-latency digital infrastructures for enterprises.
+  <main class="mt-5 pt-4">
+    <!-- REARRANGED HERO CONTENT -->
+    <section class="hero-wrapper py-5 px-3">
+      <div class="container py-4">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-7">
+            <span class="badge bg-warning bg-opacity-10 text-orange-650 mb-3 font-mono" style="background: rgba(249,115,22,0.08); color: #ea580c; font-size: 0.8rem;">
+              SURGE TECHKNOW SOLUTIONS
+            </span>
+            <h1 class="brand-title display-4 mb-3 leading-tight text-dark">
+              Secure Networks.<br>
+              Smarter Systems.
+            </h1>
+            <p class="text-zinc-600 fs-5 mb-4 leading-relaxed text-dark-50" style="font-size: 1.12rem;">
+              Practical Digital Solutions. Enterprise network topology architecture, rigorous cybersecurity audits, custom scripting automated processes, and systems engineered for high-concurrency compliance by certified lead auditor SurgeTechKnow.
             </p>
-
-            <div class="row mt-4">
-              <div class="col-md-6">
-                <ul class="card-list">
-                  <li>CCNA & Cisco Routing certified</li>
-                  <li>Cybersecurity hardening specialist</li>
-                  <li>Lightweight Python/Flask scripting</li>
-                </ul>
-              </div>
-              <div class="col-md-6">
-                <ul class="card-list">
-                  <li>Cloud & virtualization deployment</li>
-                  <li>Technical disaster recovery schemas</li>
-                  <li>Interactive network diagnostics</li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Highly Aesthetic Interactive Skill Progress Charts (Requirement 5.D) -->
-            <div class="mt-5 p-4 rounded-4 bg-black/35 border border-white/5">
-              <h5 class="text-white text-xs font-mono mb-4 tracking-wider d-flex align-items-center gap-2">
-                <i class="bi bi-cpu-fill text-success"></i> SKILLS MATRIX & DIAGNOSTICS PERFORMANCE (%)
-              </h5>
-              <div class="row g-4">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between text-xs font-mono text-muted mb-1.5">
-                      <span>CYBERSECURITY HARDENING</span>
-                      <span class="text-success fw-bold">92%</span>
-                    </div>
-                    <div class="progress bg-black/50 overflow-hidden" style="height: 7px; border-radius: 4px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 92%; border-radius: 4px;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between text-xs font-mono text-muted mb-1.5">
-                      <span>CISCO ENTERPRISE NETWORKING (CCNA)</span>
-                      <span class="text-success fw-bold">95%</span>
-                    </div>
-                    <div class="progress bg-black/50 overflow-hidden" style="height: 7px; border-radius: 4px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 95%; border-radius: 4px;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between text-xs font-mono text-muted mb-1.5">
-                      <span>PYTHON AUTOMATION ENGINE & SYSTEM FORKS</span>
-                      <span class="text-success fw-bold">88%</span>
-                    </div>
-                    <div class="progress bg-black/50 overflow-hidden" style="height: 7px; border-radius: 4px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 88%; border-radius: 4px;" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between text-xs font-mono text-muted mb-1.5">
-                      <span>LINUX SYSTEMS ADMINISTRATION (RHEL/DEBIAN)</span>
-                      <span class="text-success fw-bold">89%</span>
-                    </div>
-                    <div class="progress bg-black/50 overflow-hidden" style="height: 7px; border-radius: 4px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 89%; border-radius: 4px;" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between text-xs font-mono text-muted mb-1.5">
-                      <span>AI SYSTEM INTEGRATIONS & LOCAL FLOWS</span>
-                      <span class="text-success fw-bold">85%</span>
-                    </div>
-                    <div class="progress bg-black/50 overflow-hidden" style="height: 7px; border-radius: 4px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 85%; border-radius: 4px;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                  <div class="mb-3">
-                    <div class="d-flex justify-content-between text-xs font-mono text-muted mb-1.5">
-                      <span>DISASTER RECOVERY & REDUNDANCY SCHEMAS</span>
-                      <span class="text-success fw-bold">90%</span>
-                    </div>
-                    <div class="progress bg-black/50 overflow-hidden" style="height: 7px; border-radius: 4px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: 90%; border-radius: 4px;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Authentic Achievement Timeline Component (Requirement 5.E) -->
-            <div class="mt-5">
-              <h5 class="text-white text-xs font-mono mb-4 tracking-wider d-flex align-items-center gap-2">
-                <i class="bi bi-calendar-event-fill text-success"></i> CAREER PROGRESSION & BENCHMARKS
-              </h5>
-              <div class="position-relative ps-3 my-2" style="border-left: 2px solid rgba(16, 185, 129, 0.2);">
-                <!-- Milestone item 1 -->
-                <div class="position-relative mb-4">
-                  <span class="position-absolute translate-middle bg-success rounded-circle" style="left: -17px; top: 11px; width: 10px; height: 10px; box-shadow: 0 0 8px #10b981;"></span>
-                  <div class="ps-3">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                      <h6 class="text-white fw-bold mb-0">Cisco CCNA Certification</h6>
-                      <span class="badge py-0.5 px-2 bg-success/15 text-success font-mono text-xs border border-success/20 rounded-pill">Credential</span>
-                    </div>
-                    <p class="text-muted small mt-1 mb-0">Certified Network Routing & Switching Topology Specialist, implementing low-latency architectures and robust firewall parameters globally.</p>
-                  </div>
-                </div>
-                <!-- Milestone item 2 -->
-                <div class="position-relative mb-4">
-                  <span class="position-absolute translate-middle bg-success rounded-circle" style="left: -17px; top: 11px; width: 10px; height: 10px; box-shadow: 0 0 8px #10b981;"></span>
-                  <div class="ps-3">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                      <h6 class="text-white fw-bold mb-0">Lead IT & Cyber Security Engineer</h6>
-                      <span class="badge py-0.5 px-2 bg-success/15 text-success font-mono text-xs border border-success/20 rounded-pill">TechKnow Solutions</span>
-                    </div>
-                    <p class="text-muted small mt-1 mb-0">Engineered bespoke automation suites, completed rigorous multi-node security sweeps, and optimized critical enterprise databases.</p>
-                  </div>
-                </div>
-                <!-- Milestone item 3 -->
-                <div class="position-relative mb-2">
-                  <span class="position-absolute translate-middle bg-success rounded-circle" style="left: -17px; top: 11px; width: 10px; height: 10px; box-shadow: 0 0 8px #10b981;"></span>
-                  <div class="ps-3">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                      <h6 class="text-white fw-bold mb-0">Enterprise Systems Intern</h6>
-                      <span class="badge py-0.5 px-2 bg-success/15 text-success font-mono text-xs border border-success/20 rounded-pill">Apprenticeship</span>
-                    </div>
-                    <p class="text-muted small mt-1 mb-0">Assembled core LAN/WAN node diagrams, diagnosed live OSPF election deadlocks, and supported employees with automated diagnostic workflows.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {% if cv_file %}
-              <div class="mt-4 pt-3 border-top border-white/5">
-                <a href="{{ url_for('download_file', kind='cv', filename=cv_file) }}" class="btn-fire-secondary btn-sm py-2 px-3">
-                  <i class="bi bi-file-earmark-pdf"></i> Download Curriculum Vitae (CV)
-                </a>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Achievements / Counters -->
-    <section id="stats" aria-labelledby="stats-title">
-      <div class="section-header">
-        <h2 class="section-title" id="stats-title" data-aos="fade-up">Proven Milestones</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">A snapshot of systems scaled, networks secured, and digital transformations completed.</p>
-      </div>
-
-      <div class="counters" data-aos="fade-up" data-aos-delay="100">
-        <div class="counter-card card-fire">
-          <p class="label">Completed Projects</p>
-          <h3 id="count-projects">68</h3>
-          <p class="sub-label">Verified systems optimized</p>
-        </div>
-        <div class="counter-card card-fire">
-          <p class="label">Consultation Clients</p>
-          <h3 id="count-clients">94</h3>
-          <p class="sub-label">Companies & users supported</p>
-        </div>
-        <div class="counter-card card-fire">
-          <p class="label">Secured Networks</p>
-          <h3 id="count-networks">45</h3>
-          <p class="sub-label">Routers & switches installed</p>
-        </div>
-        <div class="counter-card card-fire">
-          <p class="label">Journal Readers</p>
-          <h3 id="count-reads">2,150</h3>
-          <p class="sub-label">Cyber protection tips shared</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials Section (Requirement 6.A) -->
-    <section id="testimonials" class="py-5" aria-labelledby="testimonials-title">
-      <div class="section-header">
-        <h2 class="section-title" id="testimonials-title" data-aos="fade-up">Trusted Endorsements</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">Feedback and peer evaluations from clients, IT supervisors, and engineering mentors.</p>
-      </div>
-
-      <div class="row g-4 justify-content-center" data-aos="fade-up" data-aos-delay="100">
-        <div class="col-lg-4">
-          <div class="card-fire p-4 h-100 d-flex flex-column justify-content-between" style="background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255,255,255,0.06);">
-            <div>
-              <div class="d-flex text-success mb-3 gap-1">
-                <i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i>
-              </div>
-              <p class="text-secondary-subtle small font-mono mb-4 leading-relaxed">
-                "Caleb's Cisco CCNA training translates to flawless real-world configurations. Under his supervision, our division's switching topologies were refactored, reducing router packet loss to zero."
-              </p>
-            </div>
-            <div class="d-flex align-items-center gap-3 border-top border-white/5 pt-3">
-              <div class="rounded-circle bg-success/10 text-success d-flex align-items-center justify-content-center fw-bold font-mono text-xs" style="width: 42px; height: 42px; border: 1px solid rgba(16,185,129,0.15)">FO</div>
-              <div>
-                <h6 class="text-white fw-bold mb-0 text-sm">Fredrick Omondi</h6>
-                <p class="text-muted text-xs font-mono mb-0">Supervisor, ICT Infrastructure</p>
-              </div>
+            <div class="d-flex flex-wrap gap-3">
+              <a href="/about" class="btn btn-warning px-4 py-2.5 rounded-3 font-semibold text-white border-0 hover:shadow-md transition-transform hover:-translate-y-0.5" style="background: var(--brand-primary); font-size: 0.95rem;">
+                Inspect Professional Profile <i class="bi bi-arrow-right-short fs-5 ms-1"></i>
+              </a>
+              <a href="/contact" class="btn btn-outline-secondary px-4 py-2.5 rounded-3 font-semibold transition-transform hover:-translate-y-0.5" style="border-radius: 10px; font-size: 0.95rem;">
+                Consultation Request
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="card-fire p-4 h-100 d-flex flex-column justify-content-between" style="background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255,255,255,0.06);">
-            <div>
-              <div class="d-flex text-success mb-3 gap-1">
-                <i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i>
-              </div>
-              <p class="text-secondary-subtle small font-mono mb-4 leading-relaxed">
-                "TechKnow Solutions implemented a customized backup and system imaging tool that cut server downtime by 40%. Caleb understands both security architecture and employee automation perfectly."
-              </p>
-            </div>
-            <div class="d-flex align-items-center gap-3 border-top border-white/5 pt-3">
-              <div class="rounded-circle bg-success/10 text-success d-flex align-items-center justify-content-center fw-bold font-mono text-xs" style="width: 42px; height: 42px; border: 1px solid rgba(16,185,129,0.15)">KN</div>
-              <div>
-                <h6 class="text-white fw-bold mb-0 text-sm">Kevin Njoroge</h6>
-                <p class="text-muted text-xs font-mono mb-0">Director of Systems, NetSec Africa</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="card-fire p-4 h-100 d-flex flex-column justify-content-between" style="background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255,255,255,0.06);">
-            <div>
-              <div class="d-flex text-success mb-3 gap-1">
-                <i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i><i class="bi bi-star-fill animate-pulse"></i>
-              </div>
-              <p class="text-secondary-subtle small font-mono mb-4 leading-relaxed">
-                "His cybersecurity vulnerability reports are meticulously thorough. Caleb doesn't just run automated scans; he isolates the exact network leak vector and provides ready-to-deploy firewall templates."
-              </p>
-            </div>
-            <div class="d-flex align-items-center gap-3 border-top border-white/5 pt-3">
-              <div class="rounded-circle bg-success/10 text-success d-flex align-items-center justify-content-center fw-bold font-mono text-xs" style="width: 42px; height: 42px; border: 1px solid rgba(16,185,129,0.15)">AW</div>
-              <div>
-                <h6 class="text-white fw-bold mb-0 text-sm">Audrey Wambui</h6>
-                <p class="text-muted text-xs font-mono mb-0">Lead Security Architect, CySec Hub</p>
+          <div class="col-lg-5 text-center">
+            <div class="position-relative d-inline-block">
+              <!-- Visual anchor matching the requested design -->
+              <img src="/static/header_bg.png" alt="SurgeTechKnow Systems" class="img-fluid rounded-4 shadow-lg border" style="max-height: 380px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80'">
+              <div class="position-absolute bottom-3 start-3 bg-white border rounded-3 p-2.5 px-3 shadow-sm text-start flex align-items-center gap-2" style="background: white;">
+                <div class="rounded-circle bg-success shadow-inner" style="width: 8px; height: 8px; animation: pulse-ring 1.8s infinite;"></div>
+                <div class="font-mono text-muted text-xxs d-flex flex-column leading-none" style="font-size: 10px;">
+                  <span class="text-dark fw-bold">NODE SECURITY</span>
+                  <span class="text-success">NATIVE ONLINE</span>
+                </div>
               </div>
             </div>
           </div>
@@ -2027,841 +343,284 @@
       </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" aria-labelledby="services-title">
-      <div class="section-header">
-        <h2 class="section-title" id="services-title" data-aos="fade-up">Core Competencies</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">Precision digital engineering services tailored for high scalability, protection, and performance.</p>
-      </div>
-
-      <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="col-lg-4 col-md-6">
-          <div class="card-fire service-card">
-            <div class="service-icon"><i class="bi bi-diagram-3"></i></div>
-            <h4 class="mb-3 text-white">Network & LAN Design</h4>
-            <p class="text-muted mb-0">Custom architecture mapping, enterprise IP addressing templates, subnetting, cabling layouts, VPN nodes, secure firewall integration, and hardware configuration.</p>
-          </div>
+    <!-- NEW SECTION: CATEGORY WINDOWS -->
+    <section class="container py-5 mt-3">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h2 class="brand-title fs-2 mb-1">Editorial Category Windows</h2>
+          <p class="text-muted small m-0">Filter professional logs, compliance briefings, and process solutions by active category channels.</p>
         </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="card-fire service-card">
-            <div class="service-icon"><i class="bi bi-shield-lock"></i></div>
-            <h4 class="mb-3 text-white">Cybersecurity Auditing</h4>
-            <p class="text-muted mb-0">System vulnerability evaluation, firmware reviews, active endpoint monitoring policies, network protection parameters, and employee security guidelines training.</p>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="card-fire service-card">
-            <div class="service-icon"><i class="bi bi-gear-wide-connected"></i></div>
-            <h4 class="mb-3 text-white">IT Automation & Support</h4>
-            <p class="text-muted mb-0">Lightweight script generation, data synchronization routines, technical backups schedules, hardware troubleshooting, and immediate cloud support.</p>
-          </div>
+        <div class="d-flex gap-1 overflow-auto py-1 scrollbar-none" id="categories-tabs">
+          <button class="category-chip active" onclick="filterScrollerPosts('All')">All Pulse</button>
+          <button class="category-chip" onclick="filterScrollerPosts('Cybersecurity')">Cybersecurity</button>
+          <button class="category-chip" onclick="filterScrollerPosts('Networking')">Networking</button>
+          <button class="category-chip" onclick="filterScrollerPosts('AI & Automation')">AI &amp; Automation</button>
+          <button class="category-chip" onclick="filterScrollerPosts('Technology')">Technology</button>
+          <button class="category-chip" onclick="filterScrollerPosts('ICT Support')">ICT Support</button>
         </div>
       </div>
-    </section>
 
-    <!-- INTERACTIVE CYBER SECURITY & ICT LAB SANDBOX -->
-    <section id="cyber-lab" class="py-5" style="background: radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 60%);">
-      <div class="section-header text-center mb-5">
-        <h2 class="section-title text-white fw-bold" data-aos="fade-up">Interactive Cyber Lab & ICT Sandbox</h2>
-        <p class="section-subtitle text-muted" data-aos="fade-up" data-aos-delay="80">Deploy real-time diagnostic simulators to audit vulnerabilities, calculate parameters, and analyze threats instantly.</p>
-      </div>
-
-      <div class="row g-4 justify-content-center" data-aos="fade-up" data-aos-delay="100">
-        <div class="col-12 col-xl-10">
-          <div class="card-fire p-4 border border-success/15" style="background: rgba(11, 15, 25, 0.7); backdrop-filter: blur(12px);">
-            
-            <!-- Sandbox Navigation Navigation -->
-            <ul class="nav nav-pills nav-fill bg-black/40 p-1.5 rounded-3 border border-secondary/10 mb-4 gap-2" id="labTabs" role="tablist">
-              <li class="nav-item">
-                <button class="nav-link active font-mono py-2 bg-transparent text-muted text-sm border-0" id="port-scanner-tab" data-bs-toggle="pill" data-bs-target="#port-scanner" type="button" role="tab"><i class="bi bi-terminal-fill me-1.5 text-success"></i> Port Scanner Simulator</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link font-mono py-2 bg-transparent text-muted text-sm border-0" id="pw-audit-tab" data-bs-toggle="pill" data-bs-target="#pw-audit" type="button" role="tab"><i class="bi bi-shield-lock-fill me-1.5 text-success"></i> Password Entropy Audit</button>
-              </li>
-              <li class="nav-item">
-                <button class="nav-link font-mono py-2 bg-transparent text-muted text-sm border-0" id="subnetter-tab" data-bs-toggle="pill" data-bs-target="#subnetter" type="button" role="tab"><i class="bi bi-calculator-fill me-1.5 text-success"></i> CCNA Subnet CIDR Calculator</button>
-              </li>
-            </ul>
-
-            <div class="tab-content" id="labTabsContent">
-              <!-- LAB 1: PORT SCANNER -->
-              <div class="tab-pane fade show active" id="port-scanner" role="tabpanel">
-                <div class="row g-4">
-                  <div class="col-12 col-lg-5">
-                    <h5 class="text-white fw-bold mb-2"><i class="bi bi-broadcast text-success me-2"></i>Port Vulnerability Diagnostics</h5>
-                    <p class="text-muted small">Examine network configurations. When running our benign automated probe sandbox on any targeted domain or node host IP, we review safety status across primary server protocols.</p>
-                    
-                    <div class="mb-3">
-                      <label class="text-muted text-xs font-mono mb-1.5 d-block">TARGET SYSTEM ADDRESS / IP</label>
-                      <input type="text" id="scan-domain" class="form-control form-control-fire py-2 px-3 font-mono text-sm bg-neutral-950 border border-secondary/15" value="192.168.10.45" placeholder="e.g. mycompany.com or IP">
-                    </div>
-                    
-                    <button onclick="executeSimulatedPortScan()" id="scan-btn" class="btn btn-fire-primary w-100 border-0 font-mono d-flex align-items-center justify-content-center gap-2">
-                      <i class="bi bi-shield-radar text-white"></i> Run Safety Diagnostic Audit
-                    </button>
-                  </div>
-                  
-                  <div class="col-12 col-lg-7">
-                    <!-- Console UI -->
-                    <div class="bg-black/80 rounded-3 border border-secondary/20 p-3 h-100 d-flex flex-column justify-content-between" style="min-height: 250px;">
-                      <div>
-                        <div class="d-flex align-items-center justify-content-between text-muted text-xs font-mono pb-2 border-bottom border-secondary/10 mb-2">
-                          <span>SYSTEM LOG ANALYZER STATE: ACTIVE</span>
-                          <span class="rounded-circle bg-success" style="width: 6px; height: 6px; animation: pulse 1s infinite;"></span>
-                        </div>
-                        <div id="scan-console" class="font-mono text-xs text-secondary/80 leading-relaxed overflow-y-auto" style="max-height: 180px;">
-                          <p class="mb-1 text-success">Ready: Awaiting user safe audit initialize commands...</p>
-                        </div>
-                      </div>
-                      
-                      <div id="scan-feedback" class="d-none p-2 rounded bg-success/5 border border-success/10 text-xs text-white mt-2">
-                        <i class="bi bi-shield-fill-check text-success me-1"></i> <strong>Audit Summary:</strong> No active network payload leak detected. Ensure default ports are correctly hardened using certified Cisco configurations.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- LAB 2: PASSWORD ENTROPY -->
-              <div class="tab-pane fade" id="pw-audit" role="tabpanel">
-                <div class="row g-4">
-                  <div class="col-12 col-md-6">
-                    <h5 class="text-white fw-bold mb-2"><i class="bi bi-key-fill text-success me-2"></i>Brute-Force Leak Simulator</h5>
-                    <p class="text-muted small">Target vulnerability vectors. Input a proposed administrative password to evaluate entropy strength and measure approximate seconds required for botnets to trace your line.</p>
-                    
-                    <div class="mb-3.5 position-relative">
-                      <label class="text-muted text-xs font-mono mb-1.5 d-block">PROPOSED PASSWORD DRAFT</label>
-                      <input oninput="evaluatePasswordSecurity()" type="password" id="lab-pass" class="form-control form-control-fire py-2 px-3 text-sm font-mono bg-neutral-950 border border-secondary/15" placeholder="Enter test password..." style="letter-spacing: 0.15em;">
-                      <button onclick="togglePasswordInputVis()" class="btn btn-xs btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2 font-mono text-white/50" style="margin-top: 5px;">SHOW</button>
-                    </div>
-
-                    <div class="mt-4 p-3 rounded bg-success/5 border border-success/15">
-                      <span class="text-success font-mono text-xs d-block mb-1">Caleb Muga's CCNA Recommendations:</span>
-                      <p class="text-muted small m-0 leading-normal">Scammers in 2025 leverage cheap high-GPU clusters. Implement 14+ characters encompassing alphanumeric mixes to completely defeat brute force.</p>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-md-6">
-                    <div class="bg-black/30 rounded-3 border border-secondary/20 p-3 h-100 d-flex flex-column justify-content-between">
-                      <div>
-                        <span class="text-xs text-muted font-mono tracking-wider mb-2 d-block">PROBABILISTIC ANALYSIS</span>
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                          <span class="text-white text-sm font-semibold">Security Level:</span>
-                          <span id="pw-lvl" class="badge bg-danger text-black font-semibold">NOT MEASURED</span>
-                        </div>
-                        
-                        <!-- Entropy progress rating bar -->
-                        <div class="progress bg-secondary-subtle/15 mb-4" style="height: 6px; border-radius: 3px;">
-                          <div id="pw-bar" class="progress-bar bg-danger" role="progressbar" style="width: 0%; transition: width 0.3s;"></div>
-                        </div>
-
-                        <!-- Scammer crack rate -->
-                        <div class="p-3 bg-black/40 rounded border border-secondary/10">
-                          <span class="text-muted text-xs d-block font-mono">ESTIMATED SCAMMER CRACK SPEED:</span>
-                          <h4 id="pw-speed" class="text-white font-mono fw-bold m-0 mt-1">Instantaneous</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- LAB 3: IP CIDR NETWORK CALCULATOR -->
-              <div class="tab-pane fade" id="subnetter" role="tabpanel">
-                <div class="row g-4">
-                  <div class="col-12 col-lg-5">
-                    <h5 class="text-white fw-bold mb-2"><i class="bi bi-box-fill text-success me-2"></i>CIDR Enterprise Subnet Calculator</h5>
-                    <p class="text-muted small font-sans d-block">Configure network masks. Provide any IP prefix block and bits mask to calculate standard administrative metrics like networks, broadcasts, and host boundaries on the fly.</p>
-                    
-                    <div class="row g-2 mb-3">
-                      <div class="col-8">
-                        <label class="text-muted text-xs font-mono mb-1 d-block">IP ADDRESS PREFIX</label>
-                        <input id="sub-ip" type="text" class="form-control form-control-fire py-2 px-3 text-sm font-mono bg-neutral-950 border border-secondary/15" value="192.168.10.0">
-                      </div>
-                      <div class="col-4">
-                        <label class="text-muted text-xs font-mono mb-1 d-block">MASK bits</label>
-                        <select id="sub-mask" class="form-select form-control-fire py-2 font-mono text-sm bg-neutral-950 border border-secondary/15" style="color:#10b981;">
-                          <option value="24">/24 (255.255.255.0)</option>
-                          <option value="25">/25 (255.255.255.128)</option>
-                          <option value="26">/26 (255.255.255.192)</option>
-                          <option value="27">/27 (255.255.255.224)</option>
-                          <option value="28">/28 (255.255.255.240)</option>
-                          <option value="30">/30 (255.255.255.252)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <button onclick="calculateCidrSubnets()" class="btn btn-fire-primary w-100 border-0 font-mono"><i class="bi bi-calculator me-1"></i> Calculate Routing Ranges</button>
-                  </div>
-
-                  <div class="col-12 col-lg-7">
-                    <div class="bg-black/30 rounded-3 border border-secondary/20 p-3 h-100">
-                      <span class="text-xs text-muted font-mono tracking-wider mb-3 d-block">SUBNET BLOCK GRAPHICS</span>
-                      
-                      <div class="row g-2.5">
-                        <div class="col-6">
-                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
-                            <span class="text-muted text-xxs d-block font-mono">SUBNET MASK</span>
-                            <span id="sub-res-mask" class="text-success text-sm font-mono">255.255.255.0</span>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
-                            <span class="text-muted text-xxs d-block font-mono">MAX USABLE HOSTS</span>
-                            <span id="sub-res-hosts" class="text-success text-sm font-mono">254 IPs</span>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
-                            <span class="text-muted text-xxs d-block font-mono">NETWORK ROUTING PREFIX</span>
-                            <span id="sub-res-net" class="text-white text-sm font-mono">192.168.10.0</span>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="p-2.5 bg-black/40 rounded border border-secondary/10">
-                            <span class="text-muted text-xxs d-block font-mono">BROADCAST ADDRESS</span>
-                            <span id="sub-res-bcast" class="text-white text-sm font-mono">192.168.10.255</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Portfolio & Private Ingestion Section -->
-    <section id="portfolio" aria-labelledby="portfolio-title">
-      <div class="section-header">
-        <h2 class="section-title" id="portfolio-title" data-aos="fade-up">Portfolio & Operations Gallery</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">Examine deployment media, network setups, or privately submit folders for security analysis.</p>
-      </div>
-
-      <div class="row g-4 d-flex align-items-stretch">
-        
-        <!-- Gallery Grid Container -->
-        <div class="col-lg-8" data-aos="fade-right" data-aos-delay="100">
-          <div class="card-fire h-100 p-4">
-            <h4 class="mb-4 text-white d-flex align-items-center gap-2">
-              <i class="bi bi-images" style="color:var(--brand1)"></i> Featured Gallery ({{ gallery_images|length }})
-            </h4>
-            
-            {% if gallery_images %}
-              <div class="gallery-grid">
-                {% for g in gallery_images %}
-                  <div class="gallery-item" onclick="openGalleryItem({{ loop.index0 }})" role="button" tabindex="0" aria-label="Open gallery item {{ loop.index }}">
-                    {% if g.type == 'image' %}
-                      <img src="{{ g.url }}" alt="Infrastructure setup photo {{ loop.index }}">
-                    {% elif g.type == 'video' %}
-                      <video src="{{ g.url }}" muted playsinline preload="metadata"></video>
-                      <div class="video-play-icon" aria-hidden="true"></div>
+      <div class="horizontal-scroll-container" id="horizontal-blogs-scroller">
+        {% if blogs %}
+          {% for blog in blogs %}
+            <div class="blog-scroller-item" data-category="{{ blog.category }}">
+              <article class="blog-card-compact h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="gallery-img-wrapper">
+                    {% if blog_images.get(blog.id) %}
+                      <img src="{{ blog_images.get(blog.id) }}" alt="{{ blog.title }}" loading="lazy">
                     {% else %}
-                      <img src="{{ g.url }}" alt="Deployment asset {{ loop.index }}">
+                      <img src="/static/header_bg.png" alt="{{ blog.title }}" loading="lazy">
                     {% endif %}
                   </div>
-                {% endfor %}
-              </div>
-            {% else %}
-              <div class="text-center py-5">
-                <i class="bi bi-folder-symlink text-muted display-4 mb-3"></i>
-                <p class="text-muted mb-0">The gallery feed is currently empty.</p>
-                <small class="text-muted mt-1 d-block">Admin can populate images & videos in the Admin dashboard.</small>
-              </div>
-            {% endif %}
-          </div>
-        </div>
-
-        <!-- Project Upload Form Card -->
-        <div class="col-lg-4" data-aos="fade-left" data-aos-delay="150">
-          <div class="card-fire h-100 d-flex flex-col justify-content-between">
-            <div>
-              <h4 class="mb-3 text-white d-flex align-items-center gap-2">
-                <i class="bi bi-unlock-fill" style="color:var(--brand2)"></i> Project Droproom
-              </h4>
-              <p class="text-muted mb-4 small">
-                Submit files or system specifications privately to Caleb Muga. These files are stored in an isolated database block and are only visible after strict verification.
-              </p>
-            </div>
-
-            <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_project') }}" class="mb-3">
-              <div class="file-upload-box mb-3" onclick="document.getElementById('fileInput').click()">
-                <i class="bi bi-cloud-arrow-up display-5 text-muted mb-3 d-block"></i>
-                <span class="text-white font-medium d-block mb-1">Click to browse files</span>
-                <span class="text-muted d-block small" id="fileNameIndicator">Drag files right here</span>
-                <input type="file" id="fileInput" name="file" required onchange="displaySelectedFilename()">
-              </div>
-
-              <button class="btn-fire-primary w-100 justify-content-center">
-                Securely Upload File <i class="bi bi-lock"></i>
-              </button>
-            </form>
-
-            <span class="text-muted small d-block">
-              Allowed extensions: {% for ext in allowed_exts %}<span class="allowed-exts-text">{{ ext }}</span> {% endfor %}<br>
-              <i class="bi bi-exclamation-triangle-fill" style="color:var(--brand2)"></i> Max single payload limit: 32MB
-            </span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Latest Articles / Blog Preview -->
-    <section id="blog" aria-labelledby="blog-sec-title">
-      <div class="section-header">
-        <h2 class="section-title" id="blog-sec-title" data-aos="fade-up">Professional Journal Insights</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">Explore deep cybersecurity, routing optimization, automation, and general ICT advice.</p>
-      </div>
-
-      <!-- Premium Semantic AI Search Section (Requirement 2 / Level 2A / 2B) -->
-      <div class="row justify-content-center mb-5 mx-0" data-aos="fade-up" data-aos-delay="90">
-        <div class="col-lg-7 px-0">
-          <div class="p-3 rounded-4 border" style="background: rgba(11, 15, 25, 0.75); border: 1px solid rgba(16,185,129,0.25) !important;">
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="d-inline-block bg-success rounded-circle animate-pulse" style="width: 7px; height: 7px;"></span>
-              <span class="text-success text-xs font-mono tracking-widest fw-bold" style="font-size: 0.72rem;">SEARCH ARTICLE</span>
-            </div>
-            <div class="input-group">
-              <span class="input-group-text bg-black/40 border-0 text-success"><i class="bi bi-search"></i></span>
-              <input type="text" id="aiSearchInput" class="form-control bg-black text-white border-0 text-xs font-mono py-2 font-bold" placeholder="Type what you want to resolve (e.g. 'trunk ports' or 'port scans')..." style="box-shadow: none; font-size: 0.85rem; color: #ffffff !important; background-color: #070e17 !important; border: 1px solid rgba(16,185,129,0.3) !important;">
-              <button onclick="triggerAISearch()" class="btn btn-fire-primary border-0 font-mono text-xs font-semibold py-2 px-3 shadow" style="font-size: 0.72rem;">SEARCH</button>
-            </div>
-            
-            <div id="ai-search-results-holder" class="d-none mt-2.5 p-3 bg-black/50 rounded-3 border border-white/5 font-mono">
-              <div id="ai-search-spinner" class="text-center py-2 d-none">
-                <div class="spinner-border spinner-border-sm text-success" role="status"></div>
-                <span class="text-xs text-muted ms-2" style="font-size: 0.7rem;">Routing through knowledge nodes...</span>
-              </div>
-              <div id="ai-search-results-list" class="d-flex flex-column gap-2 text-xs">
-                <!-- Matches load dynamically -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="blog-grid" data-aos="fade-up" data-aos-delay="100">
-        {% if blog_posts %}
-          {% for b in blog_posts[:3] %}
-            {% set combined = (b.title ~ " " ~ b.content)|lower %}
-            {% if "cyber" in combined or "exploit" in combined or "mitigate" in combined or "security" in combined or "defense" in combined or "hack" in combined or "penetration" in combined or "firewall" in combined %}
-              {% set cat = "Cybersecurity" %}
-            {% elif "rout" in combined or "net" in combined or "ip" in combined or "cisco" in combined or "ccna" in combined or "switch" in combined or "router" in combined or "dhcp" in combined or "dns" in combined or "lan" in combined or "wan" in combined %}
-              {% set cat = "Networking" %}
-            {% elif "ai" in combined or "machine" in combined or "learning" in combined or "model" in combined or "neural" in combined or "predict" in combined or "automation" in combined or "workflow" in combined or "cron" in combined or "script" in combined %}
-              {% set cat = "AI & Automation" %}
-            {% elif "web" in combined or "html" in combined or "css" in combined or "flask" in combined or "react" in combined or "js" in combined or "ts" in combined or "javascript" in combined or "typescript" in combined or "frontend" in combined or "backend" in combined %}
-              {% set cat = "Web Development" %}
-            {% elif "ict" in combined or "support" in combined or "helpdesk" in combined or "comput" in combined or "hardware" in combined or "troubleshoot" in combined or "printer" in combined %}
-              {% set cat = "ICT Support" %}
-            {% else %}
-              {% set cat = "Technology" %}
-            {% endif %}
-            
-            {% set words_count = b.content.split()|length %}
-            {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
-            {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
-            
-            {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-            {% if cat_slug == "cybersecurity" %}
-              {% set cat_icon = "bi-shield-lock" %}
-            {% elif cat_slug == "networking" %}
-              {% set cat_icon = "bi-hdd-network" %}
-            {% elif cat_slug == "ai-automation" %}
-              {% set cat_icon = "bi-cpu" %}
-            {% elif cat_slug == "web-development" %}
-              {% set cat_icon = "bi-code-slash" %}
-            {% elif cat_slug == "ict-support" %}
-              {% set cat_icon = "bi-headset" %}
-            {% else %}
-              {% set cat_icon = "bi-journal-text" %}
-            {% endif %}
-            <article class="card-fire blog-card-custom" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 50 }}">
-              {% set thumb = b.content|get_first_image %}
-              {% if thumb %}
-                {% set is_video = false %}
-                {% if thumb.endswith('.mp4') or thumb.endswith('.webm') or thumb.endswith('.ogg') or thumb.endswith('.mov') or thumb.endswith('.m4v') or 'video' in thumb|lower %}
-                  {% set is_video = true %}
-                {% endif %}
-                <div class="blog-card-thumbnail">
-                  {% if is_video %}
-                    <div class="position-relative w-100 h-100 overflow-hidden d-flex align-items-center justify-content-center bg-black">
-                      <video src="{{ thumb }}#t=0.5" class="w-100 h-100" style="object-fit: cover;" preload="metadata" muted playsinline loop onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0.5;"></video>
-                      <div class="position-absolute d-flex align-items-center justify-content-center rounded-circle" style="background: rgba(0,0,0,0.55); width: 34px; height: 34px; border: 1px solid rgba(255,255,255,0.25); z-index: 5; pointer-events: none;">
-                        <i class="bi bi-play-fill text-white transition-all fs-6" style="margin-left: 2px;"></i>
-                      </div>
-                    </div>
-                  {% else %}
-                    <img src="{{ thumb }}" alt="{{ b.title }}" loading="lazy" referrerPolicy="no-referrer">
-                  {% endif %}
+                  <div class="p-4">
+                    <span class="badge bg-warning bg-opacity-10 text-orange-655 font-mono mb-2" style="background: rgba(249,115,22,0.07); color:#ea580c; font-size:0.7rem;">{{ blog.category }}</span>
+                    <h3 class="fw-bold fs-6 mb-2 leading-snug"><a href="/blog/{{ blog.slug }}" class="text-dark text-decoration-none">{{ blog.title }}</a></h3>
+                    <p class="text-muted small line-clamp-2 leading-relaxed mb-0">{{ blog.content|striptags|truncate(80) }}</p>
+                  </div>
                 </div>
-              {% else %}
-                <div class="blog-card-thumbnail placeholder-thumbnail bg-gradient-{{ cat_slug }}">
-                  <i class="bi {{ cat_icon }} display-4"></i>
+                <div class="px-4 pb-4">
+                  <a href="/blog/{{ blog.slug }}" class="btn btn-sm btn-outline-warning w-100 py-1.5 font-semibold" style="font-size:0.8rem;">Read Log</a>
                 </div>
-              {% endif %}
-              <div class="blog-card-meta mb-3">
-                <span class="blog-tag badge-{{ cat_slug }} me-2">{{ cat }}</span>
-                <span class="text-sm"><i class="bi bi-calendar"></i> {{ b.timestamp }}</span>
-                <span class="text-sm ms-auto"><i class="bi bi-clock"></i> {{ reading_time }} min read</span>
-              </div>
-              <h4 class="blog-card-title">{{ b.title }}</h4>
-              <p class="blog-card-excerpt">
-                {{ b.content|clean_excerpt(160) }}
-              </p>
-              <a class="btn-fire-secondary btn-sm mt-auto w-100 justify-content-center" href="{{ url_for('view_blog', slug=b.slug) }}">
-                Read Full Insight <i class="bi bi-arrow-right-short"></i>
-              </a>
-            </article>
+              </article>
+            </div>
           {% endfor %}
         {% else %}
-          <div class="col-12 py-5 text-center card-fire">
-            <i class="bi bi-journals display-5 text-muted mb-3 d-block"></i>
-            <p class="text-muted mb-0">No articles have been penned yet.</p>
-            <small class="text-muted d-block mt-1">Check back soon for fresh technical resources!</small>
+          <div class="py-5 text-center w-100 text-muted col-span-12 font-mono">
+            <i class="bi bi-journal-x fs-2 d-block mb-2"></i>
+            Installing dynamic cybersecurity briefings...
           </div>
         {% endif %}
       </div>
-
-      <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="200">
-        <a class="btn-fire-secondary" href="{{ url_for('blog_list') }}">
-          Browse Full Journal Library <i class="bi bi-collection"></i>
-        </a>
-      </div>
     </section>
 
-    <!-- Newsletter Ingestion -->
-    <section id="newsletter" aria-labelledby="newsletter-title">
-      <div class="card-fire p-5 text-center mx-auto" style="max-width: 800px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);" data-aos="fade-up">
-        <h2 class="section-title mb-3" id="newsletter-title">Subscribe to the Feed</h2>
-        <p class="text-muted mb-4 max-w-lg mx-auto">Get notified immediately when fresh ICT manuals, CCNA tutorials, or cybersecurity advisory notes are distributed.</p>
-        
-        <form method="post" action="{{ url_for('subscribe') }}" class="row g-3 justify-content-center align-items-center" aria-label="Subscribe to newsletter">
-          <div class="col-md-7">
-            <input type="email" name="email" class="form-control-fire w-100" placeholder="Enter secure email address" required aria-label="Your email address">
-          </div>
-          <div class="col-md-auto">
-            <button class="btn-fire-primary w-100">
-              Join Newsletter <i class="bi bi-envelope-plus"></i>
-            </button>
-          </div>
-        </form>
-        <p class="small text-muted mt-3 mb-0"><i class="bi bi-shield-check"></i> We protect your data. Opt-out easily at any time.</p>
-      </div>
-    </section>
-
-    <!-- Get in Touch / Contact Section -->
-    <section id="contact" aria-labelledby="contact-title">
-      <div class="section-header">
-        <h2 class="section-title" id="contact-title" data-aos="fade-up">Secure Consultation</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="80">Reach Caleb Muga or submit immediate assistance requests below. Responses compiled instantly.</p>
+    <!-- SECTION: OPERATIONS SHOWCASE GRID -->
+    <section class="container py-5 border-top border-secondary-subtle border-opacity-25">
+      <div class="mb-4">
+        <h2 class="brand-title fs-2 mb-1">Operations Showcase Gallery</h2>
+        <p class="text-muted small">Explore hardware cabinet setups, fiber trunk deployments, diagnostics terminals, and certified configs.</p>
       </div>
 
-      <div class="row g-4">
-        
-        <!-- Input Form -->
-        <div class="col-lg-7" data-aos="fade-right" data-aos-delay="100">
-          <div class="card-fire p-4">
-            <h4 class="mb-4 text-white">Broadcast Message</h4>
-            <form method="post" action="{{ url_for('contact') }}">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <input type="text" name="name" class="form-control-fire w-100" placeholder="Your Name" required>
-                </div>
-                <div class="col-md-6">
-                  <input type="email" name="email" class="form-control-fire w-100" placeholder="Your Email" required>
-                </div>
-                <div class="col-12">
-                  <textarea name="message" rows="5" class="form-control-fire w-100" placeholder="State your inquiry or support details..." required></textarea>
-                </div>
-                <div class="col-12">
-                  <button class="btn-fire-primary w-100 justify-content-center">
-                    Dispatch Secured Inquiry <i class="bi bi-send-fill"></i>
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <!-- Details -->
-        <div class="col-lg-5" data-aos="fade-left" data-aos-delay="150">
-          <div class="card-fire p-4 h-100 d-flex flex-column justify-content-between">
-            <div>
-              <h4 class="mb-4 text-white">Direct Communications</h4>
-              <p class="text-muted small mb-4">Feel free to access any direct service link listed below for immediate systems troubleshooting or consultations.</p>
-              
-              <div class="contact-info-list mb-4">
-                <div class="contact-info-item">
-                  <i class="bi bi-telephone-fill"></i>
-                  <div>
-                    <div class="small text-muted">Consultation Hotline</div>
-                    <div class="text-white font-semibold">0791 204 587</div>
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% if gal_items %}
+          {% for item in gal_items[:3] %}
+            <div class="col">
+              <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
+                <div>
+                  <div class="gallery-img-wrapper">
+                    {% if item.type == 'image' %}
+                      <img src="{{ item.url }}" alt="{{ item.title }}" loading="lazy">
+                    {% else %}
+                      <video src="{{ item.url }}" muted playsinline preload="metadata" onmouseover="this.play()" onmouseout="this.pause()"></video>
+                    {% endif %}
+                  </div>
+                  <div class="p-4">
+                    <h3 class="fw-bold fs-6 mb-2">{{ item.title or item.name }}</h3>
+                    <p class="text-muted small leading-relaxed mb-0 line-clamp-2">{{ item.caption or 'Certified setup operations.' }}</p>
                   </div>
                 </div>
-                <div class="contact-info-item">
-                  <i class="bi bi-envelope-fill"></i>
-                  <div>
-                    <div class="small text-muted">Official Correspondence</div>
-                    <div class="text-white font-semibold">info@techknowsolutions.co.ke</div>
-                  </div>
-                </div>
-                <div class="contact-info-item">
-                  <i class="bi bi-geo-alt-fill"></i>
-                  <div>
-                    <div class="small text-muted">Geographical Location</div>
-                    <div class="text-white font-semibold">Nairobi, Kenya</div>
-                  </div>
+                <div class="p-4 pt-0">
+                  <a href="/media/view/{{ item.name }}" class="btn btn-sm btn-outline-secondary w-100 py-1.5" style="border-radius:8px; font-size:0.8rem;">Inspect Blueprint</a>
                 </div>
               </div>
             </div>
-
-            <div>
-              <a href="https://wa.me/254791204587" target="_blank" class="btn btn-success d-flex align-items-center justify-content-center gap-2 py-3 border-0 rounded-4 shadow" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);">
-                <i class="bi bi-whatsapp fs-5"></i> Chat via WhatsApp Support
-              </a>
+          {% endfor %}
+        {% else %}
+          <!-- Static Fallbacks -->
+          <div class="col">
+            <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
+              <div>
+                <div class="gallery-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80" alt="Cabinet Assembly" loading="lazy">
+                </div>
+                <div class="p-4">
+                  <h3 class="fw-bold fs-6 mb-2">SurgeTechKnow Cabinet Assembly</h3>
+                  <p class="text-muted small leading-relaxed mb-0 line-clamp-2">Cisco WAN topology cabinet assemblies and Category 6 termination protocols.</p>
+                </div>
+              </div>
+              <div class="p-4 pt-0">
+                <span class="btn btn-sm btn-outline-secondary w-100 py-1.5 disabled" style="border-radius:8px; font-size:0.8rem;">Setup verified</span>
+              </div>
             </div>
           </div>
-        </div>
-
+          <div class="col">
+            <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
+              <div>
+                <div class="gallery-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80" alt="Fiber Trunk" loading="lazy">
+                </div>
+                <div class="p-4">
+                  <h3 class="fw-bold fs-6 mb-2">Fiber Terminal Trunk Setup</h3>
+                  <p class="text-muted small leading-relaxed mb-0 line-clamp-2">Optical multimode fiber setups feeding switch aggregation layers.</p>
+                </div>
+              </div>
+              <div class="p-4 pt-0">
+                <span class="btn btn-sm btn-outline-secondary w-100 py-1.5 disabled" style="border-radius:8px; font-size:0.8rem;">Setup verified</span>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="feature-card h-100 d-flex flex-column justify-content-between gallery-card overflow-hidden">
+              <div>
+                <div class="gallery-img-wrapper">
+                  <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=600&q=80" alt="Telemetry Sweep" loading="lazy">
+                </div>
+                <div class="p-4">
+                  <h3 class="fw-bold fs-6 mb-2">Subnet Telemetry Sweeps</h3>
+                  <p class="text-muted small leading-relaxed mb-0 line-clamp-2">Continuous packet diagnostics locating STP leaks and rogue scanning vectors.</p>
+                </div>
+              </div>
+              <div class="p-4 pt-0">
+                <span class="btn btn-sm btn-outline-secondary w-100 py-1.5 disabled" style="border-radius:8px; font-size:0.8rem;">Setup verified</span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="text-center mt-4">
+        <a href="/media" class="btn btn-outline-warning py-2 px-4 rounded-3 text-warning font-semibold">View Operations Showcase <i class="bi bi-chevron-right ms-1"></i></a>
       </div>
     </section>
-
   </main>
 
-  <!-- Interactive Modal Viewer for Media -->
-  <div class="modal fade" id="mediaModal" tabindex="-1" aria-hidden="true" aria-labelledby="mediaModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content border-0" style="background: transparent;">
-        <div class="modal-body p-0 position-relative">
-          <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3 bg-dark border border-secondary" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8;"></button>
-          <div id="mediaContainer" style="width:100%; height:auto; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.9); border:1px solid rgba(255,255,255,0.1); box-shadow:0 25px 60px rgba(0,0,0,0.8);">
-            <!-- Javascript injects media dynamic components here -->
+  <!-- CHAT MODEL WIDGET (GEMINI BACKED) -->
+  <div class="chat-widget-wrapper">
+    <button class="chat-trigger-btn" onclick="toggleChatWindow()">
+      <i class="bi bi-robot fs-3" id="chat-icon"></i>
+    </button>
+    
+    <div class="chat-window d-flex flex-column" id="chatWindow">
+      <div class="chat-header">
+        <div class="d-flex align-items-center gap-2">
+          <span class="p-1 px-1.5 rounded bg-warning bg-opacity-10 text-orange-650" style="background:#fff3cd;"><i class="bi bi-shield-fill-check"></i></span>
+          <div class="text-start leading-none">
+            <span class="text-dark fw-bold d-block" style="font-size:0.9rem;">Surge Assistant</span>
+            <span class="text-success font-mono" style="font-size:10px;">SECURE AI ONLINE</span>
           </div>
         </div>
+        <button onclick="toggleChatWindow()" class="btn-close" style="font-size:0.8rem;"></button>
+      </div>
+      
+      <div class="chat-body" id="chatBody">
+        <div class="chat-message bot">
+          Hello! I am Surge Assistant, powered securely by Gemini on the server. Ask me anything about subnets, CCNA audits, network cabinetry, or custom server processes!
+        </div>
+      </div>
+      
+      <div class="chat-footer">
+        <input type="text" id="chatText" class="chat-input" placeholder="Query network configs..." onkeypress="handleChatKey(event)">
+        <button onclick="sendChatMessage()" class="btn btn-warning p-2 px-3 border-0 rounded" style="background:var(--brand-primary); color:white;"><i class="bi bi-send"></i></button>
       </div>
     </div>
   </div>
 
-  <!-- Persistent Sticky WhatsApp -->
-  <div class="float-whatsapp animate__animated animate__bounceIn">
-    <a href="https://wa.me/254791204587" target="_blank" rel="noopener" aria-label="Speak with Caleb Muga on WhatsApp now">
-      <i class="bi bi-whatsapp"></i>
-    </a>
-  </div>
-
-  <!-- Footer block links -->
-  <footer>
-    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div class="text-muted text-sm">© {{ year }} <strong class="text-white">Caleb Muga</strong> • TechKnow Solutions. All rights reserved.</div>
-      <div class="d-flex flex-wrap align-items-center gap-2">
-        <a class="nav-custom-link text-xs py-1 px-2 text-decoration-none" href="/about">About Us</a>
-        <a class="nav-custom-link text-xs py-1 px-2 text-decoration-none" href="/contact-us">Contact Us</a>
-        <a class="nav-custom-link text-xs py-1 px-2 text-decoration-none" href="/privacy-policy">Privacy Policy</a>
-        <a class="nav-custom-link text-xs py-1 px-2 text-decoration-none" href="/terms">Terms</a>
-        <a class="nav-custom-link text-xs py-1 px-2 text-decoration-none" href="/disclaimer">Disclaimer</a>
-        <a class="nav-custom-link text-xs py-1 px-2 text-decoration-none" href="/cookie-policy">Cookies</a>
-        <a class="nav-custom-link text-sm py-1 px-2 d-inline-flex align-items-center gap-1.5 text-decoration-none ms-lg-2" href="https://www.facebook.com/caleb.muga.1" target="_blank" rel="noopener">
-          <i class="bi bi-github"></i> FACEBOOK PAGE
-        </a>
-        <a class="nav-custom-link text-xs py-1 px-2" href="#home">Top <i class="bi bi-chevron-up"></i></a>
+  <footer class="bg-white border-top py-5 mt-5">
+    <div class="container">
+      <div class="row pt-2 g-4 text-center text-md-start">
+        <div class="col-md-6">
+          <h5 class="fw-bold m-0 text-dark">SurgeTechKnow Solutions</h5>
+          <p class="text-muted small mt-1.5 mb-0">Certified Cisco WAN topologies, network audits, and custom node configurations.</p>
+          <span class="font-mono text-zinc-650 text-xxs d-block mt-3" style="font-size:10px;">Nairobi Ops Block. Connection audited and active in Postgres.</span>
+        </div>
+        <div class="col-md-6 text-md-end font-mono" style="font-size: 11px;">
+          <a href="/disclaimer" class="text-muted text-decoration-none me-3 hover:text-warning">Disclaimer</a>
+          <a href="/privacy" class="text-muted text-decoration-none me-3 hover:text-warning">Privacy</a>
+          <a href="/terms" class="text-muted text-decoration-none me-3 hover:text-warning">Terms</a>
+          <a href="/cookies" class="text-muted text-decoration-none hover:text-warning">Cookies</a>
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- AOS & Bootstrap Bundle JS -->
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- VISITOR TRACKING & INTERACTIVE BEACON -->
   <script>
-    // ==========================================
-    // INTERACTIVE CYBER SECURITY & ICT LAB ENGINE
-    // ==========================================
-    
-    // 1. Safe Network Port Exploits Scanner Simulator
-    const SIMULATOR_LOGS = [
-      { text: "🛰️ Launching security socket probe handshake...", color: "#9ca3af" },
-      { text: "🔍 Checking [Port 80] HTTP Web Server...", color: "#9ca3af" },
-      { text: "   ↳ RESPONSE code 200 OK | Nginx server active (Hardened).", color: "#10b981" },
-      { text: "🔒 Checking [Port 22] SSH Terminal Gateway...", color: "#f59e0b" },
-      { text: "   ↳ WARNING: Root authentication is enabled. CCNA recommendation: change to SSH Key pairs.", color: "#f59e0b" },
-      { text: "🛡️ Probing [Port 53] DNS Resolver zone...", color: "#9ca3af" },
-      { text: "   ↳ DNS protection secure. Cache poisoning vectors disabled.", color: "#10b981" },
-      { text: "📊 Probing [Port 3306] MySQL Database port...", color: "#9ca3af" },
-      { text: "   ↳ SECURE: Port filtered. Outer connections disallowed.", color: "#10b981" },
-      { text: "🏁 Safety audit sequence complete.", color: "#10b981" }
-    ];
+    // Beacon visit audit parameter injection
+    fetch("/api/track_visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });
 
-    function executeSimulatedPortScan() {
-      const btn = document.getElementById("scan-btn");
-      const consoleEl = document.getElementById("scan-console");
-      const feedback = document.getElementById("scan-feedback");
-      const targetDomain = document.getElementById("scan-domain").value.trim() || "192.168.10.45";
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Auditing ${targetDomain}...`;
-      consoleEl.innerHTML = "";
-      feedback.classList.add("d-none");
-
-      let logIndex = 0;
-      function printNextLog() {
-        if (logIndex < SIMULATOR_LOGS.length) {
-          const log = SIMULATOR_LOGS[logIndex];
-          const p = document.createElement("p");
-          p.className = "mb-1";
-          p.style.color = log.color;
-          p.textContent = log.text.replace("192.168.10.45", targetDomain);
-          consoleEl.appendChild(p);
-          consoleEl.scrollTop = consoleEl.scrollHeight;
-          logIndex++;
-          setTimeout(printNextLog, 450);
+    // Filtering routine for dynamic items scroller
+    function filterScrollerPosts(category) {
+      const chips = document.querySelectorAll(".category-chip");
+      chips.forEach(c => {
+        if (c.innerText === category || (category === 'All' && c.innerText.startsWith('All'))) {
+          c.classList.add("active");
         } else {
-          btn.disabled = false;
-          btn.innerHTML = `<i class="bi bi-shield-radar text-white"></i> Run Safety Diagnostic Audit`;
-          feedback.classList.remove("d-none");
+          c.classList.remove("active");
         }
-      }
-      printNextLog();
-    }
-
-    // 2. Interactive Password Entropy & Botnet Leak Rate Checker
-    function evaluatePasswordSecurity() {
-      const pwInput = document.getElementById("lab-pass");
-      const lvlBadge = document.getElementById("pw-lvl");
-      const bar = document.getElementById("pw-bar");
-      const speed = document.getElementById("pw-speed");
-      
-      const val = pwInput.value;
-      if (!val) {
-        lvlBadge.textContent = "NOT MEASURED";
-        lvlBadge.className = "badge bg-danger text-black font-semibold";
-        bar.style.width = "0%";
-        bar.className = "progress-bar bg-danger";
-        speed.textContent = "Instantaneous";
-        return;
-      }
-
-      // Calculate score based on primitive entropy rules
-      let score = 0;
-      if (val.length >= 6) score += 20;
-      if (val.length >= 10) score += 20;
-      if (/[A-Z]/.test(val)) score += 15;
-      if (/[0-9]/.test(val)) score += 15;
-      if (/[^A-Za-z0-9]/.test(val)) score += 30;
-
-      bar.style.width = score + "%";
-
-      if (score < 40) {
-        lvlBadge.textContent = "HIGH VULNERABILITY (WEAK)";
-        lvlBadge.className = "badge bg-danger text-black font-semibold";
-        bar.className = "progress-bar bg-danger";
-        speed.innerHTML = "🔴 <span class='text-danger'>~ 0.04 seconds</span> (Instant crack)";
-      } else if (score < 75) {
-        lvlBadge.textContent = "MODERATE (MEDIUM)";
-        lvlBadge.className = "badge bg-warning text-black font-semibold";
-        bar.className = "progress-bar bg-warning";
-        speed.innerHTML = "🟡 <span class='text-warning'>~ 14 hours</span> (Vulnerable)";
-      } else {
-        lvlBadge.textContent = "MILITARY ENTERPRISE SECURE";
-        lvlBadge.className = "badge bg-success text-black font-semibold";
-        bar.className = "progress-bar bg-success";
-        speed.innerHTML = "🟢 <span class='text-success'>~ 14.8 million centuries</span> (Secure)";
-      }
-    }
-
-    // CCNA Subnet Calculator
-    function calculateCidrSubnets() {
-      const ip = document.getElementById("sub-ip").value.trim() || "192.168.10.0";
-      const mask = parseInt(document.getElementById("sub-mask").value);
-      
-      const resMask = document.getElementById("sub-res-mask");
-      const resHosts = document.getElementById("sub-res-hosts");
-      const resNet = document.getElementById("sub-res-net");
-      const resBcast = document.getElementById("sub-res-bcast");
-
-      const parts = ip.split(".");
-      if (parts.length !== 4) {
-        alert("Please enter a valid IPv4 address.");
-        return;
-      }
-
-      let ipInt = 0;
-      for (let i = 0; i < 4; i++) {
-        let val = parseInt(parts[i]);
-        if (isNaN(val) || val < 0 || val > 255) {
-          alert("Invalid octet.");
-          return;
-        }
-        ipInt = (ipInt << 8) + val;
-      }
-
-      let maskInt = 0;
-      for (let i = 0; i < mask; i++) {
-        maskInt = (maskInt << 1) | 1;
-      }
-      maskInt = maskInt << (32 - mask);
-
-      const mParts = [
-        (maskInt >>> 24) & 255,
-        (maskInt >>> 16) & 255,
-        (maskInt >>> 8) & 255,
-        maskInt & 255
-      ];
-      resMask.textContent = mParts.join(".");
-
-      const netInt = ipInt & maskInt;
-      const bcastInt = netInt | (~maskInt);
-
-      const netParts = [
-        (netInt >>> 24) & 255,
-        (netInt >>> 16) & 255,
-        (netInt >>> 8) & 255,
-        netInt & 255
-      ];
-      const bcastParts = [
-        (bcastInt >>> 24) & 255,
-        (bcastInt >>> 16) & 255,
-        (bcastInt >>> 8) & 255,
-        bcastInt & 255
-      ];
-
-      resNet.textContent = netParts.join(".");
-      resBcast.textContent = bcastParts.join(".");
-
-      const hostsCount = Math.max(0, Math.pow(2, 32 - mask) - 2);
-      resHosts.textContent = hostsCount + " usable IPs";
-    }
-
-    function togglePasswordInputVis() {
-      const input = document.getElementById("lab-pass");
-      input.type = (input.type === "password") ? "text" : "password";
-    }
-
-    // Theme logic integration
-    const themeBtn = document.getElementById("themeBtn");
-    const docBody = document.body;
-
-    if (localStorage.getItem("theme") === "light") {
-      themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
-    }
-
-    themeBtn.addEventListener("click", () => {
-      docBody.classList.toggle("light");
-      if (docBody.classList.contains("light")) {
-        localStorage.setItem("theme", "light");
-        document.documentElement.setAttribute("data-bs-theme", "light");
-        themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
-      } else {
-        localStorage.setItem("theme", "dark");
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-        themeBtn.innerHTML = '<i class="bi bi-moon-stars"></i>';
-      }
-    });
-
-    window.addEventListener('load', () => {
-      const loader = document.getElementById('loader');
-      if (loader) { 
-        loader.style.opacity = '0'; 
-        setTimeout(() => loader.style.display = 'none', 500); 
-      }
-      AOS.init({ once: true, duration: 800, easing: 'ease-out' });
-    });
-
-    const galleryItems = {{ gallery_images|tojson }};
-    function openGalleryItem(idx) {
-      if (!galleryItems || idx < 0 || idx >= galleryItems.length) return;
-      const item = galleryItems[idx];
-      const container = document.getElementById('mediaContainer');
-      container.innerHTML = '';
-      
-      const img = document.createElement('img');
-      img.src = item.url;
-      img.style.maxWidth = '100%';
-      container.appendChild(img);
-      
-      const modal = new bootstrap.Modal(document.getElementById('mediaModal'));
-      modal.show();
-    }
-
-    // Real Human Presence & Telemetry Session Verifier
-    (function() {
-      let tracked = false;
-      let timer = null;
-
-      function sendTrackRequest(byInteraction = false) {
-        if (tracked) return;
-        tracked = true;
-        if (timer) clearTimeout(timer);
-
-        // Exclude / Ignore localhost, 127.0.0.1, or admin paths
-        const hostname = window.location.hostname;
-        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || window.location.pathname.startsWith('/admin')) {
-          console.log("Analytics: Localhost or Admin session bypassed tracking.");
-          return;
-        }
-
-        const getBrowserAndDevice = () => {
-          const ua = navigator.userAgent;
-          let browser = "Unknown Browser";
-          let deviceType = "Desktop";
-          if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
-          else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
-          else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
-          else if (ua.indexOf("Trident") > -1) browser = "Microsoft Internet Explorer";
-          else if (ua.indexOf("Edge") > -1 || ua.indexOf("Edg") > -1) browser = "Microsoft Edge";
-          else if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
-          else if (ua.indexOf("Safari") > -1) browser = "Apple Safari";
-          
-          if (/Mobi|Android|iPhone|iPad|Tablet/i.test(ua)) {
-            deviceType = "Mobile/Tablet";
-          }
-          return { browser, deviceType };
-        };
-
-        const bAndD = getBrowserAndDevice();
-
-        fetch('/api/track_visit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            path: window.location.pathname,
-            js_enabled: true,
-            screen_resolution: `${window.screen.width}x${window.screen.height}`,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-            browser: bAndD.browser,
-            device_type: bAndD.deviceType,
-            engaged: byInteraction || false, // true if triggered by scroll/click
-            mouse_moved: byInteraction
-          })
-        }).catch(err => console.error("Telemetry report offline:", err));
-      }
-
-      window.addEventListener('load', () => {
-        // 1) Dwell time: 5+ seconds
-        timer = setTimeout(() => {
-          sendTrackRequest(false);
-        }, 5000);
-
-        // 2) Scroll interaction
-        const onScroll = () => {
-          sendTrackRequest(true);
-          window.removeEventListener('scroll', onScroll);
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-
-        // 3) Click interaction
-        const onClick = () => {
-          sendTrackRequest(true);
-          window.removeEventListener('click', onClick);
-        };
-        window.addEventListener('click', onClick);
       });
-    })();
+
+      const cards = document.querySelectorAll(".blog-scroller-item");
+      cards.forEach(c => {
+        if (category === 'All' || c.getAttribute("data-category") === category) {
+          c.style.display = "block";
+        } else {
+          c.style.display = "none";
+        }
+      });
+    }
+
+    // Secret Ctrl+Shift+A login dispatcher
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        window.location.href = "/admin";
+      }
+    });
+
+    // Chat drawer toggles
+    function toggleChatWindow() {
+      const win = document.getElementById("chatWindow");
+      win.classList.toggle("open");
+    }
+
+    function handleChatKey(e) {
+      if (e.key === "Enter") {
+        sendChatMessage();
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById("chatText");
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      
+      const body = document.getElementById("chatBody");
+      
+      // User bubble
+      const uMsg = document.createElement("div");
+      uMsg.className = "chat-message user";
+      uMsg.innerText = text;
+      body.appendChild(uMsg);
+      body.scrollTop = body.scrollHeight;
+
+      // Processing bubble
+      const pMsg = document.createElement("div");
+      pMsg.className = "chat-message bot font-mono text-muted text-xs";
+      pMsg.innerText = "Consulting Gemini core configuration parameters...";
+      body.appendChild(pMsg);
+      body.scrollTop = body.scrollHeight;
+
+      fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      })
+      .then(res => res.json())
+      .then(data => {
+        pMsg.remove();
+        const bMsg = document.createElement("div");
+        bMsg.className = "chat-message bot";
+        bMsg.innerText = data.reply;
+        body.appendChild(bMsg);
+        body.scrollTop = body.scrollHeight;
+      });
+    }
   </script>
 </body>
 </html>
