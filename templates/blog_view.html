@@ -1,1815 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <script>
-    (function() {
-      const savedTheme = localStorage.getItem("theme") || "dark";
-      document.documentElement.setAttribute("data-bs-theme", savedTheme === "light" ? "light" : "dark");
-    })();
-  </script>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  {% set seo_description = (post.excerpt if post.excerpt is defined and post.excerpt else post.content|striptags|replace('\n', ' ')|truncate(160, True, '...')) %}
-  {% set seo_image_raw = (post.featured_image if post.featured_image is defined and post.featured_image else post.content|get_first_image) %}
-  {% set seo_image = seo_image_raw if seo_image_raw else 'https://techknowsolution.co.ke/static/ogimage.png' %}
-  {% set canonical_url = 'https://techknowsolution.co.ke' ~ request.path %}
-
-  <title>{{ post.title }} • TechKnow Solutions</title>
-  <meta name="description" content="{{ seo_description }}">
-  <link rel="canonical" href="{{ canonical_url }}">
-
-  <meta name="author" content="SurgeTechKnow">
-  <meta name="creator" content="SurgeTechKnow">
-  <meta name="publisher" content="TechKnow Solutions">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-
-  <meta name="application-name" content="TechKnow Solutions">
-  <meta name="apple-mobile-web-app-title" content="TechKnow Solutions">
-  <meta name="theme-color" content="#07111f">
-  <meta name="language" content="English">
-  <meta name="rating" content="general">
-  <meta name="distribution" content="global">
-  <meta name="geo.region" content="KE-30">
-  <meta name="geo.placename" content="Nairobi">
-
-  <meta property="og:site_name" content="TechKnow Solutions">
-  <meta property="og:url" content="{{ canonical_url }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ blog.title }} - SurgeTechKnow</title>
+  
+  <meta name="description" content="{{ blog.content|striptags|truncate(150) }}">
+  <meta name="keywords" content="{{ blog.category }}, SurgeTechKnow, Engineering Logs, Cyber Security Analysis">
+  <meta property="og:title" content="{{ blog.title }} - SurgeTechKnow">
+  <meta property="og:description" content="{{ blog.content|striptags|truncate(150) }}">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="{{ post.title }}">
-  <meta property="og:description" content="{{ seo_description }}">
-  <meta property="og:image" content="{{ seo_image }}">
-  <meta property="og:image:secure_url" content="{{ seo_image }}">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="{{ post.title }}">
-
-  <meta property="article:author" content="SurgeTechKnow">
-  <meta property="article:publisher" content="TechKnow Solutions">
-  <meta property="article:section" content="Technology">
-  {% if post.timestamp %}
-  <meta property="article:published_time" content="{{ post.timestamp }}">
+  <meta property="og:url" content="{{ request.url }}">
+  {% if featured_image %}
+    <meta property="og:image" content="{{ featured_image }}">
+  {% else %}
+    <meta property="og:image" content="{{ request.url_root }}static/metabanner.png">
   {% endif %}
-  {% if post.updated_at is defined and post.updated_at %}
-  <meta property="article:modified_time" content="{{ post.updated_at }}">
-  {% endif %}
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@techknowsols">
-  <meta name="twitter:title" content="{{ post.title }}">
-  <meta name="twitter:description" content="{{ seo_description }}">
-  <meta name="twitter:image" content="{{ seo_image }}">
-
-  <link rel="icon" type="image/png" sizes="32x32" href="https://techknowsolution.co.ke/static/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://techknowsolution.co.ke/static/favicon-16.png">
-  <link rel="apple-touch-icon" href="https://techknowsolution.co.ke/static/apple-touch-icon.png">
-  <link rel="manifest" href="/site.webmanifest">
-
-  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
-  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
-
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag("js", new Date());
-    gtag("config", "G-ELRXZQRGNR");
-  </script>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "name": "TechKnow Solutions",
-        "alternateName": ["TechKnow", "TechKnowSols", "TechNowSolutions", "SurgeTechKnow.dev"],
-        "url": "https://techknowsolution.co.ke",
-        "logo": "https://techknowsolution.co.ke/static/ogimage.png",
-        "founder": {
-          "@type": "Person",
-          "name": "SurgeTechKnow"
-        }
-      },
-      {
-        "@type": "Person",
-        "name": "SurgeTechKnow",
-        "url": "https://techknowsolution.co.ke",
-        "jobTitle": "Cybersecurity Specialist, Network Engineer and Automation Architect",
-        "worksFor": {
-          "@type": "Organization",
-          "name": "TechKnow Solutions"
-        },
-        "knowsAbout": [
-          "Cybersecurity",
-          "Networking",
-          "Cisco CCNA",
-          "ICT Support",
-          "Python Automation",
-          "AI Systems",
-          "Cloud Computing",
-          "Web Development"
-        ]
-      },
-      {
-        "@type": "BlogPosting",
-        "headline": {{ post.title|tojson }},
-        "description": {{ seo_description|tojson }},
-        "image": {{ seo_image|tojson }},
-        "url": {{ canonical_url|tojson }},
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": {{ canonical_url|tojson }}
-        },
-        "author": {
-          "@type": "Person",
-          "name": "SurgeTechKnow"
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "TechKnow Solutions",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://techknowsolution.co.ke/static/ogimage.png"
-          }
-        },
-        "datePublished": {{ post.timestamp|tojson }},
-        "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.timestamp)|tojson }}
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://techknowsolution.co.ke"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Blog",
-            "item": "https://techknowsolution.co.ke/blog"
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": {{ post.title|tojson }},
-            "item": {{ canonical_url|tojson }}
-          }
-        ]
-      }
-    ]
-  }
-  </script>
-
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://unpkg.com">
-
-  <link rel="preload"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-        as="style">
-
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
-
-  <link rel="preload"
-        href="https://techknowsolution.co.ke/static/ogimage.png"
-        as="image">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg: #070b15;
-      --card-bg: rgba(15, 23, 42, 0.45);
-      --card-hover-bg: rgba(30, 41, 59, 0.5);
-      --border: rgba(255, 255, 255, 0.05);
-      --border-hover: rgba(59, 130, 246, 0.35);
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --brand1: #3b82f6;
-      --brand2: #8b5cf6;
-      --accent: #22d3ee;
-      --glow: rgba(59, 130, 246, 0.08);
-      --glass-bg: rgba(7, 11, 21, 0.85);
-      --font-display: 'Space Grotesk', system-ui, sans-serif;
-      --font-body: 'Inter', system-ui, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    body.light {
       --bg: #f8fafc;
       --card-bg: #ffffff;
-      --card-hover-bg: #f1f5f9;
-      --border: rgba(0, 0, 0, 0.06);
-      --border-hover: rgba(59, 130, 246, 0.4);
-      --text: #0f172a;
+      --text-main: #0f172a;
       --text-muted: #64748b;
-      --brand1: #2563eb;
-      --brand2: #7c3aed;
-      --accent: #0284c7;
-      --glow: rgba(37, 99, 235, 0.04);
-      --glass-bg: rgba(248, 250, 252, 0.9);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
+      --border-color: #e2e8f0;
+      --brand-primary: #f97316;
+      --brand-secondary: #ea580c;
     }
 
     body {
       background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-x: hidden;
-      line-height: 1.7;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
     }
 
-    /* Ambient Blur Blobs */
-    .ambient-glow {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(140px);
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.35;
-    }
-    .glow-1 {
-      top: -150px;
-      right: -50px;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-    }
-    .glow-2 {
-      bottom: 20%;
-      left: -150px;
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
-    }
-
-    /* Top Hang Reading Progress Bar */
-    .reading-progress-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      z-index: 1060;
-      background: transparent;
-    }
-    .reading-progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--brand1), var(--accent), var(--brand2));
-      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-      transition: width 0.1s ease;
-    }
-
-    /* Navbar Custom */
-    .navbar-custom {
-      backdrop-filter: blur(20px);
-      background-color: var(--glass-bg);
-      border-bottom: 1px solid var(--border);
-      z-index: 1050;
-    }
-    .brand-avatar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      font-family: var(--font-display);
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      color: var(--text);
-      font-size: 1.25rem;
-    }
-    .nav-custom-link {
-      font-size: 0.9rem;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 8px;
-      color: var(--text-muted) !important;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
-    .nav-custom-link:hover, .nav-custom-link.active {
-      color: var(--text) !important;
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-    body.light .nav-custom-link:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      letter-spacing: -1px;
     }
 
-    .theme-toggle-btn {
+    .blog-view-wrapper {
       background: var(--card-bg);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      border-radius: 10px;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      color: var(--text);
-    }
-    .theme-toggle-btn:hover {
-      border-color: var(--brand1);
-      transform: scale(1.05);
-      background: var(--card-hover-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
     }
 
-    /* Buttons */
-    .btn-fire-primary {
-      background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%);
-      border: none;
-      color: #ffffff !important;
+    .category-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
       font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 12px;
-      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.2);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .btn-fire-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(59, 130, 246, 0.3);
-      opacity: 0.95;
-    }
-
-    .btn-fire-secondary {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text) !important;
-      font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .btn-fire-secondary:hover {
-      transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.07);
-      border-color: var(--border-hover);
-    }
-    body.light .btn-fire-secondary {
-      background: rgba(0, 0, 0, 0.02);
-      color: #0f172a !important;
-      border-color: #cbd5e1;
-    }
-    body.light .btn-fire-secondary:hover {
-      background: rgba(0, 0, 0, 0.05);
-      border-color: #94a3b8;
-    }
-
-    /* Light Theme Author Styles Visibility Fixes */
-    body.light .header-author-section span.text-white {
-      color: #0f172a !important;
-    }
-    body.light .header-author-section .text-muted,
-    body.light .header-author-section .meta-row,
-    body.light .header-author-section .meta-row span,
-    body.light .header-author-section .meta-row i {
-      color: #475569 !important;
-    }
-
-    /* Mobile Adaptivity Overrides */
-    @media (max-width: 768px) {
-      .article-header {
-        padding: 95px 0 25px !important;
-      }
-      .article-title {
-        font-size: 1.95rem !important;
-        line-height: 1.25 !important;
-        letter-spacing: -0.8px !important;
-      }
-      .meta-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        border-start: 2px solid var(--brand1);
-        padding-left: 12px;
-        margin-top: 8px;
-      }
-      .navbar-custom {
-        padding-top: 8px !important;
-        padding-bottom: 8px !important;
-      }
-    }
-
-    /* Luxury Article Header */
-    .article-header {
-      padding: 140px 0 45px;
-      background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, transparent 100%);
-      border-bottom: 1px solid var(--border);
-    }
-    .article-title {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-      letter-spacing: -1.5px;
-      line-height: 1.15;
-      color: #ffffff;
-      margin-bottom: 24px;
-    }
-    body.light .article-title {
-      color: #0f172a;
-    }
-
-    /* Author Avatar Profile inline under the title */
-    .header-author-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding-top: 5px;
-    }
-    .header-author-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 1px solid var(--border-hover);
-      object-fit: cover;
-    }
-
-    .meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 16px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Sticky Sidebars */
-    .sticky-sidebar {
-      position: sticky;
-      top: 100px;
-    }
-
-    /* Automatically Generatable Table of Contents Styles */
-    .toc-card {
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 22px;
-    }
-    .toc-title {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.82rem;
-      letter-spacing: 1px;
       text-transform: uppercase;
-      color: var(--text);
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    .toc-list {
-      list-style-type: none;
-      padding-left: 0;
-      margin-bottom: 0;
-    }
-    .toc-item {
-      margin-bottom: 10px;
-      font-size: 0.85rem;
-      line-height: 1.4;
-    }
-    .toc-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: all 0.2s ease;
-      display: block;
-    }
-    .toc-link:hover, .toc-link.active {
-      color: var(--brand1);
-      padding-left: 4px;
-    }
-    .toc-item-h3 {
-      padding-left: 15px;
-      font-size: 0.8rem;
+      letter-spacing: 0.05em;
     }
 
-    /* Rich Reading Body / Elements Override */
-    .article-content {
+    .category-badge.cybersecurity { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+    .category-badge.networking { background: rgba(16, 185, 129, 0.1); color: #059669; }
+    .category-badge.automation { background: rgba(139, 92, 246, 0.1); color: #7c3aed; }
+    .category-badge.technology { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+    .category-badge.support { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+
+    .article-body {
       line-height: 1.8;
-      font-size: 1.1rem;
-      color: var(--text);
-    }
-    .article-content h2, .article-content h3, .article-content h4 {
-      font-family: var(--font-display);
-      font-weight: 700;
-      color: #ffffff;
-      margin-top: 40px;
-      margin-bottom: 16px;
-      letter-spacing: -0.5px;
-      scroll-margin-top: 110px; /* offset for nav */
-    }
-    body.light .article-content h2, body.light .article-content h3, body.light .article-content h4 {
-      color: #0f172a;
-    }
-    .article-content h2 {
-      font-size: 1.65rem;
-      border-left: 3px solid var(--brand1);
-      padding-left: 14px;
-    }
-    .article-content h3 {
-      font-size: 1.35rem;
-    }
-    .article-content p {
-      margin-bottom: 24px;
-    }
-    .article-content ul, .article-content ol {
-      margin-bottom: 24px;
-      padding-left: 20px;
-    }
-    .article-content li {
-      margin-bottom: 8px;
-    }
-
-
-    /* =========================================================
-       STANDARD BLOG CONTENT SYSTEM
-       This forces all posts to render uniformly, even if old posts
-       contain different raw HTML, image sizes, videos, tables, etc.
-       ========================================================= */
-
-    .article-content {
-      font-family: var(--font-body);
-      max-width: 100%;
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-
-    .article-content > *:first-child {
-      margin-top: 0 !important;
-    }
-
-    .article-content > *:last-child {
-      margin-bottom: 0 !important;
-    }
-
-    .article-content a {
-      color: var(--brand1);
-      text-decoration: none;
-      font-weight: 600;
-      border-bottom: 1px solid rgba(59, 130, 246, 0.25);
-    }
-
-    .article-content a:hover {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    .article-content strong,
-    .article-content b {
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    body.light .article-content strong,
-    body.light .article-content b {
-      color: #0f172a;
-    }
-
-    .article-content em,
-    .article-content i {
-      color: var(--text);
-    }
-
-    .article-content blockquote {
-      margin: 30px 0;
-      padding: 18px 22px;
-      border-left: 4px solid var(--brand1);
-      border-radius: 14px;
-      background: rgba(59, 130, 246, 0.08);
-      color: var(--text);
-      font-size: 1.03rem;
-    }
-
-    body.light .article-content blockquote {
-      background: rgba(37, 99, 235, 0.06);
-    }
-
-    .article-content hr {
-      border: 0;
-      height: 1px;
-      margin: 34px 0;
-      background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
-      opacity: 1;
-    }
-
-    .article-content table {
-      width: 100%;
-      margin: 30px 0;
-      border-collapse: separate;
-      border-spacing: 0;
-      overflow: hidden;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      font-size: 0.95rem;
-    }
-
-    .article-content th,
-    .article-content td {
-      padding: 13px 15px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-
-    .article-content th {
-      font-family: var(--font-display);
-      font-weight: 700;
-      background: rgba(59, 130, 246, 0.08);
-      color: var(--text);
-    }
-
-    .article-content tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .article-content .table-responsive {
-      margin: 30px 0;
-      border-radius: 14px;
-    }
-
-    /* Universal image/video/iframe standard */
-    .article-content img,
-    .article-content video,
-    .article-content iframe,
-    .article-content embed,
-    .article-content object {
-      width: 100% !important;
-      max-width: 100% !important;
-      display: block;
-      border: 0;
-    }
-
-    .article-content img {
-      height: auto !important;
-      max-height: 540px;
-      object-fit: cover;
-      object-position: center;
-    }
-
-    .article-content video {
-      height: auto !important;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      background: #020617;
-    }
-
-    .article-content iframe {
-      aspect-ratio: 16 / 9;
-      height: auto !important;
-      min-height: 360px;
-      background: #020617;
-    }
-
-    .article-media-frame {
-      width: 100%;
-      margin: 32px auto;
-      overflow: hidden;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
-        #020617;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
-    }
-
-    body.light .article-media-frame {
-      background: #ffffff;
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
-    }
-
-    .article-media-frame img,
-    .article-media-frame video,
-    .article-media-frame iframe {
-      margin: 0 !important;
-      border-radius: 0 !important;
-    }
-
-    .article-media-frame.portrait-media img {
-      max-height: 620px;
-      object-fit: contain;
-      background: #020617;
-    }
-
-    .article-media-caption {
-      padding: 12px 16px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .embedded-video,
-    .blog-video,
-    .blog-media,
-    .article-media {
-      width: 100% !important;
-      max-width: 100% !important;
-      border-radius: 20px;
-    }
-
-    /* Prevent old inserted width/height styles from breaking articles */
-    .article-content [style*="width"],
-    .article-content [style*="height"] {
-      max-width: 100% !important;
-    }
-
-    @media (max-width: 991.98px) {
-      .sticky-sidebar {
-        position: static;
-        top: auto;
-      }
-
-      .card-fire {
-        border-radius: 18px;
-      }
-
-      .article-content {
-        font-size: 1.02rem;
-        line-height: 1.78;
-      }
-
-      .article-content img {
-        max-height: 440px;
-      }
-
-      .article-content iframe {
-        min-height: 260px;
-      }
-    }
-
-    @media (max-width: 575.98px) {
-      main.container {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .article-content {
-        font-size: 1rem;
-        line-height: 1.75;
-      }
-
-      .article-content p {
-        margin-bottom: 18px;
-      }
-
-      .article-content h2 {
-        font-size: 1.35rem;
-      }
-
-      .article-content h3 {
-        font-size: 1.18rem;
-      }
-
-      .article-media-frame {
-        margin: 24px auto;
-        border-radius: 16px;
-      }
-
-      .article-content img {
-        max-height: 360px;
-      }
-
-      .article-content iframe {
-        min-height: 210px;
-      }
-
-      .article-content pre {
-        padding: 18px 16px !important;
-        font-size: 0.82rem !important;
-      }
-    }
-
-
-    /* Premium Code Highlight overrides */
-    .article-content pre {
-      background: #0d1117 !important;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px !important;
-      padding: 20px 24px !important;
-      margin: 28px 0 !important;
-      overflow-x: auto;
-      position: relative;
-    }
-    .article-content code {
-      font-family: var(--font-mono) !important;
-      font-size: 0.88rem !important;
-      color: #38bdf8;
-    }
-    .article-content p code, .article-content li code {
-      background: rgba(255, 255, 255, 0.06);
-      padding: 3px 6px;
-      border-radius: 6px;
-      color: #f472b6;
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-    }
-    body.light .article-content pre {
-      background: #f8fafc !important;
-      border-color: rgba(0, 0, 0, 0.08);
-    }
-    body.light .article-content p code, body.light .article-content li code {
-      background: rgba(0, 0, 0, 0.04);
-      color: #db2777;
-    }
-
-    /* Dynamic Copy Code Button */
-    .code-copy-btn {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #94a3b8;
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .code-copy-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #ffffff;
-      border-color: var(--brand1);
-    }
-
-    /* Cards */
-    .card-fire {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      padding: 24px;
-    }
-
-    /* Tags */
-    .blog-tag {
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-    }
-    .badge-cybersecurity {
-      background: rgba(239, 68, 68, 0.12) !important;
-      color: #f87171 !important;
-      border: 1px solid rgba(239, 68, 68, 0.2) !important;
-    }
-    .badge-networking {
-      background: rgba(59, 130, 246, 0.12) !important;
-      color: #60a5fa !important;
-      border: 1px solid rgba(59, 130, 246, 0.2) !important;
-    }
-    .badge-ai-automation {
-      background: rgba(139, 92, 246, 0.12) !important;
-      color: #a78bfa !important;
-      border: 1px solid rgba(139, 92, 246, 0.2) !important;
-    }
-    .badge-web-development {
-      background: rgba(6, 182, 212, 0.12) !important;
-      color: #22d3ee !important;
-      border: 1px solid rgba(6, 182, 212, 0.2) !important;
-    }
-    .badge-ict-support {
-      background: rgba(20, 184, 166, 0.12) !important;
-      color: #2dd4bf !important;
-      border: 1px solid rgba(20, 184, 166, 0.2) !important;
-    }
-    .badge-technology {
-      background: rgba(148, 163, 184, 0.12) !important;
-      color: #cbd5e1 !important;
-      border: 1px solid rgba(148, 163, 184, 0.2) !important;
-    }
-
-    body.light .badge-cybersecurity { background: rgba(239, 68, 68, 0.08) !important; color: #dc2626 !important; border: 1px solid rgba(239, 68, 68, 0.15) !important; }
-    body.light .badge-networking { background: rgba(59, 130, 246, 0.08) !important; color: #2563eb !important; border: 1px solid rgba(59, 130, 246, 0.15) !important; }
-    body.light .badge-ai-automation { background: rgba(139, 92, 246, 0.08) !important; color: #7c3aed !important; border: 1px solid rgba(139, 92, 246, 0.15) !important; }
-    body.light .badge-web-development { background: rgba(6, 182, 212, 0.08) !important; color: #0891b2 !important; border: 1px solid rgba(6, 182, 212, 0.15) !important; }
-    body.light .badge-ict-support { background: rgba(20, 184, 166, 0.08) !important; color: #0d9488 !important; border: 1px solid rgba(20, 184, 166, 0.15) !important; }
-    body.light .badge-technology { background: rgba(71, 85, 105, 0.08) !important; color: #475569 !important; border: 1px solid rgba(71, 85, 105, 0.15) !important; }
-
-    /* Premium Redesigned Reactions Bar */
-    .reaction-btn {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 12px;
-      padding: 12px 18px;
-      font-size: 0.9rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.25s ease;
-    }
-    .reaction-btn:hover {
-      border-color: var(--brand1);
-      background: rgba(59, 130, 246, 0.05);
-      color: #ffffff;
-      transform: translateY(-2px);
-    }
-    .reaction-btn.active {
-      border-color: #10b981;
-      background: rgba(16, 185, 129, 0.08);
-      color: #10b981;
-    }
-
-    /* Highlight Explainer Styles */
-    .explainer-box {
-      border: 1px dashed rgba(16, 185, 129, 0.3);
-      background-color: rgba(16, 185, 129, 0.03);
-      border-radius: 14px;
-      padding: 20px;
-      font-size: 13px;
-    }
-
-    /* Related posts cards layout */
-    .related-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .related-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-    }
-    .related-thumb {
-      height: 140px;
-      background-color: rgba(7, 11, 21, 0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    .related-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .related-title {
-      font-family: var(--font-display);
-      font-weight: 700;
       font-size: 1.05rem;
-      line-height: 1.4;
-      margin-bottom: 8px;
-    }
-    .related-title a {
-      color: #ffffff;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .related-title a:hover {
-      color: var(--brand1);
-    }
-    body.light .related-title a {
-      color: #0f172a;
     }
 
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 50px 0;
-      margin-top: auto;
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
+    .article-body p {
+      margin-bottom: 1.5rem;
     }
-    .footer-logo {
-      font-family: var(--font-display);
+
+    .article-body h2, .article-body h3, .article-body h4 {
+      font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      font-size: 1.25rem;
-      text-decoration: none;
-      color: var(--text);
+      margin-top: 2rem;
+      margin-bottom: 1rem;
     }
-    .hover-white {
-      transition: color 0.2s;
+
+    .article-body pre {
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 1.25rem;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
     }
-    .hover-white:hover {
-      color: #ffffff !important;
+
+    .article-body blockquote {
+      border-left: 4px solid var(--brand-primary);
+      padding-left: 1.25rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin: 1.5rem 0;
     }
-    body.light .hover-white:hover {
-      color: #000000 !important;
+
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-top: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .disclaimer-box {
+      border: 1px dashed rgba(249, 115, 22, 0.25);
+      background: rgba(249, 115, 22, 0.03);
+      border-radius: 12px;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
     }
   </style>
 </head>
-<script>
-(function () {
-  let sent = false;
-  let startTime = Date.now();
-  let maxScroll = 0;
-  let interacted = false;
+<body class="py-5">
 
-  function updateScrollDepth() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (docHeight > 0) {
-      maxScroll = Math.max(maxScroll, Math.round((scrollTop / docHeight) * 100));
-    }
-  }
-
-  window.addEventListener("scroll", function () {
-    interacted = true;
-    updateScrollDepth();
-  }, { passive: true });
-
-  window.addEventListener("click", function () {
-    interacted = true;
-  });
-
-  function sendTracking() {
-    const timeOnPage = Math.round((Date.now() - startTime) / 1000);
-
-    fetch("/api/track_visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
-      body: JSON.stringify({
-        path: window.location.pathname,
-        js_enabled: true,
-        visible: document.visibilityState === "visible",
-        time_on_page: timeOnPage,
-        scroll_depth: maxScroll,
-        engaged: interacted,
-        interaction: interacted,
-        mouse_moved: interacted,
-        screen_resolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        referrer: document.referrer,
-        browser: navigator.userAgent,
-        device_type: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "Mobile" : "Desktop"
-      })
-    }).catch(() => {});
-  }
-
-  setTimeout(sendTracking, 16000);
-  setInterval(sendTracking, 30000);
-})();
-</script>
-<body>
-  <script>
-    if (localStorage.getItem("theme") === "light") {
-      document.body.classList.add("light");
-    }
-  </script>
-  <!-- Ambient glows -->
-  <div class="ambient-glow glow-1" aria-hidden="true"></div>
-  <div class="ambient-glow glow-2" aria-hidden="true"></div>
-
-  <!-- Reading Progress indicator -->
-  <div class="reading-progress-container">
-    <div id="readingProgressBar" class="reading-progress-bar"></div>
-  </div>
-
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg fixed-top navbar-custom py-2" role="navigation" aria-label="Main navigation">
-    <div class="container d-flex align-items-center justify-content-between">
-      <a class="brand-avatar" href="/" aria-label="Go to home">
-        <span>SURGE <span style="color:var(--brand1)">.dev</span></span>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top bg-white border-bottom py-3">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <span class="p-1.5 px-2.5 rounded bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center">
+          <i class="bi bi-shield-lock-fill text-warning"></i>
+        </span>
+        <span class="brand-title text-dark">SurgeTechKnow</span>
       </a>
-
-      <!-- Always visible controls outside collapse -->
-      <div class="d-flex align-items-center gap-2 ms-auto order-lg-last">
-        <button id="themeBtn" class="theme-toggle-btn" title="Toggle theme colors" aria-pressed="false">
-          <i class="bi bi-moon-stars"></i>
-        </button>
-        <a class="btn btn-sm btn-fire-primary px-3 d-none d-sm-inline-flex" href="{{ url_for('admin') }}">
-          <i class="bi bi-shield-lock"></i> TechKnow
-        </a>
-        <div class="founder-avatar-wrapper d-inline-flex align-items-center ms-1" title="SurgeTechKnow - Founder">
-          <img src="/static/passport.png" alt="SurgeTechKnow" class="rounded-circle" style="height: 38px; width: 38px; object-fit: cover; border: 2px solid var(--brand1); box-shadow: 0 0 10px rgba(59,130,246,0.4);" referrerPolicy="no-referrer">
-        </div>
-        <button class="navbar-toggler border-0 text-white rounded-3 shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: rgba(255,255,255,0.05); padding: 6px 10px;">
-          <i class="bi bi-list fs-4 text-white"></i>
-        </button>
-      </div>
-
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-lg-4 align-items-center gap-1.5 py-2 py-lg-0">
-          <li class="nav-item">
-            <a class="nav-custom-link" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-custom-link active" href="{{ url_for('blog_list') }}">Journal Library</a>
-          </li>
-          <!-- Mobile Specific Extra Menu Actions -->
-          <li class="nav-item d-sm-none mt-2 w-100">
-            <a class="btn btn-sm btn-fire-primary w-100 justify-content-center" href="{{ url_for('admin') }}">
-              <i class="bi bi-shield-lock"></i> TechKnow Portal
-            </a>
-          </li>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navCollapse">
+        <ul class="navbar-nav ms-auto gap-2">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/hub">Enterprise Hub</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/blog">Insights</a></li>
+          <li class="nav-item"><a class="nav-link" href="/media">Showcase</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Article variables computation -->
-  {% set combined = (post.title ~ " " ~ post.content)|lower %}
-  {% if "cyber" in combined or "exploit" in combined or "mitigate" in combined or "security" in combined or "defense" in combined or "hack" in combined or "penetration" in combined or "firewall" in combined %}
-    {% set cat = "Cybersecurity" %}
-  {% elif "rout" in combined or "net" in combined or "ip" in combined or "cisco" in combined or "ccna" in combined or "switch" in combined or "router" in combined or "dhcp" in combined or "dns" in combined or "lan" in combined or "wan" in combined %}
-    {% set cat = "Networking" %}
-  {% elif "ai" in combined or "machine" in combined or "learning" in combined or "model" in combined or "neural" in combined or "predict" in combined or "automation" in combined or "workflow" in combined or "cron" in combined or "script" in combined %}
-    {% set cat = "AI & Automation" %}
-  {% elif "web" in combined or "html" in combined or "css" in combined or "flask" in combined or "react" in combined or "js" in combined or "ts" in combined or "javascript" in combined or "typescript" in combined or "frontend" in combined or "backend" in combined %}
-    {% set cat = "Web Development" %}
-  {% elif "ict" in combined or "support" in combined or "helpdesk" in combined or "comput" in combined or "hardware" in combined or "troubleshoot" in combined or "printer" in combined %}
-    {% set cat = "ICT Support" %}
-  {% else %}
-    {% set cat = "Technology" %}
-  {% endif %}
-  
-  {% set cat_slug = cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-
-  {% set words_count = post.content.split()|length %}
-  {% set reading_time = (words_count / 200)|round(0, 'ceil')|int %}
-  {% if reading_time < 1 %}{% set reading_time = 1 %}{% endif %}
-
-  <!-- Header -->
-  <header class="article-header">
-    <div class="container" data-aos="fade-up">
-      <div class="mb-3">
-        <span class="blog-tag badge-{{ cat_slug }}">{{ cat }}</span>
-      </div>
-      <h1 class="article-title">{{ post.title }}</h1>
-      
-      <!-- Premium Author & Meta Section -->
-      <div class="header-author-section">
-        <img src="/static/assets/passport.png" onerror="this.src='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/person-circle.svg'" class="header-author-avatar animate-pulse" alt="SurgeTechKnow">
-        <div>
-          <div class="d-flex align-items-center gap-2">
-            <span class="text-white fw-bold text-sm">SurgeTechKnow</span>
-            <span class="badge bg-primary/10 text-primary border border-primary/20 text-xxs font-mono rounded">SPECIALIST</span>
+  <main class="container mt-5 pt-4">
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-8">
+        <article class="blog-view-wrapper p-4 p-md-5">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <span class="category-badge {{ blog.category|lower }}">{{ blog.category }}</span>
+            <span class="font-mono text-muted small"><i class="bi bi-calendar-event me-1"></i>{{ blog.timestamp[:10] }}</span>
+            <span class="font-mono text-muted small"><i class="bi bi-eye me-1"></i>{{ blog.views or 0 }} reads</span>
           </div>
-          <div class="meta-row mt-1">
-            <span><i class="bi bi-calendar-event"></i> Listed {{ post.timestamp }}</span>
-            <span><i class="bi bi-eye"></i> {{ post.views or 0 }} Views</span>
-            <span><i class="bi bi-clock"></i> {{ reading_time }} Min Read</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
 
-  <!-- Complete publication structural spacing (Double Sidebars grid layout on desktop) -->
-  <main class="container py-5">
-    <div class="row g-4 g-xl-5">
-      
-      <!-- LEFT COLUMN : Interactive Table of Contents (Desktop - 3 columns) -->
-      <aside class="col-xl-3 col-lg-3 d-none d-lg-block">
-        <div class="sticky-sidebar">
-          <div class="toc-card shadow-sm">
-            <div class="toc-title"><i class="bi bi-list-nested me-1.5 text-primary"></i> TABLE OF CONTENTS</div>
-            <ul class="toc-list" id="tableModelOfContents">
-              <!-- Dynamically populated from JS rendering headings -->
-              <li class="toc-item text-muted text-xs italic">Parsing post structure...</li>
-            </ul>
-          </div>
-        </div>
-      </aside>
-
-      <!-- CENTER COLUMN : Core publication content (7 columns) -->
-      <article class="col-xl-6 col-lg-6 col-md-12" data-aos="fade-right">
-        <div class="card-fire p-4 p-md-5 mb-5 shadow-sm" style="background-color: var(--card-bg);">
-          <div class="article-content text-justify" id="blogContentPane">
-            {{ post.content|render_markdown|safe }}
-          </div>
-        </div>
-
-        <!-- Redesigned reactions logging toolbar -->
-        <div class="card-fire p-4 mb-5 border-dashed" style="background-color: rgba(255, 255, 255, 0.01);">
-          <h6 class="text-white text-xs font-mono mb-3 tracking-wider"><i class="bi bi-trophy text-warning me-1.5 animate-pulse"></i> DIGITAL ENGAGEMENT REGISTRY</h6>
-          <p class="text-muted text-xs mb-4">Did SurgeTechKnow's blueprint provide practical assistance to your setup? Click below to log your telemetry response.</p>
-          <div class="d-flex flex-wrap gap-2.5">
-            <button onclick="submitReaction('helpful')" id="btn-react-helpful" class="reaction-btn">
-              👍 Helpful <span id="cnt-helpful" class="badge bg-secondary/20 ms-1">{{ post.helpful_count or 0 }}</span>
-            </button>
-            <button onclick="submitReaction('useful')" id="btn-react-useful" class="reaction-btn">
-              💡 Useful <span id="cnt-useful" class="badge bg-secondary/20 ms-1">{{ post.useful_count or 0 }}</span>
-            </button>
-            <button onclick="submitReaction('learned')" id="btn-react-learned" class="reaction-btn">
-              🎓 Learned <span id="cnt-learned" class="badge bg-secondary/20 ms-1">{{ post.learned_count or 0 }}</span>
-            </button>
-            <button onclick="submitReaction('loved')" id="btn-react-loved" class="reaction-btn">
-              ❤️ Loved <span id="cnt-loved" class="badge bg-secondary/20 ms-1">{{ post.loved_count or 0 }}</span>
-            </button>
-          </div>
-        </div>
-      </article>
-
-      <!-- RIGHT COLUMN : Copilot Summarizer & Explainer tools (3 columns) -->
-      <aside class="col-xl-3 col-lg-3 col-md-12" data-aos="fade-left">
-        <div class="sticky-sidebar d-flex flex-column gap-4">
+          <h1 class="brand-title display-5 mb-4 leading-tight text-dark">{{ blog.title }}</h1>
           
-          <!-- AI Copilot digest block -->
-          <div class="card-fire shadow-sm">
-            <h5 class="text-white font-semibold d-flex align-items-center gap-2 mb-3" style="font-family: var(--font-display); font-size:1rem;">
-              <i class="bi bi-robot text-primary"></i> Copilot Summary
+          <hr class="opacity-10 my-4">
+
+          {% if featured_image %}
+            <div class="mb-4 text-center">
+              <img src="{{ featured_image }}" alt="{{ blog.title }}" class="img-fluid rounded-4 shadow-sm" style="max-height: 450px; object-fit: cover; width: 100%;">
+            </div>
+          {% endif %}
+
+          <div class="article-body markdown-body leading-relaxed text-dark-50">
+            {{ content_html|safe }}
+          </div>
+
+          <div class="disclaimer-box p-4 mt-5">
+            <h5 class="fw-bold mb-2 text-warning d-flex align-items-center gap-2" style="font-family: 'Space Grotesk', sans-serif;">
+              <i class="bi bi-shield-fill-exclamation text-warning"></i> Educational Sandbox & Cybersec Compliance Disclaimer
             </h5>
-            <p class="text-xs text-muted leading-relaxed mb-4">Assemble structured outlines, complexity ratings, and key technical takeaways from the SurgeTechKnow article body instantly.</p>
-            
-            <button onclick="generateAISummary()" id="ai-sum-btn" class="btn btn-sm btn-fire-secondary w-100 mb-3 justify-content-center text-xs">
-              Generate Page Digest <i class="bi bi-lightning-fill text-warning ms-1"></i>
-            </button>
-
-            <!-- Results structure -->
-            <div id="ai-summary-pane" class="d-none">
-              <div class="p-3 bg-black/40 rounded-3 border border-secondary/15">
-                <span class="text-success text-xxs font-mono fw-bold d-block mb-1 uppercase">DIFFICULTY RANKING</span>
-                <span id="ai-sum-level" class="badge bg-success/15 text-success border border-success/25 font-mono text-xs rounded mb-3 py-1">Intermediate</span>
-
-                <span class="text-success text-xxs font-mono fw-bold d-block mb-1.5 uppercase">SYSTEM ANALYSIS</span>
-                <p id="ai-sum-text" class="text-xs text-muted mb-3 m-0 leading-relaxed"></p>
-
-                <span class="text-success text-xxs font-mono fw-bold d-block mb-1.5 uppercase">KEY TAKEAWAYS</span>
-                <ul id="ai-sum-takeaways" class="text-xs text-muted ps-3 mb-0 leading-relaxed"></ul>
-              </div>
-            </div>
+            <p class="text-muted small mb-0 leading-relaxed">
+              All scripts, subnets, lab materials, and configurations shown in this article are exclusively intended for certified compliance reviews, academic training modules, and authorized security audits. Avoid execution of penetration procedures without explicit written operational privileges. SurgeTechKnow promotes smart, safe, and legally compliant systems architecture.
+            </p>
           </div>
 
-          <!-- Highlight Explainer Panel -->
-          <div class="card-fire shadow-sm">
-            <h5 class="text-white font-semibold d-flex align-items-center gap-2 mb-3" style="font-family: var(--font-display); font-size: 1rem;">
-              <i class="bi bi-cursor-fill text-primary"></i> Explainer Tool
-            </h5>
-            <p class="text-xs text-muted leading-relaxed m-0 mb-3">Doubtful about complex CCNA routing syntax keywords or commands? Highlight any word segment of the post to extract immediate clarification.</p>
-            
-            <div id="explainer-placeholder" class="explainer-box text-muted text-center py-4">
-              <i class="bi bi-bounding-box-circles text-primary mb-2 d-block fs-4"></i>
-              <span>Select text in the left pane to initialize explainer queries...</span>
-            </div>
-
-            <div id="explainer-active" class="d-none">
-              <div class="explainer-box">
-                <span class="text-success text-xxs font-mono fw-bold mb-1.5 d-block">CHOSEN BLOCKS</span>
-                <p id="explain-quote" class="text-muted text-xs italic border-start border-success/30 ps-2 mb-3 leading-normal"></p>
-
-                <button onclick="queryHighlightExplanation()" id="explain-cmd-btn" class="btn btn-fire-primary w-100 font-mono mb-3 py-1.5 text-xs text-white border-0">Ask AI Twin</button>
-
-                <!-- Explanation Reply Box -->
-                <div id="explain-reply-box" class="d-none pt-2.5 border-top border-success/15 text-xs text-white/90 leading-relaxed">
-                  <span class="text-success text-xxs font-mono d-block mb-1">CALEB'S AI TWIN RESOLUTION:</span>
-                  <div id="explain-reply-text"></div>
-                </div>
-              </div>
+          <div class="d-flex flex-wrap gap-2 mt-4 pt-3 border-top justify-content-between align-items-center">
+            <span class="text-muted small">Spread this security awareness to your channels:</span>
+            <div class="d-flex gap-2">
+              <button onclick="shareArticleWhatsApp('{{ blog.title|escape }}', '{{ blog.slug }}')" class="btn btn-sm btn-success d-flex align-items-center gap-1.5 px-3">
+                <i class="bi bi-whatsapp"></i> Share on WhatsApp
+              </button>
             </div>
           </div>
-
-          <!-- Quick Return Button -->
-          <a href="{{ url_for('blog_list') }}" class="btn btn-sm btn-fire-secondary w-100 justify-content-center">
-            <i class="bi bi-arrow-left"></i> Return to Library Feed
-          </a>
-
-        </div>
-      </aside>
-
-    </div>
-
-    <!-- Related Articles ("You May Also Like") Section -->
-    <section class="mt-5 pt-5 border-top border-white/5" data-aos="fade-up">
-      <h3 class="h4 fw-bold mb-4" style="font-family: var(--font-display);"><i class="bi bi-grid-3x3-gap-fill text-primary"></i> Recommended Publications</h3>
-      <div class="row g-4">
-        {% if related_posts %}
-          {% for r in related_posts %}
-            {% set r_comb = (r.title ~ " " ~ r.content)|lower %}
-            {% if "cyber" in r_comb or "exploit" in r_comb or "mitigate" in r_comb or "security" in r_comb or "defense" in r_comb or "hack" in r_comb or "penetration" in r_comb or "firewall" in r_comb %}
-              {% set r_cat = "Cybersecurity" %}
-            {% elif "rout" in r_comb or "net" in r_comb or "ip" in r_comb or "cisco" in r_comb or "ccna" in r_comb or "switch" in r_comb or "router" in r_comb or "dhcp" in r_comb or "dns" in r_comb or "lan" in r_comb or "wan" in r_comb %}
-              {% set r_cat = "Networking" %}
-            {% elif "ai" in r_comb or "machine" in r_comb or "learning" in r_comb or "model" in r_comb or "neural" in r_comb or "predict" in r_comb or "automation" in r_comb or "workflow" in r_comb or "cron" in r_comb or "script" in r_comb %}
-              {% set r_cat = "AI & Automation" %}
-            {% elif "web" in r_comb or "html" in r_comb or "css" in r_comb or "flask" in r_comb or "react" in r_comb or "js" in r_comb or "ts" in r_comb or "javascript" in r_comb or "typescript" in r_comb or "frontend" in r_comb or "backend" in r_comb %}
-              {% set r_cat = "Web Development" %}
-            {% elif "ict" in r_comb or "support" in r_comb or "helpdesk" in r_comb or "comput" in r_comb or "hardware" in r_comb or "troubleshoot" in r_comb or "printer" in r_comb %}
-              {% set r_cat = "ICT Support" %}
-            {% else %}
-              {% set r_cat = "Technology" %}
-            {% endif %}
-            
-            {% set r_slug = r_cat|lower|replace(' & ', '-')|replace(' ', '-') %}
-            {% set r_words = r.content.split()|length %}
-            {% set r_time = (r_words / 200)|round(0, 'ceil')|int %}
-            {% if r_time < 1 %}{% set r_time = 1 %}{% endif %}
-            {% set r_thumb = r.content|get_first_image %}
-
-            <div class="col-md-4">
-              <div class="related-card shadow-sm">
-                <div class="related-thumb">
-                  {% if r_thumb %}
-                    <img src="{{ r_thumb }}" alt="{{ r.title }}" loading="lazy" referrerPolicy="no-referrer">
-                  {% else %}
-                    <i class="bi bi-journal-code display-4 text-muted"></i>
-                  {% endif %}
-                </div>
-                <div class="p-3 d-flex flex-column flex-grow-1">
-                  <span class="blog-tag badge-{{ r_slug }} mb-2.5">{{ r_cat }}</span>
-                  <h5 class="related-title text-truncate-2">
-                    <a href="{{ url_for('view_blog', slug=r.slug) }}">{{ r.title }}</a>
-                  </h5>
-                  <div class="mt-auto pt-3 border-top border-white/5 d-flex align-items-center justify-content-between text-xs text-muted font-mono">
-                    <span>{{ r.timestamp }}</span>
-                    <span>{{ r_time }} MIN READ</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        {% else %}
-          <div class="col-12 py-4 text-center text-muted">
-            <span class="small font-mono bg-black/20 py-2 px-4 rounded border border-white/5">Further Cisco configurations or automation manuals are being documented.</span>
-          </div>
-        {% endif %}
+        </article>
       </div>
-    </section>
 
+      <div class="col-lg-4">
+        <div class="position-sticky" style="top: 100px;">
+          <div class="card p-4 border border-warning-subtle mb-4">
+            <div class="d-flex align-items-center gap-3">
+              <img src="/static/passport.png" alt="Lead Engineer" class="rounded-circle border" style="width: 60px; height: 60px; object-fit: cover;">
+              <div>
+                <h5 class="fw-bold mb-0 text-dark">SurgeTechKnow</h5>
+                <small class="text-muted text-mono">Lead Cybersec Auditor</small>
+              </div>
+            </div>
+            <p class="text-muted small mt-3 mb-0 leading-relaxed">
+              Founder & Systems Engineer at SurgeTechKnow. Designs enterprise CCNA compliance setups, executes high-concurrency security audits, and writes custom automation scripts.
+            </p>
+          </div>
+          
+          <div class="card p-4">
+            <h5 class="brand-title fs-5 mb-3">Newsletter Bulletin</h5>
+            <p class="text-muted small mb-3">Get vulnerability briefings, lab notes, and network hardening strategies direct to your inbox.</p>
+            <form action="/subscribe_news_json" method="POST" id="sidebarSubsForm" onsubmit="handleSubSubmit(event)">
+              <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="your@email.com" required style="border-radius: 8px;">
+              </div>
+              <button type="submit" class="btn btn-warning w-100" style="background: var(--brand-primary); color: white;">Activate Subscription</button>
+            </form>
+            <div id="sideSubMsg" class="mt-2 text-mono text-center small d-none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
-  <!-- High-Quality Corporate Styled Footer -->
-  <footer>
-    <div class="container">
-      <div class="row gy-4 mb-4">
-        <div class="col-md-5">
-          <a class="footer-logo d-block mb-3" href="/">
-            SURGE <span style="color:var(--brand1)">.dev</span>
-          </a>
-          <p class="text-muted text-xs leading-relaxed max-w-sm m-0">
-            TechKnow Solutions digital publication is curated by SurgeTechKnow, delivering secure routing schemas and digital twin technology. Guided by principles of strict architecture transparency.
-          </p>
-        </div>
-        <div class="col-md-3 col-sm-6">
-          <h6 class="text-white text-xs fw-bold font-mono tracking-wider uppercase mb-3 text-primary">RESOURCES</h6>
-          <ul class="list-unstyled d-flex flex-column gap-2 text-xs">
-            <li><a href="/about" class="text-muted text-decoration-none hover-white">About SurgeTechKnow</a></li>
-            <li><a href="/contact-us" class="text-muted text-decoration-none hover-white">Support & Contact</a></li>
-            <li><a href="/disclaimer" class="text-muted text-decoration-none hover-white">Academic Disclaimer</a></li>
-          </ul>
-        </div>
-        <div class="col-md-4 col-sm-6">
-          <h6 class="text-white text-xs fw-bold font-mono tracking-wider uppercase mb-3 text-primary">SECURITY & REGULATORY</h6>
-          <ul class="list-unstyled d-flex flex-column gap-2 text-xs">
-            <li><a href="/privacy-policy" class="text-muted text-decoration-none hover-white">Privacy Statement</a></li>
-            <li><a href="/terms" class="text-muted text-decoration-none hover-white">Terms of Deployment</a></li>
-            <li><a href="/cookie-policy" class="text-muted text-decoration-none hover-white">Cookie Policy Registers</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="pt-4 border-top border-white/5 d-flex flex-wrap justify-content-between align-items-center gap-3">
-        <div class="text-muted text-xs">© 2026 <strong class="text-white">SurgeTechKnow</strong> • TechKnow Solutions. Cryptographically Guarded. All Rights Reserved.</div>
-        <div class="d-flex align-items-center gap-3">
-          <a class="text-muted hover:text-white text-xs text-decoration-none" href="#home" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Escalate to Deck <i class="bi bi-chevron-up"></i></a>
-        </div>
-      </div>
+  <footer class="bg-white border-top py-5 mt-5">
+    <div class="container text-center">
+      <p class="text-muted small mb-0">&copy; 2026 SurgeTechKnow. All operational credentials active and human footfall safely tracked in Postgres.</p>
     </div>
   </footer>
 
-  <!-- AOS & Bootstrap JS -->
-  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
+  <!-- Invisible visit duration and interaction tracking beacon -->
   <script>
-    const SLUG = "{{ post.slug }}";
-
-    window.addEventListener('load', () => {
-      AOS.init({ once: true, duration: 800, easing: 'ease-out' });
-      
-      // Dispatch view metrics heartbeat
-      navigator.sendBeacon("/api/blog/heartbeat", JSON.stringify({ slug: SLUG, new_view: true }));
-
-      // Live build Table of Contents
-      generateTableOfContents();
-
-      // Normalize old and new blog media so every article looks uniform
-      normalizeArticleMedia();
-
-      // Configure copy button helpers on pre blocks
-      setupPreCodeCopyButtons();
-    });
-
-    // Theme states
-    const themeBtn = document.getElementById("themeBtn");
-    const docBody = document.body;
-
-    if (localStorage.getItem("theme") === "light") {
-      docBody.classList.add("light");
-      themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
-    }
-
-    themeBtn.addEventListener("click", () => {
-      docBody.classList.toggle("light");
-      if (docBody.classList.contains("light")) {
-        localStorage.setItem("theme", "light");
-        document.documentElement.setAttribute("data-bs-theme", "light");
-        themeBtn.innerHTML = '<i class="bi bi-sun-fill text-warning"></i>';
-      } else {
-        localStorage.setItem("theme", "dark");
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-        themeBtn.innerHTML = '<i class="bi bi-moon-stars"></i>';
-      }
-    });
-
-    // Reading progress calculator bar scroll listener
+    const G_SLUG = "{{ blog.slug }}";
+    let entryTime = Date.now();
+    let scrollDepths = [0];
+    
     window.addEventListener('scroll', () => {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      document.getElementById("readingProgressBar").style.width = scrolled + "%";
+      let docElem = document.documentElement;
+      let pos = (docElem.scrollTop || document.body.scrollTop) / ((docElem.scrollHeight || document.body.scrollHeight) - docElem.clientHeight);
+      scrollDepths.push(Math.round(pos * 100));
     });
 
-    // Periodic telemetry heartbeat
-    setInterval(() => {
-      fetch("/api/blog/heartbeat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: SLUG, new_view: false })
-      }).catch(err => console.log("Heartbeat node reporting silent logs", err));
-    }, 12000);
-
-    // Live Automated Table of Contents compiling from headings
-    function generateTableOfContents() {
-      const bodyPane = document.getElementById("blogContentPane");
-      const tocList = document.getElementById("tableModelOfContents");
-      if (!bodyPane || !tocList) return;
-
-      const headings = bodyPane.querySelectorAll("h2, h3");
-      if (headings.length === 0) {
-        tocList.innerHTML = `<li class="toc-item text-xs text-muted italic">No structure elements listed.</li>`;
-        return;
-      }
-
-      tocList.innerHTML = "";
-      headings.forEach((h, index) => {
-        // Create an ID if not exists
-        const headingId = h.id || `toc-heading-${index}`;
-        h.id = headingId;
-
-        const li = document.createElement("li");
-        li.className = `toc-item ${h.tagName.toLowerCase() === 'h3' ? 'toc-item-h3' : ''}`;
-
-        const a = document.createElement("a");
-        a.href = `#${headingId}`;
-        a.className = "toc-link text-truncate d-block";
-        a.textContent = h.textContent;
-        a.addEventListener("click", (e) => {
-          e.preventDefault();
-          h.scrollIntoView({ behavior: "smooth" });
-          document.querySelectorAll(".toc-link").forEach(l => l.classList.remove("active"));
-          a.classList.add("active");
-        });
-
-        li.appendChild(a);
-        tocList.appendChild(li);
-      });
-    }
-
-
-    // Standardize images, videos, iframes, and tables inserted from Markdown/TinyMCE/gallery
-    function normalizeArticleMedia() {
-      const contentPane = document.getElementById("blogContentPane");
-      if (!contentPane) return;
-
-      // Make tables responsive
-      contentPane.querySelectorAll("table").forEach((table) => {
-        if (table.closest(".table-responsive")) return;
-        const wrapper = document.createElement("div");
-        wrapper.className = "table-responsive";
-        table.parentNode.insertBefore(wrapper, table);
-        wrapper.appendChild(table);
-      });
-
-      // Normalize images
-      contentPane.querySelectorAll("img").forEach((img) => {
-        if (img.closest(".related-card") || img.classList.contains("header-author-avatar")) return;
-
-        img.removeAttribute("width");
-        img.removeAttribute("height");
-        img.loading = img.loading || "lazy";
-        img.decoding = "async";
-        img.classList.add("article-media", "article-image");
-
-        if (!img.alt || img.alt.trim() === "") {
-          img.alt = "{{ post.title|e }}";
-        }
-
-        wrapMediaElement(img, "image");
-      });
-
-      // Normalize videos
-      contentPane.querySelectorAll("video").forEach((video) => {
-        video.removeAttribute("width");
-        video.removeAttribute("height");
-        video.setAttribute("controls", "controls");
-        video.setAttribute("playsinline", "playsinline");
-        video.setAttribute("preload", "metadata");
-        video.classList.add("article-media", "article-video", "embedded-video");
-
-        wrapMediaElement(video, "video");
-      });
-
-      // Normalize iframes/embeds
-      contentPane.querySelectorAll("iframe, embed, object").forEach((frame) => {
-        frame.removeAttribute("width");
-        frame.removeAttribute("height");
-        frame.classList.add("article-media", "article-embed");
-        wrapMediaElement(frame, "embed");
-      });
-    }
-
-    function wrapMediaElement(element, type) {
-      if (!element || element.closest(".article-media-frame")) return;
-
-      const wrapper = document.createElement("figure");
-      wrapper.className = `article-media-frame article-${type}-frame`;
-
-      const parent = element.parentNode;
-      parent.insertBefore(wrapper, element);
-      wrapper.appendChild(element);
-
-      if (type === "image") {
-        element.addEventListener("load", () => {
-          if (element.naturalHeight > element.naturalWidth * 1.15) {
-            wrapper.classList.add("portrait-media");
-          }
-        });
-
-        if (element.complete && element.naturalHeight > element.naturalWidth * 1.15) {
-          wrapper.classList.add("portrait-media");
-        }
-      }
-
-      const existingCaption = element.getAttribute("data-caption") || element.getAttribute("title");
-      if (existingCaption) {
-        const caption = document.createElement("figcaption");
-        caption.className = "article-media-caption";
-        caption.textContent = existingCaption;
-        wrapper.appendChild(caption);
-      }
-    }
-
-
-    // Dynamic setups for copy buttons in code hilite pre containers
-    function setupPreCodeCopyButtons() {
-      // Handles standard markdown pre tags and Pygments divs
-      const preBlocks = document.querySelectorAll("pre");
-      preBlocks.forEach((pre, index) => {
-        pre.style.position = "relative";
-        
-        const copyBtn = document.createElement("button");
-        copyBtn.className = "code-copy-btn";
-        copyBtn.innerHTML = `<i class="bi bi-clipboard2"></i> Copy`;
-        copyBtn.type = "button";
-
-        copyBtn.addEventListener("click", () => {
-          const codeEl = pre.querySelector("code") || pre;
-          const textToCopy = codeEl.innerText || codeEl.textContent;
-
-          navigator.clipboard.writeText(textToCopy).then(() => {
-            copyBtn.innerHTML = `<i class="bi bi-check2 text-success"></i> Copied!`;
-            copyBtn.style.color = "#10b981";
-            setTimeout(() => {
-              copyBtn.innerHTML = `<i class="bi bi-clipboard2"></i> Copy`;
-              copyBtn.style.color = "";
-            }, 2000);
-          }).catch(err => {
-            console.error("Copy operation failed due to frame limitations.", err);
-          });
-        });
-
-        pre.appendChild(copyBtn);
-      });
-    }
-
-    // AI summary handler
-    function generateAISummary() {
-      const btn = document.getElementById("ai-sum-btn");
-      const pane = document.getElementById("ai-summary-pane");
-      const levelEl = document.getElementById("ai-sum-level");
-      const textEl = document.getElementById("ai-sum-text");
-      const listEl = document.getElementById("ai-sum-takeaways");
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Analyzing metrics...`;
-
-      fetch("/api/blog/summarize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: SLUG })
-      })
-      .then(r => r.json())
-      .then(data => {
-        btn.disabled = false;
-        btn.innerHTML = `Regenerate Page Digest <i class="bi bi-arrow-clockwise"></i>`;
-        
-        if (data.status === "success") {
-          levelEl.textContent = data.skill_level || "Intermediate";
-          textEl.textContent = data.summary || "Summary generated successfully.";
-          listEl.innerHTML = "";
-          
-          if (data.takeaways && data.takeaways.length) {
-            data.takeaways.forEach(item => {
-              const li = document.createElement("li");
-              li.className = "mb-1";
-              li.textContent = item;
-              listEl.appendChild(li);
-            });
-          }
-          pane.classList.remove("d-none");
-        } else {
-          alert("AI Summarization node reporting offline.");
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = `Generate Page Digest <i class="bi bi-lightning-fill text-warning ms-1"></i>`;
-        console.error(err);
-      });
-    }
-
-    // Reaction submission handler 
-    function submitReaction(type) {
-      const btn = document.getElementById(`btn-react-${type}`);
-      btn.disabled = true;
-      btn.classList.add("active");
-
-      fetch("/api/blog/reaction", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: SLUG, reaction: type })
-      })
-      .then(r => r.json())
-      .then(data => {
-        btn.disabled = false;
-        if (data.status === "success") {
-          document.getElementById("cnt-helpful").textContent = data.counts.helpful;
-          document.getElementById("cnt-useful").textContent = data.counts.useful;
-          document.getElementById("cnt-learned").textContent = data.counts.learned;
-          document.getElementById("cnt-loved").textContent = data.counts.loved;
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        console.error(err);
-      });
-    }
-
-    // Selection Explainer Logic
-    let selectedTextBuffer = "";
-
-    document.addEventListener("selectionchange", () => {
-      const text = window.getSelection().toString().trim();
-      const placeholder = document.getElementById("explainer-placeholder");
-      const actionBox = document.getElementById("explainer-active");
-      const quoteEl = document.getElementById("explain-quote");
-
-      if (text && text.length > 5 && text.length < 500) {
-        selectedTextBuffer = text;
-        quoteEl.textContent = `"${text}"`;
-        placeholder.classList.add("d-none");
-        actionBox.classList.remove("d-none");
-      }
+    window.addEventListener('beforeunload', () => {
+      let stayDuration = Math.round((Date.now() - entryTime) / 1000);
+      let maxScroll = Math.max(...scrollDepths);
+      
+      let telemetry = {
+        slug: G_SLUG,
+        duration: stayDuration,
+        scroll: maxScroll
+      };
+      
+      navigator.sendBeacon('/api/track_duration', JSON.stringify(telemetry));
     });
 
-    function queryHighlightExplanation() {
-      const btn = document.getElementById("explain-cmd-btn");
-      const replyBox = document.getElementById("explain-reply-box");
-      const replyText = document.getElementById("explain-reply-text");
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status"></span>Analyzing metrics...`;
-      replyBox.classList.add("d-none");
-
-      fetch("/api/blog/ask_about_text", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          selected_text: selectedTextBuffer,
-          title: "{{ post.title }}"
-        })
-      })
-      .then(r => r.json())
-      .then(data => {
-        btn.disabled = false;
-        btn.innerHTML = `Ask AI Twin`;
-        
-        if (data.status === "success") {
-          replyText.innerHTML = data.reply.replace(/\n/g, "<br>");
-          replyBox.classList.remove("d-none");
-        } else {
-          replyText.textContent = "Telemetry feedback offline.";
-          replyBox.classList.remove("d-none");
-        }
-      })
-      .catch(err => {
-        btn.disabled = false;
-        btn.innerHTML = `Ask AI Twin`;
-        console.error(err);
-      });
+    function shareArticleWhatsApp(title, slug) {
+      const url = encodeURIComponent(window.location.origin + "/blog/" + slug);
+      const text = encodeURIComponent(`📢 *SurgeTechKnow Security Insight:*\n"${title}"\n\nRead the full configuration analysis and lab notes here:\n👉 `) + url;
+      window.open(`https://wa.me/?text=${text}`, "_blank");
     }
 
-    // Real Human Presence & Telemetry Session Verifier
-    (function() {
-      let tracked = false;
-      let timer = null;
-
-      function sendTrackRequest(byInteraction = false) {
-        if (tracked) return;
-        tracked = true;
-        if (timer) clearTimeout(timer);
-
-        const hostname = window.location.hostname;
-        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || window.location.pathname.startsWith('/admin')) {
-          console.log("Analytics: Bypassed tracking.");
-          return;
-        }
-
-        const getBrowserAndDevice = () => {
-          const ua = navigator.userAgent;
-          let browser = "Unknown Browser";
-          let deviceType = "Desktop";
-          if (ua.indexOf("Firefox") > -1) browser = "Mozilla Firefox";
-          else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
-          else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
-          else if (ua.indexOf("Trident") > -1) browser = "Microsoft Internet Explorer";
-          else if (ua.indexOf("Edge") > -1 || ua.indexOf("Edg") > -1) browser = "Microsoft Edge";
-          else if (ua.indexOf("Chrome") > -1) browser = "Google Chrome";
-          else if (ua.indexOf("Safari") > -1) browser = "Apple Safari";
-          
-          if (/Mobi|Android|iPhone|iPad|Tablet/i.test(ua)) {
-            deviceType = "Mobile/Tablet";
-          }
-          return { browser, deviceType };
-        };
-
-        const bAndD = getBrowserAndDevice();
-
-        fetch('/api/track_visit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            path: window.location.pathname,
-            js_enabled: true,
-            screen_resolution: `${window.screen.width}x${window.screen.height}`,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-            browser: bAndD.browser,
-            device_type: bAndD.deviceType,
-            engaged: byInteraction || false,
-            mouse_moved: byInteraction
-          })
-        }).catch(err => console.error("Telemetry report offline:", err));
-      }
-
-      window.addEventListener('load', () => {
-        timer = setTimeout(() => {
-          sendTrackRequest(false);
-        }, 5000);
-
-        const onScroll = () => {
-          sendTrackRequest(true);
-          window.removeEventListener('scroll', onScroll);
-        };
-        window.addEventListener('scroll', onScroll, { passive: true });
-
-        const onClick = () => {
-          sendTrackRequest(true);
-          window.removeEventListener('click', onClick);
-        };
-        window.addEventListener('click', onClick);
+    function handleSubSubmit(e) {
+      e.preventDefault();
+      const f = e.target;
+      const email = f.email.value;
+      const msgDiv = document.getElementById("sideSubMsg");
+      
+      fetch("/subscribe_news_json", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `email=${encodeURIComponent(email)}`
+      })
+      .then(r => r.json())
+      .then(d => {
+        msgDiv.innerText = d.message;
+        msgDiv.className = d.status === "success" ? "mt-2 text-mono text-center small text-success" : "mt-2 text-mono text-center small text-danger";
+        msgDiv.classList.remove("d-none");
+        if (d.status === "success") f.reset();
       });
-    })();
+    }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
