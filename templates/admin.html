@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -489,7 +489,32 @@
     .main-content-wrapper, .container-fluid { max-width: 1480px; }
     .control-center-banner {background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(16,185,129,.08),rgba(59,130,246,.08));border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px 20px;margin-bottom:18px;box-shadow:0 18px 45px rgba(0,0,0,.20)}
     .control-center-banner h2{font-family:'Space Grotesk',sans-serif;font-weight:800;letter-spacing:-.03em;margin:0;color:#fff}.control-center-banner p{margin:4px 0 0;color:var(--text-muted);font-size:.9rem}.control-pill{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#86efac;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18);border-radius:999px;padding:5px 10px;display:inline-flex;align-items:center;gap:6px}
-  </style>
+  
+    /* ADMIN POLISH V4 */
+    .card-fire{border-radius:18px!important;box-shadow:0 18px 45px rgba(0,0,0,.22)!important}
+    .dashboard-wrapper:before{content:'SurgeTechKnow Control Center';position:fixed;right:24px;top:18px;z-index:1001;color:#fed7aa;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.18);padding:8px 12px;border-radius:999px}
+    .stat-card{min-height:128px;display:flex;flex-direction:column;justify-content:center}
+    .form-control-fire,.btn-fire-primary,.btn-fire-secondary{border-radius:12px!important}
+    .tab-pane .card-fire h4{letter-spacing:-.02em}
+    @media(max-width:800px){.dashboard-wrapper:before{display:none}.main-content-wrapper{padding:1rem!important;padding-top:4.5rem!important}.stat-card{min-height:auto}.card-fire{padding:1rem!important}}
+  
+/* SURGETECHKNOW ADMIN V5 POLISH */
+body{background:linear-gradient(135deg,#050816 0%,#111827 48%,#1f2937 100%) !important;}
+.sidebar-wrapper{background:rgba(3,7,18,.92)!important;border-right:1px solid rgba(255,255,255,.09)!important;}
+.sidebar-brand,.sidebar-profile{background:linear-gradient(135deg,rgba(229,9,32,.12),rgba(255,255,255,.02))!important;}
+.brand-logo{color:#fff!important;font-weight:900!important;letter-spacing:-.03em!important;}
+.main-content-wrapper{background:radial-gradient(circle at top right,rgba(229,9,32,.09),transparent 30%)!important;}
+.card-fire{border-radius:18px!important;background:rgba(15,23,42,.72)!important;border:1px solid rgba(255,255,255,.09)!important;box-shadow:0 18px 45px rgba(0,0,0,.28)!important;}
+.card-fire:hover{transform:translateY(-2px)!important;border-color:rgba(229,9,32,.34)!important;box-shadow:0 22px 55px rgba(229,9,32,.08)!important;}
+.btn-fire-primary{background:linear-gradient(135deg,#e50920,#ff7a00)!important;border-radius:12px!important;}
+.form-control-fire,.form-select,.form-control{border-radius:12px!important;}
+.stat-number{font-size:clamp(1.65rem,3vw,2.5rem)!important;}
+.table-responsive{border-radius:14px!important;}
+.admin-command-strip{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;padding:14px 16px;border-radius:18px;background:linear-gradient(90deg,rgba(229,9,32,.16),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08)}
+.admin-command-strip h2{font-family:'Space Grotesk',sans-serif;font-weight:900;margin:0;color:#fff}.admin-command-strip span{color:#cbd5e1;font-size:.85rem}
+@media(max-width:768px){.main-content-wrapper{padding:1rem!important;padding-top:4.6rem!important}.card-fire{border-radius:14px!important}.stat-card{padding:1rem!important}}
+
+</style>
 </head>
 <body class="py-4">
   <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>
@@ -1400,6 +1425,7 @@
                       <option value="Networking">Networking</option>
                       <option value="AI & Automation">AI & Automation</option>
                       <option value="Windows News">Windows News</option>
+                      <option value="Mobile & Android">Mobile & Android</option>
                       <option value="ICT Support">ICT Support</option>
                       <option value="Technology">Technology</option>
                     </select>
@@ -1934,7 +1960,16 @@
       const content = (window.tinymce && tinymce.get('blogContent')) ? tinymce.get('blogContent').getContent() : (document.getElementById('blogContent')?.value || '');
       const win = window.open('', '_blank');
       if (!win) return alert('Popup blocked. Allow popups to preview.');
-      win.document.write(`<!doctype html><html><head><title>${title}</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Inter,Arial,sans-serif;max-width:900px;margin:40px auto;padding:0 18px;line-height:1.75;color:#111827}img,video,iframe{max-width:100%;border-radius:16px;display:block;margin:22px auto}h1,h2,h3{line-height:1.25}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:10px}</style></head><body><h1>${title}</h1>${content}</body></html>`);
+      win.document.write(`<!doctype html><html><head><title>${title}</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:Inter,Arial,sans-serif;max-width:900px;margin:40px auto;padding:0 18px;line-height:1.75;color:#111827}img,video,iframe{max-width:100%;border-radius:16px;display:block;margin:22px auto}h1,h2,h3{line-height:1.25}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:10px}
+    /* ADMIN POLISH V4 */
+    .card-fire{border-radius:18px!important;box-shadow:0 18px 45px rgba(0,0,0,.22)!important}
+    .dashboard-wrapper:before{content:'SurgeTechKnow Control Center';position:fixed;right:24px;top:18px;z-index:1001;color:#fed7aa;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.18);padding:8px 12px;border-radius:999px}
+    .stat-card{min-height:128px;display:flex;flex-direction:column;justify-content:center}
+    .form-control-fire,.btn-fire-primary,.btn-fire-secondary{border-radius:12px!important}
+    .tab-pane .card-fire h4{letter-spacing:-.02em}
+    @media(max-width:800px){.dashboard-wrapper:before{display:none}.main-content-wrapper{padding:1rem!important;padding-top:4.5rem!important}.stat-card{min-height:auto}.card-fire{padding:1rem!important}}
+  </style></head><body>
+<h1>${title}</h1>${content}</body></html>`);
       win.document.close();
     }
 
@@ -2618,6 +2653,14 @@
       border-radius: 10px !important;
     }
 
+  
+    /* ADMIN POLISH V4 */
+    .card-fire{border-radius:18px!important;box-shadow:0 18px 45px rgba(0,0,0,.22)!important}
+    .dashboard-wrapper:before{content:'SurgeTechKnow Control Center';position:fixed;right:24px;top:18px;z-index:1001;color:#fed7aa;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.18);padding:8px 12px;border-radius:999px}
+    .stat-card{min-height:128px;display:flex;flex-direction:column;justify-content:center}
+    .form-control-fire,.btn-fire-primary,.btn-fire-secondary{border-radius:12px!important}
+    .tab-pane .card-fire h4{letter-spacing:-.02em}
+    @media(max-width:800px){.dashboard-wrapper:before{display:none}.main-content-wrapper{padding:1rem!important;padding-top:4.5rem!important}.stat-card{min-height:auto}.card-fire{padding:1rem!important}}
   </style>
         </head>
         <body>
