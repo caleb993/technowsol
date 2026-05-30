@@ -446,8 +446,8 @@ def sitemap_xml():
     except Exception as e:
         print("Sitemap blog loading error:", e)
 
-    xml = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {''.join(urls)}
 </urlset>"""
 
@@ -1743,7 +1743,7 @@ def admin():
             legacy_raw_views = int(bb.get("views") or 0)
             verified_views = verified_counts.get(bb.get("slug"), 0)
 
-            bb["legacy_views"] = legacy_raw_views
+            bb["hybrid_views"] = legacy_raw_views
             bb["verified_views"] = verified_views
             bb["views"] = verified_views  # admin templates use b.views, so force verified-only
             bb["analytics_source"] = "verified_only"
@@ -1940,7 +1940,7 @@ def admin_techrich_delete(doc_id):
     if data.delete_techrich_doc_by_id(doc_id):
         return jsonify({"status": "success"})
 
-    return jsonify({"error": "failed"}), 500
+    return jsonify({"error": "failed"}), 550
 
 
 @app.route("/admin/techrich/view/<int:doc_id>")
