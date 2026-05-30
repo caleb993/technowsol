@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 {% set seo_description = post.excerpt or (post.content|clean_excerpt(155)) %}
-{% set share_image = post|blog_social_image %}
+{% set share_image = post|social_share_image %}
 {% set canonical_url = 'https://techknowsolution.co.ke' ~ request.path %}
 <title>{{ post.title }} • SurgeTechKnow</title>
 <meta name="description" content="{{ seo_description }}">
@@ -16,12 +16,14 @@
 <meta name="google-adsense-account" content="ca-pub-4340479899629152">
 <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
 <meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="SurgeTechKnow">
 <meta property="og:url" content="{{ canonical_url }}">
 <meta property="og:title" content="{{ post.title }}">
 <meta property="og:description" content="{{ seo_description }}">
 <meta property="og:image" content="{{ share_image }}">
 <meta property="og:image:secure_url" content="{{ share_image }}">
+<meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="{{ post.title }}">
@@ -30,6 +32,8 @@
 <meta property="article:published_time" content="{{ (post.published_at or post.timestamp)|iso_date }}">
 <meta property="article:modified_time" content="{{ (post.updated_at if post.updated_at is defined and post.updated_at else post.published_at or post.timestamp)|iso_date }}">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@SurgeTechKnow">
+<meta name="twitter:creator" content="@SurgeTechKnow">
 <meta name="twitter:title" content="{{ post.title }}">
 <meta name="twitter:description" content="{{ seo_description }}">
 <meta name="twitter:image" content="{{ share_image }}">
@@ -46,7 +50,7 @@
       {"@type": "ListItem", "position": 2, "name": {{ post.category|tojson }}, "item": "https://techknowsolution.co.ke/blog?category={{ post.category|urlencode }}"},
       {"@type": "ListItem", "position": 3, "name": {{ post.title|tojson }}, "item": {{ canonical_url|tojson }}}
     ]},
-    {"@type": "BlogPosting", "headline": {{ post.title|tojson }}, "description": {{ seo_description|tojson }}, "image": {{ share_image|tojson }}, "datePublished": {{ (post.published_at or post.timestamp)|iso_date|tojson }}, "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.published_at or post.timestamp)|iso_date|tojson }}, "author": {"@type": "Organization", "name": "SurgeTechKnow Editorial Desk"}, "publisher": {"@type": "Organization", "name": "SurgeTechKnow", "logo": {"@type": "ImageObject", "url": "https://techknowsolution.co.ke/static/ogimage.png"}}, "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical_url|tojson }}}}
+    {"@type": "BlogPosting", "headline": {{ post.title|tojson }}, "description": {{ seo_description|tojson }}, "image": [{{ share_image|tojson }}], "datePublished": {{ (post.published_at or post.timestamp)|iso_date|tojson }}, "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.published_at or post.timestamp)|iso_date|tojson }}, "author": {"@type": "Organization", "name": "SurgeTechKnow Editorial Desk"}, "publisher": {"@type": "Organization", "name": "SurgeTechKnow", "logo": {"@type": "ImageObject", "url": "https://techknowsolution.co.ke/static/ogimage.png"}}, "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical_url|tojson }}}}
   ]
 }
 </script>

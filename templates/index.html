@@ -106,6 +106,10 @@ img{max-width:100%;}
 }
 
 </style>
+
+<meta property="og:locale" content="en_US">
+<meta name="twitter:site" content="@SurgeTechKnow">
+<meta name="twitter:creator" content="@SurgeTechKnow">
 </head>
 <body>
 {% set trending = home_blog_sections.get('Trending', []) if home_blog_sections else [] %}{% if not trending %}{% set trending = blog_posts[:5] %}{% endif %}
