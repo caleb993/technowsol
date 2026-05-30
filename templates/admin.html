@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚡ Central Control Center | SurgeTechKnow Admin</title>
+  <title>SurgeTechKnow Modern Control Center</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1219,15 +1219,15 @@
               <form action="/admin/upload_gallery" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
                   <label class="form-label text-muted small text-mono">Media display name</label>
-                  <input type="text" name="media_title" class="form-control form-control-fire" placeholder="e.g. Router Cabinet Setup">
+                  <input type="text" name="media_title" class="form-control form-control-fire" placeholder="Public media title, e.g. Router Cabinet Setup">
                 </div>
                 <div class="mb-3">
                   <label class="form-label text-muted small text-mono">Short narration shown on homepage</label>
-                  <textarea name="media_caption" class="form-control form-control-fire" rows="3" maxlength="500" placeholder="Write a short explanation shown on homepage media cards."></textarea>
+                  <textarea name="media_caption" class="form-control form-control-fire" rows="3" maxlength="500" placeholder="Short summary shown on homepage/media cards."></textarea>
                 </div>
                 <div class="mb-3">
                   <label class="form-label text-muted small text-mono">Full media narration for detail page</label>
-                  <textarea name="media_narration" class="form-control form-control-fire" rows="5" maxlength="3000" placeholder="Write the complete story/explanation users will read after opening this media."></textarea>
+                  <textarea name="media_narration" class="form-control form-control-fire" rows="5" maxlength="3000" placeholder="Full narration shown when users open this media item."></textarea>
                 </div>
                 <div class="mb-4">
                   <div class="drag-drop-zone" onclick="document.getElementById('galleryInput').click()">
@@ -1389,19 +1389,20 @@
                   <div class="col-md-6">
                     <label class="form-label text-muted small">ARTICLE CATEGORY</label>
                     <select name="category" id="blogCategory" class="form-control form-control-fire">
+                      <option value="Auto" selected>Auto-detect from title/content</option>
                       <option value="Cybersecurity">Cybersecurity</option>
                       <option value="Networking">Networking</option>
                       <option value="AI & Automation">AI & Automation</option>
                       <option value="Windows News">Windows News</option>
-                      <option value="Technology" selected>Technology</option>
                       <option value="ICT Support">ICT Support</option>
+                      <option value="Technology">Technology</option>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label text-muted small">DISPLAY POSITION</label>
                     <select name="is_trending" id="blogTrending" class="form-control form-control-fire">
-                      <option value="0" selected>Normal article</option>
-                      <option value="1">Trending - show in Now Trending on Tech</option>
+                      <option value="0" selected>Normal article - place under detected category</option>
+                      <option value="1">Trending for 7 days - then remains under category</option>
                     </select>
                   </div>
                 </div>
