@@ -639,110 +639,7 @@ img{max-width:100%;}
     .metric-value-live.updated{color:#38bdf8!important;text-shadow:0 0 14px rgba(56,189,248,.55)!important}
     @media(max-width:991px){.console-search{display:none}.brand-logo{font-size:1.35rem}.console-secure{height:40px;padding:0 10px;font-size:11px}}
 
-  
-
-    /* === FIX: compact TechKnow Console dashboard cards + stop oversized stat panels === */
-    .dashboard-wrapper {
-      background:
-        radial-gradient(circle at 78% 0%, rgba(0, 213, 255, 0.07), transparent 28%),
-        radial-gradient(circle at 0% 12%, rgba(30, 64, 175, 0.12), transparent 34%),
-        #02040a !important;
-    }
-    .main-content-wrapper {
-      padding: 1.35rem 1.55rem !important;
-    }
-    .card-fire {
-      border-radius: 16px !important;
-      background: linear-gradient(180deg, rgba(8,18,31,.88), rgba(3,9,19,.92)) !important;
-      border: 1px solid rgba(148, 163, 184, .16) !important;
-      box-shadow: 0 12px 30px rgba(0,0,0,.22) !important;
-    }
-    .card-fire:hover {
-      transform: translateY(-1px) !important;
-      border-color: rgba(0, 213, 255, .32) !important;
-      box-shadow: 0 16px 35px rgba(0, 213, 255, .08) !important;
-    }
-    .stat-card {
-      min-height: 126px !important;
-      height: auto !important;
-      padding: 1.05rem 1.15rem !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: center !important;
-      gap: .32rem !important;
-    }
-    .stat-card .small,
-    .stat-card .text-muted {
-      font-size: .7rem !important;
-      letter-spacing: .045em !important;
-      text-transform: uppercase !important;
-      opacity: .78 !important;
-    }
-    .stat-number {
-      font-size: clamp(1.75rem, 2.2vw, 2.35rem) !important;
-      line-height: 1 !important;
-      margin-top: .15rem !important;
-    }
-    .stat-number .badge {
-      font-size: .68rem !important;
-      padding: .34rem .56rem !important;
-      border-radius: .48rem !important;
-    }
-    .truth-mini-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      gap: .35rem !important;
-      margin-top: .55rem !important;
-    }
-    .truth-mini-card {
-      padding: .38rem .28rem !important;
-      border-radius: .55rem !important;
-    }
-    .truth-mini-card .label { font-size: .55rem !important; }
-    .truth-mini-card .value { font-size: .82rem !important; }
-    .mt-2\.5.pt-2,
-    .stat-card .font-mono.text-xxs {
-      font-size: .64rem !important;
-      line-height: 1.4 !important;
-    }
-    .row.row-cols-2.row-cols-md-5.g-3.mb-4 {
-      --bs-gutter-x: .85rem !important;
-      --bs-gutter-y: .85rem !important;
-      align-items: stretch !important;
-    }
-    .sidebar-wrapper {
-      background: rgba(2, 6, 15, .96) !important;
-    }
-    .sidebar-link {
-      min-height: 42px !important;
-      padding: .62rem .95rem !important;
-      border-radius: 12px !important;
-    }
-    .console-search input,
-    .console-search {
-      max-height: 44px !important;
-    }
-    @media (max-width: 991.98px) {
-      .main-content-wrapper {
-        padding: .85rem !important;
-        padding-top: 4.75rem !important;
-      }
-      .row.row-cols-2.row-cols-md-5.g-3.mb-4 {
-        grid-template-columns: repeat(2, minmax(0,1fr));
-      }
-      .stat-card {
-        min-height: 104px !important;
-        padding: .85rem !important;
-      }
-      .stat-number { font-size: 1.65rem !important; }
-    }
-    @media (min-width: 1200px) {
-      .row.row-cols-2.row-cols-md-5.g-3.mb-4 .col {
-        flex: 0 0 20%;
-        max-width: 20%;
-      }
-    }
-
-</style>
+  </style>
 <meta name="robots" content="noindex, nofollow"><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:title" content="SurgeTechKnow Modern Control Center"><meta property="og:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SurgeTechKnow Modern Control Center"><meta name="twitter:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="theme-color" content="#e50920">
 <meta property="og:image:type" content="image/png">
 <meta property="og:locale" content="en_US">
@@ -750,6 +647,27 @@ img{max-width:100%;}
 <meta name="twitter:creator" content="@SurgeTechKnow">
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","logo":"https://techknowsolution.co.ke/static/ogimage.png"}</script>
+
+  <style id="admin-console-final-fix">
+    /* FINAL ADMIN CONSOLE FIX: compact cards, no raw script bleed, closer to reference dashboard */
+    .dashboard-wrapper{background:#020711!important;color:#e5edf7!important;}
+    .main-content-wrapper{padding:26px 32px!important;background:radial-gradient(circle at top left,rgba(0,213,255,.07),transparent 30%),linear-gradient(135deg,#030712,#020711 58%,#00030a)!important;}
+    .topbar,.admin-command-strip{margin-bottom:18px!important;}
+    .stat-card{min-height:122px!important;padding:18px 20px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:6px!important;}
+    .stat-card .text-muted{font-size:.78rem!important;letter-spacing:.04em;text-transform:uppercase;color:#7f8da3!important;}
+    .stat-number{font-size:2.15rem!important;line-height:1!important;margin:0!important;color:#f8fafc!important;}
+    .card-fire{border-radius:16px!important;background:linear-gradient(135deg,rgba(6,17,34,.88),rgba(2,9,21,.84))!important;border:1px solid rgba(148,163,184,.17)!important;box-shadow:0 8px 26px rgba(0,0,0,.25)!important;}
+    .card-fire:hover{border-color:rgba(0,213,255,.35)!important;transform:none!important;}
+    .console-grid-compact{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+    .sidebar-wrapper{background:linear-gradient(180deg,#030712,#020617)!important;}
+    .sidebar-link{border-radius:10px!important;padding:12px 14px!important;}
+    .sidebar-link.active{background:linear-gradient(90deg,rgba(0,213,255,.16),rgba(30,64,175,.12))!important;border-left:3px solid #00d5ff!important;}
+    .console-search{height:44px!important;min-width:300px!important;}
+    .console-secure{height:44px!important;}
+    .overview-stat-row{--bs-gutter-x:1rem!important;--bs-gutter-y:1rem!important;}
+    @media(max-width:1100px){.console-grid-compact{grid-template-columns:repeat(2,minmax(0,1fr));}.main-content-wrapper{padding:20px!important;}}
+    @media(max-width:700px){.main-content-wrapper{padding:14px!important;padding-top:64px!important;}.stat-card{min-height:92px!important;padding:14px!important}.stat-number{font-size:1.75rem!important}.console-search{display:none!important}.console-secure{height:38px!important;font-size:11px!important}.card-fire{border-radius:14px!important}}
+  </style>
 </head>
 <body class="py-4">
   <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>
@@ -2277,15 +2195,6 @@ img{max-width:100%;}
 
   </style></head><body>
 <h1>${title}</h1>${content}
-<script>\
-function adminQuickSearch(q){
-  q=(q||'').toLowerCase().trim();
-  document.querySelectorAll('.tab-pane.active table tbody tr,.tab-pane.active .admin-media-item,.tab-pane.active .card-fire').forEach(el=>{
-    if(!q){el.style.display='';return}
-    el.style.display=(el.textContent||'').toLowerCase().includes(q)?'':'none';
-  });
-}
-<\/script>
 </body></html>`);
       win.document.close();
     }
@@ -3009,16 +2918,6 @@ function adminQuickSearch(q){
               setTimeout(function() { window.close(); }, 1500);
             }
           <\/script>
-        
-<script>\
-function adminQuickSearch(q){
-  q=(q||'').toLowerCase().trim();
-  document.querySelectorAll('.tab-pane.active table tbody tr,.tab-pane.active .admin-media-item,.tab-pane.active .card-fire').forEach(el=>{
-    if(!q){el.style.display='';return}
-    el.style.display=(el.textContent||'').toLowerCase().includes(q)?'':'none';
-  });
-}
-</script>
 </body>
         </html>
       `);
@@ -3398,7 +3297,7 @@ function adminQuickSearch(q){
 </main>
 </div>
 
-<script>\
+<script>
 function adminQuickSearch(q){
   q=(q||'').toLowerCase().trim();
   document.querySelectorAll('.tab-pane.active table tbody tr,.tab-pane.active .admin-media-item,.tab-pane.active .card-fire').forEach(el=>{
