@@ -396,6 +396,16 @@ def sitemap_xml():
     static_pages = [
         {"loc": "/", "changefreq": "daily", "priority": "1.0"},
         {"loc": "/blog", "changefreq": "daily", "priority": "0.9"},
+        {"loc": "/cybersecurity", "changefreq": "daily", "priority": "0.9"},
+        {"loc": "/networking", "changefreq": "daily", "priority": "0.9"},
+        {"loc": "/windows", "changefreq": "daily", "priority": "0.85"},
+        {"loc": "/ai-automation", "changefreq": "daily", "priority": "0.85"},
+        {"loc": "/ict-support", "changefreq": "daily", "priority": "0.85"},
+        {"loc": "/mobile-android", "changefreq": "daily", "priority": "0.8"},
+        {"loc": "/programming", "changefreq": "weekly", "priority": "0.75"},
+        {"loc": "/cloud-computing", "changefreq": "weekly", "priority": "0.75"},
+        {"loc": "/technology-news", "changefreq": "daily", "priority": "0.8"},
+        {"loc": "/career-certifications", "changefreq": "weekly", "priority": "0.75"},
         {"loc": "/about", "changefreq": "monthly", "priority": "0.7"},
         {"loc": "/contact-us", "changefreq": "monthly", "priority": "0.6"},
         {"loc": "/privacy-policy", "changefreq": "yearly", "priority": "0.4"},
@@ -939,6 +949,187 @@ def categorize_home_blogs(blogs):
         buckets[cat].append(b)
     return buckets
 
+
+CATEGORY_LANDING_PAGES = {
+    "cybersecurity": {
+        "name": "Cybersecurity",
+        "label": "Cybersecurity Watch",
+        "icon": "bi-shield-lock-fill",
+        "slug": "cybersecurity",
+        "keywords": ["cybersecurity", "network security", "password security", "phishing", "ransomware", "data protection"],
+        "description": "Cybersecurity guides, password security, phishing awareness, ransomware prevention, privacy protection and practical digital defense resources from SurgeTechKnow.",
+        "hero": "Practical cyber defense, password protection, phishing awareness and network security guidance for modern digital users.",
+        "faq": [
+            ("What is cybersecurity?", "Cybersecurity is the practice of protecting devices, networks, accounts and data from unauthorized access, scams, malware and digital attacks."),
+            ("Why is password security important?", "Strong password habits reduce account takeover, credential stuffing and unauthorized access risks."),
+            ("How can users reduce cyber attacks?", "Use unique passwords, enable multi-factor authentication, update devices, avoid suspicious links and verify online requests."),
+            ("Does cybersecurity also involve network security?", "Yes. Cybersecurity includes device security, account protection, network security, user awareness and data protection.")
+        ],
+        "related": ["Networking", "Windows News", "AI & Automation", "ICT Support"]
+    },
+    "networking": {
+        "name": "Networking",
+        "label": "Networking & Infrastructure",
+        "icon": "bi-diagram-3-fill",
+        "slug": "networking",
+        "keywords": ["CCNA", "VLAN", "subnetting", "routing", "switching", "Cisco networking", "OSPF"],
+        "description": "Networking and infrastructure tutorials covering CCNA concepts, routing, switching, VLANs, subnetting, Wi-Fi, DNS, DHCP and troubleshooting.",
+        "hero": "Clear networking tutorials for routing, switching, VLANs, subnetting, Wi-Fi and infrastructure troubleshooting.",
+        "faq": [
+            ("What is networking?", "Networking connects computers, servers and devices so they can communicate and share resources."),
+            ("What is VLAN?", "A VLAN logically separates network devices into different broadcast domains for better organization and security."),
+            ("Why is subnetting important?", "Subnetting helps organize IP networks, reduce waste and improve network planning."),
+            ("Is CCNA useful for networking careers?", "Yes. CCNA builds foundational routing, switching, IP addressing and troubleshooting skills.")
+        ],
+        "related": ["Cybersecurity", "ICT Support", "Cloud Computing", "Career & Certifications"]
+    },
+    "windows": {
+        "name": "Windows News",
+        "label": "Windows News",
+        "icon": "bi-windows",
+        "slug": "windows",
+        "keywords": ["Windows 11", "Windows security", "PC troubleshooting", "computer maintenance", "Windows updates"],
+        "description": "Windows News and practical guides on Windows security, PC troubleshooting, system performance, updates, drivers and computer maintenance.",
+        "hero": "Windows security, PC performance, troubleshooting, system updates and computer maintenance insights.",
+        "faq": [
+            ("Why do Windows PCs slow down?", "Windows PCs may slow down because of startup apps, low storage, outdated drivers, malware, overheating or background processes."),
+            ("How can Windows be secured?", "Enable Windows Security, update regularly, use strong account protection, backup files and avoid untrusted software."),
+            ("What causes Windows update issues?", "Driver conflicts, low storage, corrupt update cache and unstable connections can cause update failures."),
+            ("Should users clean temporary files?", "Yes. Cleaning temporary files can free storage and improve system responsiveness.")
+        ],
+        "related": ["Cybersecurity", "ICT Support", "Mobile & Android", "Technology"]
+    },
+    "ai-automation": {
+        "name": "AI & Automation",
+        "label": "AI & Automation Desk",
+        "icon": "bi-cpu-fill",
+        "slug": "ai-automation",
+        "keywords": ["AI automation", "ChatGPT", "artificial intelligence", "machine learning", "workflow automation"],
+        "description": "AI and automation articles covering artificial intelligence, ChatGPT workflows, productivity systems, Python automation and practical digital transformation.",
+        "hero": "Artificial intelligence, automation workflows, ChatGPT productivity and practical digital transformation guides.",
+        "faq": [
+            ("What is AI automation?", "AI automation uses intelligent tools to reduce repetitive work, analyze information and improve productivity."),
+            ("Can AI help cybersecurity?", "Yes. AI can support threat detection, log analysis, alert prioritization and security awareness."),
+            ("Is automation useful for small businesses?", "Automation can save time in reporting, customer communication, data processing and routine operations."),
+            ("Does AI replace ICT skills?", "No. AI supports skilled workers, but human judgment, troubleshooting and security awareness remain important.")
+        ],
+        "related": ["Cybersecurity", "Programming", "Technology", "ICT Support"]
+    },
+    "ict-support": {
+        "name": "ICT Support",
+        "label": "ICT Support Guides",
+        "icon": "bi-tools",
+        "slug": "ict-support",
+        "keywords": ["ICT support", "IT support", "technical support", "helpdesk", "computer support", "printer troubleshooting"],
+        "description": "ICT support guides for helpdesk operations, computer troubleshooting, printers, scanners, backups, user support and technical documentation.",
+        "hero": "Practical ICT support, troubleshooting, helpdesk operations, device maintenance and technical documentation resources.",
+        "faq": [
+            ("What is ICT support?", "ICT support helps users maintain, troubleshoot and safely use computers, networks, printers, accounts and digital systems."),
+            ("What does a helpdesk do?", "A helpdesk receives user issues, diagnoses problems, gives solutions and documents recurring technical incidents."),
+            ("Why is documentation important in ICT?", "Documentation helps teams solve issues faster, track assets and maintain consistent support procedures."),
+            ("What are common ICT support tasks?", "Common tasks include printer support, account setup, software installation, backups, networking checks and device maintenance.")
+        ],
+        "related": ["Windows News", "Networking", "Cybersecurity", "Career & Certifications"]
+    },
+    "mobile-android": {
+        "name": "Mobile & Android",
+        "label": "Mobile & Android",
+        "icon": "bi-phone-fill",
+        "slug": "mobile-android",
+        "keywords": ["Android performance", "mobile security", "phone optimization", "smartphone tips", "Android storage"],
+        "description": "Mobile and Android guides covering phone performance, battery life, app safety, storage management, mobile security and smartphone troubleshooting.",
+        "hero": "Android performance, battery health, mobile security, storage management and smartphone troubleshooting guidance.",
+        "faq": [
+            ("Why do Android phones slow down?", "Phones slow down because of low storage, background apps, cache buildup, aging hardware and outdated software."),
+            ("How can Android performance improve?", "Remove unused apps, update software, clear unnecessary files and avoid suspicious apps."),
+            ("Is mobile security important?", "Yes. Phones store personal data, passwords, financial apps and private communication."),
+            ("Should apps be installed from unknown sources?", "Only install apps from trusted sources because unknown APKs can contain malware or spyware.")
+        ],
+        "related": ["Windows News", "Cybersecurity", "ICT Support", "Technology"]
+    },
+    "programming": {
+        "name": "Programming",
+        "label": "Programming & Development",
+        "icon": "bi-code-slash",
+        "slug": "programming",
+        "keywords": ["programming", "Python", "Flask", "web development", "software development"],
+        "description": "Programming and development guides covering Python, Flask, web development, databases, APIs and practical software engineering projects.",
+        "hero": "Python, Flask, web development, databases, APIs and practical software engineering tutorials.",
+        "faq": [
+            ("What programming topics are covered?", "SurgeTechKnow covers Python, Flask, web development, databases, automation and practical project building."),
+            ("Is Python good for automation?", "Yes. Python is widely used for scripting, data handling, automation, APIs and backend systems."),
+            ("What is Flask used for?", "Flask is a lightweight Python web framework for building web applications and APIs."),
+            ("Why learn web development?", "Web development helps create websites, dashboards, portals and digital systems for real users.")
+        ],
+        "related": ["AI & Automation", "Cloud Computing", "Technology", "ICT Support"]
+    },
+    "cloud-computing": {
+        "name": "Cloud Computing",
+        "label": "Cloud Computing",
+        "icon": "bi-cloud-fill",
+        "slug": "cloud-computing",
+        "keywords": ["cloud computing", "cloud services", "hosting", "databases", "deployment"],
+        "description": "Cloud computing articles covering hosting, deployment, cloud databases, backups, storage, scalability and practical online systems.",
+        "hero": "Cloud hosting, deployment, storage, databases, backups and scalable digital infrastructure guidance.",
+        "faq": [
+            ("What is cloud computing?", "Cloud computing is accessing computing resources such as storage, servers, databases and software over the internet."),
+            ("Why use cloud hosting?", "Cloud hosting improves availability, scalability, deployment speed and remote access."),
+            ("Are cloud backups important?", "Yes. Cloud backups help protect data from device failure, accidental deletion and disasters."),
+            ("What cloud topics matter for websites?", "Hosting, databases, storage, DNS, SSL, backups and monitoring are important for websites.")
+        ],
+        "related": ["Programming", "Networking", "Cybersecurity", "Technology"]
+    },
+    "technology-news": {
+        "name": "Technology",
+        "label": "Technology News",
+        "icon": "bi-newspaper",
+        "slug": "technology-news",
+        "keywords": ["technology news", "digital systems", "tech trends", "software", "innovation"],
+        "description": "Technology news and explainers covering digital systems, software, innovation, online safety, gadgets, platforms and emerging tech trends.",
+        "hero": "Technology news, digital systems, online safety, innovation, software and practical tech explainers.",
+        "faq": [
+            ("What is covered under Technology News?", "This section covers general tech updates, digital systems, platforms, online safety and practical explainers."),
+            ("Why follow technology trends?", "Technology trends help users understand tools, risks, opportunities and digital changes."),
+            ("Does this include cybersecurity and AI?", "Broad technology topics may connect to cybersecurity, AI, networking, Windows and ICT support."),
+            ("Who is this section for?", "It is for students, professionals, everyday users and digital teams who want practical technology insights.")
+        ],
+        "related": ["AI & Automation", "Cybersecurity", "Windows News", "Mobile & Android"]
+    },
+    "career-certifications": {
+        "name": "Career & Certifications",
+        "label": "Career & Certifications",
+        "icon": "bi-award-fill",
+        "slug": "career-certifications",
+        "keywords": ["ICT career", "CCNA certification", "IT interview", "tech career", "computer skills"],
+        "description": "Career and certification resources for ICT support, networking, cybersecurity, CCNA preparation, interviews and professional growth in technology.",
+        "hero": "ICT career growth, certifications, interview preparation, CCNA learning and professional technology skills.",
+        "faq": [
+            ("Which ICT certifications are useful?", "CCNA, cybersecurity fundamentals, cloud fundamentals and support certifications can strengthen ICT career paths."),
+            ("How can someone prepare for an ICT interview?", "Review networking, troubleshooting, security basics, user support scenarios and practical examples."),
+            ("Is CCNA helpful?", "CCNA is useful for learning routing, switching, IP addressing and network troubleshooting."),
+            ("What skills help ICT support roles?", "Communication, troubleshooting, documentation, networking basics and security awareness are important.")
+        ],
+        "related": ["Networking", "Cybersecurity", "ICT Support", "Programming"]
+    },
+}
+
+CATEGORY_NAME_TO_SLUG = {v["name"]: k for k, v in CATEGORY_LANDING_PAGES.items()}
+CATEGORY_NAME_TO_SLUG.update({
+    "Technology": "technology-news",
+    "Web Development": "programming",
+    "Mobile & Android": "mobile-android",
+})
+
+def category_url_for_name(category):
+    key = CATEGORY_NAME_TO_SLUG.get(category or "")
+    if not key:
+        key = "technology-news"
+    return url_for("category_page", category_slug=key)
+
+@app.template_filter("category_page_url")
+def category_page_url_filter(category):
+    return category_url_for_name(category)
+
 def list_blogs_by_category(category, limit=3):
     blogs = data.load_blogs()
     buckets = categorize_home_blogs(blogs)
@@ -1355,6 +1546,59 @@ def blog_list():
 
     return render_template("blog_list.html", blogs=blogs, search_query=q, selected_category=category, year=datetime.now().year)
 
+
+
+@app.route("/category/<category_slug>")
+@app.route("/<category_slug>")
+def category_page(category_slug):
+    """SEO content hub for each SurgeTechKnow editorial desk."""
+    slug = (category_slug or "").strip().lower()
+    if slug not in CATEGORY_LANDING_PAGES:
+        abort(404)
+
+    cfg = CATEGORY_LANDING_PAGES[slug]
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            f"/{slug}",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+
+    all_blogs = [apply_blog_runtime_metadata(b) for b in data.load_blogs()]
+    category_name = cfg["name"]
+    posts = [b for b in all_blogs if normalize_blog_category(b) == category_name]
+
+    # For new categories without direct stored articles, add intelligent matches from title/content.
+    if not posts and category_name in ("Programming", "Cloud Computing", "Career & Certifications"):
+        keywords = [k.lower() for k in cfg.get("keywords", [])]
+        posts = [b for b in all_blogs if any(k in ((b.get("title", "") + " " + b.get("content", "")).lower()) for k in keywords)]
+
+    trending_posts = [b for b in posts if is_recent_trending_post(b)][:6]
+    featured_post = (trending_posts[0] if trending_posts else (posts[0] if posts else None))
+    latest_posts = posts[:18]
+    popular_posts = sorted(posts, key=lambda b: int(b.get("views") or b.get("verified_views") or 0), reverse=True)[:8]
+
+    related_categories = []
+    for name in cfg.get("related", []):
+        key = CATEGORY_NAME_TO_SLUG.get(name)
+        if key and key in CATEGORY_LANDING_PAGES:
+            related_categories.append(CATEGORY_LANDING_PAGES[key])
+
+    return render_template(
+        "category.html",
+        cfg=cfg,
+        posts=posts,
+        featured_post=featured_post,
+        trending_posts=trending_posts,
+        latest_posts=latest_posts,
+        popular_posts=popular_posts,
+        related_categories=related_categories,
+        all_categories=CATEGORY_LANDING_PAGES,
+        year=datetime.now().year
+    )
 
 @app.route("/blog/<slug>")
 def view_blog(slug):
