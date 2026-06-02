@@ -2794,50 +2794,134 @@ img{max-width:100%;}
         return;
       }
 
-      const safeTitle = (titleInput.value || 'SurgeTechKnow Document')
-        .replace(/[&<>"']/g, function(ch){
-          return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];
-        });
-      const contentHtml = marked.parse(textInput.value || '');
+      const contentHtml = marked.parse(textInput.value);
 
-      printWin.document.open();
-      printWin.document.write(`<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${safeTitle}</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <style>
-    body { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: 40px; color: #1e293b; background: #fff; }
-    header { display:flex; justify-content:space-between; gap:20px; align-items:center; border-bottom:1px solid #e2e8f0; margin-bottom:24px; padding-bottom:12px; color:#64748b; font-size:.75rem; font-family:monospace; }
-    h1 { font-weight:800; border-bottom:2px solid #1e40af; padding-bottom:12px; margin-bottom:20px; font-size:2rem; color:#0f172a; }
-    h2,h3,h4 { color:#0f172a; margin-top:1.25rem; }
-    p,li { line-height:1.65; }
-    pre, code { background:#f1f5f9; border:1px solid #cbd5e1; border-radius:6px; }
-    pre { padding:15px; white-space:pre-wrap; }
-    img { max-width:100%; height:auto; border-radius:10px; }
-    table { width:100%; border-collapse:collapse; margin:18px 0; }
-    th,td { border:1px solid #e2e8f0; padding:8px 10px; }
-    th { background:#f8fafc; }
-    @media print { body { padding: 18mm; } }
+      printWin.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${titleInput.value}</title>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+          <style>
+            body { font-family: 'Inter', system-ui, sans-serif; padding: 40px; color: #1e293b; background: #fff; }
+            h1 { font-weight: 800; border-bottom: 2px solid #1e40af; padding-bottom: 12px; margin-bottom: 20px; font-size: 2rem; }
+            pre { background: #f1f5f9; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid #cbd5e1; }
+            p, li { line-height: 1.6; }
+            header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; margin-bottom: 20px; padding-bottom: 10px; color: #64748b; font-size: 0.75rem; font-family: monospace; }
+        
+
+    /* Dashboard truth upgrades */
+    .truth-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .truth-mini-card {
+      background: rgba(16,185,129,0.055);
+      border: 1px solid rgba(16,185,129,0.13);
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+    }
+    .truth-mini-card .label {
+      display: block;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .truth-mini-card .value {
+      color: #00d5ff;
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+    }
+    .health-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: .78rem;
+    }
+    .health-row:last-child { border-bottom: 0; }
+    .seo-check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .seo-check-item {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.025);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .seo-check-item.good { border-color: rgba(34,197,94,.24); color: #bbf7d0; background: rgba(34,197,94,.055); }
+    .seo-check-item.warn { border-color: rgba(245,158,11,.25); color: #fde68a; background: rgba(245,158,11,.055); }
+    .seo-check-item.bad { border-color: rgba(239,68,68,.25); color: #fecaca; background: rgba(239,68,68,.055); }
+    .autosave-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #86efac;
+    }
+    .media-filter-input {
+      background: rgba(0,0,0,.25) !important;
+      border: 1px solid rgba(255,255,255,.09) !important;
+      color: #fff !important;
+      border-radius: 10px !important;
+    }
+
+  
+    /* ADMIN POLISH V4 */
+    .card-fire{border-radius:18px!important;box-shadow:0 18px 45px rgba(0,0,0,.22)!important}
+    .dashboard-wrapper:before{content:'SurgeTechKnow Control Center';position:fixed;right:24px;top:18px;z-index:1001;color:#bae6fd;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,213,255,.08);border:1px solid rgba(0,213,255,.18);padding:8px 12px;border-radius:999px}
+    .stat-card{min-height:128px;display:flex;flex-direction:column;justify-content:center}
+    .form-control-fire,.btn-fire-primary,.btn-fire-secondary{border-radius:12px!important}
+    .tab-pane .card-fire h4{letter-spacing:-.02em}
+    @media(max-width:800px){.dashboard-wrapper:before{display:none}.main-content-wrapper{padding:1rem!important;padding-top:4.5rem!important}.stat-card{min-height:auto}.card-fire{padding:1rem!important}}
+  
+
+    /* TechKnow Console visual upgrade: dark glass, denim/cyan telemetry, compact analytics */
+    :root{--console-cyan:#00d5ff;--console-blue:#1e40af;--console-bg:#020711;--console-panel:rgba(5,14,28,.82);--console-border:rgba(148,163,184,.18)}
+    .main-content-wrapper{background:radial-gradient(circle at top left,rgba(0,213,255,.07),transparent 28%),linear-gradient(135deg,#030712,#020711 55%,#00030a)!important;}
+    .sidebar-wrapper{background:linear-gradient(180deg,rgba(3,7,18,.98),rgba(2,6,23,.96))!important;border-right:1px solid var(--console-border)!important;}
+    .card-fire{background:linear-gradient(135deg,rgba(6,17,34,.88),rgba(2,9,21,.82))!important;border:1px solid var(--console-border)!important;box-shadow:0 10px 30px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.025)!important;}
+    .card-fire:hover{border-color:rgba(0,213,255,.42)!important;box-shadow:0 14px 38px rgba(0,213,255,.08)!important;}
+    .brand-logo{font-size:2rem;background:linear-gradient(90deg,#00d5ff,#f8fafc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .sidebar-link.active{background:linear-gradient(90deg,rgba(0,213,255,.16),rgba(30,64,175,.12))!important;border-left-color:#00d5ff!important;}
+    .stat-number{color:#fff!important;text-shadow:0 0 18px rgba(0,213,255,.12)}
+    .truth-mini-card{background:rgba(0,213,255,.06)!important;border-color:rgba(0,213,255,.18)!important}.truth-mini-card .value{color:#38bdf8!important}
+    .console-search{background:rgba(2,6,23,.72);border:1px solid var(--console-border);border-radius:14px;height:52px;min-width:340px;display:flex;align-items:center;gap:10px;padding:0 15px;color:#cbd5e1}.console-search input{background:transparent;border:0;outline:0;color:#fff;width:100%}.console-secure{height:52px;border-radius:12px;padding:0 18px;background:rgba(0,213,255,.08);border:1px solid rgba(0,213,255,.22);display:flex;align-items:center;gap:10px;color:#38bdf8;font-weight:800;font-family:'JetBrains Mono',monospace}.console-led{width:13px;height:13px;border-radius:50%;background:#00d5ff;box-shadow:0 0 0 6px rgba(0,213,255,.12),0 0 18px rgba(0,213,255,.7)}
+    .metric-value-live.updated{color:#38bdf8!important;text-shadow:0 0 14px rgba(56,189,248,.55)!important}
+    @media(max-width:991px){.console-search{display:none}.brand-logo{font-size:1.35rem}.console-secure{height:40px;padding:0 10px;font-size:11px}}
+
   </style>
-</head>
-<body>
-  <header>
-    <div>SurgeTechKnow TechRich Internal Document</div>
-    <div>Compiled at: ${new Date().toLocaleString()}</div>
-  </header>
-  <h1>${safeTitle}</h1>
-  <main>${contentHtml}</main>
+        </head>
+        <body>
+          <header>
+            <div>SurgeTechKnow TECHRICH INTERNAL DOCUMENT SECURITY MANUAL</div>
+            <div>COMPILED AT: ${new Date().toLocaleString()}</div>
+          </header>
+          <h1>${titleInput.value}</h1>
+          <div class="content">${contentHtml}</div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 1500);
+            }
+          <\/script>
 </body>
-</html>`);
+        </html>
+      `);
       printWin.document.close();
-      printWin.focus();
-      setTimeout(function(){
-        printWin.print();
-        setTimeout(function(){ printWin.close(); }, 1500);
-      }, 500);
     }
 
     // Attach load trigger on tab click
