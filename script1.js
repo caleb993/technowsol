@@ -1,0 +1,1 @@
+{"@context":"https://schema.org","@type":"Organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","logo":"https://techknowsolution.co.ke/static/ogimage.png"}
