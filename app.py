@@ -110,10 +110,12 @@ def hash_ip(ip):
 
 
 def is_bot_user_agent(user_agent):
-    ua = (user_agent or "").lower()
-    if not ua or len(ua) < 12:
-        return True
-    return any(sig in ua for sig in BOT_SIGNATURES)
+    """Bot blocking disabled by owner request.
+
+    The analytics system must not reject Google, Facebook, WhatsApp,
+    crawlers, previews, or any browser based on User-Agent.
+    """
+    return False
 
 
 def is_ignored_tracking_path(path):
@@ -225,13 +227,7 @@ def record_verified_session(payload):
     path = (payload.get("path") or request.path or "/").split("?")[0]
     user_agent = request.headers.get("User-Agent", "")
 
-    if is_ignored_tracking_path(path):
-        return {"status": "ignored", "reason": "ignored_path"}
-
-    if is_bot_user_agent(user_agent):
-        record_bot_request(path, user_agent, "bot_user_agent")
-        return {"status": "ignored", "reason": "bot"}
-
+    # Bot/path filtering disabled: count all public analytics beacons.
     # Do not count admin sessions as public readers.
     if session.get("is_admin") or path.startswith("/admin"):
         return {"status": "ignored", "reason": "admin"}
@@ -252,16 +248,11 @@ def record_verified_session(payload):
     referrer = (payload.get("referrer") or request.referrer or "")[:500]
     engaged_flag = bool(payload.get("engaged", False) or payload.get("mouse_moved", False) or payload.get("interaction", False))
 
+    # Suspicious-session filtering disabled: every public JS beacon is counted.
     suspicious = False
-    if screen_resolution.lower() == "unknown" or timezone.lower() in ("unknown", ""):
-        suspicious = True
-    if time_on_page > 43200:
-        suspicious = True
-
-    # Human verification requires JavaScript plus behavioral evidence.
-    verified = bool(js_enabled and not suspicious and (time_on_page >= 15 or engaged_flag or scroll_depth >= 25))
-    engaged = bool(verified and (engaged_flag or scroll_depth >= 25 or time_on_page >= 30))
-    active = bool(verified and visible and (time_on_page >= 15 or engaged_flag or scroll_depth >= 25))
+    verified = True
+    engaged = True
+    active = bool(visible)
 
     conn = data.get_conn()
     try:
@@ -326,21 +317,20 @@ def get_verified_analytics_snapshot():
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 cur.execute("""
                     SELECT
-                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE) AS human_sessions,
-                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND first_seen::date = CURRENT_DATE) AS today_sessions,
-                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND first_seen >= now() - INTERVAL '7 days') AS seven_day_sessions,
-                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND engaged = TRUE) AS engaged_sessions,
-                      COUNT(*) FILTER (WHERE js_verified = TRUE AND bot_detected = FALSE AND suspicious = FALSE AND active = TRUE AND last_activity >= now() - INTERVAL '90 seconds') AS active_readers,
-                      COUNT(*) FILTER (WHERE suspicious = TRUE) AS suspicious_sessions,
-                      COUNT(*) FILTER (WHERE returning_visitor = TRUE AND js_verified = TRUE AND suspicious = FALSE) AS returning_visitors,
-                      COALESCE(AVG(total_active_seconds) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE), 0) AS avg_read_time,
-                      COALESCE(AVG(scroll_depth) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE), 0) AS avg_scroll,
-                      COUNT(*) FILTER (WHERE js_verified = TRUE AND suspicious = FALSE AND (total_active_seconds < 15 OR scroll_depth < 10)) AS bounces
+                      COUNT(*) AS human_sessions,
+                      COUNT(*) FILTER (WHERE first_seen::date = CURRENT_DATE) AS today_sessions,
+                      COUNT(*) FILTER (WHERE first_seen >= now() - INTERVAL '7 days') AS seven_day_sessions,
+                      COUNT(*) FILTER (WHERE engaged = TRUE) AS engaged_sessions,
+                      COUNT(*) FILTER (WHERE active = TRUE AND last_activity >= now() - INTERVAL '90 seconds') AS active_readers,
+                      0 AS suspicious_sessions,
+                      COUNT(*) FILTER (WHERE returning_visitor = TRUE) AS returning_visitors,
+                      COALESCE(AVG(total_active_seconds), 0) AS avg_read_time,
+                      COALESCE(AVG(scroll_depth), 0) AS avg_scroll,
+                      COUNT(*) FILTER (WHERE total_active_seconds < 15 OR scroll_depth < 10) AS bounces
                     FROM verified_sessions
                 """)
                 row = cur.fetchone() or {}
-                cur.execute("SELECT COUNT(*) AS bots FROM bot_requests")
-                bot_row = cur.fetchone() or {}
+                bot_row = {"bots": 0}
 
                 human = int(row.get("human_sessions") or 0)
                 bounces = int(row.get("bounces") or 0)
@@ -373,8 +363,7 @@ def get_verified_daily_summary(days=15):
                 cur.execute("""
                     SELECT DATE(first_seen) AS date, COUNT(*) AS count
                     FROM verified_sessions
-                    WHERE js_verified = TRUE AND suspicious = FALSE
-                      AND first_seen >= now() - (%s * INTERVAL '1 day')
+                    WHERE first_seen >= now() - (%s * INTERVAL '1 day')
                     GROUP BY DATE(first_seen)
                     ORDER BY DATE(first_seen)
                 """, (days,))
@@ -1807,7 +1796,7 @@ def get_tracking_health_snapshot():
         "last_bot_seen": None,
         "track_endpoint": "/api/track_visit",
         "heartbeat_window_seconds": 90,
-        "message": "No verified human beacons yet. Open a public page, stay 15 seconds, then scroll or click."
+        "message": "No analytics beacons yet. Open a public page to test tracking."
     }
     conn = data.get_conn()
     try:
@@ -1816,18 +1805,14 @@ def get_tracking_health_snapshot():
                 cur.execute("""
                     SELECT MAX(last_seen) AS last_seen
                     FROM verified_sessions
-                    WHERE js_verified = TRUE AND suspicious = FALSE
                 """)
                 row = cur.fetchone() or {}
                 if row.get("last_seen"):
                     health["last_verified_seen"] = row["last_seen"].isoformat()
                     health["tracking_js_status"] = "active"
-                    health["message"] = "JS verification beacons are being received."
+                    health["message"] = "Analytics beacons are being received."
 
-                cur.execute("SELECT MAX(created_at) AS last_bot FROM bot_requests")
-                bot_row = cur.fetchone() or {}
-                if bot_row.get("last_bot"):
-                    health["last_bot_seen"] = bot_row["last_bot"].isoformat()
+                health["last_bot_seen"] = None
     except Exception as e:
         health["tracking_js_status"] = "error"
         health["message"] = str(e)
@@ -1849,9 +1834,7 @@ def get_top_live_pages(limit=8):
                            COUNT(*) AS active_readers,
                            MAX(last_activity) AS last_activity
                     FROM verified_sessions
-                    WHERE js_verified = TRUE
-                      AND suspicious = FALSE
-                      AND active = TRUE
+                    WHERE active = TRUE
                       AND last_activity >= now() - INTERVAL '90 seconds'
                     GROUP BY path
                     ORDER BY active_readers DESC, last_activity DESC
@@ -1908,23 +1891,27 @@ def blog_heartbeat():
         try:
             with conn:
                 with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                    # Confirm this session is a real JS-verified human session.
+                    # Verification/filtering disabled: count article heartbeat for every public session.
                     cur.execute("""
-                        SELECT js_verified, suspicious, bot_detected
-                        FROM verified_sessions
-                        WHERE session_id = %s
-                        LIMIT 1
-                    """, (session_id,))
-                    verified_row = cur.fetchone()
+                        INSERT INTO verified_sessions (
+                            session_id, ip_hash, user_agent, path, js_verified, bot_detected, suspicious,
+                            engaged, active, visible, total_active_seconds, heartbeat_count, page_views,
+                            first_seen, last_seen, last_activity
+                        )
+                        VALUES (%s, %s, %s, %s, TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, %s, 1, 1, now(), now(), now())
+                        ON CONFLICT (session_id) DO UPDATE SET
+                            js_verified = TRUE,
+                            bot_detected = FALSE,
+                            suspicious = FALSE,
+                            engaged = TRUE,
+                            active = TRUE,
+                            last_seen = now(),
+                            last_activity = now(),
+                            total_active_seconds = GREATEST(verified_sessions.total_active_seconds, EXCLUDED.total_active_seconds),
+                            heartbeat_count = verified_sessions.heartbeat_count + 1
+                    """, (session_id, hash_ip(get_client_ip()), (request.headers.get("User-Agent", "") or "")[:500], (request.path or "/")[:500], total_seconds))
 
-                    if not verified_row or not verified_row["js_verified"] or verified_row["suspicious"] or verified_row["bot_detected"]:
-                        return jsonify({
-                            "status": "ignored",
-                            "reason": "session_not_verified",
-                            "message": "Article heartbeat ignored until the browser session is JS-verified."
-                        }), 200
-
-                    # Count one verified article view per verified session per article.
+                    # Count one article view per session per article.
                     cur.execute("""
                         INSERT INTO blog_read_sessions (
                             session_id, slug, first_seen, last_heartbeat,
@@ -2259,7 +2246,7 @@ def admin():
             bb["legacy_views"] = legacy_raw_views
             bb["verified_views"] = verified_views
             bb["views"] = verified_views  # admin templates use b.views, so force verified-only
-            bb["analytics_source"] = "verified_only"
+            bb["analytics_source"] = "unfiltered"
             enriched_blogs.append(bb)
 
             cat = get_blog_category(bb.get("title", ""), bb.get("content", ""))
@@ -2276,7 +2263,7 @@ def admin():
     except Exception as e:
         print("Verified popularity calculation failed:", e)
         # Fail closed: do not expose legacy views if verified calculation fails.
-        blogs = [dict(b, views=0, verified_views=0, legacy_views=int(b.get("views") or 0), analytics_source="verified_only_error") for b in blogs]
+        blogs = [dict(b, views=0, verified_views=0, legacy_views=int(b.get("views") or 0), analytics_source="unfiltered_error") for b in blogs]
 
     dashboard_health = get_admin_dashboard_health()
 
@@ -2551,8 +2538,7 @@ def active_users_data():
                 cur.execute("""
                     SELECT path, COUNT(*) AS cnt
                     FROM verified_sessions
-                    WHERE js_verified = TRUE AND suspicious = FALSE
-                      AND last_activity >= now() - INTERVAL '90 seconds'
+                    WHERE last_activity >= now() - INTERVAL '90 seconds'
                     GROUP BY path
                     ORDER BY cnt DESC
                     LIMIT 6
@@ -2630,7 +2616,7 @@ def admin_article_stats():
                         "avg_scroll_depth": avg_scroll,
                         "bounce_rate": bounce_rate,
                         "category": category,
-                        "source": "verified_only"
+                        "source": "unfiltered"
                     })
 
     except Exception as e:
@@ -2655,7 +2641,7 @@ def admin_article_stats():
         "tracking_health": get_tracking_health_snapshot(),
         "articles": articles,
         "dominant_category": dominant_category,
-        "migration_mode": "verified_only_no_legacy_fallback"
+        "migration_mode": "unfiltered_tracking_no_bot_blocking"
     })
 
 
@@ -2677,7 +2663,7 @@ def admin_reset_analytics():
                 cur.execute("DELETE FROM blog_read_sessions")
                 cur.execute("DELETE FROM verified_sessions")
                 cur.execute("DELETE FROM bot_requests")
-        return jsonify({"status": "success", "message": "Verified analytics reset."})
+        return jsonify({"status": "success", "message": "Analytics reset."})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
     finally:
