@@ -662,6 +662,30 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
 #verified-total{font-size:3rem!important;color:var(--console-green)!important}#verified-total + *{color:#cbd5e1!important}.card-fire.border.border-success\/30,.card-fire.border-success,.card-fire:has(#verified-total){border-color:rgba(0,230,118,.45)!important;box-shadow:0 0 0 1px rgba(0,230,118,.08),0 22px 58px rgba(0,230,118,.06)!important}.row.row-cols-1.row-cols-md-4 .card-fire{min-height:98px}.row.row-cols-1.row-cols-md-4 .card-fire i{font-size:2rem!important}.founder-avatar-wrapper img{height:48px!important;width:48px!important;border-color:rgba(255,255,255,.45)!important}.badge{font-family:'JetBrains Mono',monospace!important}
 @media(max-width:991.98px){.sidebar-wrapper{width:290px!important}.main-content-wrapper{margin-left:0!important;width:100%!important;padding:1rem!important;padding-top:4.6rem!important}.console-search{display:none!important}}
 
+
+/* Collapsible desktop sidebar */
+@media (min-width: 992px){
+  body.sidebar-collapsed .sidebar-wrapper{width:86px!important;}
+  body.sidebar-collapsed .main-content-wrapper{margin-left:86px!important;width:calc(100% - 86px)!important;}
+  body.sidebar-collapsed .sidebar-brand{justify-content:center!important;padding:20px 10px!important;}
+  body.sidebar-collapsed .sidebar-brand > div:last-child,
+  body.sidebar-collapsed .sidebar-profile > div:not(:first-child),
+  body.sidebar-collapsed .sidebar-profile .text-white.fw-bold,
+  body.sidebar-collapsed .sidebar-profile .badge,
+  body.sidebar-collapsed .sidebar-profile .font-mono,
+  body.sidebar-collapsed .sidebar-wrapper span.text-muted\/60,
+  body.sidebar-collapsed .sidebar-link .badge,
+  body.sidebar-collapsed .sidebar-wrapper .p-3.border-top a{display:none!important;}
+  body.sidebar-collapsed .sidebar-profile{margin:14px 12px!important;padding:12px!important;display:flex;justify-content:center;}
+  body.sidebar-collapsed .sidebar-profile .d-flex{justify-content:center!important;}
+  body.sidebar-collapsed .sidebar-link{justify-content:center!important;gap:0!important;padding:14px 10px!important;font-size:0!important;}
+  body.sidebar-collapsed .sidebar-link i{font-size:1.35rem!important;margin:0!important;}
+  body.sidebar-collapsed .sidebar-wrapper .flex-grow-1{padding-left:10px!important;padding-right:10px!important;}
+  body.sidebar-collapsed .sidebar-wrapper .p-3.border-top{padding:14px 10px!important;}
+  body.sidebar-collapsed .sidebar-wrapper .p-3.border-top:after{content:'•';display:grid;place-items:center;color:#00e676;font-size:28px;}
+}
+.sidebar-collapse-btn{height:42px;width:42px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.76);color:#e2e8f0;display:inline-grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.sidebar-collapse-btn:hover{border-color:#00d5ff;color:#00d5ff}
 </style>
 <meta name="robots" content="noindex, nofollow"><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:title" content="TechKnow Console • SurgeTechKnow"><meta property="og:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="TechKnow Console • SurgeTechKnow"><meta name="twitter:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="theme-color" content="#e50920">
 <meta property="og:image:type" content="image/png">
@@ -760,13 +784,16 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
     
     <!-- DESKTOP LEFT SIDEBAR INTERACTIVE MODULE -->
     <aside class="sidebar-wrapper">
-      <div class="sidebar-brand d-flex align-items-center gap-2">
+      <div class="sidebar-brand d-flex align-items-center gap-2 justify-content-between">
+        <button type="button" class="sidebar-collapse-btn d-none d-lg-inline-grid" onclick="toggleSidebarCollapse()" title="Collapse menu"><i class="bi bi-list"></i></button>
+        <div class="d-flex align-items-center gap-2">
         <div class="p-1 px-2 rounded bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center">
           <i class="bi bi-shield-lock-fill fs-5 text-warning"></i>
         </div>
         <div>
           <h5 class="fw-bold mb-0 text-white font-sans" style="letter-spacing: -0.5px; font-size: 1.05rem;">TECHKNOW CONSOLE</h5>
           <span class="text-white-50 font-mono" style="font-size: 10px;">Operated by Caleb Muga</span>
+          </div>
         </div>
       </div>
 
@@ -861,6 +888,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
           <small class="text-muted">High-Security Operational Dashboard • Caleb Muga Infrastructure</small>
         </div>
         <div class="d-flex align-items-center gap-3">
+          <button type="button" class="sidebar-collapse-btn d-none d-lg-inline-grid" onclick="toggleSidebarCollapse()" title="Collapse menu"><i class="bi bi-layout-sidebar-inset"></i></button>
           <label class="console-search"><i class="bi bi-search"></i><input type="search" placeholder="Search console..." oninput="adminQuickSearch(this.value)"></label>
           <div class="console-secure"><span class="console-led"></span><span>SYSTEM SECURE</span></div>
           <div class="bg-info bg-opacity-5 border border-info border-opacity-15 rounded p-2 px-3 font-mono text-xs text-info d-flex align-items-center gap-2" style="display:none!important;">
@@ -3278,19 +3306,28 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
 
     function toggleSidebar() {
       const sidebarElement = document.querySelector('.sidebar-wrapper');
-      if (sidebarElement) {
-        sidebarElement.classList.toggle('show');
-        
-        let overlayElement = document.querySelector('.sidebar-overlay');
+      if (!sidebarElement) return;
+      sidebarElement.classList.toggle('show');
+      let overlayElement = document.querySelector('.sidebar-overlay');
+      if (sidebarElement.classList.contains('show')) {
         if (!overlayElement) {
           overlayElement = document.createElement('div');
           overlayElement.className = 'sidebar-overlay';
           overlayElement.onclick = toggleSidebar;
           document.body.appendChild(overlayElement);
-        } else {
-          overlayElement.remove();
         }
+      } else if (overlayElement) {
+        overlayElement.remove();
       }
+    }
+
+    function toggleSidebarCollapse() {
+      document.body.classList.toggle('sidebar-collapsed');
+      localStorage.setItem('stkSidebarCollapsed', document.body.classList.contains('sidebar-collapsed') ? '1' : '0');
+    }
+
+    if (localStorage.getItem('stkSidebarCollapsed') === '1') {
+      document.body.classList.add('sidebar-collapsed');
     }
 
     // Global CSS CSS keys inject for keyframes
