@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SurgeTechKnow Modern Control Center</title>
+  <title>TechKnow Console • SurgeTechKnow</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -639,8 +639,31 @@ img{max-width:100%;}
     .metric-value-live.updated{color:#38bdf8!important;text-shadow:0 0 14px rgba(56,189,248,.55)!important}
     @media(max-width:991px){.console-search{display:none}.brand-logo{font-size:1.35rem}.console-secure{height:40px;padding:0 10px;font-size:11px}}
 
-  </style>
-<meta name="robots" content="noindex, nofollow"><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:title" content="SurgeTechKnow Modern Control Center"><meta property="og:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SurgeTechKnow Modern Control Center"><meta name="twitter:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="theme-color" content="#e50920">
+  
+
+/* =========================================================
+   TECHKNOW CONSOLE - screenshot-inspired dashboard skin
+   ========================================================= */
+:root{--console-bg:#030712;--console-card:#07111f;--console-card-2:#0a1628;--console-line:rgba(148,163,184,.18);--console-cyan:#00d5ff;--console-green:#00e676;--console-yellow:#ffd000;--console-red:#ff3b52;}
+body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparent 26%),linear-gradient(135deg,#020617 0%,#06101f 52%,#020617 100%)!important;color:#eef2ff!important;}
+.sidebar-wrapper{width:304px!important;background:linear-gradient(180deg,rgba(2,6,23,.97),rgba(3,7,18,.94))!important;border-right:1px solid var(--console-line)!important;box-shadow:18px 0 45px rgba(0,0,0,.32)!important;}
+.main-content-wrapper{margin-left:304px!important;width:calc(100% - 304px)!important;max-width:none!important;padding:30px 34px!important;background:radial-gradient(circle at 20% 0,rgba(0,213,255,.07),transparent 26%)!important;}
+.sidebar-brand{padding:22px 18px!important;background:transparent!important;border-bottom:1px solid var(--console-line)!important;}
+.sidebar-brand .brand-logo,.main-content-wrapper .brand-logo{font-family:'Space Grotesk',sans-serif!important;font-weight:900!important;letter-spacing:-.06em!important;text-transform:uppercase!important;}
+.main-content-wrapper .brand-logo{font-size:2.25rem!important;background:linear-gradient(90deg,var(--console-cyan),#fff 58%);-webkit-background-clip:text;background-clip:text;color:transparent!important;}
+.sidebar-profile{background:linear-gradient(145deg,rgba(15,23,42,.88),rgba(2,6,23,.5))!important;border:1px solid var(--console-line)!important;border-radius:14px!important;margin:14px 18px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;}
+.sidebar-link{border-radius:10px!important;padding:13px 16px!important;font-size:.95rem!important;color:#cbd5e1!important;}
+.sidebar-link.active{background:linear-gradient(90deg,rgba(255,122,0,.18),rgba(229,9,32,.10),transparent)!important;border-left:3px solid #ff3b30!important;color:#fff!important;box-shadow:inset 0 0 20px rgba(255,122,0,.04)!important;}
+.console-search{height:50px;min-width:340px;background:rgba(15,23,42,.72);border:1px solid var(--console-line);border-radius:11px;display:flex;align-items:center;gap:12px;padding:0 16px;color:#94a3b8;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.console-search input{background:transparent;border:0;outline:0;color:#fff;width:100%;font-size:.88rem}.console-secure{height:50px;background:rgba(0,230,118,.10);border:1px solid rgba(0,230,118,.20);border-radius:10px;color:var(--console-green);display:flex;align-items:center;gap:10px;padding:0 18px;font-weight:900;font-family:'Space Grotesk',sans-serif}.console-led{width:14px;height:14px;border-radius:50%;background:var(--console-green);box-shadow:0 0 0 6px rgba(0,230,118,.09),0 0 18px rgba(0,230,118,.55)}
+.card-fire{background:linear-gradient(180deg,rgba(10,22,40,.82),rgba(3,12,24,.82))!important;border:1px solid var(--console-line)!important;border-radius:13px!important;box-shadow:0 16px 40px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.035)!important;}
+.card-fire:hover{border-color:rgba(0,213,255,.34)!important;box-shadow:0 22px 55px rgba(0,213,255,.08),inset 0 1px 0 rgba(255,255,255,.04)!important;transform:translateY(-2px)!important;}
+.stat-card{min-height:172px!important;padding:22px!important;justify-content:flex-start!important;position:relative;overflow:hidden}.stat-card:after{content:"";position:absolute;left:22px;right:22px;bottom:18px;height:34px;background:linear-gradient(90deg,rgba(255,208,0,.25),rgba(0,213,255,.16),transparent);clip-path:polygon(0 72%,8% 35%,14% 54%,22% 26%,34% 60%,46% 40%,58% 70%,72% 46%,86% 62%,100% 16%);opacity:.85}.stat-number{font-family:'Space Grotesk',sans-serif!important;font-size:2.7rem!important;line-height:1!important;color:#fff!important}.stat-card .text-muted{text-transform:uppercase;letter-spacing:.02em;font-weight:800;color:#aeb8c8!important}.truth-mini-grid{grid-template-columns:1fr!important}.truth-mini-card{display:none!important}.truth-mini-card:first-child{display:block!important;text-align:left;background:transparent!important;border:0!important;padding:0!important}.truth-mini-card:first-child .label{display:none}.truth-mini-card:first-child .value{font-size:0!important}.truth-mini-card:first-child .value:before{content:'All public visits counted';font-size:11px;color:#86efac;font-family:'JetBrains Mono',monospace}.health-row{font-size:.9rem!important;color:#cbd5e1!important}.table-responsive{background:rgba(2,6,23,.38)!important;border:1px solid var(--console-line)!important;border-radius:12px!important}.table-dark th{color:#e2e8f0!important}.table-dark td{color:#f8fafc!important;border-color:rgba(148,163,184,.16)!important}.btn-fire-secondary{background:rgba(15,23,42,.58)!important;border:1px solid var(--console-line)!important;color:#fff!important}.btn-fire-primary{background:linear-gradient(135deg,#00d5ff,#1e40af)!important;color:#fff!important}.text-info{color:var(--console-cyan)!important}.text-success{color:var(--console-green)!important}.text-warning{color:var(--console-yellow)!important}.text-danger{color:var(--console-red)!important}.dashboard-wrapper:before{display:none!important}
+#verified-total{font-size:3rem!important;color:var(--console-green)!important}#verified-total + *{color:#cbd5e1!important}.card-fire.border.border-success\/30,.card-fire.border-success,.card-fire:has(#verified-total){border-color:rgba(0,230,118,.45)!important;box-shadow:0 0 0 1px rgba(0,230,118,.08),0 22px 58px rgba(0,230,118,.06)!important}.row.row-cols-1.row-cols-md-4 .card-fire{min-height:98px}.row.row-cols-1.row-cols-md-4 .card-fire i{font-size:2rem!important}.founder-avatar-wrapper img{height:48px!important;width:48px!important;border-color:rgba(255,255,255,.45)!important}.badge{font-family:'JetBrains Mono',monospace!important}
+@media(max-width:991.98px){.sidebar-wrapper{width:290px!important}.main-content-wrapper{margin-left:0!important;width:100%!important;padding:1rem!important;padding-top:4.6rem!important}.console-search{display:none!important}}
+
+</style>
+<meta name="robots" content="noindex, nofollow"><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:title" content="TechKnow Console • SurgeTechKnow"><meta property="og:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="TechKnow Console • SurgeTechKnow"><meta name="twitter:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="theme-color" content="#e50920">
 <meta property="og:image:type" content="image/png">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:site" content="@SurgeTechKnow">
@@ -743,7 +766,7 @@ img{max-width:100%;}
         </div>
         <div>
           <h5 class="fw-bold mb-0 text-white font-sans" style="letter-spacing: -0.5px; font-size: 1.05rem;">TECHKNOW CONSOLE</h5>
-          <span class="text-white-50 font-mono" style="font-size: 10px;">Operated by SurgeTechKnow</span>
+          <span class="text-white-50 font-mono" style="font-size: 10px;">Operated by Caleb Muga</span>
         </div>
       </div>
 
@@ -757,7 +780,7 @@ img{max-width:100%;}
             <span class="position-absolute bottom-0 end-0 bg-info border border-dark rounded-circle" style="width: 10px; height: 10px; box-shadow: 0 0 4px #00d5ff;"></span>
           </div>
           <div>
-            <div class="text-white fw-bold small">SurgeTechKnow</div>
+            <div class="text-white fw-bold small">Caleb Muga</div>
             <span class="badge bg-warning/10 text-warning px-2 py-0.5 border border-warning/15 font-mono" style="font-size: 9px;">ADMIN SEC-OPS</span>
           </div>
         </div>
@@ -835,7 +858,7 @@ img{max-width:100%;}
       <div class="d-none d-lg-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-white/5">
         <div>
           <h2 class="fw-bold mb-0 text-white brand-logo" style="letter-spacing: -0.5px;">TECHKNOW CONSOLE</h2>
-          <small class="text-muted">High-Security Operational Dashboard • SurgeTechKnow Infrastructure</small>
+          <small class="text-muted">High-Security Operational Dashboard • Caleb Muga Infrastructure</small>
         </div>
         <div class="d-flex align-items-center gap-3">
           <label class="console-search"><i class="bi bi-search"></i><input type="search" placeholder="Search console..." oninput="adminQuickSearch(this.value)"></label>
@@ -1014,8 +1037,8 @@ img{max-width:100%;}
                 <div class="mt-2.5 pt-2 border-top border-info/15 font-mono text-xxs text-muted d-flex flex-column gap-1">
                   <div class="d-flex justify-content-between"><span>👤 HUMAN SESSIONS:</span><span class="text-white fw-bold metric-value-live" id="verified-real">{{ total_visits_all.real }}</span></div>
                   <div class="d-flex justify-content-between"><span>🔥 ACTIVE READERS:</span><span class="text-info fw-bold metric-value-live" id="verified-active">{{ total_visits_all.engaged or 0 }}</span></div>
-                  <div class="d-flex justify-content-between"><span>🤖 BOT FILTERING:</span><span class="text-info fw-bold metric-value-live" id="verified-bots">{{ total_visits_all.bot }}</span></div>
-                  <div class="d-flex justify-content-between"><span>⚠️ SUSPICIOUS FILTER:</span><span class="text-warning fw-bold metric-value-live" id="verified-suspicious">{{ total_visits_all.suspicious }}</span></div>
+                  <div class="d-flex justify-content-between"><span>🤖 BOT SIGNALS:</span><span class="text-info fw-bold metric-value-live" id="verified-bots">{{ total_visits_all.bot }}</span></div>
+                  <div class="d-flex justify-content-between"><span>⚠️ SUSPICIOUS SIGNALS:</span><span class="text-warning fw-bold metric-value-live" id="verified-suspicious">{{ total_visits_all.suspicious }}</span></div>
                   <div class="d-flex justify-content-between"><span>↩️ RETURNING READERS:</span><span class="text-primary fw-bold metric-value-live" id="verified-returning">{{ total_visits_all.returning or 0 }}</span></div>
                   <div class="d-flex justify-content-between"><span>📖 AVG READ SECONDS:</span><span class="text-light fw-bold metric-value-live" id="verified-avg-read">{{ total_visits_all.avg_read_time or 0 }}</span></div>
                   <div class="d-flex justify-content-between"><span>📉 BOUNCE RATE:</span><span class="text-warning fw-bold metric-value-live" id="verified-bounce">{{ total_visits_all.bounce_rate or 0 }}%</span></div>
@@ -1037,7 +1060,7 @@ img{max-width:100%;}
                   </div>
                   <div class="d-flex align-items-baseline gap-2 mb-2">
                     <span class="display-6 hover:scale-105 transition-transform text-info fw-bold" id="active-user-count" style="font-family: 'Space Grotesk', sans-serif;">1</span>
-                    <span class="text-muted text-xs font-mono">verified active readers</span>
+                    <span class="text-muted text-xs font-mono">active readers</span>
                   </div>
                   <div class="progress gap-1 mb-3 animate-pulse" style="height: 6px; background: rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;">
                     <div class="progress-bar bg-info" id="active-progress" style="width: 10%;"></div>
@@ -1067,7 +1090,7 @@ img{max-width:100%;}
                     </h5>
                     <div class="text-muted text-xs font-mono">
                       {% if most_viewed_blog %}
-                        <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> verified human views
+                        <span class="text-warning fw-bold"><i class="bi bi-eye-fill"></i> <span id="tr-most-viewed-views">{{ most_viewed_blog.views }}</span></span> public views
                       {% else %}
                         0 views
                       {% endif %}
@@ -1112,7 +1135,7 @@ img{max-width:100%;}
                 </div>
                 <div class="health-row"><span>JS beacon endpoint</span><span class="text-mono text-info" id="tracking-endpoint">/api/track_visit</span></div>
                 <div class="health-row"><span>Last verified beacon</span><span class="text-mono" id="tracking-last-seen">Waiting...</span></div>
-                <div class="health-row"><span>Bot blocking</span><span class="text-mono" id="tracking-last-bot">None yet</span></div>
+                <div class="health-row"><span>Bot blocking</span><span class="text-mono text-success" id="tracking-last-bot">Disabled — counting all public visits</span></div>
                 <div class="health-row"><span>Active reader window</span><span class="text-mono text-info">90 seconds</span></div>
                 <p class="text-muted small mt-3 mb-0" id="tracking-health-message">Waiting for live tracking state...</p>
               </div>
@@ -3170,7 +3193,7 @@ img{max-width:100%;}
       }
       
       // 2. Draft WhatsApp telemetry string
-      const text = `🚨 *SurgeTechKnow.dev Live Traffic Alert*:\n============================\n👤 *Owner*: SurgeTechKnow\n🔥 *Traffic Threshold Exceeded*: \`${threshold}+ Active Users\`\n📈 *Current Metric*: \`${count} verified active readers\`\n⚡ *System Alert Action*: Automatic real-time telemetry socket dispatch.\n\n👉 Review Admin suite: ${window.location.origin}/admin`;
+      const text = `🚨 *SurgeTechKnow.dev Live Traffic Alert*:\n============================\n👤 *Owner*: SurgeTechKnow\n🔥 *Traffic Threshold Exceeded*: \`${threshold}+ Active Users\`\n📈 *Current Metric*: \`${count} active readers\`\n⚡ *System Alert Action*: Automatic real-time telemetry socket dispatch.\n\n👉 Review Admin suite: ${window.location.origin}/admin`;
       const waUrl = "https://wa.me/254791204587?text=" + encodeURIComponent(text);
       
       // 3. Automatically execute redirect open
