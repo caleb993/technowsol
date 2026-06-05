@@ -1391,7 +1391,13 @@ def about_page():
         )
     except Exception as e:
         print(f"Tracking error: {e}")
-    return render_template("about.html")
+    
+    prof_name, _ = latest_file("profile", only_images=True)
+    return render_template(
+        "about.html",
+        profile_url=media_url("profile", prof_name) if prof_name else None,
+        year=datetime.now().year
+    )
 
 
 @app.route("/contact-us", methods=["GET"])
@@ -2231,7 +2237,7 @@ def admin():
             bb["analytics_source"] = "unfiltered"
             enriched_blogs.append(bb)
 
-            cat = get_blog_category(bb.get("title", ""), bb.get("content", ""))
+            cat = (bb.get("category") or get_blog_category(bb.get("title", ""), bb.get("content", "")) or "Technology").strip()
             category_summary[cat] = category_summary.get(cat, 0) + verified_views
 
         blogs = enriched_blogs
