@@ -810,11 +810,10 @@ def is_recent_trending_post(post, days=7):
         return True
 
 def normalize_blog_category(post):
-    """Return the best category for a post.
+    """Return the visible category for a post.
 
-    Manual categories are respected only when the title/content does not strongly
-    point to a more specific desk. This prevents old articles from being stuck
-    under Technology or being randomly stored under the wrong category.
+    Admin-selected categories must be respected. Auto-detection is used only
+    when the saved category is empty or a non-category placeholder.
     """
     if not post:
         return "Technology"
@@ -823,36 +822,19 @@ def normalize_blog_category(post):
     content = post.get("content", "") if isinstance(post, dict) else getattr(post, "content", "")
     stored = (post.get("category", "") if isinstance(post, dict) else getattr(post, "category", "")) or ""
     stored_clean = str(stored).strip()
-    inferred = get_blog_category(title, content)
 
-    title_lower = (title or "").lower()
-
-    # Strong title overrides. Titles are what users and Google see first, so they
-    # should control the visible category when a strong signal exists.
-    strong_title_rules = [
-        ("Mobile & Android", ["android", "phone", "smartphone", "mobile", "battery", "slow down", "slowdown", "play store"]),
-        ("Cybersecurity", ["hack", "hacked", "camera", "cyber", "security", "malware", "phishing", "password", "scam", "attack", "breach", "vpn", "spyware", "m-pesa", "mpesa"]),
-        ("Networking", ["ccna", "routing", "switching", "vlan", "subnet", "ospf", "router", "network", "wifi", "dns", "dhcp", "tcp", "udp", "ip address"]),
-        ("Windows News", ["windows", "microsoft", "windows 11", "windows 10", "driver", "bitlocker", "defender", "laptop", "pc"]),
-        ("AI & Automation", ["ai", "artificial intelligence", "automation", "automate", "chatgpt", "gemini", "machine learning", "bot"]),
-        ("ICT Support", ["printer", "scanner", "helpdesk", "ict", "troubleshoot", "repair", "office", "computer services"]),
-    ]
-    for cat, words in strong_title_rules:
-        if any(w in title_lower for w in words):
-            return cat
-
-    generic_values = {"", "category", "technology", "normal", "uncategorized", "general"}
     allowed = {"Cybersecurity", "Networking", "AI & Automation", "Windows News", "Mobile & Android", "ICT Support", "Technology", "Web Development"}
+    generic_values = {"", "category", "auto", "automatic", "normal", "uncategorized", "general"}
 
-    # Existing posts should be categorized by what their title/content actually says.
-    # Only keep a manual category when the automatic engine cannot find a more specific desk.
-    if inferred and inferred != "Technology":
-        return inferred
-    if stored_clean.lower() in generic_values:
-        return inferred or "Technology"
     if stored_clean in allowed:
         return "Technology" if stored_clean == "Web Development" else stored_clean
-    return inferred or "Technology"
+
+    if stored_clean.lower() in generic_values:
+        inferred = get_blog_category(title, content)
+        return "Technology" if inferred == "Web Development" else (inferred or "Technology")
+
+    inferred = get_blog_category(title, content)
+    return "Technology" if inferred == "Web Development" else (inferred or "Technology")
 
 def apply_blog_runtime_metadata(post):
     """Attach computed category and trending labels without changing template behavior."""
@@ -895,7 +877,7 @@ def refresh_existing_blog_categories():
                     SELECT id, title, content, COALESCE(category, '') AS category
                     FROM blogs
                     WHERE COALESCE(category, '') = ''
-                       OR LOWER(COALESCE(category, '')) IN ('technology', 'category', 'normal', 'uncategorized', 'general')
+                       OR LOWER(COALESCE(category, '')) IN ('category', 'auto', 'automatic', 'normal', 'uncategorized', 'general')
                 """)
                 rows = cur.fetchall()
                 for r in rows:
@@ -903,7 +885,7 @@ def refresh_existing_blog_categories():
                     stored = (r["category"] or "").strip()
                     # Repair generic or clearly mismatched old categories. This keeps manual categories only
                     # when they look intentional and the title/content does not strongly suggest another desk.
-                    if inferred and (stored.lower() in ("", "technology", "category", "normal", "uncategorized", "general") or inferred != stored):
+                    if inferred and (stored.lower() in ("", "category", "auto", "automatic", "normal", "uncategorized", "general")):
                         # Keep old generic/random labels from polluting the homepage desks.
                         cur.execute("UPDATE blogs SET category=%s WHERE id=%s", (inferred, r["id"]))
     except Exception as e:
