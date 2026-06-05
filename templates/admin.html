@@ -1014,8 +1014,8 @@ img{max-width:100%;}
                 <div class="mt-2.5 pt-2 border-top border-info/15 font-mono text-xxs text-muted d-flex flex-column gap-1">
                   <div class="d-flex justify-content-between"><span>👤 HUMAN SESSIONS:</span><span class="text-white fw-bold metric-value-live" id="verified-real">{{ total_visits_all.real }}</span></div>
                   <div class="d-flex justify-content-between"><span>🔥 ACTIVE READERS:</span><span class="text-info fw-bold metric-value-live" id="verified-active">{{ total_visits_all.engaged or 0 }}</span></div>
-                  <div class="d-flex justify-content-between"><span>🤖 BOTS EXCLUDED:</span><span class="text-info fw-bold metric-value-live" id="verified-bots">{{ total_visits_all.bot }}</span></div>
-                  <div class="d-flex justify-content-between"><span>⚠️ SUSPICIOUS SHIELDED:</span><span class="text-warning fw-bold metric-value-live" id="verified-suspicious">{{ total_visits_all.suspicious }}</span></div>
+                  <div class="d-flex justify-content-between"><span>🤖 BOT FILTERING:</span><span class="text-info fw-bold metric-value-live" id="verified-bots">{{ total_visits_all.bot }}</span></div>
+                  <div class="d-flex justify-content-between"><span>⚠️ SUSPICIOUS FILTER:</span><span class="text-warning fw-bold metric-value-live" id="verified-suspicious">{{ total_visits_all.suspicious }}</span></div>
                   <div class="d-flex justify-content-between"><span>↩️ RETURNING READERS:</span><span class="text-primary fw-bold metric-value-live" id="verified-returning">{{ total_visits_all.returning or 0 }}</span></div>
                   <div class="d-flex justify-content-between"><span>📖 AVG READ SECONDS:</span><span class="text-light fw-bold metric-value-live" id="verified-avg-read">{{ total_visits_all.avg_read_time or 0 }}</span></div>
                   <div class="d-flex justify-content-between"><span>📉 BOUNCE RATE:</span><span class="text-warning fw-bold metric-value-live" id="verified-bounce">{{ total_visits_all.bounce_rate or 0 }}%</span></div>
@@ -1112,7 +1112,7 @@ img{max-width:100%;}
                 </div>
                 <div class="health-row"><span>JS beacon endpoint</span><span class="text-mono text-info" id="tracking-endpoint">/api/track_visit</span></div>
                 <div class="health-row"><span>Last verified beacon</span><span class="text-mono" id="tracking-last-seen">Waiting...</span></div>
-                <div class="health-row"><span>Last bot blocked</span><span class="text-mono" id="tracking-last-bot">None yet</span></div>
+                <div class="health-row"><span>Bot blocking</span><span class="text-mono" id="tracking-last-bot">None yet</span></div>
                 <div class="health-row"><span>Active reader window</span><span class="text-mono text-info">90 seconds</span></div>
                 <p class="text-muted small mt-3 mb-0" id="tracking-health-message">Waiting for live tracking state...</p>
               </div>
@@ -2986,7 +2986,7 @@ img{max-width:100%;}
         status.className = 'badge border ' + (health.tracking_js_status === 'active' ? 'bg-info/10 text-info border-info/20' : health.tracking_js_status === 'error' ? 'bg-danger/10 text-danger border-danger/20' : 'bg-warning/10 text-warning border-warning/20');
       }
       if (lastSeen) lastSeen.textContent = health.last_verified_seen ? new Date(health.last_verified_seen).toLocaleString() : 'Waiting...';
-      if (lastBot) lastBot.textContent = health.last_bot_seen ? new Date(health.last_bot_seen).toLocaleString() : 'None yet';
+      if (lastBot) lastBot.textContent = 'Disabled';
       if (endpoint) endpoint.textContent = health.track_endpoint || '/api/track_visit';
       if (msg) msg.textContent = health.message || 'Tracking status loaded.';
     }
@@ -3007,7 +3007,7 @@ img{max-width:100%;}
     }
 
     function resetVerifiedAnalytics() {
-      const confirmText = prompt('Type RESET to clear verified sessions, bot logs, and read sessions.');
+      const confirmText = prompt('Type RESET to clear analytics sessions and read sessions.');
       if (confirmText !== 'RESET') return;
       fetch('/api/admin/reset_analytics', {
         method: 'POST',

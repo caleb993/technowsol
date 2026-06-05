@@ -7,4 +7,19 @@
 <meta name="twitter:creator" content="@SurgeTechKnow">
 
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","logo":"https://techknowsolution.co.ke/static/ogimage.png"}</script>
-</head><body><div class="top"><div class="wrap">SurgeTechKnow</div></div><nav class="nav"><div class="wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><a href="{{ url_for('blog_list') }}">Journal</a></div></nav><main class="wrap"><article class="card"><h1>Cookie Policy</h1><p>SurgeTechKnow may use cookies for theme preference, analytics, security, AdSense and performance measurement. You can manage cookies in your browser settings.</p><p><a class="btn" href="{{ url_for('index') }}">Back Home</a></p></article></main><nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('index') }}#more"><i class="bi bi-list"></i><span>More</span></a></nav></body></html>
+</head><body><div class="top"><div class="wrap">SurgeTechKnow</div></div><nav class="nav"><div class="wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><a href="{{ url_for('blog_list') }}">Journal</a></div></nav><main class="wrap"><article class="card"><h1>Cookie Policy</h1><p>SurgeTechKnow may use cookies for theme preference, analytics, security, AdSense and performance measurement. You can manage cookies in your browser settings.</p><p><a class="btn" href="{{ url_for('index') }}">Back Home</a></p></article></main><nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('index') }}#more"><i class="bi bi-list"></i><span>More</span></a></nav><script>
+(function(){
+  let start=Date.now(), maxScroll=0, interacted=false;
+  function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}
+  addEventListener('scroll',()=>{interacted=true;upd();},{passive:true});
+  addEventListener('click',()=>{interacted=true;});
+  addEventListener('touchstart',()=>{interacted=true;},{passive:true});
+  function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}
+  function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}
+  send(); setTimeout(send,5000); setInterval(send,30000);
+  {% if post is defined and post.slug is defined %}
+  function sendArticle(){fetch('/api/blog/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({slug:{{ post.slug|tojson }},total_seconds:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll})}).catch(()=>{});}
+  sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);
+  {% endif %}
+})();
+</script></body></html>
