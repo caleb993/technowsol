@@ -385,6 +385,7 @@ def sitemap_xml():
     static_pages = [
         {"loc": "/", "changefreq": "daily", "priority": "1.0"},
         {"loc": "/blog", "changefreq": "daily", "priority": "0.9"},
+        {"loc": "/hub", "changefreq": "weekly", "priority": "0.95"},
         {"loc": "/cybersecurity", "changefreq": "daily", "priority": "0.9"},
         {"loc": "/networking", "changefreq": "daily", "priority": "0.9"},
         {"loc": "/windows", "changefreq": "daily", "priority": "0.85"},
@@ -414,6 +415,18 @@ def sitemap_xml():
     <changefreq>{page['changefreq']}</changefreq>
     <priority>{page['priority']}</priority>
   </url>""")
+
+    try:
+        for tool in HUB_TOOLS:
+            urls.append(f"""
+  <url>
+    <loc>{base_url}/hub/{tool['slug']}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>""")
+    except Exception as e:
+        print("Sitemap hub tool loading error:", e)
 
     try:
         try:
@@ -1258,6 +1271,24 @@ def index():
     )
 
 
+HUB_TOOLS = [
+    {"slug":"password-strength-checker","anchor":"password-strength-checker","title":"Password Strength Analyzer","icon":"bi-key","description":"Check password strength, weak patterns and improvement tips directly in your browser."},
+    {"slug":"subnet-calculator","anchor":"subnet-calculator","title":"IP Address & Subnet Calculator","icon":"bi-diagram-3","description":"Calculate network ID, subnet mask, broadcast address, host range and usable hosts for CCNA practice."},
+    {"slug":"phishing-detector","anchor":"phishing-detector","title":"Phishing Email Detector","icon":"bi-envelope-exclamation","description":"Scan suspicious messages for common phishing warning signs and social engineering pressure."},
+    {"slug":"wifi-security-check","anchor":"wifi-security-check","title":"Wi‑Fi Security Audit Tool","icon":"bi-wifi","description":"Score your router and Wi‑Fi setup using practical home and office security checks."},
+    {"slug":"ict-troubleshooting-wizard","anchor":"ict-troubleshooting-wizard","title":"ICT Troubleshooting Wizard","icon":"bi-tools","description":"Get quick first-response steps for internet, printer, email, slow PC and boot problems."},
+    {"slug":"cybersecurity-quiz","anchor":"cybersecurity-quiz","title":"Cybersecurity Awareness Quiz","icon":"bi-patch-question","description":"Test everyday cyber safety knowledge with a quick interactive security quiz."},
+    {"slug":"career-simulator","anchor":"career-simulator","title":"ICT Career Path Simulator","icon":"bi-person-workspace","description":"Choose a technology career path and receive a practical beginner roadmap."},
+    {"slug":"cv-scanner","anchor":"cv-scanner","title":"CV / Resume ATS Scanner","icon":"bi-file-earmark-person","description":"Paste CV text and get simple ATS-friendly improvement suggestions for ICT roles."},
+    {"slug":"ccna-practice-lab","anchor":"ccna-practice-lab","title":"Interactive CCNA Practice Lab","icon":"bi-router","description":"Practice subnetting, VLANs, routing and OSI concepts with quick tasks and hints."},
+]
+
+def get_hub_tool(tool_slug):
+    for tool in HUB_TOOLS:
+        if tool["slug"] == tool_slug:
+            return tool
+    return None
+
 @app.route("/hub")
 def hub():
     try:
@@ -1270,7 +1301,38 @@ def hub():
     except Exception as e:
         print(f"Tracking error: {e}")
     prof_name, _ = latest_file("profile", only_images=True)
-    return render_template("hub.html", profile_url=media_url("profile", prof_name) if prof_name else None, related_posts=list_related_blogs(6), year=datetime.now().year)
+    return render_template(
+        "hub.html",
+        profile_url=media_url("profile", prof_name) if prof_name else None,
+        related_posts=list_related_blogs(6),
+        hub_tools=HUB_TOOLS,
+        active_tool=None,
+        year=datetime.now().year
+    )
+
+@app.route("/hub/<tool_slug>")
+def hub_tool(tool_slug):
+    tool = get_hub_tool(tool_slug)
+    if not tool:
+        abort(404)
+    try:
+        data.record_visit(
+            request.remote_addr,
+            request.headers.get("User-Agent", "Unknown"),
+            f"/hub/{tool_slug}",
+            get_or_create_visitor_id()
+        )
+    except Exception as e:
+        print(f"Tracking error: {e}")
+    prof_name, _ = latest_file("profile", only_images=True)
+    return render_template(
+        "hub.html",
+        profile_url=media_url("profile", prof_name) if prof_name else None,
+        related_posts=list_related_blogs(6),
+        hub_tools=HUB_TOOLS,
+        active_tool=tool,
+        year=datetime.now().year
+    )
 
 @app.route("/operations-gallery")
 def operations_gallery():
