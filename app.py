@@ -491,6 +491,7 @@ def redirect_to_custom_domain():
 
     if (
         "onrender.com" in host
+        or "mga.techknowsols.gt.tc" in host
         or host == "www.techknowsolution.co.ke"
     ):
         query = request.query_string.decode("utf-8")
