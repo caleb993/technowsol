@@ -189,6 +189,9 @@ def create_tables():
         ALTER TABLE blogs ADD COLUMN IF NOT EXISTS featured_image TEXT;
         """,
         """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS meta_keywords TEXT;
+        """,
+        """
         ALTER TABLE files ADD COLUMN IF NOT EXISTS media_title TEXT;
         """,
         """
@@ -539,7 +542,7 @@ def slugify(text: str) -> str:
     return s[:200]
 
 
-def add_blog(title, content, status="published", published_at=None, category="Technology", is_trending=False, excerpt=None, featured_image=None):
+def add_blog(title, content, status="published", published_at=None, category="Technology", is_trending=False, excerpt=None, featured_image=None, meta_keywords=None):
     conn = get_conn()
     try:
         with conn:
@@ -553,8 +556,8 @@ def add_blog(title, content, status="published", published_at=None, category="Te
 
                 cur.execute(
                     """
-                    INSERT INTO blogs (timestamp, title, slug, content, status, published_at, category, is_trending, excerpt, featured_image)
-                    VALUES (now(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO blogs (timestamp, title, slug, content, status, published_at, category, is_trending, excerpt, featured_image, meta_keywords)
+                    VALUES (now(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """,
                     (
                         title.strip(),
@@ -565,7 +568,8 @@ def add_blog(title, content, status="published", published_at=None, category="Te
                         (category or "Technology").strip(),
                         bool(is_trending),
                         (excerpt or "").strip(),
-                        (featured_image or "").strip()
+                        (featured_image or "").strip(),
+                        (meta_keywords or "").strip()
                     )
                 )
 
@@ -579,6 +583,7 @@ def add_blog(title, content, status="published", published_at=None, category="Te
                     "is_trending": bool(is_trending),
                     "excerpt": excerpt or "",
                     "featured_image": featured_image or "",
+                    "meta_keywords": meta_keywords or "",
                     "status": status,
                     "published_at": pub_time.isoformat() if hasattr(pub_time, "isoformat") else str(pub_time),
                     "helpful_count": 0,
@@ -607,7 +612,8 @@ def load_blogs(include_drafts=False):
                                COALESCE(category, 'Technology') as category,
                                COALESCE(is_trending, FALSE) as is_trending,
                                COALESCE(excerpt, '') as excerpt,
-                               COALESCE(featured_image, '') as featured_image
+                               COALESCE(featured_image, '') as featured_image,
+                               COALESCE(meta_keywords, '') as meta_keywords
                         FROM blogs
                         ORDER BY id DESC
                     """)
@@ -624,7 +630,8 @@ def load_blogs(include_drafts=False):
                                COALESCE(category, 'Technology') as category,
                                COALESCE(is_trending, FALSE) as is_trending,
                                COALESCE(excerpt, '') as excerpt,
-                               COALESCE(featured_image, '') as featured_image
+                               COALESCE(featured_image, '') as featured_image,
+                               COALESCE(meta_keywords, '') as meta_keywords
                         FROM blogs
                         WHERE COALESCE(status, 'published') = 'published'
                         AND (published_at IS NULL OR published_at <= now())
@@ -648,7 +655,8 @@ def load_blogs(include_drafts=False):
                         "category": r["category"] or "Technology",
                         "is_trending": bool(r["is_trending"]),
                         "excerpt": r["excerpt"] or "",
-                        "featured_image": r["featured_image"] or ""
+                        "featured_image": r["featured_image"] or "",
+                        "meta_keywords": r["meta_keywords"] or ""
                     }
                     for r in cur.fetchall()
                 ]
@@ -700,7 +708,8 @@ def get_blog_by_slug(slug):
                     "category": r["category"] or "Technology",
                     "is_trending": bool(r["is_trending"]),
                     "excerpt": r["excerpt"] or "",
-                    "featured_image": r["featured_image"] or ""
+                    "featured_image": r["featured_image"] or "",
+                    "meta_keywords": r["meta_keywords"] or ""
                 }
     finally:
         conn.close()
@@ -768,7 +777,7 @@ def delete_blog_by_id(bid):
         conn.close()
 
 
-def update_blog(bid, title, content, category="Technology", is_trending=False, excerpt=None, featured_image=None):
+def update_blog(bid, title, content, category="Technology", is_trending=False, excerpt=None, featured_image=None, meta_keywords=None):
     conn = get_conn()
     try:
         with conn:
@@ -779,7 +788,7 @@ def update_blog(bid, title, content, category="Technology", is_trending=False, e
                     """
                     UPDATE blogs
                     SET title = %s, slug = %s, content = %s,
-                        category = %s, is_trending = %s, excerpt = %s, featured_image = %s
+                        category = %s, is_trending = %s, excerpt = %s, featured_image = %s, meta_keywords = %s
                     WHERE id = %s
                     """,
                     (
@@ -790,6 +799,7 @@ def update_blog(bid, title, content, category="Technology", is_trending=False, e
                         bool(is_trending),
                         (excerpt or "").strip() if excerpt is not None else "",
                         (featured_image or "").strip() if featured_image is not None else "",
+                        (meta_keywords or "").strip() if meta_keywords is not None else "",
                         bid
                     )
                 )

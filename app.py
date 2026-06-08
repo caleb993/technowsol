@@ -449,19 +449,33 @@ def sitemap_xml():
             elif blog.get("timestamp"):
                 lastmod = str(blog.get("timestamp"))[:10]
 
+            img_url = ""
+            try:
+                img_url = social_share_image_url(blog)
+            except Exception:
+                img_url = ""
+            image_xml = ""
+            if img_url and not str(img_url).startswith("data:"):
+                import html
+                image_xml = f"""
+    <image:image>
+      <image:loc>{html.escape(str(img_url), quote=True)}</image:loc>
+      <image:title>{html.escape(str(blog.get('title', 'SurgeTechKnow article')), quote=True)}</image:title>
+    </image:image>"""
+
             urls.append(f"""
   <url>
     <loc>{base_url}/blog/{slug}</loc>
     <lastmod>{lastmod}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.8</priority>{image_xml}
   </url>""")
 
     except Exception as e:
         print("Sitemap blog loading error:", e)
 
     xml = f"""<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">
+<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\">
 {''.join(urls)}
 </urlset>"""
 
@@ -2683,6 +2697,7 @@ def admin_techrich_update(doc_id):
     category = get_blog_category(title, content) if requested_category.lower() in ("auto", "automatic", "") else requested_category
     is_trending = request.form.get("is_trending") in ("1", "true", "on", "yes", "trending")
     excerpt = request.form.get("excerpt", "").strip()
+    meta_keywords = normalize_meta_keywords(request.form.get("meta_keywords", ""), title, category)
     featured_image = request.form.get("featured_image", "").strip()
 
     if data.update_techrich_doc(doc_id, title, content):
@@ -3338,6 +3353,33 @@ def resolve_article_thumbnail(title, content, category, selected_thumbnail=''):
         pass
     return ''
 
+
+def normalize_meta_keywords(raw, title='', category=''):
+    """Clean admin SEO keywords for the meta keywords tag and schema article tags.
+    Keeps the input human-friendly while preventing huge/duplicated keyword dumps.
+    """
+    import re
+    base = raw or ''
+    if not base:
+        seed = f"{title}, {category}, SurgeTechKnow, cybersecurity, ICT support"
+        base = seed
+    parts = []
+    seen = set()
+    for item in re.split(r"[,;\n]+", base):
+        kw = re.sub(r"\s+", " ", item.strip())
+        if not kw:
+            continue
+        key = kw.lower()
+        if key in seen:
+            continue
+        if len(kw) > 55:
+            kw = kw[:55].rsplit(' ', 1)[0] or kw[:55]
+        seen.add(key)
+        parts.append(kw)
+        if len(parts) >= 12:
+            break
+    return ", ".join(parts)
+
 @app.route("/admin/blogs/add", methods=["POST"])
 def admin_add_blog():
     if not require_admin():
@@ -3349,6 +3391,7 @@ def admin_add_blog():
     category = get_blog_category(title, content) if requested_category.lower() in ("auto", "automatic", "") else requested_category
     is_trending = request.form.get("is_trending") in ("1", "true", "on", "yes", "trending")
     excerpt = request.form.get("excerpt", "").strip()
+    meta_keywords = normalize_meta_keywords(request.form.get("meta_keywords", ""), title, category)
     featured_image = request.form.get("featured_image", "").strip()
     featured_image = resolve_article_thumbnail(title, content, category, featured_image)
 
@@ -3356,7 +3399,7 @@ def admin_add_blog():
         flash("Title and content required.")
         return redirect(url_for("admin"))
 
-    post = data.add_blog(title, content, category=category, is_trending=is_trending, excerpt=excerpt, featured_image=featured_image)
+    post = data.add_blog(title, content, category=category, is_trending=is_trending, excerpt=excerpt, featured_image=featured_image, meta_keywords=meta_keywords)
 
     if post and "slug" in post:
         session["promote_blog_slug"] = post["slug"]
@@ -3402,6 +3445,7 @@ def admin_edit_blog(bid):
     category = get_blog_category(title, content) if requested_category.lower() in ("auto", "automatic", "") else requested_category
     is_trending = request.form.get("is_trending") in ("1", "true", "on", "yes", "trending")
     excerpt = request.form.get("excerpt", "").strip()
+    meta_keywords = normalize_meta_keywords(request.form.get("meta_keywords", ""), title, category)
     featured_image = request.form.get("featured_image", "").strip()
     featured_image = resolve_article_thumbnail(title, content, category, featured_image)
 
@@ -3409,7 +3453,7 @@ def admin_edit_blog(bid):
         flash("Title and content required.")
         return redirect(url_for("admin") + "#blogs-pane")
 
-    ok = data.update_blog(bid, title, content, category=category, is_trending=is_trending, excerpt=excerpt, featured_image=featured_image)
+    ok = data.update_blog(bid, title, content, category=category, is_trending=is_trending, excerpt=excerpt, featured_image=featured_image, meta_keywords=meta_keywords)
 
     if ok:
         import re
@@ -3570,6 +3614,20 @@ def blog_social_image(post):
     """
     return social_share_image_url(post)
 
+
+@app.template_filter("seo_keywords")
+def seo_keywords_filter(post):
+    try:
+        kws = (post.get("meta_keywords") if isinstance(post, dict) else getattr(post, "meta_keywords", "")) or ""
+        title = (post.get("title") if isinstance(post, dict) else getattr(post, "title", "")) or ""
+        category = (post.get("category") if isinstance(post, dict) else getattr(post, "category", "")) or "Technology"
+        return normalize_meta_keywords(kws, title, category)
+    except Exception:
+        return "SurgeTechKnow, cybersecurity, networking, ICT support"
+
+@app.template_filter("seo_keyword_list")
+def seo_keyword_list_filter(post):
+    return [x.strip() for x in seo_keywords_filter(post).split(',') if x.strip()]
 
 @app.template_filter("display_date")
 def display_date(value):
