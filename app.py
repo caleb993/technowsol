@@ -504,6 +504,27 @@ Sitemap: https://techknowsolution.co.ke/sitemap.xml
     response.headers["Cache-Control"] = "public, max-age=3600"
     return response
 
+@app.route("/site.webmanifest")
+def site_webmanifest():
+    manifest = {
+        "name": "SurgeTechKnow",
+        "short_name": "STK",
+        "description": "Practical cybersecurity, networking, ICT support and digital safety tools.",
+        "start_url": "/",
+        "scope": "/",
+        "display": "standalone",
+        "background_color": "#071021",
+        "theme_color": "#e50920",
+        "icons": [
+            {"src": "/static/favicon-32.png", "sizes": "32x32", "type": "image/png"},
+            {"src": "/static/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
+            {"src": "/static/ogimage.png", "sizes": "1200x630", "type": "image/png"}
+        ]
+    }
+    response = jsonify(manifest)
+    response.headers["Cache-Control"] = "public, max-age=86400"
+    return response
+
 @app.after_request
 def add_security_headers(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
