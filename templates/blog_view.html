@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-{% set seo_description = post.excerpt or (post.content|clean_excerpt(155)) %}
+{% set seo_description = (post.excerpt or (post.content|clean_excerpt(155)))|striptags %}
+{% set seo_keywords = post|seo_keywords %}
 {% set share_image = post|social_share_image %}
 {% set canonical_url = 'https://techknowsolution.co.ke' ~ request.path %}
 <title>{{ post.title }} • SurgeTechKnow</title>
 <meta name="description" content="{{ seo_description }}">
+<meta name="keywords" content="{{ seo_keywords }}">
 <link rel="canonical" href="{{ canonical_url }}">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="author" content="SurgeTechKnow Editorial Desk">
@@ -29,6 +31,8 @@
 <meta property="og:image:alt" content="{{ post.title }}">
 <meta property="article:publisher" content="SurgeTechKnow">
 <meta property="article:section" content="{{ post.category }}">
+{% for tag in post|seo_keyword_list %}<meta property="article:tag" content="{{ tag }}">
+{% endfor %}
 <meta property="article:published_time" content="{{ (post.published_at or post.timestamp)|iso_date }}">
 <meta property="article:modified_time" content="{{ (post.updated_at if post.updated_at is defined and post.updated_at else post.published_at or post.timestamp)|iso_date }}">
 <meta name="twitter:card" content="summary_large_image">
@@ -50,7 +54,7 @@
       {"@type": "ListItem", "position": 2, "name": {{ post.category|tojson }}, "item": "https://techknowsolution.co.ke{{ post.category|category_page_url }}"},
       {"@type": "ListItem", "position": 3, "name": {{ post.title|tojson }}, "item": {{ canonical_url|tojson }}}
     ]},
-    {"@type": "BlogPosting", "headline": {{ post.title|tojson }}, "description": {{ seo_description|tojson }}, "image": [{{ share_image|tojson }}], "datePublished": {{ (post.published_at or post.timestamp)|iso_date|tojson }}, "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.published_at or post.timestamp)|iso_date|tojson }}, "author": {"@type": "Person", "@id":"https://techknowsolution.co.ke/about#caleb-muga", "name": "Caleb Muga", "jobTitle":"ICT Professional and Software Developer", "url":"https://techknowsolution.co.ke/about"}, "publisher": {"@type": "Organization", "name": "SurgeTechKnow", "logo": {"@type": "ImageObject", "url": "https://techknowsolution.co.ke/static/ogimage.png"}}, "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical_url|tojson }}}}
+    {"@type": "BlogPosting", "headline": {{ post.title|tojson }}, "description": {{ seo_description|tojson }}, "image": [{{ share_image|tojson }}], "datePublished": {{ (post.published_at or post.timestamp)|iso_date|tojson }}, "dateModified": {{ (post.updated_at if post.updated_at is defined and post.updated_at else post.published_at or post.timestamp)|iso_date|tojson }}, "author": {"@type": "Person", "@id":"https://techknowsolution.co.ke/about#caleb-muga", "name": "Caleb Muga", "jobTitle":"ICT Professional and Software Developer", "url":"https://techknowsolution.co.ke/about"}, "publisher": {"@type": "Organization", "name": "SurgeTechKnow", "logo": {"@type": "ImageObject", "url": "https://techknowsolution.co.ke/static/ogimage.png"}}, "keywords": {{ seo_keywords|tojson }}, "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical_url|tojson }}}}
   ]
 }
 </script>

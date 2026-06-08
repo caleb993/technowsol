@@ -1670,8 +1670,24 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                 </div>
 
                 <div class="mb-3">
-                  <label class="form-label text-muted small">SHORT EXCERPT FOR HOMEPAGE CARDS</label>
-                  <textarea name="excerpt" id="blogExcerpt" class="form-control form-control-fire" rows="2" maxlength="220" placeholder="Short summary shown on homepage and listing cards"></textarea>
+                  <label class="form-label text-muted small d-flex justify-content-between align-items-center">
+                    <span>SHORT EXCERPT / META DESCRIPTION</span>
+                    <small class="text-info text-mono">Used by Google preview</small>
+                  </label>
+                  <textarea name="excerpt" id="blogExcerpt" class="form-control form-control-fire" rows="3" maxlength="220" placeholder="Write a clear 140–160 character summary. This appears on homepage cards and becomes the article meta description."></textarea>
+                  <div class="d-flex justify-content-between small text-muted mt-1">
+                    <span>SEO tip: mention the main topic once and explain the reader benefit.</span>
+                    <span><span id="excerptCounter">0</span>/160 ideal</span>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label text-muted small d-flex justify-content-between align-items-center">
+                    <span>SEO KEYWORDS / META KEYWORDS</span>
+                    <small class="text-warning text-mono">Before thumbnail</small>
+                  </label>
+                  <input type="text" name="meta_keywords" id="blogMetaKeywords" class="form-control form-control-fire" maxlength="450" placeholder="e.g. Windows Security, Microsoft Defender, BitLocker, SmartScreen, ransomware protection">
+                  <div class="small text-muted mt-1">Use 5–12 comma-separated keywords. They are saved with the article, added to meta keywords, and used as article tags in structured data.</div>
                 </div>
 
                 <div class="mb-3 thumbnail-control-panel">
@@ -2085,6 +2101,18 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
     }
 
     // Blog post editing controller
+    function updateExcerptCounter(){
+      const el = document.getElementById('blogExcerpt');
+      const out = document.getElementById('excerptCounter');
+      if(!el || !out) return;
+      out.textContent = (el.value || '').trim().length;
+      out.className = ((el.value || '').trim().length >= 120 && (el.value || '').trim().length <= 160) ? 'text-success' : 'text-warning';
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      const ex = document.getElementById('blogExcerpt');
+      if(ex){ ex.addEventListener('input', updateExcerptCounter); updateExcerptCounter(); }
+    });
+
     function loadBlogForEditing(bid) {
       fetch('/admin/blogs/get/' + bid)
         .then(res => res.json())
@@ -2099,7 +2127,8 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
           document.getElementById('blogContent').value = blog.content;
           if (document.getElementById('blogCategory')) document.getElementById('blogCategory').value = blog.category || 'Auto';
           if (document.getElementById('blogTrending')) document.getElementById('blogTrending').value = blog.is_trending ? '1' : '0';
-          if (document.getElementById('blogExcerpt')) document.getElementById('blogExcerpt').value = blog.excerpt || '';
+          if (document.getElementById('blogExcerpt')) { document.getElementById('blogExcerpt').value = blog.excerpt || ''; updateExcerptCounter(); }
+          if (document.getElementById('blogMetaKeywords')) document.getElementById('blogMetaKeywords').value = blog.meta_keywords || '';
           if (document.getElementById('blogFeaturedImage')) { document.getElementById('blogFeaturedImage').value = blog.featured_image || ''; refreshFeaturedPreview(); }
           if (window.tinymce && tinymce.get('blogContent')) { tinymce.get('blogContent').setContent(blog.content || ''); }
           
@@ -2116,6 +2145,25 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
           console.error(e);
           alert("Error fetching blog details.");
         });
+    }
+
+    function cancelEditing(){
+      const form = document.getElementById('blog-form');
+      if(form) form.action = '/admin/blogs/add';
+      const editId = document.getElementById('edit-blog-id'); if(editId) editId.value = '';
+      const title = document.getElementById('title'); if(title) title.value = '';
+      const cat = document.getElementById('blogCategory'); if(cat) cat.value = 'Auto';
+      const trend = document.getElementById('blogTrending'); if(trend) trend.value = '0';
+      const ex = document.getElementById('blogExcerpt'); if(ex) ex.value = '';
+      const kws = document.getElementById('blogMetaKeywords'); if(kws) kws.value = '';
+      const img = document.getElementById('blogFeaturedImage'); if(img) img.value = '';
+      const content = document.getElementById('blogContent'); if(content) content.value = '';
+      if(window.tinymce && tinymce.get('blogContent')) tinymce.get('blogContent').setContent('');
+      const editorTitle = document.getElementById('editor-title'); if(editorTitle) editorTitle.innerHTML = '<i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight';
+      const submit = document.getElementById('blog-submit-btn'); if(submit) submit.innerHTML = 'Publish Insight <i class="bi bi-send-fill"></i>';
+      const cancel = document.getElementById('cancel-edit-btn'); if(cancel) cancel.classList.add('d-none');
+      if(typeof refreshFeaturedPreview === 'function') refreshFeaturedPreview();
+      if(typeof updateExcerptCounter === 'function') updateExcerptCounter();
     }
 
     // copy clipboard helper for markdown library references
