@@ -542,6 +542,20 @@ def slugify(text: str) -> str:
     return s[:200]
 
 
+
+
+def ensure_blog_seo_columns():
+    """Keep deployed databases compatible with new blog SEO fields. Safe to run repeatedly."""
+    conn = get_conn()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS excerpt TEXT;")
+                cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS featured_image TEXT;")
+                cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS meta_keywords TEXT;")
+    finally:
+        conn.close()
+
 def add_blog(title, content, status="published", published_at=None, category="Technology", is_trending=False, excerpt=None, featured_image=None, meta_keywords=None):
     conn = get_conn()
     try:
@@ -665,6 +679,10 @@ def load_blogs(include_drafts=False):
 
 
 def get_blog_by_slug(slug):
+    try:
+        ensure_blog_seo_columns()
+    except Exception:
+        pass
     conn = get_conn()
     try:
         with conn:
@@ -681,7 +699,8 @@ def get_blog_by_slug(slug):
                            COALESCE(category, 'Technology') as category,
                            COALESCE(is_trending, FALSE) as is_trending,
                            COALESCE(excerpt, '') as excerpt,
-                           COALESCE(featured_image, '') as featured_image
+                           COALESCE(featured_image, '') as featured_image,
+                           COALESCE(meta_keywords, '') as meta_keywords
                     FROM blogs
                     WHERE slug=%s
                     LIMIT 1
