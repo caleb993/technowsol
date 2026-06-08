@@ -1,18 +1,19 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 <head>
-<meta charset="utf-8">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-ELRXZQRGNR');
-</script>
-<meta name="google-adsense-account" content="ca-pub-4340479899629152">
-
-
   <meta charset="utf-8">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ELRXZQRGNR');
+  </script>
+
+  <!-- Adsense -->
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% set active_slug = active_tool.slug if active_tool is defined and active_tool else 'interactive-cyber-lab' %}
   {% set active_title = active_tool.title if active_tool is defined and active_tool else 'Interactive Cyber Lab & ICT Sandbox' %}
@@ -33,8 +34,7 @@ gtag('config', 'G-ELRXZQRGNR');
   <meta name="twitter:description" content="{{ active_desc }}">
   <meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png">
   <meta name="theme-color" content="#e50920">
-  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+<meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <script type="application/ld+json">
@@ -162,7 +162,7 @@ async function scanCV(){let out=document.getElementById('cvOut');let file=docume
 document.getElementById('cvFile')?.addEventListener('change',function(){let f=this.files&&this.files[0];document.getElementById('cvFileNote').innerHTML=f?`Selected file: <b>${f.name}</b> (${Math.round(f.size/1024)} KB). Click Scan CV to analyze it.`:'Supported: PDF, DOC, DOCX, TXT. For scanned image PDFs, also paste the CV text below.';});
 function ccnaPractice(){let map={subnet:'Task: Find network ID, broadcast and usable hosts for 192.168.20.45/28. Hint: block size is 16.',vlan:'Task: Explain why VLAN 10 and VLAN 20 need routing to communicate. Hint: inter-VLAN routing.',routing:'Task: A PC can ping gateway but not internet. Check default route, DNS and NAT/firewall.',osi:'Task: Map HTTP, IP, TCP and Ethernet to their OSI layers.'};ccnaOut.innerHTML=map[ccnaTopic.value]}
 loadQuiz();
-(function(){let start=Date.now(),maxScroll=0,interacted=false;function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}addEventListener('scroll',()=>{interacted=true;upd();},{passive:true});addEventListener('click',()=>{interacted=true;});function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}send();setTimeout(send,5000);setInterval(send,30000);})();
+(function(){let start=Date.now(),maxScroll=0,interacted=false;function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}addEventListener('scroll',()=>{interacted=true;upd();},{passive:true});addEventListener('click',()=>{interacted=true;});function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}send(); setTimeout(send,10000); setInterval(send,90000);})();
 </script>
 <nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('index') }}#more"><i class="bi bi-list"></i><span>More</span></a></nav>
 </body></html>

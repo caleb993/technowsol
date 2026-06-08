@@ -1,7 +1,20 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 <head>
-<meta charset="utf-8">
+  <meta charset="utf-8">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ELRXZQRGNR');
+  </script>
+
+  <!-- Adsense -->
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 {% set seo_description = (post.excerpt or (post.content|clean_excerpt(155)))|striptags %}
 {% set seo_keywords = post|seo_keywords %}
@@ -15,7 +28,6 @@
 <meta name="author" content="SurgeTechKnow Editorial Desk">
 <meta name="publisher" content="SurgeTechKnow">
 <meta name="theme-color" content="#e50920">
-<meta name="google-adsense-account" content="ca-pub-4340479899629152">
 <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
@@ -41,7 +53,6 @@
 <meta name="twitter:title" content="{{ post.title }}">
 <meta name="twitter:description" content="{{ seo_description }}">
 <meta name="twitter:image" content="{{ share_image }}">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-ELRXZQRGNR');</script>
 <script type="application/ld+json">
 {
@@ -152,7 +163,7 @@ img{max-width:100%;}
   addEventListener('touchstart',()=>{interacted=true;},{passive:true});
   function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}
   function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}
-  send(); setTimeout(send,5000); setInterval(send,30000);
+  send(); setTimeout(send,10000); setInterval(send,90000);
   {% if post is defined and post.slug is defined %}
   function sendArticle(){fetch('/api/blog/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({slug:{{ post.slug|tojson }},total_seconds:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll})}).catch(()=>{});}
   sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);

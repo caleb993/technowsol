@@ -2,17 +2,22 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
+  <meta charset="utf-8">
+
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-  
     gtag('config', 'G-ELRXZQRGNR');
   </script>
-  <script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
-  <meta charset="utf-8">
+
+  <!-- Adsense -->
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
+
+<!-- Google tag (gtag.js) -->
+<script src="https://app.secureprivacy.ai/script/6a100f4a8031e8c457f05d53.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Blog • Muga</title>
@@ -218,7 +223,7 @@
 
   </style>
 
-<meta name="robots" content="index, follow, max-image-preview:large"><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:title" content="Blog • Muga"><meta property="og:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Blog • Muga"><meta name="twitter:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="theme-color" content="#e50920"><meta name="google-adsense-account" content="ca-pub-4340479899629152">
+<meta name="robots" content="index, follow, max-image-preview:large"><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:title" content="Blog • Muga"><meta property="og:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Blog • Muga"><meta name="twitter:description" content="SurgeTechKnow provides practical cybersecurity, networking, Windows News, AI automation and ICT support insights."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="theme-color" content="#e50920">
 <meta property="og:image:type" content="image/png">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:site" content="@SurgeTechKnow">
@@ -320,7 +325,7 @@
   addEventListener('touchstart',()=>{interacted=true;},{passive:true});
   function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}
   function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}
-  send(); setTimeout(send,5000); setInterval(send,30000);
+  send(); setTimeout(send,10000); setInterval(send,90000);
   {% if post is defined and post.slug is defined %}
   function sendArticle(){fetch('/api/blog/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({slug:{{ post.slug|tojson }},total_seconds:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll})}).catch(()=>{});}
   sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);

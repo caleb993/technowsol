@@ -1,25 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-ELRXZQRGNR');
-</script>
-<meta name="google-adsense-account" content="ca-pub-4340479899629152">
-
-
   <meta charset="utf-8">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ELRXZQRGNR');
+  </script>
+
+  <!-- Adsense -->
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About Caleb Muga & SurgeTechKnow</title>
   <meta name="description" content="Meet Caleb Muga, an ICT professional, software developer, cybersecurity enthusiast and founder of SurgeTechKnow.">
   <link rel="canonical" href="https://techknowsolution.co.ke{{ request.path }}">
   <meta name="robots" content="index, follow">
-  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
+<meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SurgeTechKnow">
   <meta property="og:title" content="About Caleb Muga & SurgeTechKnow">
@@ -109,7 +109,7 @@ gtag('config', 'G-ELRXZQRGNR');
   <footer class="footer"><div class="wrap">© {{ year or 2026 }} SurgeTechKnow • Built by Caleb Muga • <a href="{{ url_for('about_page') }}" style="color:#fff;font-weight:900;">About Us</a></div></footer>
   <nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('contact_us_page') }}"><i class="bi bi-envelope"></i><span>Contact</span></a></nav>
 <script>
-(function(){let start=Date.now(),maxScroll=0,interacted=false;function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}addEventListener('scroll',()=>{interacted=true;upd();},{passive:true});addEventListener('click',()=>{interacted=true;});addEventListener('touchstart',()=>{interacted=true;},{passive:true});function payload(){return{path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}send();setTimeout(send,5000);setInterval(send,30000);})();
+(function(){let start=Date.now(),maxScroll=0,interacted=false;function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}addEventListener('scroll',()=>{interacted=true;upd();},{passive:true});addEventListener('click',()=>{interacted=true;});addEventListener('touchstart',()=>{interacted=true;},{passive:true});function payload(){return{path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}send(); setTimeout(send,10000); setInterval(send,90000);})();
 </script>
 </body>
 </html>

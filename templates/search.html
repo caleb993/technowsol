@@ -1,15 +1,18 @@
 <!doctype html><html lang="en" data-bs-theme="light"><head>
-<meta charset="utf-8">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-ELRXZQRGNR');
-</script>
-<meta name="google-adsense-account" content="ca-pub-4340479899629152">
+  <meta charset="utf-8">
 
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Search SurgeTechKnow</title><meta name="description" content="Search SurgeTechKnow articles and field media."><link rel="canonical" href="https://techknowsolution.co.ke/search"><meta name="robots" content="noindex, follow"><meta name="google-adsense-account" content="ca-pub-4340479899629152"><meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">{% include '_site_css.html' %}</head><body><nav class="nav"><div class="wrap navin"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">STK</span><span>SurgeTechKnow<small>SEARCH</small></span></a><div class="nav-links"><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('hub') }}">Hub</a></div></div></nav><main class="wrap"><section class="section"><div class="section-head"><h2><i class="bi bi-search"></i> Search</h2></div><form class="searchbar" action="{{ url_for('search_page') }}"><input name="q" value="{{ q }}" placeholder="Search articles and media"><button class="btn btn-red">Search</button></form></section><section class="section"><div class="section-head"><h2>Article Results</h2></div><div class="latest-list">{% for b in results %}<a class="related-row" href="{{ url_for('view_blog', slug=b.slug) }}"><img src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.png';"><div><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><p class="excerpt">{{ b.content|clean_excerpt(120) }}</p></div></a>{% else %}<p>No matching articles.</p>{% endfor %}</div></section><section class="section"><div class="section-head"><h2>Media Results</h2></div><div class="dense-grid">{% for m in media_results %}<a class="card compact-card" href="{{ url_for('media_view', filename=m.name) }}"><div class="story-img"><img src="{{ m.url }}"></div><div class="body"><h3>{{ m.title }}</h3><p class="excerpt">{{ m.caption }}</p></div></a>{% else %}<p>No matching media.</p>{% endfor %}</div></section></main><script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ELRXZQRGNR');
+  </script>
+
+  <!-- Adsense -->
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Search SurgeTechKnow</title><meta name="description" content="Search SurgeTechKnow articles and field media."><link rel="canonical" href="https://techknowsolution.co.ke/search"><meta name="robots" content="noindex, follow">
+<meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">{% include '_site_css.html' %}</head><body><nav class="nav"><div class="wrap navin"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">STK</span><span>SurgeTechKnow<small>SEARCH</small></span></a><div class="nav-links"><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('hub') }}">Hub</a></div></div></nav><main class="wrap"><section class="section"><div class="section-head"><h2><i class="bi bi-search"></i> Search</h2></div><form class="searchbar" action="{{ url_for('search_page') }}"><input name="q" value="{{ q }}" placeholder="Search articles and media"><button class="btn btn-red">Search</button></form></section><section class="section"><div class="section-head"><h2>Article Results</h2></div><div class="latest-list">{% for b in results %}<a class="related-row" href="{{ url_for('view_blog', slug=b.slug) }}"><img src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.png';"><div><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><p class="excerpt">{{ b.content|clean_excerpt(120) }}</p></div></a>{% else %}<p>No matching articles.</p>{% endfor %}</div></section><section class="section"><div class="section-head"><h2>Media Results</h2></div><div class="dense-grid">{% for m in media_results %}<a class="card compact-card" href="{{ url_for('media_view', filename=m.name) }}"><div class="story-img"><img src="{{ m.url }}"></div><div class="body"><h3>{{ m.title }}</h3><p class="excerpt">{{ m.caption }}</p></div></a>{% else %}<p>No matching media.</p>{% endfor %}</div></section></main><script>
 (function(){
   let start=Date.now(), maxScroll=0, interacted=false;
   function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}
@@ -18,7 +21,7 @@ gtag('config', 'G-ELRXZQRGNR');
   addEventListener('touchstart',()=>{interacted=true;},{passive:true});
   function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}
   function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}
-  send(); setTimeout(send,5000); setInterval(send,30000);
+  send(); setTimeout(send,10000); setInterval(send,90000);
   {% if post is defined and post.slug is defined %}
   function sendArticle(){fetch('/api/blog/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({slug:{{ post.slug|tojson }},total_seconds:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll})}).catch(()=>{});}
   sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);
