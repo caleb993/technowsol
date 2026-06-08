@@ -4,6 +4,8 @@ import math
 import secrets
 import urllib.parse
 import json
+import re
+import zipfile
 from datetime import datetime, timedelta
 
 import markdown
@@ -1284,6 +1286,20 @@ HUB_TOOLS = [
     {"slug":"ccna-practice-lab","anchor":"ccna-practice-lab","title":"Interactive CCNA Practice Lab","icon":"bi-router","description":"Practice subnetting, VLANs, routing and OSI concepts with quick tasks and hints."},
 ]
 
+
+HUB_TOOL_GUIDES = {
+    "password-strength-checker": {"heading":"Free Password Strength Checker for safer logins", "intro":"Use this tool to understand whether a password has enough length, variety and unpredictability for everyday accounts. It is useful for students, office users and small businesses that want better cyber hygiene without complicated security language.", "uses":["Check if a password is too short or predictable","Learn why reused passwords are risky","Get quick improvement tips before creating a new account"]},
+    "subnet-calculator": {"heading":"IP Subnet Calculator for CCNA and ICT support", "intro":"This calculator helps you convert CIDR notation into practical network details: subnet mask, network ID, broadcast address, host range and usable hosts. It supports CCNA revision, router planning and first-level network troubleshooting.", "uses":["Calculate /24, /27, /28 and other CIDR ranges","Find the first and last usable host address","Practise subnetting for networking interviews and CCNA labs"]},
+    "phishing-detector": {"heading":"Phishing Email Checker for suspicious messages", "intro":"Paste a suspicious message and the tool checks for common social-engineering signs such as urgency, password requests, payment pressure, shortened links and attachment tricks. It is an awareness tool for safer decision-making.", "uses":["Review strange email or SMS wording","Teach staff and students common phishing red flags","Support cybersecurity awareness training"]},
+    "wifi-security-check": {"heading":"Wi‑Fi Security Audit Checklist for home and office routers", "intro":"This checklist scores your Wi‑Fi setup based on encryption, password practices and router admin protection. It is designed for practical home users, offices and ICT support teams.", "uses":["Check whether WPA2/WPA3 is enabled","Identify default router password risks","Improve guest network and password sharing habits"]},
+    "ict-troubleshooting-wizard": {"heading":"ICT Troubleshooting Wizard for first-response support", "intro":"Select a common ICT problem and receive structured troubleshooting steps. The goal is to help users document issues and solve basic incidents before escalation.", "uses":["Internet not working checks","Printer and email troubleshooting","Slow computer and boot problem guidance"]},
+    "cybersecurity-quiz": {"heading":"Cybersecurity Awareness Quiz for everyday users", "intro":"Use this quick quiz to test basic password, MFA and phishing awareness. It can support training sessions, student learning and office cyber hygiene reminders.", "uses":["Measure basic security awareness","Create discussion points for training","Encourage safer login and link-clicking habits"]},
+    "internet-speed-tester": {"heading":"Internet Speed Tester for ICT support checks", "intro":"This browser-based tester estimates latency, download speed and upload response between your device and SurgeTechKnow. It helps identify slow Wi‑Fi, weak bundles, ISP issues or overloaded connections.", "uses":["Check if your current connection is usable","Compare Wi‑Fi positions or routers","Support basic ISP or office network troubleshooting"]},
+    "career-simulator": {"heading":"ICT Career Path Simulator for tech learners", "intro":"Choose a technology path and get a practical roadmap covering core skills, certifications and projects. It is useful for beginners exploring cybersecurity, networking, software development, cloud or ICT support.", "uses":["Plan a learning path","Choose beginner certifications","Identify portfolio projects to build"]},
+    "cv-scanner": {"heading":"CV ATS Scanner for ICT and technology roles", "intro":"Upload or paste your CV to check contact details, skills, education, experience sections, ICT keywords and action verbs. The scan gives practical suggestions for making your CV clearer and more recruiter-friendly.", "uses":["Check if your CV has key sections","Improve ICT keyword coverage","Prepare applications for support, networking, cybersecurity and developer roles"]},
+    "ccna-practice-lab": {"heading":"Interactive CCNA Practice Lab for networking learners", "intro":"Practise core networking concepts such as subnetting, VLANs, routing and OSI layers. It is designed for learners preparing for interviews, CCNA study or practical ICT support work.", "uses":["Revise subnetting tasks","Understand VLAN communication","Practise routing and OSI model thinking"]},
+}
+
 def get_hub_tool(tool_slug):
     for tool in HUB_TOOLS:
         if tool["slug"] == tool_slug:
@@ -1307,7 +1323,24 @@ def _extract_docx_text(file_bytes):
 
 
 def _extract_pdf_text_light(file_bytes):
-    """Lightweight PDF text extraction fallback for simple PDFs."""
+    """Extract text from text-based PDFs. Uses pypdf/PyPDF2 when available, then a safe fallback."""
+    try:
+        try:
+            from pypdf import PdfReader
+        except Exception:
+            from PyPDF2 import PdfReader
+        reader = PdfReader(io.BytesIO(file_bytes))
+        pages = []
+        for page in reader.pages[:8]:
+            try:
+                pages.append(page.extract_text() or "")
+            except Exception:
+                continue
+        text = " ".join(pages).strip()
+        if text:
+            return text
+    except Exception:
+        pass
     try:
         raw = file_bytes.decode("latin-1", errors="ignore")
         chunks = re.findall(r"\((.{2,}?)\)", raw, flags=re.S)
@@ -1402,8 +1435,35 @@ def api_cv_scan():
     return jsonify(result)
 
 
-@app.route("/api/speed-test-upload", methods=["POST"])
+@app.route("/api/speed-test-download")
+def api_speed_test_download():
+    """Serve random bytes for the Hub internet speed tester.
+    This avoids depending on a cached static image and gives the browser a real download workload.
+    """
+    try:
+        size = int(request.args.get("size", "1048576"))
+    except Exception:
+        size = 1048576
+    size = max(131072, min(size, 4 * 1024 * 1024))
+
+    def generate():
+        remaining = size
+        chunk = 64 * 1024
+        while remaining > 0:
+            n = min(chunk, remaining)
+            remaining -= n
+            yield os.urandom(n)
+
+    resp = Response(generate(), mimetype="application/octet-stream")
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    resp.headers["Content-Length"] = str(size)
+    return resp
+
+
+@app.route("/api/speed-test-upload", methods=["POST", "OPTIONS"])
 def api_speed_test_upload():
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True})
     size = len(request.get_data(cache=False) or b"")
     return jsonify({"ok": True, "bytes_received": size, "server_time": datetime.utcnow().isoformat() + "Z"})
 
@@ -1425,6 +1485,7 @@ def hub():
         related_posts=list_related_blogs(6),
         hub_tools=HUB_TOOLS,
         active_tool=None,
+        active_guide=None,
         year=datetime.now().year
     )
 
@@ -1449,6 +1510,7 @@ def hub_tool(tool_slug):
         related_posts=list_related_blogs(6),
         hub_tools=HUB_TOOLS,
         active_tool=tool,
+        active_guide=HUB_TOOL_GUIDES.get(tool_slug),
         year=datetime.now().year
     )
 
