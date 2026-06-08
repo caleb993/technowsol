@@ -1278,8 +1278,9 @@ HUB_TOOLS = [
     {"slug":"wifi-security-check","anchor":"wifi-security-check","title":"Wi‑Fi Security Audit Tool","icon":"bi-wifi","description":"Score your router and Wi‑Fi setup using practical home and office security checks."},
     {"slug":"ict-troubleshooting-wizard","anchor":"ict-troubleshooting-wizard","title":"ICT Troubleshooting Wizard","icon":"bi-tools","description":"Get quick first-response steps for internet, printer, email, slow PC and boot problems."},
     {"slug":"cybersecurity-quiz","anchor":"cybersecurity-quiz","title":"Cybersecurity Awareness Quiz","icon":"bi-patch-question","description":"Test everyday cyber safety knowledge with a quick interactive security quiz."},
+    {"slug":"internet-speed-tester","anchor":"internet-speed-tester","title":"Internet Speed Tester","icon":"bi-speedometer2","description":"Estimate download speed, upload response and latency from your browser for quick ICT checks."},
     {"slug":"career-simulator","anchor":"career-simulator","title":"ICT Career Path Simulator","icon":"bi-person-workspace","description":"Choose a technology career path and receive a practical beginner roadmap."},
-    {"slug":"cv-scanner","anchor":"cv-scanner","title":"CV / Resume ATS Scanner","icon":"bi-file-earmark-person","description":"Paste CV text and get simple ATS-friendly improvement suggestions for ICT roles."},
+    {"slug":"cv-scanner","anchor":"cv-scanner","title":"CV / Resume ATS Scanner","icon":"bi-file-earmark-person","description":"Upload a PDF, Word document or paste CV text for ATS-friendly improvement suggestions."},
     {"slug":"ccna-practice-lab","anchor":"ccna-practice-lab","title":"Interactive CCNA Practice Lab","icon":"bi-router","description":"Practice subnetting, VLANs, routing and OSI concepts with quick tasks and hints."},
 ]
 
@@ -1288,6 +1289,123 @@ def get_hub_tool(tool_slug):
         if tool["slug"] == tool_slug:
             return tool
     return None
+
+
+def _extract_docx_text(file_bytes):
+    """Extract readable text from a DOCX file without extra dependencies."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(file_bytes)) as z:
+            parts = []
+            for name in z.namelist():
+                if name.startswith("word/") and name.endswith(".xml"):
+                    xml = z.read(name).decode("utf-8", errors="ignore")
+                    xml = re.sub(r"<[^>]+>", " ", xml)
+                    parts.append(xml)
+            return " ".join(parts)
+    except Exception:
+        return ""
+
+
+def _extract_pdf_text_light(file_bytes):
+    """Lightweight PDF text extraction fallback for simple PDFs."""
+    try:
+        raw = file_bytes.decode("latin-1", errors="ignore")
+        chunks = re.findall(r"\((.{2,}?)\)", raw, flags=re.S)
+        text = " ".join(chunks)
+        text = text.replace("\\n", " ").replace("\\r", " ").replace("\\t", " ")
+        return text
+    except Exception:
+        return ""
+
+
+def _extract_cv_text(upload):
+    if not upload:
+        return ""
+    filename = secure_filename(upload.filename or "")
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    file_bytes = upload.read()
+    if ext in {"txt", "md"}:
+        return file_bytes.decode("utf-8", errors="ignore")
+    if ext == "docx":
+        return _extract_docx_text(file_bytes)
+    if ext == "pdf":
+        return _extract_pdf_text_light(file_bytes)
+    if ext == "doc":
+        # Old binary DOC files need specialist parsers. This fallback still pulls visible strings when available.
+        return file_bytes.decode("latin-1", errors="ignore")
+    return ""
+
+
+def _score_cv_text(text):
+    text = (text or "").strip()
+    low = text.lower()
+    tips = []
+    strengths = []
+    score = 25
+
+    if len(text) >= 800:
+        score += 12; strengths.append("Enough content for a recruiter to review.")
+    else:
+        tips.append("Add more detail on your experience, projects, education and achievements.")
+    if re.search(r"[\w\.-]+@[\w\.-]+\.\w+", text):
+        score += 10; strengths.append("Email contact detected.")
+    else:
+        tips.append("Add a professional email address.")
+    if re.search(r"(\+254|0\d{9}|phone|mobile|tel)", low):
+        score += 8; strengths.append("Phone/contact section detected.")
+    else:
+        tips.append("Add a phone number or clear contact section.")
+    if re.search(r"\b(skills|technical skills|competencies)\b", low):
+        score += 10; strengths.append("Skills section detected.")
+    else:
+        tips.append("Add a clear Skills or Technical Skills section.")
+    if re.search(r"\b(experience|employment|work history|internship|projects?)\b", low):
+        score += 12; strengths.append("Experience or projects section detected.")
+    else:
+        tips.append("Add work experience, attachment/internship, or project experience.")
+    if re.search(r"\b(education|degree|bbit|diploma|certificate|certification|ccna|opsswat|cybersecurity)\b", low):
+        score += 10; strengths.append("Education/certification keywords detected.")
+    else:
+        tips.append("Add education and certifications such as BBIT, CCNA, cybersecurity or file security.")
+    ict_keywords = re.findall(r"\b(python|flask|django|javascript|html|css|sql|database|network|ccna|cybersecurity|ict|support|linux|windows|cloud|api|git|router|switch|vlan)\b", low)
+    if len(set(ict_keywords)) >= 5:
+        score += 13; strengths.append("Good ICT keyword coverage detected.")
+    else:
+        tips.append("Add more role-relevant ICT keywords, tools and technologies.")
+    if re.search(r"\b(achieved|improved|reduced|developed|implemented|managed|configured|supported|automated|resolved)\b", low):
+        score += 10; strengths.append("Action verbs detected.")
+    else:
+        tips.append("Use action verbs like developed, configured, supported, automated and resolved.")
+
+    score = max(0, min(100, score))
+    if not tips:
+        tips.append("Your CV has a good ATS foundation. Keep formatting simple and quantify achievements where possible.")
+    return {"score": score, "tips": tips[:8], "strengths": strengths[:6], "characters": len(text)}
+
+
+@app.route("/api/cv-scan", methods=["POST"])
+def api_cv_scan():
+    pasted = request.form.get("cv_text", "")
+    uploaded = request.files.get("cv_file")
+    text = pasted.strip()
+    filename = ""
+    if uploaded and uploaded.filename:
+        filename = secure_filename(uploaded.filename)
+        ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        if ext not in {"pdf", "doc", "docx", "txt", "md"}:
+            return jsonify({"ok": False, "error": "Upload a PDF, DOC, DOCX or TXT CV file."}), 400
+        text = (text + " " + _extract_cv_text(uploaded)).strip()
+    if len(text) < 60:
+        return jsonify({"ok": False, "error": "Not enough readable CV text found. Try a text-based PDF, DOCX, TXT, or paste the CV text."}), 400
+    result = _score_cv_text(text)
+    result.update({"ok": True, "filename": filename})
+    return jsonify(result)
+
+
+@app.route("/api/speed-test-upload", methods=["POST"])
+def api_speed_test_upload():
+    size = len(request.get_data(cache=False) or b"")
+    return jsonify({"ok": True, "bytes_received": size, "server_time": datetime.utcnow().isoformat() + "Z"})
 
 @app.route("/hub")
 def hub():
