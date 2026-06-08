@@ -1,20 +1,42 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 <head>
-  <meta charset="utf-8">
 
-  <!-- Google Analytics -->
+  <!-- Google Analytics HARD FIX -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR');
+    gtag('config', 'G-ELRXZQRGNR', {
+      send_page_view: false,
+      cookie_domain: 'auto',
+      cookie_flags: 'SameSite=Lax;Secure'
+    });
+
+    function stkSendPageView(){
+      if (window.__stkGaPageViewSent) return;
+      window.__stkGaPageViewSent = true;
+      gtag('event', 'page_view', {
+        page_title: document.title || 'SurgeTechKnow',
+        page_location: window.location.href,
+        page_path: window.location.pathname + window.location.search
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', stkSendPageView);
+    } else {
+      stkSendPageView();
+    }
   </script>
 
   <!-- Adsense -->
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Adsense -->
+<meta charset="utf-8">
+<!-- Adsense -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
   {% set active_slug = active_tool.slug if active_tool is defined and active_tool else 'interactive-cyber-lab' %}
   {% set active_title = active_tool.title if active_tool is defined and active_tool else 'Interactive Cyber Lab & ICT Sandbox' %}
   {% set active_desc = active_tool.description if active_tool is defined and active_tool else 'Free cybersecurity, networking, CCNA, ICT support and career tools by SurgeTechKnow.' %}

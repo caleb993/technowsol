@@ -1,20 +1,41 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 <head>
-  <meta charset="utf-8">
 
-  <!-- Google Analytics -->
+  <!-- Google Analytics HARD FIX -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR');
+    gtag('config', 'G-ELRXZQRGNR', {
+      send_page_view: false,
+      cookie_domain: 'auto',
+      cookie_flags: 'SameSite=Lax;Secure'
+    });
+
+    function stkSendPageView(){
+      if (window.__stkGaPageViewSent) return;
+      window.__stkGaPageViewSent = true;
+      gtag('event', 'page_view', {
+        page_title: document.title || 'SurgeTechKnow',
+        page_location: window.location.href,
+        page_path: window.location.pathname + window.location.search
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', stkSendPageView);
+    } else {
+      stkSendPageView();
+    }
   </script>
 
   <!-- Adsense -->
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-
+<!-- Adsense -->
+<meta charset="utf-8">
+<!-- Adsense -->
 <script>(function(){const saved=localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-bs-theme', saved==='dark'?'dark':'light');})();</script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -28,8 +49,7 @@
   <meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:secure_url" content="https://techknowsolution.co.ke/static/ogimage.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SurgeTechKnow • Practical Technology Journal"><meta name="twitter:description" content="Cybersecurity, networking, Windows News, AI automation and ICT support guides."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.png">
 <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-ELRXZQRGNR');</script>
-  <script type="application/ld+json">
+<script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@graph":[

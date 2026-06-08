@@ -1,21 +1,42 @@
 <!doctype html><html lang="en" data-bs-theme="light"><head>
-  <meta charset="utf-8">
 
-  <!-- Google Analytics -->
+  <!-- Google Analytics HARD FIX -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR');
+    gtag('config', 'G-ELRXZQRGNR', {
+      send_page_view: false,
+      cookie_domain: 'auto',
+      cookie_flags: 'SameSite=Lax;Secure'
+    });
+
+    function stkSendPageView(){
+      if (window.__stkGaPageViewSent) return;
+      window.__stkGaPageViewSent = true;
+      gtag('event', 'page_view', {
+        page_title: document.title || 'SurgeTechKnow',
+        page_location: window.location.href,
+        page_path: window.location.pathname + window.location.search
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', stkSendPageView);
+    } else {
+      stkSendPageView();
+    }
   </script>
 
   <!-- Adsense -->
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
-
+<!-- Adsense -->
+<meta charset="utf-8">
+<!-- Adsense -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>{% if selected_category %}{{ selected_category }} • {% endif %}SurgeTechKnow Journal</title><meta name="description" content="Browse SurgeTechKnow technology articles by cybersecurity, networking, Windows News, Mobile & Android, AI automation and ICT Support."><link rel="canonical" href="https://techknowsolution.co.ke{{ request.full_path.rstrip('?') }}"><meta name="robots" content="index, follow, max-image-preview:large"><meta property="og:title" content="SurgeTechKnow Journal"><meta property="og:description" content="Practical technology stories and guides."><meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png"><meta name="twitter:card" content="summary_large_image">
 <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-ELRXZQRGNR');</script><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>:root{--red:#e50920;--green:#1e3a8a;--ink:#071021;--muted:#647084;--line:#dfe3ea;--soft:#f4f6fa;--card:#fff;--wrap:min(1660px,calc(100% - 30px))}*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--soft);color:var(--ink)}a{text-decoration:none;color:inherit}.wrap{width:var(--wrap);margin:auto}.top{background:var(--red);color:#fff}.top .wrap{height:38px;display:flex;align-items:center;gap:22px;font-weight:900;overflow:auto;white-space:nowrap}.nav{background:#fff;border-bottom:1px solid var(--line)}.nav .wrap{height:62px;display:flex;align-items:center;justify-content:space-between}.brand{font:900 22px 'Poppins'}.brand span{color:var(--red)}.nav a{font-weight:800;font-size:13px;text-transform:uppercase}.hero{padding:26px 0 18px}.hero h1{font:900 clamp(26px,4vw,46px) 'Poppins';margin:0}.filters{display:flex;gap:8px;overflow:auto;padding:10px 0}.filters a{border:1px solid var(--line);background:#fff;padding:8px 13px;border-radius:999px;font-size:12px;font-weight:900;white-space:nowrap}.filters a.active{background:var(--red);color:#fff}.layout{display:grid;grid-template-columns:1.1fr .9fr .7fr;gap:18px}.lead{background:#fff;border:1px solid var(--line)}.lead img{width:100%;height:330px;object-fit:cover;display:block}.body{padding:14px}.cat{color:var(--red);font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.lead h2{font:900 32px/1.07 'Poppins';margin:.35rem 0}.excerpt{color:var(--muted);font-size:14px}.mini-list{display:grid;gap:10px}.mini{background:#fff;border:1px solid var(--line);display:grid;grid-template-columns:112px 1fr;gap:11px;padding:9px}.mini img{width:112px;height:78px;object-fit:cover}.mini h3{font:900 15px/1.2 'Poppins';margin:.2rem 0}.rail{background:#fff;border:1px solid var(--line)}.rail h3{background:var(--green);color:#fff;margin:0;padding:12px 14px;text-transform:uppercase;font-size:14px}.rail a{display:block;padding:13px;border-bottom:1px solid var(--line)}.rail h4{font:900 14px/1.22 'Poppins';margin:.25rem 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.card{background:#fff;border:1px solid var(--line)}.card img{width:100%;height:140px;object-fit:cover}.card h3{font:900 16px/1.22 'Poppins';margin:.25rem 0}.meta{color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.footer{background:#071021;color:#dbe3ef;margin-top:30px;padding:25px 0}@media(max-width:1100px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:640px){:root{--wrap:calc(100% - 14px)}.top .wrap{height:30px;font-size:12px}.nav .wrap{height:52px}.layout{gap:10px}.lead img{height:190px}.lead h2{font-size:22px}.mini-list{grid-template-columns:repeat(2,1fr);gap:8px}.mini{grid-template-columns:1fr;padding:0}.mini img{width:100%;height:92px}.mini div{padding:8px}.mini h3{font-size:12px}.grid{grid-template-columns:repeat(2,1fr);gap:8px}.card img{height:92px}.card .body{padding:8px}.card h3{font-size:12px}.excerpt{display:none}.rail{display:none}}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"><style>:root{--red:#e50920;--green:#1e3a8a;--ink:#071021;--muted:#647084;--line:#dfe3ea;--soft:#f4f6fa;--card:#fff;--wrap:min(1660px,calc(100% - 30px))}*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--soft);color:var(--ink)}a{text-decoration:none;color:inherit}.wrap{width:var(--wrap);margin:auto}.top{background:var(--red);color:#fff}.top .wrap{height:38px;display:flex;align-items:center;gap:22px;font-weight:900;overflow:auto;white-space:nowrap}.nav{background:#fff;border-bottom:1px solid var(--line)}.nav .wrap{height:62px;display:flex;align-items:center;justify-content:space-between}.brand{font:900 22px 'Poppins'}.brand span{color:var(--red)}.nav a{font-weight:800;font-size:13px;text-transform:uppercase}.hero{padding:26px 0 18px}.hero h1{font:900 clamp(26px,4vw,46px) 'Poppins';margin:0}.filters{display:flex;gap:8px;overflow:auto;padding:10px 0}.filters a{border:1px solid var(--line);background:#fff;padding:8px 13px;border-radius:999px;font-size:12px;font-weight:900;white-space:nowrap}.filters a.active{background:var(--red);color:#fff}.layout{display:grid;grid-template-columns:1.1fr .9fr .7fr;gap:18px}.lead{background:#fff;border:1px solid var(--line)}.lead img{width:100%;height:330px;object-fit:cover;display:block}.body{padding:14px}.cat{color:var(--red);font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.lead h2{font:900 32px/1.07 'Poppins';margin:.35rem 0}.excerpt{color:var(--muted);font-size:14px}.mini-list{display:grid;gap:10px}.mini{background:#fff;border:1px solid var(--line);display:grid;grid-template-columns:112px 1fr;gap:11px;padding:9px}.mini img{width:112px;height:78px;object-fit:cover}.mini h3{font:900 15px/1.2 'Poppins';margin:.2rem 0}.rail{background:#fff;border:1px solid var(--line)}.rail h3{background:var(--green);color:#fff;margin:0;padding:12px 14px;text-transform:uppercase;font-size:14px}.rail a{display:block;padding:13px;border-bottom:1px solid var(--line)}.rail h4{font:900 14px/1.22 'Poppins';margin:.25rem 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.card{background:#fff;border:1px solid var(--line)}.card img{width:100%;height:140px;object-fit:cover}.card h3{font:900 16px/1.22 'Poppins';margin:.25rem 0}.meta{color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.footer{background:#071021;color:#dbe3ef;margin-top:30px;padding:25px 0}@media(max-width:1100px){.layout{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:640px){:root{--wrap:calc(100% - 14px)}.top .wrap{height:30px;font-size:12px}.nav .wrap{height:52px}.layout{gap:10px}.lead img{height:190px}.lead h2{font-size:22px}.mini-list{grid-template-columns:repeat(2,1fr);gap:8px}.mini{grid-template-columns:1fr;padding:0}.mini img{width:100%;height:92px}.mini div{padding:8px}.mini h3{font-size:12px}.grid{grid-template-columns:repeat(2,1fr);gap:8px}.card img{height:92px}.card .body{padding:8px}.card h3{font-size:12px}.excerpt{display:none}.rail{display:none}}
 .mobile-bottom-nav{display:none}@media(max-width:640px){body{padding-bottom:62px}.mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:56px;background:#fff;border-top:1px solid #dfe3ea;z-index:999;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -8px 24px rgba(15,23,42,.08)}.mobile-bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-weight:900;color:#334155;text-decoration:none}.mobile-bottom-nav i{font-size:18px;color:#e50920}}
 
 /* =========================================================

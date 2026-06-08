@@ -1,17 +1,40 @@
 <!doctype html><html lang="en" data-bs-theme="light"><head>
-  <meta charset="utf-8">
 
-  <!-- Google Analytics -->
+  <!-- Google Analytics HARD FIX -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR');
+    gtag('config', 'G-ELRXZQRGNR', {
+      send_page_view: false,
+      cookie_domain: 'auto',
+      cookie_flags: 'SameSite=Lax;Secure'
+    });
+
+    function stkSendPageView(){
+      if (window.__stkGaPageViewSent) return;
+      window.__stkGaPageViewSent = true;
+      gtag('event', 'page_view', {
+        page_title: document.title || 'SurgeTechKnow',
+        page_location: window.location.href,
+        page_path: window.location.pathname + window.location.search
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', stkSendPageView);
+    } else {
+      stkSendPageView();
+    }
   </script>
 
   <!-- Adsense -->
-  <meta name="google-adsense-account" content="ca-pub-4340479899629152"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Search SurgeTechKnow</title><meta name="description" content="Search SurgeTechKnow articles and field media."><link rel="canonical" href="https://techknowsolution.co.ke/search"><meta name="robots" content="noindex, follow">
+  <meta name="google-adsense-account" content="ca-pub-4340479899629152">
+<!-- Adsense -->
+<meta charset="utf-8">
+<!-- Adsense -->
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Search SurgeTechKnow</title><meta name="description" content="Search SurgeTechKnow articles and field media."><link rel="canonical" href="https://techknowsolution.co.ke/search"><meta name="robots" content="noindex, follow">
 <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">{% include '_site_css.html' %}</head><body><nav class="nav"><div class="wrap navin"><a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">STK</span><span>SurgeTechKnow<small>SEARCH</small></span></a><div class="nav-links"><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('hub') }}">Hub</a></div></div></nav><main class="wrap"><section class="section"><div class="section-head"><h2><i class="bi bi-search"></i> Search</h2></div><form class="searchbar" action="{{ url_for('search_page') }}"><input name="q" value="{{ q }}" placeholder="Search articles and media"><button class="btn btn-red">Search</button></form></section><section class="section"><div class="section-head"><h2>Article Results</h2></div><div class="latest-list">{% for b in results %}<a class="related-row" href="{{ url_for('view_blog', slug=b.slug) }}"><img src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.png';"><div><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><p class="excerpt">{{ b.content|clean_excerpt(120) }}</p></div></a>{% else %}<p>No matching articles.</p>{% endfor %}</div></section><section class="section"><div class="section-head"><h2>Media Results</h2></div><div class="dense-grid">{% for m in media_results %}<a class="card compact-card" href="{{ url_for('media_view', filename=m.name) }}"><div class="story-img"><img src="{{ m.url }}"></div><div class="body"><h3>{{ m.title }}</h3><p class="excerpt">{{ m.caption }}</p></div></a>{% else %}<p>No matching media.</p>{% endfor %}</div></section></main><script>
 (function(){
   let start=Date.now(), maxScroll=0, interacted=false;
