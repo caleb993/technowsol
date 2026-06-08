@@ -68,6 +68,19 @@ img{max-width:100%;}
   .hero-img,.blog-hero-image{max-height:240px!important;aspect-ratio:16/9;}
 }
 
+
+/* ===== Click-to-zoom image lightbox ===== */
+.stk-zoomable-img{cursor:zoom-in;transition:transform .18s ease, box-shadow .18s ease;}
+.stk-zoomable-img:hover{transform:translateY(-1px);box-shadow:0 14px 34px rgba(2,6,23,.18);}
+.stk-lightbox{position:fixed;inset:0;z-index:99999;background:rgba(2,6,23,.92);display:none;align-items:center;justify-content:center;padding:18px;}
+.stk-lightbox.active{display:flex;}
+.stk-lightbox-inner{position:relative;width:min(1180px,96vw);max-height:92vh;display:flex;flex-direction:column;gap:10px;align-items:center;}
+.stk-lightbox img{max-width:100%;max-height:86vh;object-fit:contain;border-radius:14px;background:#020617;box-shadow:0 24px 80px rgba(0,0,0,.55);}
+.stk-lightbox-caption{color:#e5e7eb;font:800 13px/1.4 Inter,system-ui,sans-serif;text-align:center;max-width:900px;}
+.stk-lightbox-close{position:absolute;top:-10px;right:-10px;width:42px;height:42px;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:#e50920;color:#fff;font-size:28px;line-height:38px;font-weight:900;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.35);}
+.stk-lightbox-hint{position:absolute;left:12px;top:12px;color:#cbd5e1;background:rgba(15,23,42,.72);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:7px 12px;font:800 12px Inter,system-ui,sans-serif;}
+@media(max-width:640px){.stk-lightbox{padding:10px}.stk-lightbox-close{top:8px;right:8px}.stk-lightbox-hint{display:none}.stk-lightbox img{max-height:82vh;border-radius:10px}}
+
 </style><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","logo":"https://techknowsolution.co.ke/static/ogimage.png"},{"@type":"WebSite","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","publisher":{"@type":"Organization","name":"SurgeTechKnow"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://techknowsolution.co.ke/"},{"@type":"ListItem","position":2,"name":"Field Media","item":"https://techknowsolution.co.ke{{ request.path }}"}]}]}</script><meta property="og:type" content="website"><meta property="og:site_name" content="SurgeTechKnow"><meta property="og:url" content="https://techknowsolution.co.ke{{ request.path }}"><meta property="og:description" content="{{ item.caption }}"><meta property="og:image:secure_url" content="{{ item.url|absolute_url }}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{{ item.title }} • Field Media Desk"><meta name="twitter:description" content="{{ item.caption }}"><meta name="twitter:image" content="{{ item.url|absolute_url }}"><meta name="theme-color" content="#e50920">
 <meta property="og:image:type" content="image/png">
 <meta property="og:locale" content="en_US">
@@ -88,4 +101,42 @@ img{max-width:100%;}
   sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);
   {% endif %}
 })();
-</script></body></html>
+</script>
+<script>
+(function(){
+  function ready(fn){document.readyState!=='loading'?fn():document.addEventListener('DOMContentLoaded',fn);}
+  ready(function(){
+    const selectors=['.article .hero-img','.article .content img','.main .media img'];
+    const imgs=[...document.querySelectorAll(selectors.join(','))].filter(img=>img && img.src);
+    if(!imgs.length) return;
+    let box=document.querySelector('.stk-lightbox');
+    if(!box){
+      box=document.createElement('div');
+      box.className='stk-lightbox';
+      box.setAttribute('role','dialog');
+      box.setAttribute('aria-modal','true');
+      box.innerHTML='<div class="stk-lightbox-inner"><button type="button" class="stk-lightbox-close" aria-label="Close image preview">×</button><span class="stk-lightbox-hint">Click outside or press ESC to close</span><img alt="Expanded image preview"><div class="stk-lightbox-caption"></div></div>';
+      document.body.appendChild(box);
+    }
+    const big=box.querySelector('img');
+    const cap=box.querySelector('.stk-lightbox-caption');
+    const close=()=>{box.classList.remove('active');document.body.style.overflow='';big.removeAttribute('src');};
+    box.querySelector('.stk-lightbox-close').addEventListener('click',close);
+    box.addEventListener('click',e=>{if(e.target===box) close();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape' && box.classList.contains('active')) close();});
+    imgs.forEach(img=>{
+      img.classList.add('stk-zoomable-img');
+      img.setAttribute('title','Click to view larger image');
+      img.addEventListener('click',function(e){
+        e.preventDefault(); e.stopPropagation();
+        big.src=this.currentSrc || this.src;
+        big.alt=this.alt || 'SurgeTechKnow image preview';
+        cap.textContent=this.alt || this.closest('article')?.querySelector('h1')?.textContent || 'SurgeTechKnow image preview';
+        box.classList.add('active');
+        document.body.style.overflow='hidden';
+      });
+    });
+  });
+})();
+</script>
+</body></html>
