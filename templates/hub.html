@@ -110,7 +110,16 @@ async function runSpeedTest(){
 
     step('Testing upload response...');
     let payload=new Uint8Array(384*1024);
-    if(window.crypto && crypto.getRandomValues){crypto.getRandomValues(payload);}else{for(let i=0;i<payload.length;i++)payload[i]=i%255;}
+    if(window.crypto && crypto.getRandomValues){
+      // crypto.getRandomValues has a hard 65,536 byte limit per call.
+      // Fill the upload payload safely in smaller chunks.
+      const chunkSize = 65536;
+      for(let offset=0; offset<payload.length; offset+=chunkSize){
+        crypto.getRandomValues(payload.subarray(offset, Math.min(offset+chunkSize, payload.length)));
+      }
+    }else{
+      for(let i=0;i<payload.length;i++) payload[i]=i%255;
+    }
     let u0=performance.now();
     let ur=await fetch('/api/speed-test-upload',{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:payload,cache:'no-store'});
     if(!ur.ok) throw new Error('Upload endpoint failed');
