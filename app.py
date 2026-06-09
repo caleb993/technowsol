@@ -1312,6 +1312,7 @@ def index():
 HUB_TOOLS = [
     {"slug":"password-strength-checker","anchor":"password-strength-checker","title":"Password Strength Analyzer","icon":"bi-key","description":"Check password strength, weak patterns and improvement tips directly in your browser."},
     {"slug":"subnet-calculator","anchor":"subnet-calculator","title":"IP Address & Subnet Calculator","icon":"bi-diagram-3","description":"Calculate network ID, subnet mask, broadcast address, host range and usable hosts for CCNA practice."},
+    {"slug":"port-scanner","anchor":"port-scanner","title":"Port Scanner","icon":"bi-broadcast-pin","description":"Check a permitted host for common open service ports and understand basic exposure safely."},
     {"slug":"phishing-detector","anchor":"phishing-detector","title":"Phishing Email Detector","icon":"bi-envelope-exclamation","description":"Scan suspicious messages for common phishing warning signs and social engineering pressure."},
     {"slug":"wifi-security-check","anchor":"wifi-security-check","title":"Wi‑Fi Security Audit Tool","icon":"bi-wifi","description":"Score your router and Wi‑Fi setup using practical home and office security checks."},
     {"slug":"ict-troubleshooting-wizard","anchor":"ict-troubleshooting-wizard","title":"ICT Troubleshooting Wizard","icon":"bi-tools","description":"Get quick first-response steps for internet, printer, email, slow PC and boot problems."},
@@ -1326,6 +1327,7 @@ HUB_TOOLS = [
 HUB_TOOL_GUIDES = {
     "password-strength-checker": {"heading":"Free Password Strength Checker for safer logins", "intro":"Use this tool to understand whether a password has enough length, variety and unpredictability for everyday accounts. It is useful for students, office users and small businesses that want better cyber hygiene without complicated security language.", "uses":["Check if a password is too short or predictable","Learn why reused passwords are risky","Get quick improvement tips before creating a new account"]},
     "subnet-calculator": {"heading":"IP Subnet Calculator for CCNA and ICT support", "intro":"This calculator helps you convert CIDR notation into practical network details: subnet mask, network ID, broadcast address, host range and usable hosts. It supports CCNA revision, router planning and first-level network troubleshooting.", "uses":["Calculate /24, /27, /28 and other CIDR ranges","Find the first and last usable host address","Practise subnetting for networking interviews and CCNA labs"]},
+    "port-scanner": {"heading":"Safe Port Scanner for authorized ICT checks", "intro":"This tool checks a small set of common TCP service ports on a host you own or are authorized to test. It is intended for defensive ICT support, learning and basic exposure review, not aggressive scanning.", "uses":["Check whether common service ports are open","Understand visible services such as HTTP, HTTPS, SSH and RDP","Support basic firewall and server exposure reviews"]},
     "phishing-detector": {"heading":"Phishing Email Checker for suspicious messages", "intro":"Paste a suspicious message and the tool checks for common social-engineering signs such as urgency, password requests, payment pressure, shortened links and attachment tricks. It is an awareness tool for safer decision-making.", "uses":["Review strange email or SMS wording","Teach staff and students common phishing red flags","Support cybersecurity awareness training"]},
     "wifi-security-check": {"heading":"Wi‑Fi Security Audit Checklist for home and office routers", "intro":"This checklist scores your Wi‑Fi setup based on encryption, password practices and router admin protection. It is designed for practical home users, offices and ICT support teams.", "uses":["Check whether WPA2/WPA3 is enabled","Identify default router password risks","Improve guest network and password sharing habits"]},
     "ict-troubleshooting-wizard": {"heading":"ICT Troubleshooting Wizard for first-response support", "intro":"Select a common ICT problem and receive structured troubleshooting steps. The goal is to help users document issues and solve basic incidents before escalation.", "uses":["Internet not working checks","Printer and email troubleshooting","Slow computer and boot problem guidance"]},
@@ -1469,6 +1471,85 @@ def api_cv_scan():
     result = _score_cv_text(text)
     result.update({"ok": True, "filename": filename})
     return jsonify(result)
+
+
+@app.route("/api/port-scan", methods=["POST"])
+def api_port_scan():
+    """Defensive, rate-limited common-port checker for the Hub.
+    It blocks local/private targets to avoid SSRF and scans only a small approved list of common ports.
+    """
+    import socket
+    import ipaddress
+
+    payload = request.get_json(silent=True) or {}
+    target = str(payload.get("target", "")).strip().lower()
+    selected_ports = payload.get("ports") or []
+    allowed_ports = {
+        21: "FTP", 22: "SSH", 25: "SMTP", 53: "DNS", 80: "HTTP",
+        110: "POP3", 143: "IMAP", 443: "HTTPS", 465: "SMTPS", 587: "SMTP Submission",
+        993: "IMAPS", 995: "POP3S", 1433: "MSSQL", 3306: "MySQL",
+        3389: "RDP", 5432: "PostgreSQL", 8080: "HTTP Alternate", 8443: "HTTPS Alternate"
+    }
+
+    if not target or len(target) > 253:
+        return jsonify({"ok": False, "error": "Enter a valid hostname or public IP address."}), 400
+    if re.search(r"[^a-z0-9.-]", target):
+        return jsonify({"ok": False, "error": "Use only a hostname or IP address, without protocol or paths."}), 400
+    if target.startswith(("http://", "https://")) or "/" in target:
+        return jsonify({"ok": False, "error": "Enter only the host, for example example.com or 8.8.8.8."}), 400
+
+    try:
+        resolved = socket.gethostbyname(target)
+        ip_obj = ipaddress.ip_address(resolved)
+    except Exception:
+        return jsonify({"ok": False, "error": "Could not resolve that host."}), 400
+
+    if any([ip_obj.is_private, ip_obj.is_loopback, ip_obj.is_link_local, ip_obj.is_multicast, ip_obj.is_reserved, ip_obj.is_unspecified]):
+        return jsonify({"ok": False, "error": "For safety, this public Hub tool does not scan private, localhost, reserved or internal addresses."}), 400
+
+    ports = []
+    try:
+        for p in selected_ports:
+            p = int(p)
+            if p in allowed_ports and p not in ports:
+                ports.append(p)
+    except Exception:
+        ports = []
+    if not ports:
+        ports = [80, 443, 22, 25, 53, 3389, 3306, 5432]
+    ports = ports[:10]
+
+    results = []
+    for port in ports:
+        status = "closed_or_filtered"
+        latency_ms = None
+        started = datetime.utcnow()
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.8)
+            t0 = datetime.utcnow()
+            code = sock.connect_ex((resolved, port))
+            latency_ms = round((datetime.utcnow() - t0).total_seconds() * 1000)
+            status = "open" if code == 0 else "closed_or_filtered"
+        except Exception:
+            status = "closed_or_filtered"
+        finally:
+            try:
+                sock.close()
+            except Exception:
+                pass
+        results.append({"port": port, "service": allowed_ports.get(port, "Unknown"), "status": status, "latency_ms": latency_ms})
+
+    open_count = sum(1 for r in results if r["status"] == "open")
+    return jsonify({
+        "ok": True,
+        "target": target,
+        "resolved_ip": resolved,
+        "ports_checked": len(results),
+        "open_count": open_count,
+        "results": results,
+        "note": "Use this only on systems you own or have permission to test. Closed/filtered means the connection was refused, blocked or timed out."
+    })
 
 
 @app.route("/api/speed-test-download")
