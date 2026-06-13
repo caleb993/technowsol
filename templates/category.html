@@ -87,7 +87,7 @@
 </head>
 <body>
   <div class="top"><div class="wrap"><span>SurgeTechKnow</span><span>{{ cfg.label }}</span><span>Guides</span><span>Analysis</span><span>Practical Technology</span></div></div>
-  <nav class="nav"><div class="wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks"><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('media_gallery') }}">Field Desk</a><a href="{{ url_for('contact_us_page') }}">Contact</a></div></div></nav>
+  <nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a><a href="{{ url_for('privacy_policy') }}">Privacy</a><a href="{{ url_for('terms') }}">Terms</a><a href="{{ url_for('cookie_policy') }}">Cookies</a><a href="{{ url_for('disclaimer') }}">Disclaimer</a></div></div></nav>
   <header class="hero"><div class="wrap"><div class="crumb"><a href="{{ url_for('index') }}">Home</a> &gt; <span>{{ cfg.label }}</span></div><div class="hero-grid"><div><h1><i class="bi {{ cfg.icon }}" style="color:var(--red)"></i> {{ cfg.label }}</h1><p>{{ cfg.hero }}</p></div><aside class="hero-box"><h3>Explore this desk</h3><div class="chips">{% for kw in cfg.keywords %}<span class="chip">{{ kw }}</span>{% endfor %}</div></aside></div></div></header>
 
   <main>
@@ -101,7 +101,7 @@
 
     <section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-question-circle-fill"></i> {{ cfg.name }} FAQs</h2><a class="view-more" href="{{ url_for('contact_us_page') }}">Ask SurgeTechKnow <i class="bi bi-chevron-right"></i></a></div><div class="faq">{% for q,a in cfg.faq %}<div class="faq-item"><h3>{{ q }}</h3><p class="excerpt" style="display:block">{{ a }}</p></div>{% endfor %}</div></div></section>
   </main>
-  <footer class="footer"><div class="wrap">© {{ year }} SurgeTechKnow • {{ cfg.label }} • Practical technology journal</div></footer>
+  <footer class="footer"><div class="wrap">© {{ year or 2026 }} SurgeTechKnow • <a href="{{ url_for('about_page') }}">About Us</a> • <a href="{{ url_for('contact_us_page') }}">Contact</a> • <a href="{{ url_for('privacy_policy') }}">Privacy</a> • <a href="{{ url_for('terms') }}">Terms</a> • <a href="{{ url_for('cookie_policy') }}">Cookies</a> • <a href="{{ url_for('disclaimer') }}">Disclaimer</a></div></footer>
   <nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('index') }}#more"><i class="bi bi-list"></i><span>More</span></a></nav>
 <script>
 (function(){
