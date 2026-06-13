@@ -18,6 +18,7 @@ from flask import (
     flash, abort, session, jsonify, Response
 )
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 
 import data
@@ -25,6 +26,7 @@ import data
 load_dotenv()
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", secrets.token_hex(16))
 
 ADMIN_KEY = os.environ.get("ADMIN_KEY", "calebadmin")
@@ -45,7 +47,9 @@ app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=int(os.environ.get("ADMIN_SESSION_MINUTES", "30")))
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "1") != "0"
+# Secure cookies are ON in production/Render by default, but local HTTP testing remains functional.
+_default_secure_cookie = "1" if (os.environ.get("RENDER") or os.environ.get("RENDER_SERVICE_ID") or os.environ.get("RENDER_EXTERNAL_URL") or os.environ.get("FLASK_ENV") == "production") else "0"
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", _default_secure_cookie) != "0"
 
 ADMIN_LOGIN_ATTEMPTS = {}
 ADMIN_MAX_ATTEMPTS = int(os.environ.get("ADMIN_MAX_ATTEMPTS", "6"))
