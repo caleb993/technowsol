@@ -35,7 +35,55 @@
 <meta charset="utf-8">
 <!-- Adsense -->
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Search SurgeTechKnow</title><meta name="description" content="Search SurgeTechKnow articles and field media."><link rel="canonical" href="https://techknowsolution.co.ke/search"><meta name="robots" content="noindex, follow">
-<meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">{% include '_site_css.html' %}</head><body><nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a><a href="{{ url_for('privacy_policy') }}">Privacy</a><a href="{{ url_for('terms') }}">Terms</a><a href="{{ url_for('cookie_policy') }}">Cookies</a><a href="{{ url_for('disclaimer') }}">Disclaimer</a></div></div></nav><main class="wrap"><section class="section"><div class="section-head"><h2><i class="bi bi-search"></i> Search</h2></div><form class="searchbar" action="{{ url_for('search_page') }}"><input name="q" value="{{ q }}" placeholder="Search articles and media"><button class="btn btn-red">Search</button></form></section><section class="section"><div class="section-head"><h2>Article Results</h2></div><div class="latest-list">{% for b in results %}<a class="related-row" href="{{ url_for('view_blog', slug=b.slug) }}"><img src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.png';"><div><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><p class="excerpt">{{ b.content|clean_excerpt(120) }}</p></div></a>{% else %}<p>No matching articles.</p>{% endfor %}</div></section><section class="section"><div class="section-head"><h2>Media Results</h2></div><div class="dense-grid">{% for m in media_results %}<a class="card compact-card" href="{{ url_for('media_view', filename=m.name) }}"><div class="story-img"><img src="{{ m.url }}"></div><div class="body"><h3>{{ m.title }}</h3><p class="excerpt">{{ m.caption }}</p></div></a>{% else %}<p>No matching media.</p>{% endfor %}</div></section></main><script>
+<meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">{% include '_site_css.html' %}
+<style>
+  /* Polished global navigation buttons */
+  .navlinks a,
+  .nav-links a,
+  .nav-links button,
+  .mobile-menu a,
+  .mobile-menu button{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid rgba(226,232,240,.95) !important;
+    background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+    color:#0f172a !important;
+    padding:9px 12px !important;
+    border-radius:999px !important;
+    box-shadow:0 6px 18px rgba(15,23,42,.06) !important;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease, background .18s ease;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .navlinks a:hover,
+  .nav-links a:hover,
+  .nav-links button:hover,
+  .mobile-menu a:hover,
+  .mobile-menu button:hover{
+    transform:translateY(-1px);
+    border-color:#e50920 !important;
+    color:#e50920 !important;
+    box-shadow:0 10px 24px rgba(229,9,32,.12) !important;
+  }
+  .navlinks a[href*="hub"],
+  .nav-links a[href*="hub"]{
+    background:linear-gradient(135deg,#e50920,#ff7a1a) !important;
+    color:#fff !important;
+    border-color:#e50920 !important;
+  }
+  .navlinks a[href*="hub"]:hover,
+  .nav-links a[href*="hub"]:hover{
+    color:#fff !important;
+    box-shadow:0 12px 26px rgba(229,9,32,.22) !important;
+  }
+  @media(max-width:700px){
+    .navlinks a,.nav-links a,.nav-links button,.mobile-menu a,.mobile-menu button{border-radius:14px !important;padding:11px 12px !important;justify-content:flex-start;}
+  }
+</style>
+
+</head><body><nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a><a href="{{ url_for('privacy_policy') }}">Privacy</a><a href="{{ url_for('terms') }}">Terms</a><a href="{{ url_for('cookie_policy') }}">Cookies</a><a href="{{ url_for('disclaimer') }}">Disclaimer</a></div></div></nav><main class="wrap"><section class="section"><div class="section-head"><h2><i class="bi bi-search"></i> Search</h2></div><form class="searchbar" action="{{ url_for('search_page') }}"><input name="q" value="{{ q }}" placeholder="Search articles and media"><button class="btn btn-red">Search</button></form></section><section class="section"><div class="section-head"><h2>Article Results</h2></div><div class="latest-list">{% for b in results %}<a class="related-row" href="{{ url_for('view_blog', slug=b.slug) }}"><img src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.png';"><div><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><p class="excerpt">{{ b.content|clean_excerpt(120) }}</p></div></a>{% else %}<p>No matching articles.</p>{% endfor %}</div></section><section class="section"><div class="section-head"><h2>Media Results</h2></div><div class="dense-grid">{% for m in media_results %}<a class="card compact-card" href="{{ url_for('media_view', filename=m.name) }}"><div class="story-img"><img src="{{ m.url }}"></div><div class="body"><h3>{{ m.title }}</h3><p class="excerpt">{{ m.caption }}</p></div></a>{% else %}<p>No matching media.</p>{% endfor %}</div></section></main><script>
 (function(){
   let start=Date.now(), maxScroll=0, interacted=false;
   function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}

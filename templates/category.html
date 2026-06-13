@@ -84,6 +84,54 @@
     ]
   }
   </script>
+
+<style>
+  /* Polished global navigation buttons */
+  .navlinks a,
+  .nav-links a,
+  .nav-links button,
+  .mobile-menu a,
+  .mobile-menu button{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid rgba(226,232,240,.95) !important;
+    background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+    color:#0f172a !important;
+    padding:9px 12px !important;
+    border-radius:999px !important;
+    box-shadow:0 6px 18px rgba(15,23,42,.06) !important;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease, background .18s ease;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .navlinks a:hover,
+  .nav-links a:hover,
+  .nav-links button:hover,
+  .mobile-menu a:hover,
+  .mobile-menu button:hover{
+    transform:translateY(-1px);
+    border-color:#e50920 !important;
+    color:#e50920 !important;
+    box-shadow:0 10px 24px rgba(229,9,32,.12) !important;
+  }
+  .navlinks a[href*="hub"],
+  .nav-links a[href*="hub"]{
+    background:linear-gradient(135deg,#e50920,#ff7a1a) !important;
+    color:#fff !important;
+    border-color:#e50920 !important;
+  }
+  .navlinks a[href*="hub"]:hover,
+  .nav-links a[href*="hub"]:hover{
+    color:#fff !important;
+    box-shadow:0 12px 26px rgba(229,9,32,.22) !important;
+  }
+  @media(max-width:700px){
+    .navlinks a,.nav-links a,.nav-links button,.mobile-menu a,.mobile-menu button{border-radius:14px !important;padding:11px 12px !important;justify-content:flex-start;}
+  }
+</style>
+
 </head>
 <body>
   <div class="top"><div class="wrap"><span>SurgeTechKnow</span><span>{{ cfg.label }}</span><span>Guides</span><span>Analysis</span><span>Practical Technology</span></div></div>

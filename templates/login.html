@@ -187,6 +187,7 @@
       {% endwith %}
 
       <form method="POST" action="{{ url_for('login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="mb-4">
           <label for="code" class="form-label text-muted small fw-semibold">WHAT'S YOUR PASS KEY</label>
           <input type="password" class="form-control form-control-fire text-center" id="code" name="code" required autocomplete="current-password" placeholder="••••••••" autofocus>

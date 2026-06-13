@@ -83,6 +83,54 @@
 .hub-proof h2{font:900 clamp(24px,3vw,42px)/1.05 Poppins;margin:0 0 14px}.hub-proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.proof-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}.proof-card b{font:900 16px Poppins}.proof-card p{color:var(--muted);margin:8px 0 0}.tool-card,.panel,.tool-box{transition:.18s ease}.tool-card:hover,.tool-box:hover{transform:translateY(-3px);box-shadow:0 22px 55px rgba(15,23,42,.14)}.toc a:hover{border-color:rgba(229,9,32,.32);background:#fff1f2}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.mini-metric{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:10px}.mini-metric b{display:block;font-size:20px;color:var(--red)}@media(max-width:850px){.hub-proof-grid,.mini-grid{grid-template-columns:1fr}.hero-grid{grid-template-columns:1fr}}
 </style>
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://techknowsolution.co.ke/#organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","logo":"https://techknowsolution.co.ke/static/ogimage.png","areaServed":"KE"},{"@type":"WebApplication","name":"{{ active_title }}","url":"https://techknowsolution.co.ke{{ request.path }}","applicationCategory":"EducationalApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"KES"},"publisher":{"@id":"https://techknowsolution.co.ke/#organization"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://techknowsolution.co.ke/"},{"@type":"ListItem","position":2,"name":"Hub","item":"https://techknowsolution.co.ke/hub"},{"@type":"ListItem","position":3,"name":"{{ active_title }}","item":"https://techknowsolution.co.ke{{ request.path }}"}]}]}</script>
+
+<style>
+  /* Polished global navigation buttons */
+  .navlinks a,
+  .nav-links a,
+  .nav-links button,
+  .mobile-menu a,
+  .mobile-menu button{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid rgba(226,232,240,.95) !important;
+    background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+    color:#0f172a !important;
+    padding:9px 12px !important;
+    border-radius:999px !important;
+    box-shadow:0 6px 18px rgba(15,23,42,.06) !important;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease, background .18s ease;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .navlinks a:hover,
+  .nav-links a:hover,
+  .nav-links button:hover,
+  .mobile-menu a:hover,
+  .mobile-menu button:hover{
+    transform:translateY(-1px);
+    border-color:#e50920 !important;
+    color:#e50920 !important;
+    box-shadow:0 10px 24px rgba(229,9,32,.12) !important;
+  }
+  .navlinks a[href*="hub"],
+  .nav-links a[href*="hub"]{
+    background:linear-gradient(135deg,#e50920,#ff7a1a) !important;
+    color:#fff !important;
+    border-color:#e50920 !important;
+  }
+  .navlinks a[href*="hub"]:hover,
+  .nav-links a[href*="hub"]:hover{
+    color:#fff !important;
+    box-shadow:0 12px 26px rgba(229,9,32,.22) !important;
+  }
+  @media(max-width:700px){
+    .navlinks a,.nav-links a,.nav-links button,.mobile-menu a,.mobile-menu button{border-radius:14px !important;padding:11px 12px !important;justify-content:flex-start;}
+  }
+</style>
+
 </head>
 <body>
   <div class="top"><div class="wrap">Interactive Cyber Lab & ICT Sandbox • Free ICT Tools</div></div>

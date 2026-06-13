@@ -110,7 +110,55 @@ img{max-width:100%;}
 <meta property="og:locale" content="en_US">
 <meta name="twitter:site" content="@SurgeTechKnow">
 <meta name="twitter:creator" content="@SurgeTechKnow">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://techknowsolution.co.ke/#organization","name":"SurgeTechKnow","alternateName":["TechKnow Solutions","TechKnow","TechKnowSols"],"url":"https://techknowsolution.co.ke","logo":{"@type":"ImageObject","url":"https://techknowsolution.co.ke/static/ogimage.png","width":1200,"height":630},"contactPoint":[{"@type":"ContactPoint","contactType":"customer support","url":"https://techknowsolution.co.ke/contact-us","areaServed":"KE","availableLanguage":["English","Swahili"]}]},{"@type":"WebSite","@id":"https://techknowsolution.co.ke/#website","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","publisher":{"@id":"https://techknowsolution.co.ke/#organization"}}]}</script></head><body><div class="top"><div class="wrap">SurgeTechKnow Field Media Desk</div></div><nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a><a href="{{ url_for('privacy_policy') }}">Privacy</a><a href="{{ url_for('terms') }}">Terms</a><a href="{{ url_for('cookie_policy') }}">Cookies</a><a href="{{ url_for('disclaimer') }}">Disclaimer</a></div></div></nav><main><section class="hero"><div class="wrap"><h1>Field Media Desk</h1><p>Technical operations, project visuals, lab moments and field media logs.</p></div></section><section><div class="wrap"><div class="grid">{% for m in gallery_images %}<a class="card" href="{{ url_for('media_view', filename=m.name) }}"><div class="thumb">{% if m.type=='video' %}<video src="{{ m.url }}" muted playsinline></video>{% else %}<img loading="lazy" src="{{ m.url }}" alt="{{ m.title }}">{% endif %}</div><div class="body"><h3>{{ m.title }}</h3><p>{{ m.caption }}</p></div></a>{% endfor %}</div></div></section><section class="related"><div class="wrap"><h2>More technology content</h2><div class="grid">{% for b in related_posts[:5] %}<a class="card" href="{{ url_for('view_blog', slug=b.slug) }}"><div class="thumb"><img loading="lazy" src="{{ b|blog_image }}" onerror="this.src='/static/ogimage.png'" alt="{{ b.title }}"></div><div class="body"><h3>{{ b.title }}</h3></div></a>{% endfor %}</div></div></section></main><nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('index') }}#more"><i class="bi bi-list"></i><span>More</span></a></nav><script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://techknowsolution.co.ke/#organization","name":"SurgeTechKnow","alternateName":["TechKnow Solutions","TechKnow","TechKnowSols"],"url":"https://techknowsolution.co.ke","logo":{"@type":"ImageObject","url":"https://techknowsolution.co.ke/static/ogimage.png","width":1200,"height":630},"contactPoint":[{"@type":"ContactPoint","contactType":"customer support","url":"https://techknowsolution.co.ke/contact-us","areaServed":"KE","availableLanguage":["English","Swahili"]}]},{"@type":"WebSite","@id":"https://techknowsolution.co.ke/#website","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","publisher":{"@id":"https://techknowsolution.co.ke/#organization"}}]}</script>
+<style>
+  /* Polished global navigation buttons */
+  .navlinks a,
+  .nav-links a,
+  .nav-links button,
+  .mobile-menu a,
+  .mobile-menu button{
+    display:inline-flex !important;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid rgba(226,232,240,.95) !important;
+    background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+    color:#0f172a !important;
+    padding:9px 12px !important;
+    border-radius:999px !important;
+    box-shadow:0 6px 18px rgba(15,23,42,.06) !important;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease, background .18s ease;
+    line-height:1;
+    white-space:nowrap;
+  }
+  .navlinks a:hover,
+  .nav-links a:hover,
+  .nav-links button:hover,
+  .mobile-menu a:hover,
+  .mobile-menu button:hover{
+    transform:translateY(-1px);
+    border-color:#e50920 !important;
+    color:#e50920 !important;
+    box-shadow:0 10px 24px rgba(229,9,32,.12) !important;
+  }
+  .navlinks a[href*="hub"],
+  .nav-links a[href*="hub"]{
+    background:linear-gradient(135deg,#e50920,#ff7a1a) !important;
+    color:#fff !important;
+    border-color:#e50920 !important;
+  }
+  .navlinks a[href*="hub"]:hover,
+  .nav-links a[href*="hub"]:hover{
+    color:#fff !important;
+    box-shadow:0 12px 26px rgba(229,9,32,.22) !important;
+  }
+  @media(max-width:700px){
+    .navlinks a,.nav-links a,.nav-links button,.mobile-menu a,.mobile-menu button{border-radius:14px !important;padding:11px 12px !important;justify-content:flex-start;}
+  }
+</style>
+
+</head><body><div class="top"><div class="wrap">SurgeTechKnow Field Media Desk</div></div><nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a><a href="{{ url_for('privacy_policy') }}">Privacy</a><a href="{{ url_for('terms') }}">Terms</a><a href="{{ url_for('cookie_policy') }}">Cookies</a><a href="{{ url_for('disclaimer') }}">Disclaimer</a></div></div></nav><main><section class="hero"><div class="wrap"><h1>Field Media Desk</h1><p>Technical operations, project visuals, lab moments and field media logs.</p></div></section><section><div class="wrap"><div class="grid">{% for m in gallery_images %}<a class="card" href="{{ url_for('media_view', filename=m.name) }}"><div class="thumb">{% if m.type=='video' %}<video src="{{ m.url }}" muted playsinline></video>{% else %}<img loading="lazy" src="{{ m.url }}" alt="{{ m.title }}">{% endif %}</div><div class="body"><h3>{{ m.title }}</h3><p>{{ m.caption }}</p></div></a>{% endfor %}</div></div></section><section class="related"><div class="wrap"><h2>More technology content</h2><div class="grid">{% for b in related_posts[:5] %}<a class="card" href="{{ url_for('view_blog', slug=b.slug) }}"><div class="thumb"><img loading="lazy" src="{{ b|blog_image }}" onerror="this.src='/static/ogimage.png'" alt="{{ b.title }}"></div><div class="body"><h3>{{ b.title }}</h3></div></a>{% endfor %}</div></div></section></main><nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="{{ url_for('index') }}#more"><i class="bi bi-list"></i><span>More</span></a></nav><script>
 (function(){
   let start=Date.now(), maxScroll=0, interacted=false;
   function upd(){let h=document.documentElement.scrollHeight-innerHeight;if(h>0)maxScroll=Math.max(maxScroll,Math.round((scrollY/h)*100));}

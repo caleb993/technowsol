@@ -763,6 +763,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
     @media(max-width:1100px){.console-grid-compact{grid-template-columns:repeat(2,minmax(0,1fr));}.main-content-wrapper{padding:20px!important;}}
     @media(max-width:700px){.main-content-wrapper{padding:14px!important;padding-top:64px!important;}.stat-card{min-height:92px!important;padding:14px!important}.stat-number{font-size:1.75rem!important}.console-search{display:none!important}.console-secure{height:38px!important;font-size:11px!important}.card-fire{border-radius:14px!important}}
   </style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="py-4">
   <div class="container-fluid"><div class="control-center-banner d-flex flex-wrap align-items-center justify-content-between gap-3"><div><span class="control-pill"><i class="bi bi-broadcast"></i> Private Operations Console</span><h2>SurgeTechKnow Control Center</h2><p>Manage articles, trends, media narration, traffic intelligence, uploads and site publishing without removing existing functions.</p></div><a class="btn btn-fire-primary" href="{{ url_for('index') }}" target="_blank"><i class="bi bi-eye"></i> View Site</a></div></div>
@@ -1379,6 +1380,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                                 <i class="bi {% if m.status == 'unread' %}bi-envelope-paper-fill{% else %}bi-envelope-fill{% endif %}"></i>
                               </button>
                               <form action="/admin/delete_message/{{ m.gid }}" method="POST" onsubmit="return confirm('Delete this message permanently?');" class="m-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
                               </form>
                             </div>
@@ -1445,9 +1447,11 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                       </div>
                       <div class="d-flex gap-2">
                         <form action="/admin/approve/{{ file }}" method="POST" class="m-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                           <button type="submit" class="btn btn-sm btn-success px-3">Verify <i class="bi bi-check-circle"></i></button>
                         </form>
                         <form action="/admin/reject/{{ file }}" method="POST" onsubmit="return confirm('Reject and securely delete this file?');" class="m-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                           <button type="submit" class="btn btn-sm btn-outline-danger">Reject <i class="bi bi-x-circle"></i></button>
                         </form>
                       </div>
@@ -1475,6 +1479,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                       <div class="d-flex gap-2">
                         <a href="/media/project/{{ file }}" class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i> Download</a>
                         <form action="/admin/delete_project/{{ file }}" method="POST" onsubmit="return confirm('Delete this project asset permanently?');" class="m-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                           <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i></button>
                         </form>
                       </div>
@@ -1502,6 +1507,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
               <p class="text-muted small">Upload infrastructure, cybersecurity, physical network setups, or system diagrams here. Supported extensions: images or videos (.jpg, .png, .gif, .webp, .mp4, .webm etc.)</p>
               
               <form action="/admin/upload_gallery" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3">
                   <label class="form-label text-muted small text-mono">Media display name</label>
                   <input type="text" name="media_title" class="form-control form-control-fire" placeholder="Public media title, e.g. Router Cabinet Setup">
@@ -1553,6 +1559,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                           <details class="mt-2 mb-2">
                             <summary class="btn btn-sm btn-fire-secondary w-100" style="cursor:pointer"><i class="bi bi-pencil-square"></i> Edit Details</summary>
                             <form action="/admin/gallery/update/{{ item.name }}" method="POST" class="mt-2 d-grid gap-2">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                               <input type="text" name="media_title" value="{{ item.title or '' }}" class="form-control form-control-fire form-control-sm" placeholder="Media title">
                               <textarea name="media_caption" class="form-control form-control-fire form-control-sm" rows="2" maxlength="500" placeholder="Short summary">{{ item.caption or '' }}</textarea>
                               <textarea name="media_narration" class="form-control form-control-fire form-control-sm" rows="3" maxlength="3000" placeholder="Full narration">{{ item.narration or item.caption or '' }}</textarea>
@@ -1560,6 +1567,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                             </form>
                           </details>
                           <form action="/admin/delete_gallery/{{ item.name }}" method="POST" onsubmit="return confirm('Delete this gallery file securely?');" class="m-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-trash"></i> Wipe Asset</button>
                           </form>
                         </div>
@@ -1596,6 +1604,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
             <div class="card-fire p-4">
               <h5 class="mb-3 text-warning fw-bold">Upload Blog Assets</h5>
               <form action="/admin/upload_blog_media" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-4">
                   <div class="drag-drop-zone" style="border-color: rgba(0,213,255,0.3);" onclick="document.getElementById('blogMediaInput').click()">
                     <i class="bi bi-cloud-arrow-up text-warning display-5 mb-3 d-block"></i>
@@ -1646,6 +1655,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                           </div>
 
                           <form action="/admin/delete_blog_media/{{ item.name }}" method="POST" onsubmit="return confirm('Wipe output file permanently?');" class="m-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger w-100 py-1" style="font-size:0.8rem;"><i class="bi bi-trash3"></i> Delete Asset</button>
                           </form>
                         </div>
@@ -1673,6 +1683,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
               <h4 class="mb-4 text-white fw-bold" id="editor-title"><i class="bi bi-pencil-square text-warning me-2"></i>Publish New Insight</h4>
               
               <form id="blog-form" action="/admin/blogs/add" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" id="edit-blog-id" value="">
                 <div class="mb-3">
                   <label for="title" class="form-label text-muted small">ARTICLE TITLE (Auto Slugified)</label>
@@ -1778,6 +1789,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
               
               <!-- Quick Upload -->
               <form action="/admin/upload_blog_media?ret=blogs" method="POST" enctype="multipart/form-data" class="mb-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="input-group">
                   <input type="file" name="images" id="quickBlogMediaInput" class="form-control form-control-fire py-1 px-2 text-mono" style="font-size:0.8rem;" multiple required>
                   <button type="submit" class="btn btn-sm btn-fire-primary">Upload & Refresh</button>
@@ -1842,6 +1854,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
                       <div class="d-flex justify-content-between align-items-center gap-2">
                         <span class="fw-bold text-white text-truncate small" title="{{ b.title }}">{{ b.title }}</span>
                         <form action="/admin/blogs/delete/{{ b.id }}" method="POST" onsubmit="return confirm('Delete this blog post? This action is absolutely irreversible!');" class="m-0 flex-shrink-0">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                           <button type="submit" class="btn btn-xs btn-outline-danger px-2 py-1" style="font-size:0.75rem;"><i class="bi bi-trash"></i> Wipe</button>
                         </form>
                       </div>
@@ -1977,6 +1990,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
               </div>
               
               <form action="/admin/upload_profile_image" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3">
                   <input class="form-control form-control-fire text-mono p-2" type="file" name="file" required>
                 </div>
@@ -2003,6 +2017,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
               </div>
               
               <form action="/admin/upload_hero_image" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3">
                   <input class="form-control form-control-fire text-mono p-2" type="file" name="file" required>
                 </div>
@@ -2027,6 +2042,7 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
               </div>
               
               <form action="/admin/upload_cv" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="mb-3">
                   <input class="form-control form-control-fire text-mono p-2" type="file" name="file" required>
                 </div>
@@ -2341,6 +2357,33 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
 
   </style></head><body>
 <h1>${title}</h1>${content}
+
+<script>
+  (function(){
+    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = tokenMeta ? tokenMeta.getAttribute('content') : '';
+    document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(function(form){
+      if (!form.querySelector('input[name="csrf_token"]')) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'csrf_token';
+        input.value = csrfToken;
+        form.appendChild(input);
+      }
+    });
+    const originalFetch = window.fetch;
+    window.fetch = function(resource, options){
+      options = options || {};
+      const method = (options.method || 'GET').toUpperCase();
+      if (csrfToken && !['GET','HEAD','OPTIONS'].includes(method)) {
+        options.headers = new Headers(options.headers || {});
+        options.headers.set('X-CSRFToken', csrfToken);
+      }
+      return originalFetch(resource, options);
+    };
+  })();
+</script>
+
 </body></html>`);
       win.document.close();
     }
