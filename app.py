@@ -6,6 +6,7 @@ import urllib.parse
 import json
 import re
 import zipfile
+import time
 from datetime import datetime, timedelta
 
 import markdown
@@ -36,6 +37,97 @@ IMAGE_EXTS = {"png", "jpg", "jpeg", "webp", "gif"}
 VIDEO_EXTS = {"mp4", "webm", "ogg", "mov", "m4v"}
 
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024
+
+# =========================================================
+# SECURITY HARDENING
+# =========================================================
+# Keep admin sessions short, browser-only, and HTTPS-ready.
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=int(os.environ.get("ADMIN_SESSION_MINUTES", "30")))
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", "1") != "0"
+
+ADMIN_LOGIN_ATTEMPTS = {}
+ADMIN_MAX_ATTEMPTS = int(os.environ.get("ADMIN_MAX_ATTEMPTS", "6"))
+ADMIN_LOCK_SECONDS = int(os.environ.get("ADMIN_LOCK_SECONDS", "900"))
+
+if ADMIN_KEY == "calebadmin":
+    print("⚠️ SECURITY WARNING: ADMIN_KEY is using the fallback value. Set a strong ADMIN_KEY in environment variables.")
+
+
+def csrf_token():
+    token = session.get("csrf_token")
+    if not token:
+        token = secrets.token_urlsafe(32)
+        session["csrf_token"] = token
+    return token
+
+
+def csrf_is_valid():
+    expected = session.get("csrf_token", "")
+    supplied = (
+        request.form.get("csrf_token")
+        or request.headers.get("X-CSRFToken")
+        or request.headers.get("X-CSRF-Token")
+        or ""
+    )
+    return bool(expected and supplied and secrets.compare_digest(str(expected), str(supplied)))
+
+
+@app.context_processor
+def inject_security_helpers():
+    return {"csrf_token": csrf_token}
+
+
+def login_rate_limited(ip):
+    now = time.time()
+    rec = ADMIN_LOGIN_ATTEMPTS.get(ip, {"count": 0, "until": 0})
+    if rec.get("until", 0) > now:
+        return True, int(rec["until"] - now)
+    if rec.get("until", 0) <= now and rec.get("count", 0) >= ADMIN_MAX_ATTEMPTS:
+        ADMIN_LOGIN_ATTEMPTS[ip] = {"count": 0, "until": 0}
+    return False, 0
+
+
+def record_bad_login(ip):
+    now = time.time()
+    rec = ADMIN_LOGIN_ATTEMPTS.get(ip, {"count": 0, "until": 0})
+    count = int(rec.get("count", 0)) + 1
+    until = now + ADMIN_LOCK_SECONDS if count >= ADMIN_MAX_ATTEMPTS else 0
+    ADMIN_LOGIN_ATTEMPTS[ip] = {"count": count, "until": until}
+
+
+def clear_bad_login(ip):
+    ADMIN_LOGIN_ATTEMPTS.pop(ip, None)
+
+
+@app.before_request
+def admin_security_gate():
+    path = request.path or ""
+
+    # Block common credential and source-code probing paths.
+    probe_paths = ("/.env", "/.git", "/wp-admin", "/wp-login", "/xmlrpc.php", "/phpmyadmin", "/config")
+    if any(path.lower().startswith(p) for p in probe_paths):
+        abort(404)
+
+    # Require CSRF tokens for login and every admin write action.
+    protected_write = (path == "/login" or path.startswith("/admin") or path.startswith("/api/admin"))
+    if request.method in {"POST", "PUT", "PATCH", "DELETE"} and protected_write:
+        if not csrf_is_valid():
+            abort(403)
+
+
+@app.after_request
+def add_security_headers(response):
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
+    response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin-allow-popups")
+    if request.path.startswith("/admin") or request.path in {"/login", "/logout"}:
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+    return response
 
 
 # =========================================================
@@ -701,6 +793,19 @@ def require_admin():
     if not session.get("is_admin"):
         flash("Please log in as admin.")
         return False
+
+    now = time.time()
+    last_seen = float(session.get("admin_last_seen", now))
+    max_idle = int(os.environ.get("ADMIN_IDLE_SECONDS", "1800"))
+    if now - last_seen > max_idle:
+        session.pop("is_admin", None)
+        session.pop("admin_login_at", None)
+        session.pop("admin_last_seen", None)
+        flash("Admin session expired. Please log in again.")
+        return False
+
+    session["admin_last_seen"] = now
+    session.permanent = True
     return True
 
 
@@ -2355,14 +2460,29 @@ def ai_search_engine():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        code = request.form.get("code", "")
+    csrf_token()
+    ip = get_client_ip()
 
-        if code == ADMIN_KEY:
+    if request.method == "POST":
+        locked, seconds_left = login_rate_limited(ip)
+        if locked:
+            flash(f"Too many failed attempts. Try again in {max(1, seconds_left // 60)} minute(s).")
+            return redirect(url_for("login"))
+
+        code = (request.form.get("code", "") or "").strip()
+
+        if ADMIN_KEY and secrets.compare_digest(code, ADMIN_KEY):
+            clear_bad_login(ip)
+            session.clear()
+            session.permanent = True
             session["is_admin"] = True
+            session["admin_login_at"] = time.time()
+            session["admin_last_seen"] = time.time()
+            csrf_token()
             flash("Logged in as admin.")
             return redirect(url_for("admin"))
 
+        record_bad_login(ip)
         flash("Wrong passcode.")
         return redirect(url_for("login"))
 
@@ -2371,7 +2491,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    session.pop("is_admin", None)
+    session.clear()
     flash("Logged out.")
     return redirect(url_for("index"))
 
