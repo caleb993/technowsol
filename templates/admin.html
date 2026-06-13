@@ -2358,31 +2358,6 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
   </style></head><body>
 <h1>${title}</h1>${content}
 
-<script>
-  (function(){
-    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
-    const csrfToken = tokenMeta ? tokenMeta.getAttribute('content') : '';
-    document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(function(form){
-      if (!form.querySelector('input[name="csrf_token"]')) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'csrf_token';
-        input.value = csrfToken;
-        form.appendChild(input);
-      }
-    });
-    const originalFetch = window.fetch;
-    window.fetch = function(resource, options){
-      options = options || {};
-      const method = (options.method || 'GET').toUpperCase();
-      if (csrfToken && !['GET','HEAD','OPTIONS'].includes(method)) {
-        options.headers = new Headers(options.headers || {});
-        options.headers.set('X-CSRFToken', csrfToken);
-      }
-      return originalFetch(resource, options);
-    };
-  })();
-</script>
 
 </body></html>`);
       win.document.close();
@@ -3494,6 +3469,44 @@ body{background:radial-gradient(circle at 78% -5%,rgba(0,213,255,.10),transparen
   </script>
 </main>
 </div>
+
+<script>
+  // Admin CSRF harmony layer: keeps existing layout/actions functional while sending CSRF on admin POST/fetch requests.
+  (function(){
+    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+    const csrfToken = tokenMeta ? tokenMeta.getAttribute('content') : '';
+    if (!csrfToken) return;
+
+    function attachTokenToForms(){
+      document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(function(form){
+        if (!form.querySelector('input[name="csrf_token"]')) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'csrf_token';
+          input.value = csrfToken;
+          form.appendChild(input);
+        }
+      });
+    }
+
+    attachTokenToForms();
+
+    // Some admin forms/buttons are created dynamically by JavaScript; keep them protected too.
+    const observer = new MutationObserver(attachTokenToForms);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+
+    const originalFetch = window.fetch;
+    window.fetch = function(resource, options){
+      options = options || {};
+      const method = (options.method || 'GET').toUpperCase();
+      if (!['GET','HEAD','OPTIONS'].includes(method)) {
+        options.headers = new Headers(options.headers || {});
+        options.headers.set('X-CSRFToken', csrfToken);
+      }
+      return originalFetch(resource, options);
+    };
+  })();
+</script>
 
 <script>
 function adminQuickSearch(q){
