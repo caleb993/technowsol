@@ -1,37 +1,7 @@
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 <head>
-
-  <!-- Google Analytics HARD FIX -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ELRXZQRGNR', {
-      send_page_view: false,
-      cookie_domain: 'auto',
-      cookie_flags: 'SameSite=Lax;Secure'
-    });
-
-    function stkSendPageView(){
-      if (window.__stkGaPageViewSent) return;
-      window.__stkGaPageViewSent = true;
-      gtag('event', 'page_view', {
-        page_title: document.title || 'SurgeTechKnow',
-        page_location: window.location.href,
-        page_path: window.location.pathname + window.location.search
-      });
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', stkSendPageView);
-    } else {
-      stkSendPageView();
-    }
-  </script>
-
-  <!-- Adsense -->
+<!-- Adsense -->
   <meta name="google-adsense-account" content="ca-pub-4340479899629152">
 <!-- Adsense -->
 <meta charset="utf-8">
@@ -50,7 +20,7 @@
   <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SurgeTechKnow • Practical Technology Journal"><meta name="twitter:description" content="Cybersecurity, networking, Windows News, AI automation and ICT support guides."><meta name="twitter:image" content="https://techknowsolution.co.ke/static/ogimage.webp">
 {% set preload_trending = home_blog_sections.get('Trending', []) if home_blog_sections else blog_posts[:1] %}
 {% if preload_trending and preload_trending[0] %}
-  <link rel="preload" as="image" href="{{ preload_trending[0]|blog_image }}" fetchpriority="high">
+  <link rel="preload" as="image" href="{{ preload_trending[0]|blog_image }}" fetchpriority="high" imagesizes="(max-width: 640px) 100vw, 55vw">
 {% endif %}
 <meta name="google-site-verification" content="xN8zzUOK3ngMEFkP7XrSySJp_i9oCxQLBeWPBc0QHQE">
 <script type="application/ld+json">
@@ -109,165 +79,13 @@
   </script>
   <link rel="icon" sizes="32x32" href="/static/favicon-32.png"><link rel="icon" sizes="16x16" href="/static/favicon-16.png"><link rel="apple-touch-icon" href="/static/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <style>
-    :root{--red:#e50920;--deep:#0b1220;--ink:#071021;--muted:#647084;--line:#dfe3ea;--soft:#f3f5f9;--green:#1e3a8a;--card:#fff;--wrap:min(1660px,calc(100% - 30px));--shadow:0 8px 24px rgba(15,23,42,.08)}
-    [data-bs-theme="dark"]{--ink:#f8fafc;--muted:#b5becb;--line:#253042;--soft:#0b1120;--card:#101827;--deep:#020617;--shadow:none;background:#0b1120;color:var(--ink)}
-    *{box-sizing:border-box}html,body{margin:0;overflow-x:hidden}body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--soft);color:var(--ink);line-height:1.45}a{text-decoration:none;color:inherit}.wrap{width:var(--wrap);margin:0 auto}.font-display{font-family:'Poppins',Inter,sans-serif}.top-strip{background:var(--red);color:#fff;font-weight:800;font-size:13px}.top-strip .wrap{height:31px;display:flex;align-items:center;gap:18px;overflow:auto;white-space:nowrap}.pill{background:#fff;color:var(--red);border-radius:999px;padding:4px 12px;text-transform:uppercase;font-size:11px}.nav{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}.navin{height:64px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px}.brand-mark{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--red),#ff8a00);color:#fff;font-weight:900}.brand strong{font:800 20px 'Poppins'}.brand small{display:block;color:var(--red);font-weight:900;font-size:10px;letter-spacing:.08em}.nav-links{display:flex;align-items:center;gap:24px;font-size:13px;font-weight:900;text-transform:uppercase;color:#4b5565}.nav-links a:hover{color:var(--red)}.icon-btn{width:39px;height:39px;border:1px solid var(--line);border-radius:12px;background:#fff;display:grid;place-items:center;color:var(--ink)}.mobile-menu{display:none}.intro{background:linear-gradient(90deg,#fff1f2,#fff,#f3f6ff);border-bottom:1px solid var(--line)}.intro .wrap{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px}.intro h1{font:900 20px 'Poppins';margin:0}.intro p{margin:4px 0 0;color:var(--muted);font-size:14px}.mini-btn{background:#020617;color:#fff;border-radius:8px;padding:10px 16px;font-weight:900;font-size:12px}.section{padding:22px 0}.section-head{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--line);margin-bottom:14px}.section-head h2{font:900 clamp(20px,2vw,31px) 'Poppins';margin:0;padding-bottom:10px}.section-head h2 i{color:var(--red)}.view-more{color:var(--red);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.card{background:var(--card);border:1px solid var(--line);border-radius:0;box-shadow:none;overflow:hidden}.story-img{background:#111;overflow:hidden}.story-img img{width:100%;height:100%;object-fit:cover;display:block}.cat{color:var(--red);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.meta{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase}.excerpt{color:var(--muted);margin:.45rem 0;font-size:14px}.trending-grid{display:grid;grid-template-columns:1.25fr .42fr .7fr;gap:18px;align-items:start}.lead-story .story-img{height:305px}.lead-story .body{padding:16px}.lead-story h3{font:900 30px/1.05 'Poppins';margin:.3rem 0}.side-stack{display:grid;gap:12px}.mini-story{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px;align-items:center}.mini-story .story-img{height:78px;border-radius:4px}.mini-story h4{font:900 15px/1.2 'Poppins';margin:2px 0}.numbered-list{background:#fff;border:1px solid var(--line)}.numbered-list .head{background:var(--green);color:#fff;padding:12px 16px;font-weight:900;text-transform:uppercase}.rank-row{display:grid;grid-template-columns:30px 82px 1fr;gap:10px;padding:13px;border-bottom:1px solid var(--line);align-items:center}.rank{width:24px;height:24px;background:var(--red);color:#fff;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:900}.rank-row img{width:82px;height:54px;object-fit:cover}.rank-row h4{font:900 14px/1.2 'Poppins';margin:0}.home-hero-panel{display:block;position:relative;background:#fff;border:1px solid var(--line);overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,.08)}.home-hero-panel img{width:100%;height:220px;object-fit:cover;display:block}.home-hero-panel::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,23,0),rgba(2,6,23,.22));pointer-events:none}.home-hero-panel .hero-caption{position:absolute;left:12px;right:12px;bottom:12px;z-index:1;color:#fff;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.08em;text-shadow:0 2px 8px rgba(0,0,0,.45)}.news-layout{display:grid;grid-template-columns:1fr .82fr .75fr;gap:18px}.feature-green{background:var(--green);color:#fff}.feature-green .story-img{height:300px}.feature-green .body{padding:17px}.feature-green h3{font:900 28px/1.1 'Poppins';margin:.4rem 0}.feature-green .excerpt,.feature-green .meta{color:#e9f7ed}.list-panel{display:grid;gap:0;background:#fff;border:1px solid var(--line)}.text-item{padding:14px 0;border-bottom:1px solid var(--line)}.text-item h4{font:900 16px/1.25 'Poppins';margin:.25rem 0}.dense-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.compact-card .story-img{height:128px}.compact-card .body{padding:12px}.compact-card h3{font:900 15px/1.22 'Poppins';margin:.25rem 0}.overlay-card{position:relative;min-height:260px;background:#000;color:#fff}.overlay-card .story-img{position:absolute;inset:0}.overlay-card .story-img:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent,rgba(0,0,0,.86))}.overlay-card .body{position:absolute;left:0;right:0;bottom:0;padding:18px}.overlay-card h3{font:900 24px/1.1 'Poppins';margin:.35rem 0}.media-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.media-card .story-img{height:120px}.media-card .body{padding:9px}.media-card h3{font:900 13px/1.18 'Poppins';margin:0}.contact-split{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:#fff;border:1px solid var(--line);padding:16px}.form-control{width:100%;border:1px solid var(--line);padding:10px 12px;border-radius:3px}.btn-red{background:var(--red);color:#fff;border:0;padding:11px 15px;font-weight:900;border-radius:4px}.footer{background:#070b15;color:#dbe3ef;margin-top:24px;padding:30px 0}.footer-grid{display:grid;grid-template-columns:1.4fr .7fr .7fr;gap:24px}.footer a{display:block;color:#cbd5e1;margin:7px 0}.wa{display:none!important;position:fixed;right:18px;bottom:18px;width:54px;height:54px;border-radius:50%;background:#2563eb;color:#fff;place-items:center;font-size:25px;z-index:60;box-shadow:0 10px 25px rgba(37,99,235,.32)}
-    .popup-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;z-index:100;align-items:center;justify-content:center;padding:16px}.popup-backdrop.show{display:flex}.popup-card{background:#fff;color:#071021;border-radius:14px;max-width:720px;width:100%;max-height:84vh;overflow:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}.popup-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:12px}.popup-head h3{font:900 22px 'Poppins';margin:0}.close-pop{border:0;background:#f1f5f9;border-radius:10px;width:36px;height:36px}.legal-btn{background:none;border:0;color:inherit;padding:0;text-align:left;margin:7px 0;display:block}
-    [data-bs-theme="dark"] .nav,[data-bs-theme="dark"] .intro,[data-bs-theme="dark"] .card,[data-bs-theme="dark"] .numbered-list,[data-bs-theme="dark"] .list-panel,[data-bs-theme="dark"] .panel{background:var(--card);color:var(--ink)}[data-bs-theme="dark"] .icon-btn{background:var(--card);color:var(--ink)}
-    @media(max-width:1100px){.trending-grid,.news-layout{grid-template-columns:1fr}.home-hero-panel img{height:260px}.dense-grid{grid-template-columns:repeat(3,1fr)}.media-grid{grid-template-columns:repeat(3,1fr)}.nav-links{display:none}.mobile-menu.show{display:grid;gap:0;border-top:1px solid var(--line);padding-bottom:10px}.mobile-menu a,.mobile-menu button{padding:12px 0;border-bottom:1px solid var(--line);font-weight:900;background:none;border-left:0;border-right:0;border-top:0;text-align:left;color:var(--ink)}}
-    @media(max-width:640px){:root{--wrap:calc(100% - 16px)}.top-strip .wrap{height:29px;font-size:12px}.navin{height:56px}.brand strong{font-size:16px}.brand-mark{width:34px;height:34px}.intro .wrap{min-height:52px}.intro h1{font-size:16px}.intro p{font-size:12px}.mini-btn{padding:8px 10px;font-size:11px}.section{padding:14px 0}.section-head{margin-bottom:9px}.section-head h2{font-size:20px}.lead-story .story-img{height:190px}.lead-story .body{padding:11px}.lead-story h3{font-size:21px}.side-stack{grid-template-columns:1fr 1fr;gap:8px}.mini-story{grid-template-columns:1fr;padding:0}.mini-story .story-img{height:92px;border-radius:0}.mini-story div:not(.story-img){padding:9px}.mini-story h4{font-size:12px}.rank-row{grid-template-columns:24px 64px 1fr;padding:9px}.rank-row img{width:64px;height:46px}.rank-row h4{font-size:12px}.feature-green .story-img{height:160px}.feature-green .body{padding:11px}.feature-green h3{font-size:18px}.dense-grid{grid-template-columns:repeat(2,1fr);gap:9px}.compact-card .story-img{height:96px}.compact-card .body{padding:9px}.compact-card h3{font-size:12.5px}.overlay-card{min-height:180px}.overlay-card h3{font-size:16px}.media-grid{grid-template-columns:repeat(3,1fr);gap:8px}.media-card .story-img{height:82px}.media-card .body{padding:7px}.media-card h3{font-size:11px}.excerpt{display:none}.contact-split,.footer-grid{grid-template-columns:1fr}.cat{font-size:9px}.meta{font-size:9.5px}.text-item h4{font-size:13px}.text-item{padding:10px 0}.wa{width:46px;height:46px;font-size:21px}.popup-card{padding:16px}}
-  
-    /* v9 lightweight engagement upgrades */
-    .editor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.editor-row{background:#fff;border:1px solid var(--line);display:grid;grid-template-columns:112px 1fr;gap:10px;padding:9px;align-items:center}.editor-row img{width:112px;height:78px;object-fit:cover}.editor-row h3{font:900 15px/1.2 'Poppins';margin:.2rem 0}
-    .popular-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.pop-row{background:#fff;border:1px solid var(--line);padding:12px;display:grid;grid-template-columns:32px 1fr;gap:9px;align-items:start}.pop-row span{background:var(--red);color:#fff;border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-weight:900}.pop-row h3{font:900 15px/1.2 'Poppins';margin:0}.pop-row small{grid-column:2;color:var(--muted);font-weight:800;text-transform:uppercase;font-size:10px}
-    .latest-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.latest-row{background:#fff;border:1px solid var(--line);display:grid;grid-template-columns:126px 1fr;gap:11px;padding:9px;align-items:center}.latest-row img{width:126px;height:84px;object-fit:cover}.latest-row h3{font:900 16px/1.2 'Poppins';margin:.2rem 0}
-    .mobile-bottom-nav{display:none}
-    @media(max-width:640px){body{padding-bottom:62px}.editor-grid{grid-template-columns:repeat(2,1fr);gap:8px}.editor-row{grid-template-columns:1fr;padding:0}.editor-row img{width:100%;height:88px}.editor-row div{padding:8px}.editor-row h3{font-size:12px}.popular-strip{grid-template-columns:repeat(2,1fr);gap:8px}.pop-row{padding:9px}.pop-row h3{font-size:12px}.latest-grid{grid-template-columns:1fr;gap:8px}.latest-row{grid-template-columns:82px 1fr}.latest-row img{width:82px;height:58px}.latest-row h3{font-size:12.5px}.mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;height:56px;background:#fff;border-top:1px solid var(--line);z-index:90;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:0 -8px 24px rgba(15,23,42,.08)}.mobile-bottom-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10px;font-weight:900;color:#334155}.mobile-bottom-nav i{font-size:18px;color:var(--red)}[data-bs-theme="dark"] .mobile-bottom-nav{background:var(--card)}}
-
-  
-/* =========================================================
-   UNIVERSAL THUMBNAIL STANDARDIZATION PATCH
-   Keeps every thumbnail/card image aligned, fast, and professional.
-   Priority logic is handled by the existing blog_image filter:
-   admin thumbnail -> first article image -> category fallback.
-   ========================================================= */
-img{max-width:100%;}
-.story-img,.thumb,.blog-thumb,.article-thumb,.media-thumb,.featured-thumb{
-  position:relative;
-  overflow:hidden;
-  background:#0b1220;
-}
-.story-img img,.story-img video,
-.thumb img,.thumb video,
-.blog-thumb img,.article-thumb img,.media-thumb img,.featured-thumb img,
-.blog-thumb video,.article-thumb video,.media-thumb video,.featured-thumb video{
-  width:100%!important;
-  height:100%!important;
-  object-fit:cover!important;
-  object-position:center!important;
-  display:block!important;
-}
-.card .story-img,.compact-card .story-img,.mini-story .story-img{
-  aspect-ratio:16/9;
-  height:auto!important;
-}
-.lead-story .story-img,.feature-green .story-img{
-  aspect-ratio:21/11;
-  height:auto!important;
-}
-.media-card .story-img,.media-card .thumb,.media-thumb{
-  aspect-ratio:4/3;
-  height:auto!important;
-}
-.overlay-card .story-img{
-  height:100%!important;
-  aspect-ratio:auto;
-}
-.rank-row img,.rel-row img,.rel img{
-  width:96px!important;
-  height:68px!important;
-  object-fit:cover!important;
-  border-radius:6px;
-  background:#0b1220;
-  flex:0 0 auto;
-}
-.hero-img,.blog-hero-image{
-  width:100%!important;
-  max-height:440px!important;
-  aspect-ratio:16/7;
-  object-fit:cover!important;
-  object-position:center!important;
-  border-radius:10px;
-  background:#0b1220;
-}
-.content img,.article-content img{
-  max-height:520px;
-  object-fit:cover;
-}
-@media(max-width:640px){
-  .lead-story .story-img,.feature-green .story-img{aspect-ratio:16/9;}
-  .compact-card .story-img,.mini-story .story-img,.card .story-img{aspect-ratio:16/9;height:auto!important;}
-  .media-card .story-img,.media-card .thumb,.media-thumb{aspect-ratio:4/3;height:auto!important;}
-  .rank-row img,.rel-row img,.rel img{width:74px!important;height:52px!important;}
-  .hero-img,.blog-hero-image{max-height:240px!important;aspect-ratio:16/9;}
-}
-
-
-    /* Professional overlay lead card and denim-blue editorial sections */
-    .lead-story{position:relative;min-height:430px;background:#020617;color:#fff;border:0;overflow:hidden;border-radius:14px;box-shadow:0 14px 36px rgba(15,23,42,.18)}
-    .lead-story .story-img{position:absolute;inset:0;height:100%!important;margin:0;background:#020617}
-    .lead-story .story-img:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,6,23,.05),rgba(2,6,23,.60) 45%,rgba(2,6,23,.94));z-index:1}
-    .lead-story .story-img img{width:100%;height:100%;object-fit:cover;filter:saturate(1.03) contrast(1.04)}
-    .lead-story .body{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:24px!important;color:#fff}
-    .lead-story .cat{color:#93c5fd!important;background:rgba(30,64,175,.72);padding:5px 9px;border-radius:5px;display:inline-flex;letter-spacing:.09em}
-    .lead-story h3{color:#fff!important;text-shadow:0 2px 12px rgba(0,0,0,.55)}
-    .lead-story .excerpt,.lead-story .meta{color:#dbeafe!important;text-shadow:0 1px 8px rgba(0,0,0,.45)}
-    .feature-green{background:#1e3a8a!important;color:#fff}
-    .feature-green .excerpt,.feature-green .meta{color:#dbeafe!important}
-    .numbered-list .head{background:#1e3a8a!important}
-    @media(max-width:640px){.lead-story{min-height:285px;border-radius:10px}.lead-story .body{padding:14px!important}.lead-story h3{font-size:21px!important}.lead-story .excerpt{display:block;font-size:12px;line-height:1.35;max-height:3.8em;overflow:hidden}}
-
-.home-hero-panel{border-radius:18px!important;background:linear-gradient(145deg,#071021,#0f172a)!important;border:1px solid rgba(229,9,32,.20)!important;box-shadow:0 18px 45px rgba(2,6,23,.14), inset 0 1px 0 rgba(255,255,255,.08)!important;padding:10px!important;overflow:hidden!important}.home-hero-panel:before{content:"";position:absolute;inset:-35%;background:radial-gradient(circle at 20% 15%,rgba(229,9,32,.34),transparent 32%),radial-gradient(circle at 90% 70%,rgba(14,165,233,.28),transparent 35%);pointer-events:none}.home-hero-panel img{position:relative;z-index:1;height:190px!important;border-radius:14px!important;box-shadow:0 12px 30px rgba(0,0,0,.24)}.home-hero-panel .hero-caption{left:20px!important;right:20px!important;bottom:20px!important;background:rgba(2,6,23,.72);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);padding:10px 12px;border-radius:12px;text-align:center;color:#fff!important;font-size:12px!important;letter-spacing:.12em!important}.footer .footer-about-link{display:inline-flex;align-items:center;gap:7px;background:#e50920;color:#fff!important;border-radius:999px;padding:8px 13px;margin-top:8px;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-
-/* 9.5 polish: trust, authority and interactive hub preview */
-.home-trust-strip{background:#fff;border-bottom:1px solid var(--line)}.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px 0}.trust-card{display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;gap:2px 12px;align-items:center;background:linear-gradient(135deg,#fff,#f8fafc);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow)}.trust-card i{grid-row:1/3;width:42px;height:42px;border-radius:14px;background:#fff1f2;color:var(--red);display:grid;place-items:center;font-size:20px}.trust-card b{font:900 15px 'Poppins';letter-spacing:-.02em}.trust-card span{color:var(--muted);font-size:13px}.stk-hub-preview .hub-preview-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:18px;align-items:stretch;background:linear-gradient(135deg,#071021,#101827);color:#fff;border-radius:24px;padding:22px;overflow:hidden;position:relative}.stk-hub-preview .hub-preview-grid:before{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(229,9,32,.38),transparent 70%)}.hub-preview-copy,.hub-mini-tools{position:relative;z-index:1}.hub-preview-copy h2{font:900 clamp(25px,3vw,42px)/1.05 'Poppins';margin:8px 0}.hub-preview-copy .excerpt{color:#cbd5e1}.hub-mini-tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.hub-mini-tools a{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:18px;font-weight:900;display:flex;align-items:center;gap:12px;backdrop-filter:blur(12px)}.hub-mini-tools i{width:38px;height:38px;border-radius:13px;background:#e50920;color:#fff;display:grid;place-items:center}.hub-mini-tools a:hover{background:rgba(255,255,255,.14);transform:translateY(-2px)}@media(max-width:900px){.trust-grid,.stk-hub-preview .hub-preview-grid{grid-template-columns:1fr}.hub-mini-tools{grid-template-columns:1fr 1fr}}@media(max-width:560px){.hub-mini-tools{grid-template-columns:1fr}.trust-card{grid-template-columns:36px 1fr;padding:12px}.trust-card i{width:36px;height:36px}}
-</style>
-
-<meta property="og:locale" content="en_US">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Poppins:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="preload" href="{{ url_for('static', filename='css/index.css') }}" as="style">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"></noscript><meta property="og:locale" content="en_US">
 <meta name="twitter:site" content="@SurgeTechKnow">
-<meta name="twitter:creator" content="@SurgeTechKnow">
-
-<style>
-  /* Polished global navigation buttons */
-  .navlinks a,
-  .nav-links a,
-  .nav-links button,
-  .mobile-menu a,
-  .mobile-menu button{
-    display:inline-flex !important;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    border:1px solid rgba(226,232,240,.95) !important;
-    background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
-    color:#0f172a !important;
-    padding:9px 12px !important;
-    border-radius:999px !important;
-    box-shadow:0 6px 18px rgba(15,23,42,.06) !important;
-    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease, background .18s ease;
-    line-height:1;
-    white-space:nowrap;
-  }
-  .navlinks a:hover,
-  .nav-links a:hover,
-  .nav-links button:hover,
-  .mobile-menu a:hover,
-  .mobile-menu button:hover{
-    transform:translateY(-1px);
-    border-color:#e50920 !important;
-    color:#e50920 !important;
-    box-shadow:0 10px 24px rgba(229,9,32,.12) !important;
-  }
-  .navlinks a[href*="hub"],
-  .nav-links a[href*="hub"]{
-    background:linear-gradient(135deg,#e50920,#ff7a1a) !important;
-    color:#fff !important;
-    border-color:#e50920 !important;
-  }
-  .navlinks a[href*="hub"]:hover,
-  .nav-links a[href*="hub"]:hover{
-    color:#fff !important;
-    box-shadow:0 12px 26px rgba(229,9,32,.22) !important;
-  }
-  @media(max-width:700px){
-    .navlinks a,.nav-links a,.nav-links button,.mobile-menu a,.mobile-menu button{border-radius:14px !important;padding:11px 12px !important;justify-content:flex-start;}
-  }
-</style>
-
-</head>
+<meta name="twitter:creator" content="@SurgeTechKnow"></head>
 <body>
 {% set trending = home_blog_sections.get('Trending', []) if home_blog_sections else [] %}{% if not trending %}{% set trending = blog_posts[:5] %}{% endif %}
 {% set cats = ['Cybersecurity','Networking','Windows News','Mobile & Android','AI & Automation','ICT Support','Technology'] %}
@@ -275,7 +93,7 @@ img{max-width:100%;}
 <nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a></div></div></nav>
 <header class="intro"><div class="wrap"><div><h1><i class="bi bi-shield-lock" style="color:var(--red)"></i> SurgeTechKnow</h1><p>Practical cybersecurity, networking, Windows, AI and ICT guidance for real users.</p></div><a class="mini-btn" href="{{ url_for('hub') }}">Open Hub →</a></div></header>
 <main>
-<section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-fire"></i> Now Trending on Tech</h2><a class="view-more" href="{{ url_for('blog_list') }}">View All <i class="bi bi-chevron-right"></i></a></div><div class="trending-grid">{% set main = trending[0] if trending else None %}{% if main %}<a class="card lead-story" href="{{ url_for('view_blog', slug=main.slug) }}"><div class="story-img"><img src="{{ main|blog_image }}" fetchpriority="high" decoding="async" width="1536" height="1024" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ main.title }}"></div><div class="body"><span class="cat">{{ main.category }}</span><h3>{{ main.title }}</h3><p class="excerpt">{{ main.excerpt or (main.content|clean_excerpt(150)) }}</p><span class="meta">{{ main.content|get_reading_time }} min read • {{ main|trending_label or 'Trending this week' }}</span></div></a>{% endif %}<a class="home-hero-panel" href="{{ url_for('about_page') }}" aria-label="Open SurgeTechKnow about page"><img loading="lazy" decoding="async" width="800" height="1000" src="{{ profile_url or hero_url or '/static/passport.webp' }}" onerror="this.onerror=null;this.src='/static/passport.webp';" alt="SurgeTechKnow profile image"><span class="hero-caption">ABOUT SURGETECHKNOW</span></a><div class="numbered-list"><div class="head">Popular Tech Reads</div>{% for b in blog_posts[:5] %}<a class="rank-row" href="{{ url_for('view_blog', slug=b.slug) }}"><span class="rank">{{ loop.index }}</span><img loading="lazy" decoding="async" width="1536" height="1024" src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ b.title }}"><h4>{{ b.title }}</h4></a>{% endfor %}</div></div></div></section>
+<section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-fire"></i> Now Trending on Tech</h2><a class="view-more" href="{{ url_for('blog_list') }}">View All <i class="bi bi-chevron-right"></i></a></div><div class="trending-grid">{% set main = trending[0] if trending else None %}{% if main %}<a class="card lead-story" href="{{ url_for('view_blog', slug=main.slug) }}"><div class="story-img"><img src="{{ main|blog_image }}" fetchpriority="high" decoding="async" width="1536" height="1024" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ main.title }}"></div><div class="body"><span class="cat">{{ main.category }}</span><h3>{{ main.title }}</h3><p class="excerpt">{{ main.excerpt or (main.content|clean_excerpt(150)) }}</p><span class="meta">{{ main.content|get_reading_time }} min read • {{ main|trending_label or 'Trending this week' }}</span></div></a>{% endif %}<a class="home-hero-panel" href="{{ url_for('about_page') }}" aria-label="Open SurgeTechKnow about page"><img fetchpriority="low" decoding="async" width="800" height="1000" src="{{ profile_url or hero_url or '/static/passport.webp' }}" onerror="this.onerror=null;this.src='/static/passport.webp';" alt="SurgeTechKnow profile image"><span class="hero-caption">ABOUT SURGETECHKNOW</span></a><div class="numbered-list"><div class="head">Popular Tech Reads</div>{% for b in blog_posts[:5] %}<a class="rank-row" href="{{ url_for('view_blog', slug=b.slug) }}"><span class="rank">{{ loop.index }}</span><img loading="lazy" decoding="async" width="1536" height="1024" src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ b.title }}"><h4>{{ b.title }}</h4></a>{% endfor %}</div></div></div></section>
 <section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-star-fill"></i> Editor's Picks</h2><a class="view-more" href="{{ url_for('blog_list') }}">Explore Journal <i class="bi bi-chevron-right"></i></a></div><div class="editor-grid">{% for b in blog_posts[0:6] %}<a class="editor-row" href="{{ url_for('view_blog', slug=b.slug) }}"><img loading="lazy" decoding="async" width="1536" height="1024" src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ b.title }}"><div><span class="cat">{{ b.category }}</span><h3>{{ b.title }}</h3><span class="meta">{{ b.content|get_reading_time }} min read</span></div></a>{% endfor %}</div></div></section>
 {% macro news_desk(title, icon, green=False) -%}{% set items = home_blog_sections.get(title, []) if home_blog_sections else [] %}{% if items %}<section class="section"><div class="wrap"><div class="section-head"><h2><i class="{{ icon }}"></i> {{ title }}</h2><a class="view-more" href="{{ title|category_page_url }}">More {{ title }} <i class="bi bi-chevron-right"></i></a></div>{% if green %}<div class="news-layout"><a class="feature-green" href="{{ url_for('view_blog', slug=items[0].slug) }}"><div class="story-img"><img loading="lazy" decoding="async" width="1536" height="1024" src="{{ items[0]|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ items[0].title }}"></div><div class="body"><span class="cat" style="color:#fff">{{ title }}</span><h3>{{ items[0].title }}</h3><p class="excerpt">{{ items[0].excerpt or (items[0].content|clean_excerpt(145)) }}</p><span class="meta">{{ items[0].content|get_reading_time }} min read</span></div></a><div class="numbered-list"><div class="head">Most Useful</div>{% for b in items[1:6] %}<a class="rank-row" href="{{ url_for('view_blog', slug=b.slug) }}"><span class="rank">{{ loop.index }}</span><img loading="lazy" decoding="async" width="1536" height="1024" src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ b.title }}"><h4>{{ b.title }}</h4></a>{% endfor %}</div><div class="list-panel" style="padding:0 15px">{% for b in items[6:11] %}<a class="text-item" href="{{ url_for('view_blog', slug=b.slug) }}"><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><span class="meta">{{ b.content|get_reading_time }} min read</span></a>{% endfor %}</div></div>{% else %}<div class="dense-grid">{% for b in items[:8] %}<a class="card compact-card {% if loop.index == 1 %}overlay-card{% endif %}" href="{{ url_for('view_blog', slug=b.slug) }}"><div class="story-img"><img loading="lazy" decoding="async" width="1536" height="1024" src="{{ b|blog_image }}" onerror="this.onerror=null;this.src='/static/ogimage.webp';" alt="{{ b.title }}"></div><div class="body"><span class="cat">{{ title }}</span><h3>{{ b.title }}</h3><p class="excerpt">{{ b.excerpt or (b.content|clean_excerpt(85)) }}</p><span class="meta">{{ b.content|get_reading_time }} min read</span></div></a>{% endfor %}</div>{% endif %}</div></section>{% endif %}{%- endmacro %}
 {{ news_desk('Cybersecurity','bi bi-shield-lock-fill', True) }}{{ news_desk('Networking','bi bi-diagram-3-fill', True) }}{{ news_desk('Windows News','bi bi-windows') }}{{ news_desk('Mobile & Android','bi bi-phone-fill') }}{{ news_desk('AI & Automation','bi bi-cpu-fill') }}{{ news_desk('ICT Support','bi bi-tools') }}{{ news_desk('Technology','bi bi-newspaper') }}
@@ -301,5 +119,35 @@ document.getElementById('menuBtn').onclick=()=>document.getElementById('mobileMe
   function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'})}).catch(()=>{});}
   send(); setTimeout(send,10000); setInterval(send,90000);
 })();</script>
-<nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="#" id="mobileMoreBtn"><i class="bi bi-list"></i><span>More</span></a></nav><script>document.getElementById('mobileMoreBtn')?.addEventListener('click',function(e){e.preventDefault();document.getElementById('mobileMenu')?.classList.toggle('show')});</script></body>
+<nav class="mobile-bottom-nav" aria-label="Mobile quick navigation"><a href="{{ url_for('index') }}"><i class="bi bi-house-fill"></i><span>Home</span></a><a href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i><span>Journal</span></a><a href="{{ url_for('hub') }}"><i class="bi bi-tools"></i><span>Hub</span></a><a href="{{ url_for('media_gallery') }}"><i class="bi bi-images"></i><span>Media</span></a><a href="#" id="mobileMoreBtn"><i class="bi bi-list"></i><span>More</span></a></nav><script>document.getElementById('mobileMoreBtn')?.addEventListener('click',function(e){e.preventDefault();document.getElementById('mobileMenu')?.classList.toggle('show')});</script>
+<!-- Google Analytics moved near end so critical mobile rendering starts sooner -->
+<!-- Google Analytics HARD FIX -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELRXZQRGNR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ELRXZQRGNR', {
+      send_page_view: false,
+      cookie_domain: 'auto',
+      cookie_flags: 'SameSite=Lax;Secure'
+    });
+
+    function stkSendPageView(){
+      if (window.__stkGaPageViewSent) return;
+      window.__stkGaPageViewSent = true;
+      gtag('event', 'page_view', {
+        page_title: document.title || 'SurgeTechKnow',
+        page_location: window.location.href,
+        page_path: window.location.pathname + window.location.search
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', stkSendPageView);
+    } else {
+      stkSendPageView();
+    }
+  </script>
+</body>
 </html>
