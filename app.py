@@ -1327,12 +1327,57 @@ def list_blog_media():
         conn.close()
 
 
+
+# ===== PERFORMANCE IMAGE OPTIMIZATION HELPERS =====
+def cloudinary_optimized_url(url, width=700, quality="auto", crop="limit"):
+    """
+    Return a lightweight Cloudinary delivery URL without changing stored DB values.
+    - f_auto lets Cloudinary serve WebP/AVIF where supported.
+    - q_auto compresses safely.
+    - w_* prevents 1536px+ images being downloaded for 300px cards.
+    """
+    try:
+        if not url:
+            return url
+        val = str(url).strip()
+        if "res.cloudinary.com" not in val or "/image/upload/" not in val:
+            return val
+        width = int(width or 700)
+        width = max(80, min(width, 1600))
+        transform = f"f_auto,q_{quality},c_{crop},w_{width}"
+        if re.search(r"/image/upload/[^/]*(?:f_auto|q_auto|w_\d+|c_)", val):
+            return val
+        return val.replace("/image/upload/", f"/image/upload/{transform}/", 1)
+    except Exception:
+        return url
+
+
+@app.template_filter("img_opt")
+def img_opt(url, width=700):
+    return cloudinary_optimized_url(url, width=width)
+
+
+
 def media_url(kind, filename):
     if not filename:
         return None
 
     category = category_from_kind(kind)
     ts = data.get_file_timestamp(category, filename) or 0
+
+    try:
+        rec = data.get_file_record(category, filename)
+        if rec and rec.get("url"):
+            width_map = {
+                "profile": 700,
+                "hero": 900,
+                "gallery": 520,
+                "blog_media": 900,
+                "media": 520,
+            }
+            return cloudinary_optimized_url(rec.get("url"), width_map.get(kind, 700))
+    except Exception:
+        pass
 
     return url_for("media_file", kind=kind, filename=filename) + f"?v={int(ts)}"
 
@@ -3672,16 +3717,16 @@ def category_fallback_image(category="Technology", title="SurgeTechKnow"):
 
 @app.template_filter("blog_image")
 def blog_image(post):
-    """Reliable thumbnail resolver for cards. Keeps cards from showing broken/empty images."""
+    """Reliable optimized thumbnail resolver for cards. Keeps cards from showing broken/empty images."""
     try:
         featured = (post.get("featured_image") if isinstance(post, dict) else getattr(post, "featured_image", "")) or ""
         content = (post.get("content") if isinstance(post, dict) else getattr(post, "content", "")) or ""
         category = normalize_blog_category(post) if post else get_blog_category("", content)
         first = get_first_image(content)
         if featured:
-            return featured
+            return cloudinary_optimized_url(featured, 700)
         if first:
-            return first
+            return cloudinary_optimized_url(first, 700)
         return category_fallback_image(category)
     except Exception:
         return category_fallback_image("Technology")
