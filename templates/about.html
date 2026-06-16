@@ -46,7 +46,7 @@
   <meta property="og:site_name" content="SurgeTechKnow">
   <meta property="og:title" content="About Caleb Muga & SurgeTechKnow">
   <meta property="og:description" content="Professional profile, mission, vision and values behind SurgeTechKnow.">
-  <meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.webp">
+  <meta property="og:image" content="https://techknowsolution.co.ke/static/ogimage.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,7 +56,7 @@
   {
     "@context":"https://schema.org",
     "@graph":[
-      {"@type":"Organization","@id":"https://techknowsolution.co.ke/#organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","founder":{"@id":"https://techknowsolution.co.ke/about#caleb-muga"},"logo":"https://techknowsolution.co.ke/static/ogimage.webp","sameAs":[]},
+      {"@type":"Organization","@id":"https://techknowsolution.co.ke/#organization","name":"SurgeTechKnow","url":"https://techknowsolution.co.ke","founder":{"@id":"https://techknowsolution.co.ke/about#caleb-muga"},"logo":"https://techknowsolution.co.ke/static/ogimage.png","sameAs":[]},
       {"@type":"Person","@id":"https://techknowsolution.co.ke/about#caleb-muga","name":"Caleb Muga","url":"https://techknowsolution.co.ke/about","jobTitle":"ICT Professional, Software Developer and Cybersecurity Enthusiast","alumniOf":"Bachelor of Business Information Technology (BBIT)","knowsAbout":["Cybersecurity","CCNA Networking","ICT Support","Software Development","File Security","Business Information Technology"]}
     ]
   }
@@ -129,7 +129,7 @@
         <span class="kicker"><i class="bi bi-shield-lock-fill"></i> Founder Profile</span>
         <h1>Caleb Muga</h1>
         <p class="lead">I am an ICT professional, software developer, cybersecurity enthusiast and networking practitioner with a background in Business Information Technology and practical experience supporting digital systems, users and technology-driven operations.</p>
-        <div class="founder-trust-photo" style="display:flex;align-items:center;gap:16px;margin:18px 0;padding:14px;border:1px solid var(--line);border-radius:22px;background:#f8fafc;box-shadow:0 12px 30px rgba(15,23,42,.06)"><img decoding="async" width="800" height="1000" src="{{ url_for('static', filename='passport.webp') }}" alt="Caleb Muga founder photo" style="width:112px;height:112px;border-radius:24px;object-fit:cover;border:3px solid #fff;box-shadow:0 12px 30px rgba(15,23,42,.18)"><div><strong style="display:block;font-size:16px;color:var(--dark)">Founder-led ICT guidance</strong><span style="display:block;color:var(--muted);font-size:14px;line-height:1.55">SurgeTechKnow is built around practical technology education, cybersecurity awareness, networking, ICT support and software development experience.</span></div></div>
+        <div class="founder-trust-photo" style="display:flex;align-items:center;gap:16px;margin:18px 0;padding:14px;border:1px solid var(--line);border-radius:22px;background:#f8fafc;box-shadow:0 12px 30px rgba(15,23,42,.06)"><img src="{{ url_for('static', filename='passport.png') }}" alt="Caleb Muga founder photo" style="width:112px;height:112px;border-radius:24px;object-fit:cover;border:3px solid #fff;box-shadow:0 12px 30px rgba(15,23,42,.18)"><div><strong style="display:block;font-size:16px;color:var(--dark)">Founder-led ICT guidance</strong><span style="display:block;color:var(--muted);font-size:14px;line-height:1.55">SurgeTechKnow is built around practical technology education, cybersecurity awareness, networking, ICT support and software development experience.</span></div></div>
         <p>I hold a Bachelor of Business Information Technology (BBIT) and have pursued professional training in cybersecurity, CCNA networking and file security. My work combines technical support, systems thinking, software development and practical digital problem-solving.</p>
         <div class="chips"><span class="chip">BBIT Graduate</span><span class="chip">CCNA Training</span><span class="chip">Cybersecurity</span><span class="chip">OPSWAT File Security</span><span class="chip">ICT Officer Experience</span><span class="chip">Software Developer</span></div>
         <a class="btn" href="{{ url_for('blog_list') }}"><i class="bi bi-newspaper"></i> Explore the Journal</a>
@@ -137,7 +137,7 @@
 
       <aside class="profile-card">
         <div class="profile-inner">
-          <div class="avatar-wrap"><img decoding="async" width="800" height="1000" src="{{ profile_url or '/static/passport.webp' }}" alt="Caleb Muga profile photo" onerror="this.onerror=null;this.src='/static/passport.webp';"></div>
+          <div class="avatar-wrap"><img src="{{ profile_url or '/static/passport.png' }}" alt="Caleb Muga profile photo" onerror="this.onerror=null;this.src='/static/passport.png';"></div>
           <h2>Caleb Muga</h2>
           <div class="role">ICT Professional • Software Developer • Cybersecurity Enthusiast</div><div class="profile-badge-line"><span>BBIT</span><span>CCNA</span><span>Cybersecurity</span><span>OPSWAT</span></div>
           <div class="cert-grid">
