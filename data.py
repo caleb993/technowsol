@@ -614,7 +614,7 @@ def add_blog(title, content, status="published", published_at=None, category="Te
     finally:
         conn.close()
 
-def load_blogs(include_drafts=False):
+def load_blogs(include_drafts=False, limit=None):
     conn = get_conn()
     try:
         with conn:
@@ -636,7 +636,8 @@ def load_blogs(include_drafts=False):
                                COALESCE(meta_keywords, '') as meta_keywords
                         FROM blogs
                         ORDER BY id DESC
-                    """)
+                        LIMIT %s
+                    """, (limit or 1000000,))
                 else:
                     cur.execute("""
                         SELECT id, timestamp, title, slug, content,
@@ -656,7 +657,8 @@ def load_blogs(include_drafts=False):
                         WHERE COALESCE(status, 'published') = 'published'
                         AND (published_at IS NULL OR published_at <= now())
                         ORDER BY id DESC
-                    """)
+                        LIMIT %s
+                    """, (limit or 1000000,))
 
                 return [
                     {

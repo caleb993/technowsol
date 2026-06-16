@@ -55,11 +55,6 @@ ADMIN_LOGIN_ATTEMPTS = {}
 ADMIN_MAX_ATTEMPTS = int(os.environ.get("ADMIN_MAX_ATTEMPTS", "6"))
 ADMIN_LOCK_SECONDS = int(os.environ.get("ADMIN_LOCK_SECONDS", "900"))
 
-# Homepage performance cache controls. Keeps the homepage fast without changing visible content.
-HOME_REFRESH_LAST = 0
-HOME_REFRESH_TTL_SECONDS = int(os.environ.get("HOME_REFRESH_TTL_SECONDS", "21600"))  # 6 hours
-
-
 if ADMIN_KEY == "calebadmin":
     print("⚠️ SECURITY WARNING: ADMIN_KEY is using the fallback value. Set a strong ADMIN_KEY in environment variables.")
 
@@ -128,9 +123,6 @@ def admin_security_gate():
 
 @app.after_request
 def add_security_headers(response):
-    # Performance: cache static assets aggressively; file names should change when assets change.
-    if request.path.startswith("/static/"):
-        response.headers.setdefault("Cache-Control", "public, max-age=31536000, immutable")
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
@@ -1391,6 +1383,8 @@ def log_upload_result(category, fname):
         print("⚠️ Could not log upload result:", e)
 
 
+_HOME_CATEGORY_REFRESH_DONE = False
+
 @app.route("/", methods=["GET"])
 def index():
     try:
@@ -1406,17 +1400,17 @@ def index():
     prof_name, _ = latest_file("profile", only_images=True)
     hero_name, _ = latest_file("hero", only_images=True)
     gallery = list_gallery_media_limited(6)
-    # Performance: category cleanup is useful, but doing it on every homepage request
-    # slows first paint. Run it occasionally instead of blocking every visitor.
-    global HOME_REFRESH_LAST
-    now_ts = time.time()
-    if now_ts - HOME_REFRESH_LAST > HOME_REFRESH_TTL_SECONDS:
+    # Performance: avoid repairing old blog categories on every homepage request.
+    # The repair still runs once per app process, but the homepage no longer waits for it repeatedly.
+    global _HOME_CATEGORY_REFRESH_DONE
+    if not _HOME_CATEGORY_REFRESH_DONE:
         try:
             refresh_existing_blog_categories()
-            HOME_REFRESH_LAST = now_ts
         except Exception as e:
             print(f"Category refresh skipped: {e}")
-    blogs = [apply_blog_runtime_metadata(b) for b in data.load_blogs()]
+        _HOME_CATEGORY_REFRESH_DONE = True
+
+    blogs = [apply_blog_runtime_metadata(b) for b in data.load_blogs(limit=80)]
     home_blog_sections = categorize_home_blogs(blogs)
 
     return render_template(
