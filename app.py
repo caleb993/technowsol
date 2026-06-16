@@ -629,7 +629,7 @@ def site_webmanifest():
         "icons": [
             {"src": "/static/favicon-32.png", "sizes": "32x32", "type": "image/png"},
             {"src": "/static/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
-            {"src": "/static/ogimage.webp", "sizes": "1200x630", "type": "image/webp"}
+            {"src": "/static/ogimage.png", "sizes": "1200x630", "type": "image/png"}
         ]
     }
     response = jsonify(manifest)
@@ -3641,7 +3641,7 @@ def render_markdown(text):
 
 
 
-OG_FALLBACK_IMAGE = "https://techknowsolution.co.ke/static/ogimage.webp"
+OG_FALLBACK_IMAGE = "https://techknowsolution.co.ke/static/ogimage.png"
 
 def category_fallback_image(category="Technology", title="SurgeTechKnow"):
     """Small inline SVG thumbnails so articles without images still look professional and load instantly."""
@@ -3714,7 +3714,7 @@ def absolute_url_filter(path):
 
 def social_share_image_url(post):
     """Return the public image used by WhatsApp/Facebook/Twitter previews.
-    Priority: admin-selected thumbnail -> first image in article -> static/ogimage.webp.
+    Priority: admin-selected thumbnail -> first image in article -> static/ogimage.png.
     Never returns data URIs or relative paths.
     """
     try:
@@ -3735,7 +3735,7 @@ def social_share_image_filter(post):
 @app.template_filter("blog_social_image")
 def blog_social_image(post):
     """Open Graph/Twitter image resolver for social previews.
-    Priority: admin-selected thumbnail -> first image in article -> static/ogimage.webp.
+    Priority: admin-selected thumbnail -> first image in article -> static/ogimage.png.
     """
     return social_share_image_url(post)
 

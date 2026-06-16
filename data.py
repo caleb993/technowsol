@@ -15,12 +15,6 @@ try:
 except Exception:
     cloudinary = None
 
-try:
-    from PIL import Image, ImageOps
-except Exception:
-    Image = None
-    ImageOps = None
-
 
 # ---------------- Environment ----------------
 load_dotenv()
@@ -891,56 +885,6 @@ def delete_from_cloudinary(public_id):
         return False
 
 
-
-def _is_convertible_image(filename, mimetype=""):
-    """Return True for uploaded images we can safely optimize to WebP."""
-    ext = (filename.rsplit(".", 1)[-1].lower() if "." in filename else "")
-    # Keep GIF animation untouched. Videos/documents are untouched.
-    return ext in {"png", "jpg", "jpeg", "webp"} or (mimetype or "").lower() in {"image/png", "image/jpeg", "image/jpg", "image/webp"}
-
-
-def _optimized_webp_bytes(content, filename):
-    """Convert PNG/JPG/WebP uploads to a compressed WebP image for faster pages.
-    Keeps transparency when present, strips heavy metadata, limits huge dimensions,
-    and returns (new_content, new_filename, new_mimetype). If Pillow is unavailable
-    or conversion fails, the original file is returned unchanged.
-    """
-    if not Image or not content or not _is_convertible_image(filename):
-        return content, filename, None
-
-    try:
-        max_width = int(os.getenv("WEBP_MAX_WIDTH", "1536"))
-        quality = int(os.getenv("WEBP_QUALITY", "78"))
-
-        img = Image.open(io.BytesIO(content))
-        img = ImageOps.exif_transpose(img)
-
-        if getattr(img, "is_animated", False):
-            return content, filename, None
-
-        if img.width > max_width:
-            new_height = max(1, int(img.height * (max_width / float(img.width))))
-            img = img.resize((max_width, new_height), Image.LANCZOS)
-
-        has_alpha = img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info)
-        img = img.convert("RGBA" if has_alpha else "RGB")
-
-        base = os.path.splitext(filename)[0] or "image"
-        new_filename = secure_filename(base + ".webp")
-        out = io.BytesIO()
-        img.save(out, "WEBP", quality=quality, method=6, optimize=True)
-        optimized = out.getvalue()
-
-        # Avoid replacing a tiny already-optimized image with a larger file.
-        if optimized and len(optimized) < len(content) * 0.98:
-            return optimized, new_filename, "image/webp"
-        if filename.lower().endswith(".webp"):
-            return optimized or content, new_filename, "image/webp"
-        return optimized or content, new_filename, "image/webp"
-    except Exception as e:
-        print(f"⚠️ WebP optimization skipped for {filename}: {e}")
-        return content, filename, None
-
 def save_file_from_storage(category, file_storage, rename_to=None, approve=True, single_replace=False):
     if not file_storage or file_storage.filename == "":
         return None, "No file provided."
@@ -953,20 +897,10 @@ def save_file_from_storage(category, file_storage, rename_to=None, approve=True,
     try:
         content = file_storage.read()
         mimetype = _guess_mimetype(fname, file_storage)
+        file_size = len(content or b"")
 
         if not content:
             return None, "Uploaded file is empty."
-
-        # Performance upgrade: automatically convert uploaded PNG/JPG/WebP images
-        # to compressed WebP before saving or sending to Cloudinary. This keeps
-        # article thumbnails, profile images, hero images and gallery photos light.
-        optimized_mimetype = None
-        if category in {"profile", "hero", "gallery", "blog_media"}:
-            content, fname, optimized_mimetype = _optimized_webp_bytes(content, fname)
-            if optimized_mimetype:
-                mimetype = optimized_mimetype
-
-        file_size = len(content or b"")
 
         cloud = upload_bytes_to_cloudinary(content, fname, category)
 
