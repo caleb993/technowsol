@@ -1383,8 +1383,6 @@ def log_upload_result(category, fname):
         print("⚠️ Could not log upload result:", e)
 
 
-_HOME_CATEGORY_REFRESH_DONE = False
-
 @app.route("/", methods=["GET"])
 def index():
     try:
@@ -1400,17 +1398,11 @@ def index():
     prof_name, _ = latest_file("profile", only_images=True)
     hero_name, _ = latest_file("hero", only_images=True)
     gallery = list_gallery_media_limited(6)
-    # Performance: avoid repairing old blog categories on every homepage request.
-    # The repair still runs once per app process, but the homepage no longer waits for it repeatedly.
-    global _HOME_CATEGORY_REFRESH_DONE
-    if not _HOME_CATEGORY_REFRESH_DONE:
-        try:
-            refresh_existing_blog_categories()
-        except Exception as e:
-            print(f"Category refresh skipped: {e}")
-        _HOME_CATEGORY_REFRESH_DONE = True
-
-    blogs = [apply_blog_runtime_metadata(b) for b in data.load_blogs(limit=80)]
+    try:
+        refresh_existing_blog_categories()
+    except Exception as e:
+        print(f"Category refresh skipped: {e}")
+    blogs = [apply_blog_runtime_metadata(b) for b in data.load_blogs()]
     home_blog_sections = categorize_home_blogs(blogs)
 
     return render_template(
