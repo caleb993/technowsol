@@ -1329,12 +1329,12 @@ def list_blog_media():
 
 
 # ===== PERFORMANCE IMAGE OPTIMIZATION HELPERS =====
-def cloudinary_optimized_url(url, width=700, quality="auto", crop="limit"):
+def cloudinary_optimized_url(url, width=700, quality="auto:eco", crop="limit"):
     """
     Return a lightweight Cloudinary delivery URL without changing stored DB values.
-    - f_auto lets Cloudinary serve WebP/AVIF where supported.
-    - q_auto compresses safely.
-    - w_* prevents 1536px+ images being downloaded for 300px cards.
+    This version intentionally REWRITES an existing Cloudinary transformation so
+    card thumbnails really become small thumbnails instead of inheriting a large
+    earlier width. Layout and database values remain unchanged.
     """
     try:
         if not url:
@@ -1342,12 +1342,24 @@ def cloudinary_optimized_url(url, width=700, quality="auto", crop="limit"):
         val = str(url).strip()
         if "res.cloudinary.com" not in val or "/image/upload/" not in val:
             return val
+
         width = int(width or 700)
-        width = max(80, min(width, 1600))
+        width = max(80, min(width, 1400))
         transform = f"f_auto,q_{quality},c_{crop},w_{width}"
-        if re.search(r"/image/upload/[^/]*(?:f_auto|q_auto|w_\d+|c_)", val):
-            return val
-        return val.replace("/image/upload/", f"/image/upload/{transform}/", 1)
+
+        marker = "/image/upload/"
+        before, after = val.split(marker, 1)
+        parts = after.split("/", 1)
+        first = parts[0]
+        rest = parts[1] if len(parts) > 1 else ""
+
+        # Cloudinary URLs commonly look like /upload/v123/folder/file.png or
+        # /upload/f_auto,q_auto,w_700/v123/folder/file.png. If a transform is
+        # already present, replace it with the requested responsive width.
+        has_transform = bool(re.search(r"(^|,)(f_auto|q_auto(?::\w+)?|q_\w+(?::\w+)?|w_\d+|c_\w+|dpr_auto)(,|$)", first))
+        if has_transform:
+            return before + marker + transform + ("/" + rest if rest else "")
+        return before + marker + transform + "/" + after
     except Exception:
         return url
 
