@@ -92,7 +92,7 @@
   addEventListener('touchstart',()=>{interacted=true;},{passive:true});
   function payload(){return {path:location.pathname,js_enabled:true,visible:document.visibilityState==='visible',time_on_page:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll,engaged:true,interaction:interacted,screen_resolution:`${screen.width}x${screen.height}`,timezone:(Intl.DateTimeFormat().resolvedOptions().timeZone||'Unknown'),referrer:document.referrer,browser:navigator.userAgent,device_type:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)?'Mobile':'Desktop'};}
   function send(){fetch('/api/track_visit',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(payload())}).catch(()=>{});}
-  send(); setTimeout(send,10000); setInterval(send,90000);
+  function scheduleTracking(){setTimeout(send,3000); setTimeout(send,13000); setInterval(send,90000);}if(document.readyState==='complete'){scheduleTracking();}else{addEventListener('load',scheduleTracking,{once:true});}
   {% if post is defined and post.slug is defined %}
   function sendArticle(){fetch('/api/blog/heartbeat',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({slug:{{ post.slug|tojson }},total_seconds:Math.round((Date.now()-start)/1000),scroll_depth:maxScroll})}).catch(()=>{});}
   sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);
