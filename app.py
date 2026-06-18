@@ -3685,6 +3685,42 @@ def render_markdown(text):
         return ""
 
     try:
+        html = markdown.markdown(text, extensions=["fenced_code", "codehilite"])
+    except Exception as e:
+        print(f"Error rendering markdown custom extensions: {e}")
+        try:
+            html = markdown.markdown(text)
+        except Exception as e2:
+            print(f"Fallback markdown failed too: {e2}")
+            import html as html_lib
+            return f"<pre>{html_lib.escape(text)}</pre>"
+
+    # Force all Cloudinary images inside article content to WebP/AVIF + compressed + resized
+    try:
+        import re
+
+        def optimize_img_src(match):
+            before = match.group(1)
+            src = match.group(2)
+            after = match.group(3)
+
+            optimized_src = cloudinary_optimized_url(src, width=1000)
+
+            return f'{before}{optimized_src}{after}'
+
+        html = re.sub(
+            r'(<img[^>]+src=["\'])(https://res\.cloudinary\.com/[^"\']+)(["\'][^>]*>)',
+            optimize_img_src,
+            html,
+            flags=re.IGNORECASE
+        )
+
+    except Exception as e:
+        print(f"Image optimization inside markdown failed: {e}")
+
+    return html
+
+    try:
         return markdown.markdown(text, extensions=["fenced_code", "codehilite"])
     except Exception as e:
         print(f"Error rendering markdown custom extensions: {e}")
@@ -3729,7 +3765,7 @@ def category_fallback_image(category="Technology", title="SurgeTechKnow"):
 
 @app.template_filter("blog_image")
 def blog_image(post):
-    """Reliable optimized thumbnail resolver for cards. Keeps cards from showing broken/empty images."""
+    """ Reliable optimized thumbnail resolver for cards. Keeps cards from showing broken/empty images."""
     try:
         featured = (post.get("featured_image") if isinstance(post, dict) else getattr(post, "featured_image", "")) or ""
         content = (post.get("content") if isinstance(post, dict) else getattr(post, "content", "")) or ""
