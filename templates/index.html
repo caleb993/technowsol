@@ -1,3 +1,8 @@
+<!--
+  index.html cleaned for SurgeTechKnow.
+  Functional logic, Jinja routes, analytics, forms, tracking, blog loops, and page sections retained.
+  Added a non-invasive CLS stability patch near </head> to reserve image and mobile-nav space.
+-->
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 <head>
@@ -433,6 +438,116 @@ img{max-width:100%;}
     .home-category-row.home-category-feature .story-img{width:100%!important;height:auto!important;min-height:0!important;aspect-ratio:16/9!important;}
     .home-category-row.home-category-feature h3{font-size:18px;line-height:1.15;-webkit-line-clamp:2;}
     .home-category-row.home-category-feature .excerpt{font-size:12px;-webkit-line-clamp:2;}
+  }
+  
+
+  
+</style>
+
+<!-- CLS STABILITY PATCH: reserves image/nav space without changing routes, Jinja logic, forms, tracking, or content flow -->
+<style>
+  /* Keep images predictable before they finish loading */
+  .story-img,
+  .thumb,
+  .blog-thumb,
+  .article-thumb,
+  .media-thumb,
+  .featured-thumb {
+    background:#0b1220;
+    overflow:hidden;
+    contain:layout paint;
+  }
+
+  .story-img img,
+  .thumb img,
+  .blog-thumb img,
+  .article-thumb img,
+  .media-thumb img,
+  .featured-thumb img {
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+    display:block!important;
+  }
+
+  /* Reserve stable space for main homepage cards */
+  .lead-story {
+    min-height:430px;
+  }
+
+  .lead-story .story-img {
+    min-height:305px;
+  }
+
+  .home-hero-panel {
+    min-height:212px;
+  }
+
+  .home-hero-panel img {
+    aspect-ratio:16/9;
+  }
+
+  /* Reserve stable space for sidebar and row thumbnails */
+  .mini-story .story-img,
+  .compact-card .story-img {
+    aspect-ratio:16/9;
+    min-height:90px;
+  }
+
+  .editor-row img {
+    width:112px;
+    height:78px;
+  }
+
+  .latest-row img {
+    width:126px;
+    height:84px;
+  }
+
+  .rank-row img {
+    width:82px;
+    height:54px;
+  }
+
+  /* Homepage category rows: keep previous layout, only reserve mobile feature space */
+  .home-category-row .story-img {
+    flex-shrink:0;
+  }
+
+  /* Mobile bottom navigation should not push the page after load */
+  .mobile-bottom-nav {
+    height:62px;
+    min-height:62px;
+  }
+
+  @media(max-width:640px){
+    body {
+      padding-bottom:70px;
+    }
+
+    .lead-story {
+      min-height:285px;
+    }
+
+    .lead-story .story-img {
+      min-height:190px;
+    }
+
+    .home-hero-panel {
+      min-height:210px;
+    }
+
+    .home-category-row.home-category-feature .story-img {
+      width:100%!important;
+      height:auto!important;
+      min-height:180px!important;
+      aspect-ratio:16/9!important;
+    }
+
+    .mobile-bottom-nav {
+      height:62px;
+      min-height:62px;
+    }
   }
 </style>
 
