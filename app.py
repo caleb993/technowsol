@@ -629,7 +629,7 @@ def site_webmanifest():
         "icons": [
             {"src": "/static/favicon-32.png", "sizes": "32x32", "type": "image/png"},
             {"src": "/static/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"},
-            {"src": "/static/ogimage.png", "sizes": "1200x630", "type": "image/png"}
+            {"src": "/static/favicon.png", "sizes": "512x512", "type": "image/png"}
         ]
     }
     response = jsonify(manifest)
