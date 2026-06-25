@@ -134,18 +134,320 @@
   }
 </style>
 
+
+<style>
+/* =========================================================
+   CATEGORY PAGE CONSISTENCY PATCH
+   Makes every individual category page use the same premium
+   card presentation used on the main blog_list "All" section.
+   ========================================================= */
+.category-page{
+  --theme-main:#e50920;
+  --theme-deep:#071021;
+  --theme-soft:rgba(229,9,32,.08);
+  --theme-ring:rgba(229,9,32,.22);
+  --theme-glow:rgba(229,9,32,.16);
+  background:
+    radial-gradient(circle at top left, rgba(229,9,32,.055), transparent 32rem),
+    radial-gradient(circle at 88% 18%, rgba(30,58,138,.075), transparent 28rem),
+    linear-gradient(180deg,#f8fafc 0%,#eef2f7 45%,#f8fafc 100%);
+}
+.theme-cybersecurity{--theme-main:#e50920;--theme-deep:#020617;--theme-soft:rgba(229,9,32,.09);--theme-ring:rgba(229,9,32,.26);--theme-glow:rgba(229,9,32,.18)}
+.theme-networking{--theme-main:#1e3a8a;--theme-deep:#082f49;--theme-soft:rgba(30,58,138,.09);--theme-ring:rgba(30,58,138,.25);--theme-glow:rgba(30,58,138,.18)}
+.theme-windows-news{--theme-main:#2563eb;--theme-deep:#0f172a;--theme-soft:rgba(37,99,235,.09);--theme-ring:rgba(37,99,235,.24);--theme-glow:rgba(37,99,235,.16)}
+.theme-mobile-android{--theme-main:#15803d;--theme-deep:#052e16;--theme-soft:rgba(21,128,61,.09);--theme-ring:rgba(21,128,61,.24);--theme-glow:rgba(21,128,61,.16)}
+.theme-ai-automation{--theme-main:#7c3aed;--theme-deep:#2e1065;--theme-soft:rgba(124,58,237,.09);--theme-ring:rgba(124,58,237,.24);--theme-glow:rgba(124,58,237,.16)}
+.theme-ict-support{--theme-main:#0f766e;--theme-deep:#042f2e;--theme-soft:rgba(15,118,110,.09);--theme-ring:rgba(15,118,110,.24);--theme-glow:rgba(15,118,110,.16)}
+.theme-technology{--theme-main:#334155;--theme-deep:#020617;--theme-soft:rgba(51,65,85,.08);--theme-ring:rgba(51,65,85,.23);--theme-glow:rgba(51,65,85,.15)}
+
+.category-page .top{background:linear-gradient(90deg,var(--theme-deep),var(--theme-main))}
+.category-page .hero{
+  background:
+    radial-gradient(circle at 15% 10%, var(--theme-soft), transparent 28rem),
+    linear-gradient(110deg,#fff,#eef4ff 60%,#fff1f2);
+}
+.category-page .hero h1 i,
+.category-page .crumb a,
+.category-page .view-more,
+.category-page .cat{color:var(--theme-main)!important}
+.category-page .cat{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  border-radius:999px;
+  background:var(--theme-soft);
+  padding:4px 8px;
+}
+.category-page .section-head{border-bottom:0;margin-bottom:18px}
+.category-page .section-head h2{
+  letter-spacing:-.035em;
+  position:relative;
+}
+.category-page .section-head h2:after{
+  content:'';
+  display:block;
+  width:76px;
+  height:4px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--theme-main),var(--theme-deep));
+  margin-top:9px;
+}
+.category-page .lead,
+.category-page .mini,
+.category-page .rail,
+.category-page .card,
+.category-page .relcat,
+.category-page .faq-item,
+.category-page .hero-box{
+  border-radius:24px!important;
+  overflow:hidden;
+  border:1px solid rgba(226,232,240,.95)!important;
+  background:rgba(255,255,255,.94)!important;
+  box-shadow:0 10px 26px rgba(15,23,42,.055);
+  transition:transform .24s ease, box-shadow .24s ease, border-color .24s ease, filter .24s ease;
+}
+.category-page .lead:hover,
+.category-page .mini:hover,
+.category-page .rail a:hover,
+.category-page .card:hover,
+.category-page .relcat:hover,
+.category-page .faq-item:hover{
+  transform:translateY(-6px);
+  box-shadow:0 26px 70px rgba(15,23,42,.18);
+  border-color:var(--theme-ring)!important;
+}
+.category-page .lead-img img,
+.category-page .mini img,
+.category-page .card img{
+  transition:transform .42s ease, filter .3s ease;
+}
+.category-page .lead:hover .lead-img img,
+.category-page .mini:hover img,
+.category-page .card:hover img{
+  transform:scale(1.045);
+  filter:saturate(1.08) contrast(1.03);
+}
+.category-page .lead h2,
+.category-page .mini h3,
+.category-page .rail h4,
+.category-page .card h3{text-wrap:balance}
+.category-page .rail h3{
+  background:linear-gradient(135deg,var(--theme-deep),var(--theme-main))!important;
+  border-radius:24px 24px 0 0;
+}
+.category-page .rail a{transition:background .18s ease, padding-left .18s ease}
+.category-page .rail a:hover{background:#f8fafc;padding-left:18px}
+
+/* Same "All" card-grid appearance */
+.category-page .grid{
+  margin:8px 0 10px!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:18px!important;
+  align-items:stretch;
+  grid-auto-flow:dense;
+}
+.category-page .card{
+  position:relative;
+  min-height:0;
+  isolation:isolate;
+  transform-origin:center;
+  border-radius:24px!important;
+  background:rgba(255,255,255,.96)!important;
+}
+.category-page .card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(135deg,rgba(255,255,255,.7),var(--theme-ring),rgba(255,255,255,.2));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
+  opacity:.72;
+}
+.category-page .card-glow{
+  position:absolute;
+  inset:auto -30% -45% -30%;
+  height:95px;
+  background:radial-gradient(circle,var(--theme-glow),transparent 66%);
+  opacity:0;
+  transition:opacity .25s ease;
+  z-index:0;
+  pointer-events:none;
+}
+.category-page .card:hover .card-glow{opacity:1}
+.category-page .card img{
+  width:100%;
+  height:104px!important;
+  aspect-ratio:auto!important;
+  object-fit:cover;
+  display:block;
+  border-radius:24px 24px 0 0;
+  background:#0b1220;
+}
+.category-page .card .body{
+  position:relative;
+  z-index:1;
+  padding:10px 11px 12px!important;
+}
+.category-page .card h3{
+  font-size:13.5px!important;
+  line-height:1.22!important;
+  margin:.42rem 0 .55rem!important;
+  letter-spacing:-.02em;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.category-page .read-pill{
+  display:inline-flex;
+  border:1px solid rgba(100,112,132,.18);
+  border-radius:999px;
+  padding:4px 8px;
+  background:#f8fafc;
+  color:#475569;
+  font-size:10px;
+}
+.category-page .card-footerline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.category-page .continue{font:900 10px Inter;color:var(--theme-main);opacity:0;transform:translateX(-4px);transition:.22s ease;white-space:nowrap}
+.category-page .card:hover .continue{opacity:1;transform:translateX(0)}
+.category-page .card-corner-icon{
+  position:absolute;
+  right:10px;
+  top:10px;
+  z-index:3;
+  width:30px;
+  height:30px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.92);
+  color:var(--theme-main);
+  border:1px solid rgba(226,232,240,.9);
+  box-shadow:0 10px 22px rgba(15,23,42,.10);
+  transform:scale(.92);
+  opacity:0;
+  transition:opacity .2s ease,transform .2s ease;
+}
+.category-page .card:hover .card-corner-icon{opacity:1;transform:scale(1)}
+
+/* Mixed professional card presentation copied from the Journal grid */
+.category-page .card-style-1,
+.category-page .card-style-6{
+  display:grid!important;
+  grid-template-columns:42% 1fr;
+}
+.category-page .card-style-1 img,
+.category-page .card-style-6 img{
+  height:100%!important;
+  min-height:126px;
+  border-radius:24px 0 0 24px!important;
+}
+.category-page .card-style-1 h3,
+.category-page .card-style-6 h3{-webkit-line-clamp:4}
+.category-page .card-style-2{
+  background:linear-gradient(180deg,#ffffff,#f8fbff)!important;
+  border-top:4px solid var(--theme-main)!important;
+}
+.category-page .card-style-2 img{height:88px!important}
+.category-page .card-style-3{grid-row:span 2}
+.category-page .card-style-3 img{height:168px!important}
+.category-page .card-style-3 h3{font-size:15px!important}
+.category-page .card-style-4{background:linear-gradient(135deg,#fff,var(--theme-soft))!important}
+.category-page .card-style-4::after{
+  content:'Editor pick';
+  position:absolute;
+  right:10px;
+  top:10px;
+  background:#071021;
+  color:#fff;
+  border-radius:999px;
+  padding:5px 8px;
+  font:900 9px Inter;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  z-index:4;
+}
+.category-page .card-style-5{display:flex!important;flex-direction:column-reverse}
+.category-page .card-style-5 img{border-radius:0 0 24px 24px!important;height:96px!important}
+.category-page .card-style-7{border-left:5px solid var(--theme-main)!important}
+.category-page .card-style-7 img{height:92px!important}
+.category-page .card-style-8{
+  grid-column:span 2;
+  display:grid!important;
+  grid-template-columns:45% 1fr;
+  background:linear-gradient(135deg,#fff,var(--theme-soft))!important;
+}
+.category-page .card-style-8 img{height:100%!important;min-height:132px;border-radius:24px 0 0 24px!important}
+.category-page .card-style-9{grid-row:span 2;background:linear-gradient(180deg,#fff,#f8fafc)!important}
+.category-page .card-style-9 img{height:190px!important}
+.category-page .card-style-10{border-bottom:5px solid var(--theme-main)!important}
+.category-page .card-style-10 img{height:84px!important}
+.category-page .card-style-11{display:flex!important;flex-direction:column-reverse;background:linear-gradient(135deg,#f8fafc,#fff)!important}
+.category-page .card-style-11 img{border-radius:0 0 24px 24px!important;height:94px!important}
+.category-page .card-style-0:hover{rotate:-.35deg}
+.category-page .card-style-2:hover,
+.category-page .card-style-5:hover{rotate:.35deg}
+.category-page .reveal-card{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+.category-page .reveal-card.is-visible{opacity:1;transform:translateY(0)}
+@media(prefers-reduced-motion:reduce){
+  .category-page .reveal-card{opacity:1;transform:none;transition:none}
+  .category-page .lead:hover,
+  .category-page .mini:hover,
+  .category-page .rail a:hover,
+  .category-page .card:hover{transform:none}
+}
+@media(max-width:1380px){
+  .category-page .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .category-page .card img{height:100px!important}
+}
+@media(max-width:1100px){
+  .category-page .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important}
+  .category-page .card img{height:112px!important}
+  .category-page .card-style-3 img{height:150px!important}
+  .category-page .card-style-8{grid-column:span 3}
+}
+@media(max-width:760px){
+  .category-page .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:8px!important}
+  .category-page .lead,
+  .category-page .mini,
+  .category-page .rail,
+  .category-page .card{border-radius:18px!important}
+  .category-page .card img{height:88px!important;border-radius:17px 17px 0 0!important}
+  .category-page .card .body{padding:8px!important}
+  .category-page .card h3{font-size:12px!important;-webkit-line-clamp:3}
+  .category-page .card-style-1,
+  .category-page .card-style-6,
+  .category-page .card-style-8{grid-template-columns:1fr;grid-column:auto}
+  .category-page .card-style-1 img,
+  .category-page .card-style-6 img,
+  .category-page .card-style-8 img{height:88px!important;min-height:0;border-radius:17px 17px 0 0!important}
+  .category-page .card-style-3,
+  .category-page .card-style-9{grid-row:span 1}
+  .category-page .card-style-3 img,
+  .category-page .card-style-9 img{height:96px!important}
+  .category-page .card-style-4::after,
+  .category-page .card-corner-icon,
+  .category-page .continue{display:none}
+}
+</style>
+
 </head>
-<body>
+<body class="category-page theme-{{ cfg.slug|default(cfg.name)|lower|replace(' & ', '-')|replace(' ', '-') }}">
   <div class="top"><div class="wrap"><span>SurgeTechKnow</span><span>{{ cfg.label }}</span><span>Guides</span><span>Analysis</span><span>Practical Technology</span></div></div>
   <nav class="nav"><div class="wrap" style="min-height:62px;height:auto;padding:10px 0;gap:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap"><a class="brand" href="{{ url_for('index') }}">Surge<span>TechKnow</span></a><div class="navlinks" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:900"><a href="{{ url_for('index') }}">Home</a><a href="{{ url_for('hub') }}">Hub</a><a href="{{ url_for('blog_list') }}">Journal</a><a href="{{ url_for('about_page') }}">About Us</a><a href="{{ url_for('contact_us_page') }}">Contact</a></div></div></nav>
   <header class="hero"><div class="wrap"><div class="crumb"><a href="{{ url_for('index') }}">Home</a> &gt; <span>{{ cfg.label }}</span></div><div class="hero-grid"><div><h1><i class="bi {{ cfg.icon }}" style="color:var(--red)"></i> {{ cfg.label }}</h1><p>{{ cfg.hero }}</p></div><aside class="hero-box"><h3>Explore this desk</h3><div class="chips">{% for kw in cfg.keywords %}<span class="chip">{{ kw }}</span>{% endfor %}</div></aside></div></div></header>
 
   <main>
-    <section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-stars"></i> Featured in {{ cfg.name }}</h2><a class="view-more" href="#latest">Latest Articles <i class="bi bi-chevron-right"></i></a></div><div class="layout">{% if featured_post %}<a class="lead" href="{{ url_for('view_blog', slug=featured_post.slug) }}"><div class="lead-img"><img src="{{ featured_post|blog_image|img_opt(900) }}" width="900" height="520" fetchpriority="high" decoding="async" onerror="this.src='/static/ogimage.webp'" alt="{{ featured_post.title }}"></div><div class="lead-body"><span class="cat">{{ featured_post.category }}</span><h2>{{ featured_post.title }}</h2><p class="excerpt">{{ featured_post.excerpt or (featured_post.content|clean_excerpt(170)) }}</p><span class="meta">{{ featured_post.content|get_reading_time }} min read • {{ featured_post|trending_label or 'Featured guide' }}</span></div></a>{% endif %}<div class="mini-list">{% for b in latest_posts[1:7] %}<a class="mini" href="{{ url_for('view_blog', slug=b.slug) }}"><img loading="lazy" decoding="async" width="420" height="236" src="{{ b|blog_image|img_opt(420) }}" onerror="this.src='/static/ogimage.webp'" alt="{{ b.title }}"><div><span class="cat">{{ b.category }}</span><h3>{{ b.title }}</h3><span class="meta">{{ b.content|get_reading_time }} min read</span></div></a>{% endfor %}</div><aside class="rail"><h3>Popular This Week</h3>{% for b in popular_posts[:6] %}<a href="{{ url_for('view_blog', slug=b.slug) }}"><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><span class="meta">{{ b.content|get_reading_time }} min read</span></a>{% endfor %}</aside></div></div></section>
+    <section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-stars"></i> Featured in {{ cfg.name }}</h2><a class="view-more" href="#latest">Latest Articles <i class="bi bi-chevron-right"></i></a></div><div class="layout">{% if featured_post %}<a class="lead reveal-card" href="{{ url_for('view_blog', slug=featured_post.slug) }}"><div class="lead-img"><img src="{{ featured_post|blog_image|img_opt(900) }}" width="900" height="520" fetchpriority="high" decoding="async" onerror="this.src='/static/ogimage.webp'" alt="{{ featured_post.title }}"></div><div class="lead-body"><span class="cat">{{ featured_post.category }}</span><h2>{{ featured_post.title }}</h2><p class="excerpt">{{ featured_post.excerpt or (featured_post.content|clean_excerpt(170)) }}</p><span class="meta">{{ featured_post.content|get_reading_time }} min read • {{ featured_post|trending_label or 'Featured guide' }}</span></div></a>{% endif %}<div class="mini-list">{% for b in latest_posts[1:7] %}<a class="mini reveal-card" href="{{ url_for('view_blog', slug=b.slug) }}"><img loading="lazy" decoding="async" width="420" height="236" src="{{ b|blog_image|img_opt(420) }}" onerror="this.src='/static/ogimage.webp'" alt="{{ b.title }}"><div><span class="cat">{{ b.category }}</span><h3>{{ b.title }}</h3><span class="meta">{{ b.content|get_reading_time }} min read</span></div></a>{% endfor %}</div><aside class="rail reveal-card"><h3>Popular This Week</h3>{% for b in popular_posts[:6] %}<a href="{{ url_for('view_blog', slug=b.slug) }}"><span class="cat">{{ b.category }}</span><h4>{{ b.title }}</h4><span class="meta">{{ b.content|get_reading_time }} min read</span></a>{% endfor %}</aside></div></div></section>
 
-    {% if trending_posts %}<section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-fire"></i> Trending in {{ cfg.name }}</h2><a class="view-more" href="{{ url_for('blog_list') }}">Open Journal <i class="bi bi-chevron-right"></i></a></div><div class="grid">{% for b in trending_posts[:8] %}<a class="card" href="{{ url_for('view_blog', slug=b.slug) }}"><img loading="lazy" decoding="async" width="420" height="236" src="{{ b|blog_image|img_opt(420) }}" onerror="this.src='/static/ogimage.webp'" alt="{{ b.title }}"><div class="body"><span class="cat">{{ b|trending_label or 'Trending' }}</span><h3>{{ b.title }}</h3><span class="meta">{{ b.content|get_reading_time }} min read</span></div></a>{% endfor %}</div></div></section>{% endif %}
+    {% if trending_posts %}<section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-fire"></i> Trending in {{ cfg.name }}</h2><a class="view-more" href="{{ url_for('blog_list') }}">Open Journal <i class="bi bi-chevron-right"></i></a></div><div class="grid">{% for b in trending_posts[:8] %}<a class="card card-style-{{ loop.index0 % 12 }} reveal-card" href="{{ url_for('view_blog', slug=b.slug) }}"><span class="card-glow"></span><span class="card-corner-icon"><i class="bi {{ cfg.icon }}"></i></span><img loading="lazy" decoding="async" width="420" height="236" src="{{ b|blog_image|img_opt(420) }}" onerror="this.src='/static/ogimage.webp'" alt="{{ b.title }}"><div class="body"><span class="cat">{{ b|trending_label or 'Trending' }}</span><h3>{{ b.title }}</h3><div class="card-footerline"><span class="meta read-pill">{{ b.content|get_reading_time }} min read</span><span class="continue">Read →</span></div></div></a>{% endfor %}</div></div></section>{% endif %}
 
-    <section id="latest" class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-clock-history"></i> Latest {{ cfg.name }} Articles</h2><a class="view-more" href="{{ url_for('blog_list') }}">All Journal Posts <i class="bi bi-chevron-right"></i></a></div>{% if latest_posts %}<div class="grid">{% for b in latest_posts %}<a class="card" href="{{ url_for('view_blog', slug=b.slug) }}"><img loading="lazy" decoding="async" width="420" height="236" src="{{ b|blog_image|img_opt(420) }}" onerror="this.src='/static/ogimage.webp'" alt="{{ b.title }}"><div class="body"><span class="cat">{{ b.category }}</span><h3>{{ b.title }}</h3><span class="meta">{{ b.content|get_reading_time }} min read</span></div></a>{% endfor %}</div>{% else %}<div class="lead-body" style="background:#fff;border:1px solid var(--line)"><h2>No articles yet</h2><p class="excerpt" style="display:block">This desk is ready. New {{ cfg.name }} articles will appear here automatically after publishing.</p></div>{% endif %}</div></section>
+    <section id="latest" class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-clock-history"></i> Latest {{ cfg.name }} Articles</h2><a class="view-more" href="{{ url_for('blog_list') }}">All Journal Posts <i class="bi bi-chevron-right"></i></a></div>{% if latest_posts %}<div class="grid">{% for b in latest_posts %}<a class="card card-style-{{ loop.index0 % 12 }} reveal-card" href="{{ url_for('view_blog', slug=b.slug) }}"><span class="card-glow"></span><span class="card-corner-icon"><i class="bi {{ cfg.icon }}"></i></span><img loading="lazy" decoding="async" width="420" height="236" src="{{ b|blog_image|img_opt(420) }}" onerror="this.src='/static/ogimage.webp'" alt="{{ b.title }}"><div class="body"><span class="cat">{{ b.category }}</span><h3>{{ b.title }}</h3><div class="card-footerline"><span class="meta read-pill">{{ b.content|get_reading_time }} min read</span><span class="continue">Read →</span></div></div></a>{% endfor %}</div>{% else %}<div class="lead-body" style="background:#fff;border:1px solid var(--line)"><h2>No articles yet</h2><p class="excerpt" style="display:block">This desk is ready. New {{ cfg.name }} articles will appear here automatically after publishing.</p></div>{% endif %}</div></section>
 
     <section class="section"><div class="wrap"><div class="section-head"><h2><i class="bi bi-link-45deg"></i> Related Technology Desks</h2><a class="view-more" href="{{ url_for('blog_list') }}">Explore All <i class="bi bi-chevron-right"></i></a></div><div class="related-cats">{% for rel in related_categories %}<a class="relcat" href="{{ rel.name|category_page_url }}"><b>{{ rel.label }}</b><span class="meta">{{ rel.description|truncate(75) }}</span></a>{% endfor %}</div></div></section>
 
@@ -168,5 +470,32 @@
   sendArticle(); setTimeout(sendArticle,8000); setInterval(sendArticle,30000);
   {% endif %}
 })();
-</script></body>
+</script>
+<script>
+(function(){
+  function ready(fn){document.readyState!=='loading'?fn():document.addEventListener('DOMContentLoaded',fn);}
+  ready(function(){
+    const cards=[...document.querySelectorAll('.reveal-card')];
+    if(!cards.length) return;
+    if(!('IntersectionObserver' in window)){
+      cards.forEach(el=>el.classList.add('is-visible'));
+      return;
+    }
+    const io=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+    cards.forEach((el,i)=>{
+      el.style.transitionDelay=Math.min(i%8*55,330)+'ms';
+      io.observe(el);
+    });
+  });
+})();
+</script>
+
+</body>
 </html>
