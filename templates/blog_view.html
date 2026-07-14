@@ -42,6 +42,9 @@
 {% set share_image = post|social_share_image %}
 {% set canonical_url = 'https://techknowsolution.co.ke' ~ request.path %}
 <title>{{ post.title }} • SurgeTechKnow</title>
+<link rel="icon" type="image/webp" href="{{ share_image }}">
+<link rel="shortcut icon" href="{{ share_image }}">
+<link rel="apple-touch-icon" href="{{ share_image }}">
 <meta name="description" content="{{ seo_description }}">
 <meta name="keywords" content="{{ seo_keywords }}">
 <link rel="canonical" href="{{ canonical_url }}">
