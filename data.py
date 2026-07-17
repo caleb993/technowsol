@@ -175,6 +175,9 @@ def create_tables():
         """
         ALTER TABLE blogs ADD COLUMN IF NOT EXISTS published_at TIMESTAMP WITH TIME ZONE;
         """,
+        """
+        ALTER TABLE blogs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;
+        """,
 
         """
         ALTER TABLE blogs ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Technology';
@@ -553,6 +556,7 @@ def ensure_blog_seo_columns():
                 cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS excerpt TEXT;")
                 cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS featured_image TEXT;")
                 cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS meta_keywords TEXT;")
+                cur.execute("ALTER TABLE blogs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE;")
     finally:
         conn.close()
 
@@ -623,6 +627,7 @@ def load_blogs(include_drafts=False):
                                COALESCE(loved_count, 0) as loved_count,
                                COALESCE(status, 'published') as status,
                                published_at,
+                               updated_at,
                                COALESCE(category, 'Technology') as category,
                                COALESCE(is_trending, FALSE) as is_trending,
                                COALESCE(excerpt, '') as excerpt,
@@ -641,6 +646,7 @@ def load_blogs(include_drafts=False):
                                COALESCE(loved_count, 0) as loved_count,
                                COALESCE(status, 'published') as status,
                                published_at,
+                               updated_at,
                                COALESCE(category, 'Technology') as category,
                                COALESCE(is_trending, FALSE) as is_trending,
                                COALESCE(excerpt, '') as excerpt,
@@ -666,6 +672,7 @@ def load_blogs(include_drafts=False):
                         "loved_count": r["loved_count"] or 0,
                         "status": r["status"] or "published",
                         "published_at": r["published_at"].isoformat() if r["published_at"] else "",
+                        "updated_at": r["updated_at"].isoformat() if r["updated_at"] else "",
                         "category": r["category"] or "Technology",
                         "is_trending": bool(r["is_trending"]),
                         "excerpt": r["excerpt"] or "",
@@ -696,6 +703,7 @@ def get_blog_by_slug(slug):
                            COALESCE(loved_count, 0) as loved_count,
                            COALESCE(status, 'published') as status,
                            published_at,
+                           updated_at,
                            COALESCE(category, 'Technology') as category,
                            COALESCE(is_trending, FALSE) as is_trending,
                            COALESCE(excerpt, '') as excerpt,
@@ -724,6 +732,7 @@ def get_blog_by_slug(slug):
                     "loved_count": r["loved_count"] or 0,
                     "status": r["status"] or "published",
                     "published_at": r["published_at"].isoformat() if r["published_at"] else "",
+                    "updated_at": r["updated_at"].isoformat() if r["updated_at"] else "",
                     "category": r["category"] or "Technology",
                     "is_trending": bool(r["is_trending"]),
                     "excerpt": r["excerpt"] or "",
@@ -807,7 +816,8 @@ def update_blog(bid, title, content, category="Technology", is_trending=False, e
                     """
                     UPDATE blogs
                     SET title = %s, slug = %s, content = %s,
-                        category = %s, is_trending = %s, excerpt = %s, featured_image = %s, meta_keywords = %s
+                        category = %s, is_trending = %s, excerpt = %s, featured_image = %s, meta_keywords = %s,
+                        updated_at = now()
                     WHERE id = %s
                     """,
                     (
